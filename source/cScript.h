@@ -1,6 +1,7 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
 
+#include <js/RootingAPI.h>
 
 class CPIGumpMenuSelect;
 class CPIGumpInput;
@@ -131,7 +132,9 @@ enum ScriptEvent
 	seOnSpecialMove,
 	seOnFacetChange,
 	seOnReleasePet,
-	seOnPaperDoll
+	seOnPaperDoll,
+	seOnTempEffectExpire,
+	seOnTempEffectRemove
 };
 
 struct SEGump_st
@@ -155,17 +158,17 @@ struct JSErrorInfo
 	std::string filename;
 	std::string lineSource;
 	std::string tokenPointer;
-	uintN lineNum = 0;
+	unsigned int lineNum = 0;
 };
 
 class cScript
 {
 private:
 
-	JSScript *			targScript;
+	JS::PersistentRootedScript	targScript;
 	JSContext *			targContext;
-	JSObject *			targObject;
-	JSObject *			scriptObj;
+	JS::PersistentRootedObject	targObject;
+	JS::PersistentRootedObject	scriptObj;
 	UI16				scriptID;
 
 	bool				isFiring;
@@ -182,7 +185,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
-	JSBool		InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
+	bool		InvokeEvent( const char* name, unsigned int argc, const JS::Value* argv, JS::Value* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -269,6 +272,8 @@ public:
 	bool		OnWeatherChange( CBaseObject *tObject, WeatherType element );
 	bool		OnTempChange( CBaseObject *tObject, SI08 temp );
 	bool		OnTimer( CBaseObject *tObject, UI16 timerId );
+	bool		OnTempEffectExpire( CBaseObject *source, CBaseObject *target, UI16 effectId );
+	bool		OnTempEffectRemove( CBaseObject *source, CBaseObject *target, UI16 effectId );
 	SI08		OnDeath( CChar *pDead, CItem *iCorpse );
 	SI08		OnResurrect( CChar *pAlive );
 	SI08		OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus );
@@ -280,16 +285,16 @@ public:
 	SI08		OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper );
 	bool		OnEnterRegion( CChar *entering, UI16 region );
 	bool		OnLeaveRegion( CChar *entering, UI16 region );
-	SI08		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );
-	SI08		OnSpellTargetSelect( CChar *caster, CBaseObject *target, UI08 spellNum );
+	SI32		OnSpellTarget( CBaseObject *target, CChar *caster, SI32 spellNum );
+	SI32		OnSpellTargetSelect( CChar *caster, CBaseObject *target, SI32 spellNum );
 	bool		DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum );
-	SI16		OnSpellCast( CChar *tChar, UI08 SpellId );
-	SI16		OnScrollCast( CChar *tChar, UI08 SpellId );
-	SI08		OnSpellSuccess( CChar *tChar, UI08 SpellId );
+	SI32		OnSpellCast( CChar *tChar, SI32 SpellId );
+	SI32		OnScrollCast( CChar *tChar, SI32 SpellId );
+	SI32		OnSpellSuccess( CChar *tChar, SI32 SpellId );
 	SI08		OnTalk( CChar *myChar, const char *mySpeech );
 	bool		OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech );
-	SI08		OnSpellGain( CItem *book, const UI08 spellNum );
-	SI08		OnSpellLoss( CItem *book, const UI08 spellNum );
+	SI32		OnSpellGain( CItem *book, const SI32 spellNum );
+	SI32		OnSpellLoss( CItem *book, const SI32 spellNum );
 	SI08		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill, SI08 overrideOutcome );
 	SI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i );
 	SI08		OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest );
@@ -305,7 +310,7 @@ public:
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
 	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
-	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
+	bool		CallParticularEvent( const char *eventToCall, const JS::Value *params, SI32 numParams, JS::Value *eventRetVal );
 	bool		OnFactionTownstone( CSocket *mSock, CChar *mChar, UI16 regionId );
 
 	bool		ScriptRegistration( std::string scriptType );

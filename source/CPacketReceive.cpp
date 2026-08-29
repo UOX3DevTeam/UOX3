@@ -18,6 +18,7 @@
 #include "CResponse.h"
 #include "StringUtility.hpp"
 #include "cRaces.h"
+#include "cLoginThrottler.h"
 #include <chrono>
 #include "IP4Address.hpp"
 #include "utf8.h"
@@ -189,10 +190,9 @@ void CPIFirstLogin::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIFirstLogin 0x80 --> Length: 62" << TimeStamp() << std::endl;
 	}
 	outStream << "UserId         : " << Name() << std::endl;
-	outStream << "Password       : " << Pass() << std::endl;
+	outStream << "Password       : [REDACTED]" << std::endl;
 	outStream << "Unknown        : " << static_cast<SI16>( Unknown() ) << std::endl;
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
+	outStream << "  Raw dump     : [REDACTED - CONTAINS ACCOUNT CREDENTIALS]" << std::endl;
 }
 
 bool CPIFirstLogin::Handle( void )
@@ -201,6 +201,15 @@ bool CPIFirstLogin::Handle( void )
 	LoginDenyReason t = LDR_NODENY;
 
 	std::string username = Name();
+	UI32 retryAfterSeconds = 0;
+	if( LoginThrottler.IsBlocked( tSock, username, retryAfterSeconds ))
+	{
+		CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+		tSock->Send( &pckDeny );
+		Network->LoginDisconnect( tSock );
+		return true;
+	}
+	bool throttleAttemptRecorded = false;
 
 	CAccountBlock_st * actbTemp = &Accounts->GetAccountByName( username );
 	if( actbTemp->wAccountIndex != AB_INVALID_ID )
@@ -221,6 +230,8 @@ bool CPIFirstLogin::Handle( void )
 			actbTemp = &Accounts->GetAccountByName( username );
 			if( actbTemp->wAccountIndex != AB_INVALID_ID )	// grab our account number
 			{
+				LoginThrottler.RecordAccountCreation( tSock, username );
+				throttleAttemptRecorded = true;
 				tSock->SetAccount(( *actbTemp ));
 			}
 		}
@@ -234,7 +245,7 @@ bool CPIFirstLogin::Handle( void )
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
-		else if( actbTemp->sPassword != pass1 )
+		else if( !Accounts->VerifyPassword( *actbTemp, pass1 ))
 		{
 			t = LDR_BADPASSWORD;
 		}
@@ -339,6 +350,10 @@ bool CPIFirstLogin::Handle( void )
 	}
 	if( t != LDR_NODENY )
 	{
+		if( !throttleAttemptRecorded && ( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER ))
+		{
+			LoginThrottler.RecordFailure( tSock, username );
+		}
 		CPLoginDeny pckDeny( t );
 		tSock->Send( &pckDeny );
 		tSock->AcctNo( AB_INVALID_ID );
@@ -348,7 +363,7 @@ bool CPIFirstLogin::Handle( void )
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
 		actbTemp->dwLastIP = CalcSerial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
-		auto temp = oldstrutil::format( "Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
+		auto temp = oldstrutil::format( "Account '%s' authenticated successfully with Login Server from [%i.%i.%i.%i].", username.c_str(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
 		Console.Log( temp , "server.log" );
 		messageLoop << temp;
 
@@ -395,13 +410,15 @@ void CPIFirstLogin::Receive( void )
 	tSock->Receive( 62, false );
 
 	// Copy data over into internal variables
-	char temp[30];
+	char temp[31]{};
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[1], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	userId = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[31], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	password = temp;
 
 	unknown = tSock->GetByte( 61 );
@@ -517,9 +534,8 @@ void CPISecondLogin::Log( std::ostream &outStream, bool fullHeader )
 
 	outStream << "Key Used       : " << Account() << std::endl;
 	outStream << "SID            : " << Name() << std::endl;
-	outStream << "Password       : " << Pass() << std::endl;
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
+	outStream << "Password       : [REDACTED]" << std::endl;
+	outStream << "  Raw dump     : [REDACTED - CONTAINS ACCOUNT CREDENTIALS]" << std::endl;
 }
 void CPISecondLogin::InternalReset( void )
 {
@@ -543,15 +559,17 @@ void CPISecondLogin::Receive( void )
 	tSock->CryptClient( true );
 
 	// Copy data over into internal variables
-	char temp[30];
+	char temp[31]{};
 	keyUsed = tSock->GetDWord( 1 );
 
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[5], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	sid = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[35], 30 );
+	temp[30] = '\0'; // Ensure the fixed-width packet field is null-terminated.
 	password = temp;
 
 	// Done with our buffer, we can clear it out now
@@ -573,6 +591,14 @@ bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
 	tSock->AcctNo( AB_INVALID_ID );
+	UI32 retryAfterSeconds = 0;
+	if( LoginThrottler.IsBlocked( tSock, Name(), retryAfterSeconds ))
+	{
+		CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+		tSock->Send( &pckDeny );
+		Network->LoginDisconnect( tSock );
+		return true;
+	}
 	CAccountBlock_st& actbTemp = Accounts->GetAccountByName( Name() );
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 	{
@@ -597,7 +623,7 @@ bool CPISecondLogin::Handle( void )
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
-		else if( pass1 != actbTemp.sPassword )
+		else if( !Accounts->VerifyPassword( actbTemp, pass1 ))
 		{
 			t = LDR_BADPASSWORD;
 		}
@@ -609,6 +635,10 @@ bool CPISecondLogin::Handle( void )
 
 	if( t != LDR_NODENY )
 	{
+		if( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER )
+		{
+			LoginThrottler.RecordFailure( tSock, Name() );
+		}
 		tSock->AcctNo( AB_INVALID_ID );
 		CPLoginDeny pckDeny( t );
 		tSock->Send( &pckDeny );
@@ -617,6 +647,10 @@ bool CPISecondLogin::Handle( void )
 	}
 	else
 	{
+		auto temp = oldstrutil::format( "Account '%s' connected successfully to Game Server from [%i.%i.%i.%i].", Name().c_str(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
+		Console.Log( temp , "server.log" );
+		messageLoop << temp;
+
 		// If first login timestamp has not been set, set it here
 		if( actbTemp.wFirstLogin == 0 )
 		{
@@ -720,9 +754,9 @@ void CPINewClientVersion::Receive( void )
 		tSock->ClientVersion( majorVersion, minorVersion, clientRevision, clientPrototype );
 
 		std::string verString = oldstrutil::number( majorVersion ) + std::string( "." ) + 
-			oldstrutil::number( minorVersion ) + std::string( ". ") + oldstrutil::number( clientRevision ) +
+			oldstrutil::number( minorVersion ) + std::string( ".") + oldstrutil::number( clientRevision ) +
 			std::string( "." ) + oldstrutil::number( clientPrototype );
-		Console << verString << myendl;
+		messageLoop << oldstrutil::format( "Connection request (Socket %lu) from [%i.%i.%i.%i] using client v%s", cwmWorldState->GetPlayersOnline(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), verString.c_str() );
 
 		// Set client-version based on information received so far. We need this to be able to send the correct info during login
 		// Needs to be refined in second client-version pass (CPIClientVersion)
@@ -960,7 +994,7 @@ bool CPIClientVersion::Handle( void )
 		}
 
 		tSock->ClientVersion( major, minor, sub, letter );
-		Console << verString << myendl;
+		messageLoop << oldstrutil::format( "Connection request (Socket %lu) from [%i.%i.%i.%i] using client v%s", cwmWorldState->GetPlayersOnline(), tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), verString );
 	}
 
 	if( strstr( verString, "Dawn" ))
@@ -2884,7 +2918,7 @@ bool CPIProfileRequest::Handle( void )
 			// to be replicated in script
 
 			try { // Add a try block for potential utfcpp exceptions
-				UI08 tempBuffer[1024];
+				UI08 tempBuffer[4096];
 				size_t mj = 0; // Current write position / running total size
 
 				 // It's generally safer to get the request buffer pointer once if needed
@@ -3009,27 +3043,56 @@ bool CPIProfileRequest::Handle( void )
 		auto msgLen = tSock->GetWord( 10 ); // length of profile text string
 		
 		size_t bytesToCopy = static_cast<size_t>( msgLen ) * 2;
-		char rawProfileBytes[512];
-		const size_t maxProfileBytes = sizeof( rawProfileBytes ) - 2; // reserve 2 bytes for null terminator
-		if( bytesToCopy >= maxProfileBytes )
+		if( bytesToCopy == 0 )
 		{
-			return false;
+			// Handle empty profile update
+			cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+			if( toExecute != nullptr )
+			{
+				toExecute->OnProfileUpdate( tSock, "" );
+			}
+			return true;
 		}
 
-		memcpy( rawProfileBytes, &(tSock->Buffer())[12], bytesToCopy );
+		// Cap maximum profile size to 1536 UTF-16 characters (3072 bytes)
+		constexpr size_t maxAllowedBytes = 3072;
+		if( bytesToCopy > maxAllowedBytes )
+		{
+			bytesToCopy = maxAllowedBytes; // Truncate rather than dropping packet entirely
+		}
+
+		// Ensure we don't read past the received network packet buffer
+		auto packetSize = static_cast<size_t>( tSock->GetWord( 1 ));
+		if( 12 + bytesToCopy > packetSize )
+		{
+			if( packetSize > 12 )
+			{
+				bytesToCopy = packetSize - 12;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		// Ensure bytesToCopy is an even number for UTF-16
+		bytesToCopy &= ~1;
+
+		std::vector<char> rawProfileBytes( bytesToCopy );
+		memcpy( rawProfileBytes.data(), &(tSock->Buffer())[12], bytesToCopy );
 
 		// Byte-swap the UTF-16 data (big-endian) to little-endian
 		for( size_t i = 0; i < bytesToCopy; i += 2 )
 		{
-			std::uint16_t* word_ptr = reinterpret_cast<uint16_t*>( rawProfileBytes + i );
+			std::uint16_t* word_ptr = reinterpret_cast<uint16_t*>( rawProfileBytes.data() + i );
 			*word_ptr = byte_swap_u16( *word_ptr );
 		}
 
 		// Convert Native UTF-16 from buffer to UTF-8
 		std::string utf8ProfileText;
 		try {
-			const char16_t* utf16_start = reinterpret_cast<const char16_t*>( rawProfileBytes );
-			const char16_t* utf16_end = reinterpret_cast<const char16_t*>( rawProfileBytes + bytesToCopy );
+			const char16_t* utf16_start = reinterpret_cast<const char16_t*>( rawProfileBytes.data() );
+			const char16_t* utf16_end = reinterpret_cast<const char16_t*>( rawProfileBytes.data() + bytesToCopy );
 
 			// Use std::back_inserter to append UTF-8 bytes directly to the string
 			utf8::utf16to8( utf16_start, utf16_end, std::back_inserter( utf8ProfileText ));
@@ -3453,7 +3516,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "Pattern1       : " << pattern1 << std::endl;
 		outStream << "Slot           : " << static_cast<SI32>( slot ) << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
-		outStream << "Password       : " << password << std::endl;
+		outStream << "Password       : [REDACTED]" << std::endl;
 		outStream << "Profession     : " << static_cast<SI32>( profession ) << std::endl;
 		outStream << "Client Flags   : " << static_cast<SI32>( clientFlags ) << std::endl;
 		outStream << "Sex            : " << static_cast<SI32>( sex ) << std::endl;
@@ -3485,8 +3548,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "Unknown9       : " << static_cast<SI32>( unknown9 ) << std::endl;
 		outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
 		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
-		outStream << "  Raw dump     :" << std::endl;
-		CPInputBuffer::Log( outStream, false );
+		outStream << "  Raw dump     : [REDACTED - MAY CONTAIN CREDENTIALS]" << std::endl;
 	}
 	else
 	{
@@ -3505,7 +3567,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "Pattern2       : " << pattern2 << std::endl;
 		outStream << "Pattern3       : " << static_cast<SI32>( pattern3 ) << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
-		outStream << "Password       : " << password << std::endl;
+		outStream << "Password       : [REDACTED]" << std::endl;
 		outStream << "Sex            : " << static_cast<SI32>( sex ) << std::endl;
 		outStream << "Strength       : " << static_cast<SI32>( str ) << std::endl;
 		outStream << "Dexterity      : " << static_cast<SI32>( dex ) << std::endl;
@@ -3523,8 +3585,7 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "IP Address     : " << ipAddress << std::endl;
 		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
 		outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
-		outStream << "  Raw dump     :" << std::endl;
-		CPInputBuffer::Log( outStream, false );
+		outStream << "  Raw dump     : [REDACTED - MAY CONTAIN CREDENTIALS]" << std::endl;
 	}
 }
 
@@ -3978,7 +4039,6 @@ void CPIToolTipRequestAoS::Log( std::ostream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, true );
 }
 
-
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIBookPage()
 //o------------------------------------------------------------------------------------------------o
@@ -4088,13 +4148,11 @@ void CPIMetrics::Log( std::ostream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
 //	UI16			subCmd;
 //	UI08			subSubCmd;
 
 void PaperDoll( CSocket *s, CChar *pdoll );
 bool BuyShop( CSocket *s, CChar *c );
-
 
 CPISubcommands::CPISubcommands() : skipOver( false ), subPacket( nullptr )
 {
@@ -4618,7 +4676,7 @@ bool CPITrackingArrow::Handle( void )
 		{
 			CPTrackingArrow tSend = ( *trackingTarg );
 			tSend.Active( 0 );
-			if( tSock->ClientVersion() >= CV_HS2D )
+			if( tSock->ClientType() >= CV_HS2D )
 			{
 				tSend.AddSerial( trackingTarg->GetSerial() );
 			}
@@ -4628,7 +4686,7 @@ bool CPITrackingArrow::Handle( void )
 		{
 			CPTrackingArrow tSend;
 			tSend.Active( 0 );
-			if( tSock->ClientVersion() >= CV_HS2D )
+			if( tSock->ClientType() >= CV_HS2D )
 			{
 				tSend.AddSerial( mChar->GetTrackingTargetSerial() );
 			}
@@ -5868,61 +5926,52 @@ void CPISpellbookSelect::Receive( void )
 }
 bool CPISpellbookSelect::Handle( void )
 {
-	CChar *ourChar	= tSock->CurrcharObj();
-	CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
-	CItem *p		= ourChar->GetPackItem();
-	UI08 *buffer	= tSock->Buffer();
-	if( ValidateObject( sBook ))
-	{
-		bool validLoc	= false;
-		if( sBook->GetCont() == ourChar )
-		{
-			validLoc = true;
-		}
-		else if( ValidateObject( p ) && sBook->GetCont() == p )
-		{
-			validLoc = true;
-		}
+	CChar *ourChar = tSock->CurrcharObj();
+	SI32 spellNumber = tSock->GetWord( 7 );
+	CItem *activeBook = Magic->FindSpellBook( ourChar, spellNumber );
 
-		if( validLoc )
+	if( !ValidateObject( activeBook ))
+	{
+		tSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
+		return true;
+	}
+
+	auto bookConfig = Magic->GetSpellBookConfig( activeBook );
+	SI32 book = spellNumber - bookConfig.firstSpell + 1;
+
+	// Validate the spell in the book
+	if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, activeBook ))
+	{
+		if( ourChar->IsFrozen() )
 		{
-			SI32 book = ( buffer[7] << 8 ) + ( buffer[8] );
-			if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ))
+			if( ourChar->IsCasting() )
 			{
-				if( ourChar->IsFrozen() )
-				{
-					if( ourChar->IsCasting() )
-					{
-						tSock->SysMessage( 762 ); // You are already casting a spell.
-					}
-					else
-					{
-						tSock->SysMessage( 763 ); // You cannot cast spells while frozen.
-					}
-				}
-				else
-				{
-					tSock->CurrentSpellType( 0 );
-					Magic->SelectSpell( tSock, book );
-				}
+				tSock->SysMessage( 762 ); // "You are already casting a spell."
 			}
 			else
 			{
-				tSock->SysMessage( 764 ); // You do not have that spell.
+				tSock->SysMessage( 763 ); // "You cannot cast spells while frozen."
 			}
 		}
 		else
 		{
-			tSock->SysMessage( 765 ); // =To cast spells, your spellbook must be in your hands or in the first layer of your pack.
+			tSock->CurrentSpellType( 0 );
+			Magic->SelectSpell( tSock, spellNumber );
 		}
 	}
+	else
+	{
+		tSock->SysMessage( 764 ); // "You do not have that spell."
+	}
+
 	return true;
 }
+
 void CPISpellbookSelect::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
-		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Spellbook Select --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Spellbook Select --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
 	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );

@@ -240,10 +240,18 @@ private:
 	UI32		maxBytesIn;					// Max bytes that can be received from a client in a 10-second window before client is warned/kicked for excessive data use
 	UI32		maxBytesOut;				// Max bytes that can be sent to a client in a 10-second window before client is warned/kicked for excessive data use
 	UI32		trafficTimeban;				// Duration in minutes that player will be banned for if they exceed their network traffic budget
+	UI32		loginThrottleMaxAttempts;	// Failed login/account creation attempts allowed per IP in the observation window
+	UI32		loginThrottleWindow;		// Login throttle observation window in seconds
+	UI32		loginThrottleInitialDelay;	// Initial login throttle block in seconds
+	UI32		loginThrottleMultiplier;	// Multiplier applied to repeated throttle blocks
+	UI32		loginThrottleMaxDelay;		// Maximum login throttle block in seconds
+	UI32		loginThrottleEntryTtl;		// Seconds before an inactive throttle entry is discarded
 
 	bool		uogEnabled;					// 04/03/2004 - Added to support the UOG Info Request Service
 	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
 	bool		useUnicodeMessages;			// Enable or disable sending messages originating on server in Unicode format
+	bool		loginThrottleEnabled;			// Enable IP-based login throttling
+	bool		passwordHashingEnabled;			// Store new account passwords with PBKDF2-HMAC-SHA256 and migrate plaintext passwords on login
 
 	// Client Support
 	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
@@ -388,7 +396,6 @@ private:
 	UI08		hours;							//	Number of hours the world has been running (persistent)
 	SI16		days;							//	Number of days the world has been running (persistent)
 	SI16		moon[2];						//	Moon current state
-	bool		ampm;							//	Whether our current time is in the morning or afternoon
 
 	// Tracking
 	UI08		trackingMaxTargets;				//	Maximum number of targets that can be tracked
@@ -683,6 +690,22 @@ public:
 
 	auto		InternalAccountStatus( bool value ) -> void;
 	auto		InternalAccountStatus() const -> bool;
+	auto		LoginThrottleEnabled( bool value ) -> void { loginThrottleEnabled = value; }
+	auto		LoginThrottleEnabled() const -> bool { return loginThrottleEnabled; }
+	auto		LoginThrottleMaxAttempts( UI32 value ) -> void { loginThrottleMaxAttempts = value; }
+	auto		LoginThrottleMaxAttempts() const -> UI32 { return loginThrottleMaxAttempts; }
+	auto		LoginThrottleWindow( UI32 value ) -> void { loginThrottleWindow = value; }
+	auto		LoginThrottleWindow() const -> UI32 { return loginThrottleWindow; }
+	auto		LoginThrottleInitialDelay( UI32 value ) -> void { loginThrottleInitialDelay = value; }
+	auto		LoginThrottleInitialDelay() const -> UI32 { return loginThrottleInitialDelay; }
+	auto		LoginThrottleMultiplier( UI32 value ) -> void { loginThrottleMultiplier = value; }
+	auto		LoginThrottleMultiplier() const -> UI32 { return loginThrottleMultiplier; }
+	auto		LoginThrottleMaxDelay( UI32 value ) -> void { loginThrottleMaxDelay = value; }
+	auto		LoginThrottleMaxDelay() const -> UI32 { return loginThrottleMaxDelay; }
+	auto		LoginThrottleEntryTtl( UI32 value ) -> void { loginThrottleEntryTtl = value; }
+	auto		LoginThrottleEntryTtl() const -> UI32 { return loginThrottleEntryTtl; }
+	auto		PasswordHashingEnabled( bool value ) -> void { passwordHashingEnabled = value; }
+	auto		PasswordHashingEnabled() const -> bool { return passwordHashingEnabled; }
 
 	auto		YoungPlayerSystem( bool value ) -> void;
 	auto		YoungPlayerSystem() const -> bool;
@@ -1444,13 +1467,11 @@ public:
 	UI08		ServerTimeHours() const;
 	UI08		ServerTimeMinutes() const;
 	UI08		ServerTimeSeconds() const;
-	auto		ServerTimeAMPM() const -> bool;
 
 	auto		ServerTimeDay( SI16 nValue ) -> void;
 	auto		ServerTimeHours( UI08 nValue ) -> void;
 	auto		ServerTimeMinutes( UI08 nValue ) -> void;
 	auto		ServerTimeSeconds( UI08 nValue ) -> void;
-	auto		ServerTimeAMPM( bool nValue ) -> void;
 
 	auto		SaveTime() -> void;
 	auto		LoadTime() -> void;

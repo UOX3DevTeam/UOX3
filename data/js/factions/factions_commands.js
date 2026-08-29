@@ -1,7 +1,7 @@
 // =============================================================================
 // factions_commands.js
 // UOX3 Faction System - GM testing commands
-// COMMAND_SCRIPTS ID suggestion: 1071
+// COMMAND_SCRIPTS ID: 1072
 // =============================================================================
 
 var CommandMaxFactionSilver = 100000;

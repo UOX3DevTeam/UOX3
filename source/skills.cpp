@@ -1156,16 +1156,24 @@ void CSkills::Track( CChar *i )
 //o------------------------------------------------------------------------------------------------o
 void CSkills::UpdateSkillLevel( CChar *c, UI08 s ) const
 {
-	UI16 sStr = cwmWorldState->skill[s].strength;
-	SI16 aStr = c->ActualStrength();
-	UI16 sDex = cwmWorldState->skill[s].dexterity;
-	SI16 aDex = c->ActualDexterity();
-	UI16 sInt = cwmWorldState->skill[s].intelligence;
-	SI16 aInt = c->ActualIntelligence();
-	UI16 bSkill = c->GetBaseSkill( s );
+	// Fetch stat contribution weights for this skill in skills.dfn
+	const UI32 sStr = cwmWorldState->skill[s].strength;
+	const UI32 aStr = std::max<SI32>( 0, c->ActualStrength() );
+	const UI32 sDex = cwmWorldState->skill[s].dexterity;
+	const UI32 aDex = std::max<SI32>( 0, c->ActualDexterity() );
+	const UI32 sInt = cwmWorldState->skill[s].intelligence;
+	const UI32 aInt = std::max<SI32>( 0, c->ActualIntelligence() );
+	const UI32 bSkill = c->GetBaseSkill( s );
 
-	UI16 temp = (( static_cast<R32>( sStr * aStr ) / 100.0f + static_cast<R32>( sDex * aDex ) / 100.0f + static_cast<R32>( sInt * aInt ) / 100.0f ) * static_cast<R32>( 1000 - bSkill )) / 1000.0f + static_cast<R32>( bSkill );
-	c->SetSkill( std::max( bSkill, temp ), s );
+	// Calculate weighted stat contribution sum
+	const UI32 statSum = ( sStr * aStr ) + ( sDex * aDex ) + ( sInt * aInt );
+
+	// Stat bonuses provide a boost at lower skill levels, gradually diminishing as base skill approaches 100.0% (1000).
+	// Formula: EffectiveSkill = BaseSkill + (WeightedStats * (1000 - BaseSkill)) / 100000
+	const UI32 temp = (( statSum * ( 1000 - bSkill )) / 100000 ) + bSkill;
+
+	// Store final effective (modified) skill
+	c->SetSkill( static_cast<UI16>( std::max( bSkill, temp )), s );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1469,7 +1477,6 @@ void CSkills::Load( void )
 			ourScript->ScriptRegistration( "Skill" );
 		}
 	}
-
 	Console.PrintSectionBegin();
 }
 
@@ -2041,7 +2048,7 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 	[[maybe_unused]] UI16 btnLeft	= cwmWorldState->ServerData()->ButtonLeft();
 	UI16 btnRight	= cwmWorldState->ServerData()->ButtonRight();
 
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( s );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 12 );
 
@@ -2185,8 +2192,7 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 			++actualItems;
 		}
 	}
-	toSend.Finalize();
-	s->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o

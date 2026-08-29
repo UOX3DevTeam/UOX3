@@ -308,3 +308,66 @@ function onQuestGump( pUser )
 		}
 	}
 }
+
+// Fetch and return paperdoll profile data from specified character
+/** @type { ( socket: Socket, profileOwnerChar: Character ) => string } */
+function onProfileRequest( socket, profileOwnerChar )
+{
+	let profileText = "";
+
+	// Create a new file object
+	var mFile = new UOXCFile();
+	var fileName = "profile_" + ( profileOwnerChar.serial ).toString() + ".jsdata";
+
+	// Open file for reading in "/shared/profiles/" subfolder
+	mFile.Open( fileName, "r", "profiles" );
+	if( mFile && mFile.Length() >= 0 )
+	{
+		// Read until we reach the end of the file
+		while( !mFile.EOF() )
+		{
+			// Read a line of text from the file
+			var line = mFile.ReadUntil( "\n" );
+			profileText += line + "\n";
+		}
+
+		mFile.Close();
+		mFile.Free();
+	}
+
+	profileText = profileText.trim();
+	if( profileText == "" )
+	{
+		return "[empty profile]";
+	}
+
+	return profileText;
+}
+
+// Update paperdoll profile data for current character
+/** @type { ( socket: Socket, updatedProfileText: string ) => boolean } */
+function onProfileUpdate( socket, updatedProfileText )
+{
+	var mFile = new UOXCFile();
+	var fileName = "profile_" + ( socket.currentChar.serial ).toString() + ".jsdata";
+
+	mFile.Open( fileName, "w", "profiles" ); // Open file for (over)writing
+	if( mFile != null )
+	{
+		if( updatedProfileText.trim() === "" )
+		{
+			socket.SysMessage( "Profile cleared." );
+		}
+		else
+		{
+			mFile.Write( updatedProfileText );
+			socket.SysMessage( "Profile updated." );
+		}
+
+		mFile.Close();
+		mFile.Free();
+		return true;
+	}
+
+	return false;
+}

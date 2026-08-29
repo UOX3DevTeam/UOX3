@@ -420,6 +420,7 @@ void CSpawnRegion::SetNPC( const std::string &newVal )
 	// Clear old entries to make room for new ones
 	sNpcs.clear();
 	sNpcs.push_back( newVal );
+	BuildParsedLists();
 }
 void CSpawnRegion::SetNPCList( std::string newVal )
 {
@@ -447,6 +448,7 @@ void CSpawnRegion::SetNPCList( std::string newVal )
 		// Assume an actual NPClist was provided
 		LoadNPCList( newVal );
 	}
+	BuildParsedLists();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -478,6 +480,7 @@ void CSpawnRegion::SetItem( const std::string &newVal )
 	// Clear old entries to make room for new ones
 	sItems.clear();
 	sItems.push_back( newVal );
+	BuildParsedLists();
 }
 void CSpawnRegion::SetItemList( std::string newVal )
 {
@@ -505,6 +508,7 @@ void CSpawnRegion::SetItemList( std::string newVal )
 		// Assume an actual ItemList was provided
 		LoadItemList( newVal );
 	}
+	BuildParsedLists();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -660,11 +664,20 @@ bool CSpawnRegion::Load( CScriptSection *toScan, bool isParentSpawnRegion )
 						auto csecs = oldstrutil::sections( data, "," );
 						if( csecs.size() == 4 )
 						{
-							excludeArea.x1 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
-							excludeArea.y1 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-							excludeArea.x2 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
-							excludeArea.y2 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
-							exclusionAreas.push_back( excludeArea );
+							excludeArea.x1 = static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+							excludeArea.y1 = static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+							excludeArea.x2 = static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+							excludeArea.y2 = static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
+
+							if( excludeArea.x1 > excludeArea.x2 || excludeArea.y1 > excludeArea.y2 )
+							{
+								Console.Warning( oldstrutil::format( "Invalid coordinates for EXCLUDEAREA in REGIONSPAWN %u: (%i,%i) to (%i,%i) (x1 > x2 or y1 > y2)!", 
+									regionNum, excludeArea.x1, excludeArea.y1, excludeArea.x2, excludeArea.y2 ));
+							}
+							else
+							{
+								exclusionAreas.push_back( excludeArea );
+							}
 						}
 					}
 					else if( UTag == "ERAS" && !isParentSpawnRegion )
@@ -818,20 +831,54 @@ bool CSpawnRegion::Load( CScriptSection *toScan, bool isParentSpawnRegion )
 					{
 						data = oldstrutil::simplify( data );
 						auto csecs = oldstrutil::sections( data, "," );
+						
 						if( csecs.size() == 3 )
 						{
-							validLandPos.push_back( Point3_st( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)), static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//") ), nullptr, 0 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ))));
-							validLandPosCheck[ static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )) + ( static_cast<UI16>(std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )) << 16 ) ] = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+							SI16 x = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+							SI16 y = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+							SI08 z = static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+							
+							// Stuff the provided Z into both cache values
+							SI08 baseZ = z;
+							SI08 staticZ = z;
+
+							UI32 cacheKey = y + ( x << 16 );
+							auto [it, inserted] = validLandPosCheck.try_emplace( cacheKey, x, y, baseZ, staticZ );
+							if( inserted )
+							{
+								validLandPos.emplace_back( x, y, baseZ, staticZ );
+							}
+						}
+						else
+						{
+							Console.Warning( oldstrutil::format( "Invalid VALIDLANDPOS format in region %i. Expected X,Y,Z.", GetRegionNum() ));
 						}
 					}
 					else if( UTag == "VALIDWATERPOS" )
 					{
 						data = oldstrutil::simplify( data );
 						auto csecs = oldstrutil::sections( data, "," );
+						
 						if( csecs.size() == 3 )
 						{
-							validWaterPos.push_back( Point3_st( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )), static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ))));
-							validWaterPosCheck[ static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )) + ( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )) << 16 ) ] = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+							SI16 x = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+							SI16 y = static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+							SI08 z = static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+							
+							// Stuff the provided Z into both cache values
+							SI08 baseZ = z;
+							SI08 staticZ = z;
+
+							UI32 cacheKey = y + ( x << 16 );
+							auto [it, inserted] = validWaterPosCheck.try_emplace( cacheKey, x, y, baseZ, staticZ );
+							if( inserted )
+							{
+								validWaterPos.emplace_back( x, y, baseZ, staticZ );
+							}
+						}
+						else
+						{
+							Console.Warning( oldstrutil::format( "Invalid VALIDWATERPOS format in region %i. Expected X,Y,Z.", GetRegionNum() ));
 						}
 					}
 					break;
@@ -876,6 +923,7 @@ bool CSpawnRegion::Load( CScriptSection *toScan, bool isParentSpawnRegion )
 			}
 		}
 	}
+	BuildParsedLists();
 	return true;
 }
 
@@ -916,7 +964,7 @@ void CSpawnRegion::DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 					spawnItem = RegionSpawnItem();
 					if( ValidateObject( spawnItem ))
 					{
-						spawnedItems.Add( spawnItem );
+						spawnedItems.Add( spawnItem, false );
 						++itemsSpawned;
 						shouldSpawnItems = ( spawnedItems.Num() < maxItemSpawn );
 					}
@@ -929,7 +977,7 @@ void CSpawnRegion::DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 					spawnChar = RegionSpawnChar();
 					if( ValidateObject( spawnChar ))
 					{
-						spawnedChars.Add( spawnChar );
+						spawnedChars.Add( spawnChar, false );
 						++npcsSpawned;
 						shouldSpawnChars = ( spawnedChars.Num() < maxCharSpawn );
 					}
@@ -942,30 +990,53 @@ void CSpawnRegion::DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSpawnRegion::BuildParsedLists()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Pre-parses raw string NPC and Item lists into weighted pair vectors
+//|					to eliminate dynamic string splitting and heap allocations during spawn ticks
+//o------------------------------------------------------------------------------------------------o
+void CSpawnRegion::BuildParsedLists()
+{
+	parsedNpcList.clear();
+	parsedNpcList.reserve( sNpcs.size() );
+	for( const auto &entry : sNpcs )
+	{
+		auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( entry, "//" )), "|" );
+		UI16 sectionWeight = 1;
+		if( csecs.size() > 1 )
+		{
+			sectionWeight = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+		}
+		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
+		parsedNpcList.emplace_back( npcSection, sectionWeight );
+	}
+
+	parsedItemList.clear();
+	parsedItemList.reserve( sItems.size() );
+	for( const auto &entry : sItems )
+	{
+		auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( entry, "//" )), "|" );
+		UI16 sectionWeight = 1;
+		if( csecs.size() > 1 )
+		{
+			sectionWeight = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+		}
+		auto itemSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
+		parsedItemList.emplace_back( itemSection, sectionWeight );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::RegionSpawnChar()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do a char spawn
 //o------------------------------------------------------------------------------------------------o
 auto CSpawnRegion::RegionSpawnChar() -> CChar *
 {	
-	// Stuff each NPC entry into a vector
-	std::vector<std::pair<std::string, UI16>> npcListVector;
-	for( size_t i = 0; i < sNpcs.size(); i++ )
-	{
-		// Split string for entry into a stringlist based on | as separator
-		auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( sNpcs[i], "//" )), "|" );
+	if( parsedNpcList.empty() )
+		return nullptr;
 
-		UI16 sectionWeight = 1;
-		if( csecs.size() > 1 )
-		{
-			sectionWeight = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
-		}
-
-		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
-		npcListVector.emplace_back( npcSection, sectionWeight );
-	}
-
-	auto ourNPC = Npcs->ChooseNpcToCreate( npcListVector );
+	auto ourNPC = Npcs->ChooseNpcToCreate( parsedNpcList );
 	if( ourNPC.empty() )
 		return nullptr;
 
@@ -980,23 +1051,16 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 	if( npcCreate == nullptr )
 		return nullptr;
 
-	std::string cdata;
-	SI32 ndata = -1, odata = -1;
+	// Extract NPC ID from DFN tag
 	UI16 npcId = 0;
-
-	for( DFNTAGS tag = npcCreate->FirstTag(); !npcCreate->AtEndTags(); tag = npcCreate->NextTag() )
+	for( const auto *entry : npcCreate->collection2() )
 	{
-		cdata = npcCreate->GrabData( ndata, odata );
-		switch( tag )
+		if( entry->tag == DFNTAG_ID )
 		{
-			case DFNTAG_ID:
-				npcId = oldstrutil::value<UI16>( cdata ); // static_cast<UI16>( ndata );
-				goto foundNpcId;
-			default:
-				break;
+			npcId = oldstrutil::value<UI16>( entry->cdata );
+			break;
 		}
 	}
-	foundNpcId:
 
 	bool waterCreature = false;
 	bool amphiCreature = false;
@@ -1008,8 +1072,15 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 
 	SI16 x, y;
 	SI08 z;
+
+	// Start timing
+	auto tStart = std::chrono::high_resolution_clock::now();
+
 	if( FindCharSpotToSpawn( x, y, z, waterCreature, amphiCreature ))
 	{
+		// Mark end of location finding
+		auto tLoc = std::chrono::high_resolution_clock::now();
+
 		CChar *CSpawn = nullptr;
 		CSpawn = Npcs->CreateBaseNPC( ourNPC, false );
 
@@ -1045,14 +1116,30 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 			}
 
 			// Get all script triggers and run onSpawn on each
-			std::vector<UI16> scriptTriggers = CSpawn->GetScriptTriggers();
-			for( auto scriptTrig : scriptTriggers )
+			for( auto scriptTrig : CSpawn->GetScriptTriggers() )
 			{
 				cScript* toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
 					toExecute->OnSpawn( CSpawn, regionNum );
 				}
+			}
+
+			// Mark end of NPC creation
+			auto tEnd = std::chrono::high_resolution_clock::now();
+
+			// Accumulate and print averages
+			static long long totalLocTime = 0;
+			static long long totalSpawnTime = 0;
+			static int spawnCount = 0;
+
+			totalLocTime += std::chrono::duration_cast<std::chrono::microseconds>( tLoc - tStart ).count();
+			totalSpawnTime += std::chrono::duration_cast<std::chrono::microseconds>( tEnd - tLoc ).count();
+			spawnCount++;
+
+			if( spawnCount % 100 == 0 )
+			{
+				Console.Print( oldstrutil::format("Avg Loc Time: %lld us | Avg Creation Time: %lld us\n", (totalLocTime / spawnCount), (totalSpawnTime / spawnCount )));
 			}
 
 			return CSpawn;
@@ -1075,7 +1162,18 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem *
 	CItem *ISpawn = nullptr;
 	SI16 x, y;
 	SI08 z;
-	auto idToSpawn = sItems[RandomNum( static_cast<size_t>( 0 ), sItems.size() - 1 )];
+	std::string idToSpawn;
+	if( !parsedItemList.empty() )
+	{
+		idToSpawn = Npcs->ChooseNpcToCreate( parsedItemList );
+	}
+	else if( !sItems.empty() )
+	{
+		idToSpawn = sItems[RandomNum( static_cast<size_t>( 0 ), sItems.size() - 1 )];
+	}
+	if( idToSpawn.empty() )
+		return nullptr;
+
 	if( FindItemSpotToSpawn( x, y, z, idToSpawn ))
 	{
 		auto objType = OT_ITEM;
@@ -1115,212 +1213,280 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem *
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSpawnRegion::IsInExclusionArea()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if coordinates fall within an exclusion area
+//o------------------------------------------------------------------------------------------------o
+bool CSpawnRegion::IsInExclusionArea( SI16 x, SI16 y )
+{
+	for( auto &exclusionArea : exclusionAreas )
+	{
+		if( x >= exclusionArea.x1 && x <= exclusionArea.x2 && y >= exclusionArea.y1 && y <= exclusionArea.y2 )
+			return true;
+	}
+	return false;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSpawnRegion::TryRandomStoredLocation()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Helper function to try picking at random from list of already valid locations
+//o------------------------------------------------------------------------------------------------o
+bool CSpawnRegion::TryRandomStoredLocation( const std::vector<CachedSpawnPoint>& validPositions, SI16& x, SI16& y, SI08& z, SI08& z2 )
+{
+	if( validPositions.empty() )
+		return false;
+
+	const CachedSpawnPoint &loc = validPositions[RandomNum( static_cast<size_t>( 0 ), validPositions.size() - 1 )];
+	x = static_cast<SI16>( loc.x );
+	y = static_cast<SI16>( loc.y );
+	z = static_cast<SI08>( loc.baseZ );
+	z2 = static_cast<SI08>( loc.staticZ );
+
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::FindCharSpotToSpawn()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Find a random spot within a region valid for dropping an item
+//|	Purpose		-	Find a random spot within a region valid for spawning a character
 //o------------------------------------------------------------------------------------------------o
 bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature )
 {
-	bool rValue = false;
-	Point3_st currLoc;
-	//std::map<UI32, SI08>::const_iterator checkValid;
+	bool foundLoc = false;
 	SI08 z2 = ILLEGAL_Z;
 	const size_t landPosSize = validLandPos.size();
 	const size_t waterPosSize = validWaterPos.size();
 
-	// By default, let's attempt - at most - this many times to find a valid spawn point for the NPC
-	UI08 maxSpawnAttempts = 100;
+	// Determine which cache size to use
+	// Note: Amphibians can use either!
+	size_t posSize = 0;
+	if( amphiCreature )
+		posSize = landPosSize + waterPosSize;
+	else if( waterCreature )
+		posSize = waterPosSize;
+	else
+		posSize = landPosSize;
 
-	// However, if we have found some valid spawn points already, reduce the amount of attempts to find MORE
-	// valid spawn points, and increase the chance of using those valid spots instead! Always make some attempts to
-	// find new spots, though
-	if( !waterCreature && landPosSize > 0 ) // land creature
-	{
-		maxSpawnAttempts = std::max( static_cast<SI08>( 25 ), static_cast<SI08>( maxSpawnAttempts - landPosSize ));
-	}
-	else if(( waterCreature || amphiCreature ) && waterPosSize > 0 )  // water or amphibian creature
-	{
-		maxSpawnAttempts = std::max( static_cast<SI08>( 25 ), static_cast<SI08>( maxSpawnAttempts - waterPosSize ));
-	}
+	// Scale chance of trying cached locations early based on number of cached locations found (up to 65% chance at 75+ locations found). More cached locations = higher chance of using cached locations
+	const R32 cacheUsageProbability = ( 0.65f ) * std::min( static_cast<R32>( posSize ) / 75, 1.0f);
+	UI08 maxSpawnAttempts = std::max( static_cast<UI08>( 25 ), static_cast<UI08>( std::max<SI32>( 0, static_cast<SI32>( 100 ) - static_cast<SI32>( posSize ))));
 
-	for( UI08 a = 0; a < maxSpawnAttempts; ++a )
+	bool tryWater = waterCreature;
+	for( UI08 attempt = 0; attempt < maxSpawnAttempts; ++attempt )
 	{
-		x = RandomNum( x1, x2 );
-		y = RandomNum( y1, y2 );
-		z = Map->MapElevation( x, y, worldNumber );
+		foundLoc = false;
+		SI08 baseZ = ILLEGAL_Z;
+		SI08 staticZ = ILLEGAL_Z;
 
+		// Decide whether to randomize spawn location or use already validated location from cache
+		if( RandomNum( 0, 100 ) < static_cast<UI08>( cacheUsageProbability * 100 ))
+		{
+			// For amphibians, decide which pool to pull from based on weighted probability
+			if( amphiCreature && posSize > 0 )
+			{
+				size_t cacheRoll = RandomNum( static_cast<size_t>( 0 ), posSize - 1 );
+				tryWater = ( cacheRoll >= landPosSize );
+			}
+
+			if( tryWater )
+			{
+				if( !validWaterPos.empty() && TryRandomStoredLocation( validWaterPos, x, y, z, z2 ))
+				{
+					baseZ = z;
+					staticZ = z2;
+					foundLoc = true;
+				}
+			}
+			else
+			{
+				// Try land location for non-water creatures
+				if( !validLandPos.empty() && TryRandomStoredLocation( validLandPos, x, y, z, z2 ))
+				{
+					baseZ = z;
+					staticZ = z2;
+					foundLoc = true;
+				}
+			}
+		}
+
+		// No location has been selected yet, so try to find a new random location
+		if( !foundLoc )
+		{
+			x = RandomNum( x1, x2 );
+			y = RandomNum( y1, y2 );
+
+			// If chosen location is in an exclusion area defined in spawn region, continue
+			if( IsInExclusionArea( x, y ))
+				continue;
+
+			// Check if random location exists in cache already; if so we can reuse the base/static Z values without looking them up again
+			UI32 cacheKey = y + ( x << 16 );
+
+			if( !waterCreature )
+			{
+				auto landIt = validLandPosCheck.find( cacheKey );
+				if( landIt != validLandPosCheck.end() )
+				{
+					// Found randomly selected location in land cache
+					baseZ = landIt->second.baseZ; // Use cached baseZ
+					staticZ = landIt->second.staticZ; // Use cached staticZ
+					foundLoc = true;
+				}
+			}
+
+			if( !foundLoc && ( waterCreature || amphiCreature ))
+			{
+				auto waterIt = validWaterPosCheck.find( cacheKey );
+				if( waterIt != validWaterPosCheck.end() )
+				{
+					// Found randomly selected location in water cache
+					baseZ = waterIt->second.baseZ; // Use cached baseZ
+					staticZ = waterIt->second.staticZ; // Use cached staticZ
+					foundLoc = true;
+				}
+			}
+		}
+
+		// If DEFZ is defined for spawn region, use it
+		// Trust that the spawnregion scripter knows what they are doing...
 		if( defZ != ILLEGAL_Z )
 		{
-			// Use the definite Z level defined in the spawn region
-			// Trust that the spawnregion scripter knows what they are doing...
 			z = defZ;
 		}
 		else
 		{
-			// No definite Z has been defined, look for valid dynamic Z based on prefZ
-			const SI08 dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
-			if( ILLEGAL_Z != dynZ )
+			// If baseZ is not set by now, location was not found in cache
+			if( baseZ == ILLEGAL_Z )
+			{
+				// Get base map height for the random location
+				baseZ = Map->MapElevation( x, y, worldNumber );
+			}
+			z = baseZ;
+
+			// No definite Z has been defined, look for valid dynamic Z based on prefZ influence
+			const SI08 dynZ = Map->DynamicElevation( x, y, baseZ, worldNumber, instanceId, prefZ, ( waterCreature ? false : true ), ( waterCreature ? true : false ));
+			if( ILLEGAL_Z != dynZ && dynZ > baseZ )
 			{
 				z = dynZ;
 			}
 
-			// Even if we got a valid dynamic Z, there might be a better match with statics, based on prefZ
-			const SI08 staticZ = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			// Even if we got a valid dynamic Z, there might be a better match with statics, based on prefZ influence
+			if( staticZ == ILLEGAL_Z )
+			{
+				staticZ = Map->StaticTop( x, y, z, worldNumber, prefZ, ( waterCreature ? false : true ), ( waterCreature ? true : false ));
+			}
 			if( ILLEGAL_Z != staticZ && staticZ > z )
 			{
 				z = staticZ;
 			}
 		}
 
-		// Continue with the next spawn attempt if z is illegal
+		// No valid Z found, proceed to next attempt
 		if( z == ILLEGAL_Z )
 			continue;
 
-
 		if( forceSpawn )
 		{
-			// Don't care about validation, force spawn at own risk!
+			// Don't care about validating the location, force spawn at own risk!
 			return true;
 		}
 
-		// First go through the lists of already valid spawn locations on land,
-		// and see if the chosen location has already been validated
-		if( !waterCreature )
-		{
-			if( !validLandPosCheck.empty() && landPosSize > 0 )
-			{
-				auto checkValid = validLandPosCheck.find( y + ( x << 16 ));
-				if( checkValid != validLandPosCheck.end() )
-				{
-					z2 = ( *checkValid ).second;
-				}
-
-				if( z2 == z && z != ILLEGAL_Z )
-				{
-					rValue = true;
-					break;
-				}
-			}
-		}
-
-		// No luck, so let's try the list of already valid water tiles instead (if NPC can move on water)
-		if( waterCreature || amphiCreature )
-		{
-			if( !validWaterPosCheck.empty() && waterPosSize > 0 )
-			{
-				auto checkValid = validWaterPosCheck.find( y + ( x << 16 ));
-				if( checkValid != validWaterPosCheck.end() )
-				{
-					z2 = ( *checkValid ).second;
-				}
-
-				if( z2 == z && z != ILLEGAL_Z )
-				{
-					rValue = true;
-					break;
-				}
-			}
-		}
-
-		// Make sure the chosen spawn location is not in an exclusion area
-		auto illegalLoc = false;
-		if( !rValue )
-		{
-			for( auto &exclusionArea : exclusionAreas )
-			{
-				if( x >= exclusionArea.x1 && x <= exclusionArea.x2 && y >= exclusionArea.y1 && y <= exclusionArea.y2 )
-				{
-					// Chosen location is in an exclusion area. Disallow!
-					illegalLoc = true;
-					break;
-				}
-			}
-		}
-
 		// Since our chosen location has not already been validated, lets validate it with a land-based creature in mind
-		if( !illegalLoc && !waterCreature && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId ))
+		// Revalidate the chosen location with land-based creature in mind, and store it in quick-lookup cache if valid
+		if( !tryWater && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, true, foundLoc ))
 		{
 			if( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId ))
 			{
-				if( z != ILLEGAL_Z )
+				UI32 cacheKey = y + ( x << 16 );
+				auto [it, inserted] = validLandPosCheck.try_emplace( cacheKey, x, y, baseZ, staticZ );
+	
+				// Add to vector if inserted successfully
+				if( inserted )
 				{
-					rValue = true;
-					validLandPos.push_back( Point3_st( x, y, z ));
-					validLandPosCheck[ y + ( x << 16) ] = z;
-					break;
+					validLandPos.emplace_back( x, y, baseZ, staticZ );
 				}
+				return true;
 			}
 		}
 
 		// Otherwise, validate it with a water-based creature in mind instead
-		if( !illegalLoc && ( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, false ))
+		if(( tryWater || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, false, foundLoc ))
 		{
-			if( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId ))
+			if( onlyOutside == false ) //|| !Map->InBuilding( x, y, z, worldNumber, instanceId ))
 			{
-				rValue = true;
-				validWaterPos.push_back( Point3_st( x, y, z ));
-				validWaterPosCheck[ y + ( x << 16) ] = z;
-				break;
+				UI32 cacheKey = y + ( x << 16 );
+				auto [it, inserted] = validWaterPosCheck.try_emplace( cacheKey, x, y, baseZ, staticZ );
+	
+				// Add to vector if inserted successfully
+				if( inserted )
+				{
+					validWaterPos.emplace_back( x, y, baseZ, staticZ );
+				}
+				return true;
 			}
 		}
 	}
 
-	// If we haven't found a valid location pick a random location from the stored ones
-	if( !rValue && !waterCreature && !validLandPos.empty() && landPosSize > 0 )
+	// FALLBACK
+	// If we haven't found a valid location in all our allowed attempts, pick a random location from the cached ones
+	bool fallbackToWater = waterCreature;
+	if( amphiCreature && posSize > 0 )
 	{
-		currLoc = validLandPos[RandomNum( static_cast<size_t>( 0 ), ( landPosSize - 1 ))];
-		x = static_cast<SI16>( currLoc.x );
-		y = static_cast<SI16>( currLoc.y );
-		z = static_cast<SI08>( currLoc.z );
-		// Recalculate the z coordinate to see whether something has changed
-		z2 = Map->MapElevation( x, y, worldNumber );
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
-		if( ILLEGAL_Z != dynz )
-		{
-			z2 = dynz;
-		}
-		else
-		{
-			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
-			if( ILLEGAL_Z != staticz )
-			{
-				z2 = staticz;
-			}
-		}
-
-		if( z2 == z )
-		{
-			rValue = true;
-		}
+		size_t cacheRoll = RandomNum( static_cast<size_t>( 0 ), posSize - 1 );
+		fallbackToWater = ( cacheRoll >= landPosSize );
 	}
-	else if( !rValue && ( waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0 )
+
+	if( !fallbackToWater && !validLandPos.empty() )
 	{
-		currLoc = validWaterPos[RandomNum( static_cast<size_t>( 0 ), ( waterPosSize - 1 ))];
-		x = static_cast<SI16>( currLoc.x );
-		y = static_cast<SI16>( currLoc.y );
-		z = static_cast<SI08>( currLoc.z );
-		// Recalculate the z coordinate to see whether something has changed
-		z2 = Map->MapElevation( x, y, worldNumber );
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
-		if( ILLEGAL_Z != dynz )
+		if( TryRandomStoredLocation( validLandPos, x, y, z, z2 ) )
 		{
-			z2 = dynz;
-		}
-		else
-		{
-			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
-			if( ILLEGAL_Z != staticz )
+			// Combine baseZ (z) and staticZ (z2) to get the best starting Z
+			if( z2 != ILLEGAL_Z && z2 > z )
 			{
-				z2 = staticz;
+				z = z2;
+			}
+
+			// Run dynamic elevation check
+			const SI08 dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ, true, false );
+			if( ILLEGAL_Z != dynZ && dynZ > z )
+			{
+				z = dynZ;
+			}
+			
+			// Validate spawn location
+			if( z != ILLEGAL_Z && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, true, true ) && ( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId ) ) )
+			{
+				return true;
 			}
 		}
-
-		if( z2 == z )
+	}
+	else if( fallbackToWater && !validWaterPos.empty() )
+	{
+		if( TryRandomStoredLocation( validWaterPos, x, y, z, z2 ) )
 		{
-			rValue = true;
+			// Combine baseZ (z) and staticZ (z2) to get the best starting Z
+			if( z2 != ILLEGAL_Z && z2 > z )
+			{
+				z = z2;
+			}
+
+			// Run dynamic elevation check
+			const SI08 dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ, ( waterCreature ? false : true ), ( waterCreature ? true : false ));
+			if( ILLEGAL_Z != dynZ && dynZ > z )
+			{
+				z = dynZ;
+			}
+
+			// Validate spawn location
+			if( z != ILLEGAL_Z && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, false, true ))
+			{
+				return true;
+			}
 		}
 	}
-	return rValue;
+	
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1330,142 +1496,155 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 //o------------------------------------------------------------------------------------------------o
 bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, std::string idToSpawn )
 {
-	bool rValue = false;
-	Point3_st currLoc;
+	bool foundLoc = false;
 	SI08 z2 = ILLEGAL_Z;
-	std::map<UI32, SI08>::const_iterator checkValid;
 	const size_t landPosSize = validLandPos.size();
 
-	// By default, let's try - at most - this many times to find a valid spawn point for the item
-	UI08 maxSpawnAttempts = 100;
+	// Scale chance of trying cached locations early based on number of cached locations found (up to 80% chance at 75+ locations found). More cached locations = higher chance of using cached locations
+	const R32 cacheUsageProbability = ( 0.8f ) * std::min( static_cast<R32>( landPosSize ) / 75, 1.0f);
+	UI08 maxSpawnAttempts = std::max( static_cast<UI08>( 25 ), static_cast<UI08>( std::max<SI32>( 0, static_cast<SI32>( 100 ) - static_cast<SI32>( landPosSize ))));
 
-	// However, if we have found some valid spawn points already, reduce the amount of attempts to find MORE
-	// valid spawn points, and increase the chance of using those valid spots instead!
-	if( landPosSize > 0 )
+	for( UI08 attempt = 0; attempt < maxSpawnAttempts; ++attempt )
 	{
-		maxSpawnAttempts = std::max( static_cast<SI16>( 25 ), static_cast<SI16>( maxSpawnAttempts - landPosSize ));
-	}
+		foundLoc = false;
+		SI08 baseZ = ILLEGAL_Z;
+		SI08 staticZ = ILLEGAL_Z;
 
-	for( UI08 a = 0; a < maxSpawnAttempts; ++a )
-	{
-		x = RandomNum( x1, x2 );
-		y = RandomNum( y1, y2 );
-		z = Map->MapElevation( x, y, worldNumber );
+		// Decide whether to randomize spawn location or use already validated location from cache
+		if( RandomNum( 0, 100 ) < static_cast<UI08>( cacheUsageProbability * 100 ))
+		{
+			if( !validLandPos.empty() && TryRandomStoredLocation( validLandPos, x, y, z, z2 ))
+			{
+				baseZ = z;
+				staticZ = z2;
+				foundLoc = true;
+			}
+		}
 
+		// No location has been selected yet, so try to find a new random location
+		if( !foundLoc )
+		{
+			x = RandomNum( x1, x2 );
+			y = RandomNum( y1, y2 );
+
+			// If chosen location is in an exclusion area defined in spawn region, continue
+			if( IsInExclusionArea( x, y ))
+				continue;
+
+			// Check if random location exists in cache already; if so we can reuse the base/static Z values without looking them up again
+			UI32 cacheKey = y + ( x << 16 );
+			auto landIt = validLandPosCheck.find( cacheKey );
+			if( landIt != validLandPosCheck.end() )
+			{
+				// Found randomly selected location in land cache
+				baseZ = landIt->second.baseZ; // Use cached baseZ
+				staticZ = landIt->second.staticZ; // Use cached staticZ
+				foundLoc = true;
+			}
+		}
+
+		// If DEFZ is defined for spawn region, use it
+		// Trust that the spawnregion scripter knows what they are doing...
 		if( defZ != ILLEGAL_Z )
 		{
-			// Use the definite Z level defined in the spawn region
-			// Trust that the spawnregion scripter knows what they are doing...
 			z = defZ;
 		}
 		else
 		{
-			// No definite Z has been defined, look for valid dynamic Z based on prefZ
-			const SI08 dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
-			if( ILLEGAL_Z != dynZ )
+			// Location not found in cache, continue with validation!
+			// First, get base map height for the random location
+			if( baseZ == ILLEGAL_Z )
+			{
+				baseZ = Map->MapElevation( x, y, worldNumber );
+			}
+			z = baseZ;
+
+			// No definite Z has been defined, look for valid dynamic Z based on prefZ influence
+			const SI08 dynZ = Map->DynamicElevation( x, y, baseZ, worldNumber, instanceId, prefZ, true, false );
+			if( ILLEGAL_Z != dynZ && dynZ > baseZ )
 			{
 				z = dynZ;
 			}
 
-			// Even if we got a valid dynamic Z, there might be a better match with statics, based on prefZ
-			const SI08 staticZ = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			// Even if we got a valid dynamic Z, there might be a better match with statics, based on prefZ influence
+			if( staticZ == ILLEGAL_Z )
+			{
+				staticZ = Map->StaticTop( x, y, z, worldNumber, prefZ, true, false );
+			}
 			if( ILLEGAL_Z != staticZ && staticZ > z )
 			{
 				z = staticZ;
 			}
 		}
 
-		// First go through the lists of already stored good locations
-		if( !validLandPosCheck.empty() && landPosSize > 0 )
-		{
-			auto checkValid = validLandPosCheck.find( y + ( x << 16 ));
-			if( checkValid != validLandPosCheck.end() )
-			{
-				z2 = (*checkValid).second;
-			}
+		// No valid Z found, proceed to next attempt
+		if( z == ILLEGAL_Z )
+			continue;
 
-			if( z2 == z && z != ILLEGAL_Z )
-			{
-				rValue = true;
-				//break;
-			}
+		if( forceSpawn )
+		{
+			// Don't care about validating the location, force spawn at own risk!
+			return true;
 		}
 
-		// Make sure the chosen spawn location is not in an exclusion area
-		auto illegalLoc = false;
-		if( !rValue )
-		{
-			for( auto &exclusionArea : exclusionAreas )
-			{
-				if( x >= exclusionArea.x1 && x <= exclusionArea.x2 && y >= exclusionArea.y1 && y <= exclusionArea.y2 )
-				{
-					// Chosen location is in an exclusion area. Disallow!
-					illegalLoc = true;
-					break;
-				}
-			}
-		}
-		
 		// Don't spawn an item in a location where same item has already spawned before
 		auto itemAtXYZ = GetItemAtXYZ( x, y, z, worldNumber, instanceId );
 		if( ValidateObject( itemAtXYZ ) && itemAtXYZ->GetSectionId() == idToSpawn )
 		{
-			illegalLoc = true;
-			rValue = false;
-			break;
+			continue;
 		}
 
-		if( !illegalLoc && !rValue && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId ))
+		// Since our chosen location has not already been validated, lets validate it now, and store it in quick-lookup cache if valid
+		if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, true, foundLoc ))
 		{
 			if( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId ))
 			{
-				rValue = true;
-				validLandPos.push_back( Point3_st( x, y, z ));
-				validLandPosCheck[ y + ( x << 16) ] = z;
-				break;
+				UI32 cacheKey = y + ( x << 16 );
+				auto [it, inserted] = validLandPosCheck.try_emplace( cacheKey, x, y, baseZ, staticZ );
+
+				// Add to vector if inserted successfully
+				if( inserted )
+				{
+					validLandPos.emplace_back( x, y, baseZ, staticZ );
+				}
+				return true;
 			}
 		}
 	}
 
-	// If we haven't found a valid location pick a random location from the stored ones
-	if( !rValue && !validLandPos.empty() && landPosSize > 0 )
+	// FALLBACK
+	// If we haven't found a valid location in all our allowed attempts, pick a random location from the cached ones
+	if( !validLandPos.empty() )
 	{
-		currLoc = validLandPos[RandomNum( static_cast<size_t>( 0 ), ( landPosSize - 1 ))];
-		x = static_cast<SI16>( currLoc.x );
-		y = static_cast<SI16>( currLoc.y );
-		z = static_cast<SI08>( currLoc.z );
-		// Recalculate the z coordinate to see whether something has changed
-		z2 = Map->MapElevation( x, y, worldNumber );
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
-		if( ILLEGAL_Z != dynz )
+		if( TryRandomStoredLocation( validLandPos, x, y, z, z2 ) )
 		{
-			z2 = dynz;
-		}
-		else
-		{
-			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
-			if( ILLEGAL_Z != staticz )
+			// Combine baseZ (z) and staticZ (z2) to get the best starting Z
+			if( z2 != ILLEGAL_Z && z2 > z )
 			{
-				z2 = staticz;
+				z = z2;
 			}
-		}
 
-		if( z2 == z )
-		{
-			// Nevertheless, don't spawn an item in a location where same item has already spawned before
-			auto itemAtXYZ = GetItemAtXYZ( x, y, z, worldNumber, instanceId );
-			if( ValidateObject( itemAtXYZ ) && itemAtXYZ->GetSectionId() == idToSpawn )
+			// Run dynamic elevation check
+			const SI08 dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ, true, false );
+			if( ILLEGAL_Z != dynZ && dynZ > z )
 			{
-				rValue = false;
+				z = dynZ;
 			}
-			else
+
+			// Don't spawn item in location where same item has already spawned before
+			auto itemAtXYZ = GetItemAtXYZ( x, y, z, worldNumber, instanceId );
+			if( !( ValidateObject( itemAtXYZ ) && itemAtXYZ->GetSectionId() == idToSpawn ) )
 			{
-				rValue = true;
+				// Validate spawn location
+				if( z != ILLEGAL_Z && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, true, true ) && ( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId )))
+				{
+					return true;
+				}
 			}
 		}
 	}
 
-	return rValue;
+	return false;
 }
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::CheckSpawned()

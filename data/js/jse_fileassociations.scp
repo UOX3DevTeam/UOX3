@@ -424,25 +424,6 @@
 8001=player/young_player.js
 8002=player/death/resurrectpenalty.js
 
-//-------------------------------------------
-// Faction System [8500-8514]
-//-------------------------------------------
-8500=factions/factions_core.js
-8501=factions/factions_combat.js
-8502=factions/factions_sigils.js
-8503=factions/factions_guards.js
-8504=factions/factions_vendors.js
-8505=factions/factions_stones.js
-8506=factions/factions_traps.js
-8507=factions/factions_items.js
-8508=factions/factions_election.js
-8509=factions/factions_towns.js
-8510=factions/factions_townstone.js
-8511=factions/factions_strongholds.js
-8512=factions/factions_npcs.js
-8513=factions/factions_playerdata.js
-8514=factions/factions_setupdata.js
-
 // House Scripts [15000-15500]
 15000=server/house/house.js
 15001=server/house/houseSign.js
@@ -530,7 +511,8 @@
 1068=commands/spawnregionadmin.js
 1069=commands/em.js
 1070=commands/champion_spawn_cmd.js
-1071=factions/factions_commands.js
+1071=commands/testjsbindings.js
+1072=factions/factions_commands.js
 }
 
 //-------------------------------------------

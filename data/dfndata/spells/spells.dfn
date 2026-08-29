@@ -38,14 +38,8 @@ SCHI=201
 MANTRA=Uus Jux
 ACTION=17
 DELAY=0.5
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=bloodmoss,1
+REAGENT=nightshade,1
 TARG=Select target for clumsy.
 FLAGS=0x01C9
 STATFX=37 79 00 0F
@@ -66,14 +60,9 @@ SCHI=201
 MANTRA=In Mani Yelm
 ACTION=17
 DELAY=0.5
-ASH=0
-DRAKE=1
-GARLIC=1
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=ginseng,1
 FLAGS=0x0000
 SOUNDFX=0x01E2
 }
@@ -92,14 +81,8 @@ SCHI=201
 MANTRA=Rel Wis
 ACTION=17
 DELAY=0.5
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=ginseng,1
+REAGENT=nightshade,1
 TARG=Select target for feeblemind.
 FLAGS=0x01C9
 STATFX=37 79 00 0F
@@ -121,14 +104,9 @@ SCHI=201
 MANTRA=In Mani
 ACTION=17
 DELAY=0.5
-ASH=0
-DRAKE=0
-GARLIC=1
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=garlic,1
+REAGENT=ginseng,1
+REAGENT=spidersilk,1
 TARG=Select person to heal.
 FLAGS=0x0009
 STATFX=37 6A 00 20
@@ -151,14 +129,7 @@ MANTRA=In Por Ylem
 ACTION=17
 DELAY=0.5
 DAMAGEDELAY=1.0
-ASH=1
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
 TARG=Select target for magic arrow.
 FLAGS=0x01C9
 SOUNDFX=0x01E5
@@ -179,14 +150,8 @@ SCHI=201
 MANTRA=In Lor
 ACTION=17
 DELAY=0.5
-ASH=1
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=spidersilk,1
 TARG=Select target for night sight.
 FLAGS=0x0009
 STATFX=37 6A 00 20
@@ -207,14 +172,9 @@ SCHI=201
 MANTRA=Flam Sanct
 ACTION=17
 DELAY=0.5
-ASH=1
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=garlic,1
+REAGENT=spidersilk,1
 TARG=Select target for reactive armour.
 FLAGS=0x0009
 STATFX=37 3A 00 0F
@@ -235,14 +195,8 @@ SCHI=201
 MANTRA=Des Mani
 ACTION=17
 DELAY=0.5
-ASH=0
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=garlic,1
+REAGENT=nightshade,1
 TARG=Select target for weaken.
 FLAGS=0x01C9
 STATFX=37 4A 00 0F
@@ -263,14 +217,8 @@ SCHI=301
 MANTRA=Ex Uus
 ACTION=17
 DELAY=0.75
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
 TARG=Select target for agility.
 FLAGS=0x0009
 STATFX=37 3A 00 0F
@@ -291,14 +239,8 @@ SCHI=301
 MANTRA=Uus Wis
 ACTION=17
 DELAY=0.75
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=nightshade,1
 TARG=Select target for cunning.
 FLAGS=0x0009
 STATFX=37 5A 00 0F
@@ -319,14 +261,8 @@ SCHI=301
 MANTRA=An Nox
 ACTION=17
 DELAY=0.75
-ASH=0
-DRAKE=0
-GARLIC=1
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=garlic,1
+REAGENT=ginseng,1
 TARG=Select target to cure.
 FLAGS=0x0009
 STATFX=37 3A 00 0f
@@ -348,14 +284,8 @@ SCHI=301
 MANTRA=An Mani
 ACTION=17
 DELAY=0.75
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=1
+REAGENT=nightshade,1
+REAGENT=spidersilk,1
 TARG=Select target for harm.
 FLAGS=0x01C9
 STATFX=37 4A 00 0f
@@ -376,14 +306,9 @@ SCHI=301
 MANTRA=In Jux
 ACTION=17
 DELAY=0.75
-ASH=1
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=garlic,1
+REAGENT=spidersilk,1
 TARG=Select item to set magic trap.
 FLAGS=0x0003
 STATFX=37 6A 00 20
@@ -404,14 +329,8 @@ SCHI=301
 MANTRA=An Jux
 ACTION=17
 DELAY=0.75
-ASH=1
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=bloodmoss,1
 TARG=Select item to untrap.
 FLAGS=0x0003
 STATFX=37 3A 00 0f
@@ -432,14 +351,9 @@ SCHI=301
 MANTRA=Uus Sanct
 ACTION=17
 DELAY=0.75
-ASH=1
-DRAKE=0
-GARLIC=1
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=garlic,1
+REAGENT=ginseng,1
 TARG=Select person for protection.
 FLAGS=0x0009
 STATFX=37 5A 00 10
@@ -460,14 +374,8 @@ SCHI=301
 MANTRA=Uus Mani
 ACTION=17
 DELAY=0.75
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=nightshade,1
 TARG=Select target for strength.
 FLAGS=0x0009
 STATFX=37 5A 00 0F
@@ -488,14 +396,8 @@ SCHI=401
 MANTRA=Rel Sanct
 ACTION=17
 DELAY=1.0
-ASH=0
-DRAKE=1
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
 TARG=Select target for bless.
 FLAGS=0x0009
 STATFX=37 3A 00 0F
@@ -518,14 +420,7 @@ MANTRA=Vas Flam
 ACTION=17
 DELAY=1.0
 DAMAGEDELAY=1.0
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=0
+REAGENT=blackpearl,1
 TARG=Select target for fireball.
 FLAGS=0x01C9
 MOVEFX=36 D4 03 00 01
@@ -546,14 +441,9 @@ SCHI=401
 MANTRA=An Por
 ACTION=17
 DELAY=1.0
-ASH=1
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=garlic,1
+REAGENT=bloodmoss,1
 TARG=Select item to lock.
 FLAGS=0x0003
 STATFX=37 3A 00 0f
@@ -574,14 +464,7 @@ SCHI=401
 MANTRA=In Nox
 ACTION=17
 DELAY=1.0
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=nightshade,1
 TARG=Select target to Poison.
 FLAGS=0x01C9
 STATFX=37 4A 00 0F
@@ -602,14 +485,8 @@ SCHI=401
 MANTRA=Ort Por Ylem
 ACTION=17
 DELAY=1.0
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
 FLAGS=0x0003
 STATFX=37 6A 00 20
 SOUNDFX=0x01F5
@@ -629,14 +506,8 @@ SCHI=401
 MANTRA=Rel Por
 ACTION=17
 DELAY=1.0
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
 TARG=Select target for teleport.
 FLAGS=0x0005
 STATFX=37 2A 00 0a
@@ -657,14 +528,8 @@ SCHI=401
 MANTRA=Ex Por
 ACTION=17
 DELAY=1.0
-ASH=1
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=bloodmoss,1
 TARG=What do you want to unlock?
 FLAGS=0x0003
 STATFX=37 6A 00 20
@@ -685,14 +550,8 @@ SCHI=401
 MANTRA=In Sanct Ylem
 ACTION=17
 DELAY=1.0
-ASH=0
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=garlic,1
+REAGENT=bloodmoss,1
 TARG=Select location for wall of stone.
 FLAGS=0x01A5
 STATFX=37 6A 00 20
@@ -713,14 +572,9 @@ SCHI=501
 MANTRA=Vas An Nox
 ACTION=17
 DELAY=1.25
-ASH=0
-DRAKE=1
-GARLIC=1
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=ginseng,1
 TARG=Select location for Arch Cure.
 FLAGS=0x0009
 STATFX=37 3A 00 0f
@@ -741,14 +595,10 @@ SCHI=501
 MANTRA=Vas Uus Sanct
 ACTION=17
 DELAY=1.25
-ASH=1
-DRAKE=1
-GARLIC=1
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=ginseng,1
 FLAGS=0x0009
 STATFX=37 6A 09 20
 SOUNDFX=0x01F7
@@ -768,14 +618,9 @@ SCHI=501
 MANTRA=Des Sanct
 ACTION=17
 DELAY=1.25
-ASH=1
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=garlic,1
+REAGENT=nightshade,1
 TARG=Select target for curse.
 FLAGS=0x01C9
 STATFX=37 4A 00 0F
@@ -798,14 +643,9 @@ MANTRA=In Flam Grav
 ACTION=17
 DELAY=1.25
 DAMAGEDELAY=1.0
-ASH=1
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=blackpearl,1
+REAGENT=spidersilk,1
 TARG=Select location for fire field.
 FLAGS=0x01A5
 STATFX=37 6A 00 20
@@ -827,14 +667,10 @@ SCHI=501
 MANTRA=In Vas Mani
 ACTION=17
 DELAY=1.25
-ASH=0
-DRAKE=1
-GARLIC=1
-GINSENG=1
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=ginseng,1
+REAGENT=spidersilk,1
 TARG=Select person to heal.
 FLAGS=0x0009
 STATFX=37 6A 09 20
@@ -857,14 +693,8 @@ MANTRA=Por Ort Grav
 ACTION=17
 DELAY=1.25
 DAMAGEDELAY=1.0
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
 TARG=Select target for lightning.
 FLAGS=0x01C9
 SOUNDFX=0x0029
@@ -884,14 +714,9 @@ SCHI=501
 MANTRA=Ort Rel
 ACTION=17
 DELAY=1.25
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=blackpearl,1
+REAGENT=spidersilk,1
 TARG=Select target for Mana Drain.
 FLAGS=0x01C9
 STATFX=37 4A 00 0F
@@ -912,14 +737,9 @@ SCHI=501
 MANTRA=Kal Ort Por
 ACTION=17
 DELAY=1.25
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=1
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=blackpearl,1
 TARG=Select rune from which to recall.
 FLAGS=0x0011
 SOUNDFX=0x01FC
@@ -939,14 +759,9 @@ SCHI=601
 MANTRA=In Jux Hur Ylem
 ACTION=17
 DELAY=1.5
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=1
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=blackpearl,1
+REAGENT=nightshade,1
 TARG=Select location for blade spirits.
 FLAGS=0x0085
 SOUNDFX=0x0212
@@ -966,14 +781,10 @@ SCHI=601
 MANTRA=An Grav
 ACTION=17
 DELAY=1.5
-ASH=1
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=garlic,1
+REAGENT=blackpearl,1
+REAGENT=spidersilk,1
 TARG=Select field to dispel.
 FLAGS=0x0005
 SOUNDFX=0x0201
@@ -993,14 +804,9 @@ SCHI=601
 MANTRA=Kal In Ex
 ACTION=17
 DELAY=1.5
-ASH=0
-DRAKE=0
-GARLIC=1
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=garlic,1
+REAGENT=bloodmoss,1
+REAGENT=nightshade,1
 FLAGS=0x0000
 SOUNDFX=0x3bd
 }
@@ -1019,14 +825,9 @@ SCHI=601
 MANTRA=In Jux Sanct
 ACTION=17
 DELAY=1.5
-ASH=0
-DRAKE=1
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=spidersilk,1
 FLAGS=0x0000
 STATFX=37 5A 00 0F
 SOUNDFX=0x01E9
@@ -1048,14 +849,10 @@ MANTRA=Por Corp Wis
 ACTION=17
 DELAY=1.5
 DAMAGEDELAY=1.0
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=1
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=blackpearl,1
+REAGENT=nightshade,1
 TARG=Select target for mind blast.
 FLAGS=0x01C9
 STATFX=37 4A 00 0F
@@ -1076,14 +873,9 @@ SCHI=601
 MANTRA=An Ex Por
 ACTION=17
 DELAY=1.5
-ASH=0
-DRAKE=1
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=spidersilk,1
 TARG=Select target for paralyze.
 FLAGS=0x01C9
 STATFX=37 6A 0a 10
@@ -1105,14 +897,9 @@ MANTRA=In Nox Grav
 ACTION=17
 DELAY=1.5
 DAMAGEDELAY=1.0
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=1
-SILK=1
+REAGENT=blackpearl,1
+REAGENT=nightshade,1
+REAGENT=spidersilk,1
 TARG=Select location for poison field.
 FLAGS=0x01A5
 STATFX=37 6A 00 20
@@ -1133,14 +920,9 @@ SCHI=601
 MANTRA=Kal Xen
 ACTION=17
 DELAY=1.5
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 FLAGS=0x0005
 STATFX=37 2A 00 0a
 SOUNDFX=0x215
@@ -1160,14 +942,9 @@ SCHI=701
 MANTRA=An Ort
 ACTION=17
 DELAY=1.75
-ASH=1
-DRAKE=1
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
 TARG=Select target to dispel.
 FLAGS=0x0189
 STATFX=37 2A 09 0a
@@ -1190,14 +967,8 @@ MANTRA=Corp Por
 ACTION=16
 DELAY=1.75
 DAMAGEDELAY=1.0
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=1
-SILK=0
+REAGENT=blackpearl,1
+REAGENT=nightshade,1
 TARG=Select target for energy bolt.
 FLAGS=0x01C9
 SOUNDFX=0x020A
@@ -1220,14 +991,8 @@ MANTRA=Vas Ort Flam
 ACTION=17
 DELAY=1.75
 DAMAGEDELAY=2.5
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
 TARG=Select target for explosion.
 FLAGS=0x01C9
 STATFX=36 B0 09 0d
@@ -1248,14 +1013,8 @@ SCHI=701
 MANTRA=An Lor Xen
 ACTION=17
 DELAY=1.75
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=bloodmoss,1
+REAGENT=nightshade,1
 TARG=Select character to make invisible.
 FLAGS=0x0009
 STATFX=37 6a 09 0f
@@ -1276,14 +1035,9 @@ SCHI=701
 MANTRA=Kal Por Ylem
 ACTION=17
 DELAY=1.75
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=1
-SHADE=0
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=blackpearl,1
 TARG=Select rune to mark.
 FLAGS=0x0011
 STATFX=37 79 09 10
@@ -1304,14 +1058,10 @@ SCHI=701
 MANTRA=Vas Des Sanct
 ACTION=17
 DELAY=1.75
-ASH=1
-DRAKE=1
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=1
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=nightshade,1
 TARG=Select location for Mass Curse.
 FLAGS=0x0189
 STATFX=37 4A 00 0F
@@ -1333,14 +1083,9 @@ MANTRA=In Ex Grav
 ACTION=17
 DELAY=1.75
 DAMAGEDELAY=1.0
-ASH=0
-DRAKE=0
-GARLIC=0
-GINSENG=1
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=1
+REAGENT=ginseng,1
+REAGENT=blackpearl,1
+REAGENT=spidersilk,1
 TARG=Select location for paralyze field.
 FLAGS=0x01A5
 STATFX=37 6A 00 10
@@ -1361,14 +1106,8 @@ SCHI=701
 MANTRA=Wis Quas
 ACTION=17
 DELAY=1.75
-ASH=1
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=bloodmoss,1
 TARG=Select area to reveal.
 FLAGS=0x0005
 STATFX=37 5A 00 10
@@ -1391,14 +1130,10 @@ MANTRA=Vas Ort Grav
 ACTION=17
 DELAY=2.0
 DAMAGEDELAY=1.0
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=1
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=blackpearl,1
 TARG=Select location for Chain Lightning.
 FLAGS=0x0189
 SOUNDFX=0x0029
@@ -1418,14 +1153,10 @@ SCHI=901
 MANTRA=In Sanct Grav
 ACTION=17
 DELAY=2.0
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=blackpearl,1
+REAGENT=spidersilk,1
 TARG=Select location for energy field.
 FLAGS=0x01A5
 STATFX=37 6A 00 20
@@ -1448,14 +1179,8 @@ MANTRA=Kal Vas Vlam
 ACTION=17
 DELAY=2.0
 DAMAGEDELAY=1.0
-ASH=1
-DRAKE=0
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=spidersilk,1
 TARG=Select player to flamestrike.
 FLAGS=0x01C9
 STATFX=37 09 09 1e
@@ -1476,14 +1201,9 @@ SCHI=901
 MANTRA=Vas Rel Por
 ACTION=17
 DELAY=2.0
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=blackpearl,1
 TARG=Select rune from which to gate.
 FLAGS=0x0011
 SOUNDFX=0x020E
@@ -1503,14 +1223,10 @@ SCHI=901
 MANTRA=Ort Sanct
 ACTION=17
 DELAY=2.0
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=1
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=blackpearl,1
+REAGENT=spidersilk,1
 TARG=Select target for Mana Vampire.
 FLAGS=0x01C9
 STATFX=37 4A 00 0F
@@ -1531,14 +1247,10 @@ SCHI=901
 MANTRA=Vas An Ort
 ACTION=17
 DELAY=2.0
-ASH=1
-DRAKE=1
-GARLIC=1
-GINSENG=0
-MOSS=0
-PEARL=1
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=garlic,1
+REAGENT=blackpearl,1
 TARG=Select location for Mass Dispel.
 FLAGS=0x0189
 STATFX=37 2A 09 0a
@@ -1561,14 +1273,10 @@ MANTRA=Kal Des Flam Ylem
 ACTION=17
 DELAY=2.0
 DAMAGEDELAY=1.0
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 TARG=Select location for Meteor Swarm.
 FLAGS=0x0189
 MOVEFX=36 D4 03 00 01
@@ -1589,14 +1297,9 @@ SCHI=901
 MANTRA=Vas Ylem Rel
 ACTION=17
 DELAY=2.0
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 FLAGS=0x0000
 SOUNDFX=0x020F
 }
@@ -1616,14 +1319,10 @@ SCHI=1001
 MANTRA=In Vas Por
 ACTION=17
 DELAY=2.25
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=1
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=ginseng,1
+REAGENT=bloodmoss,1
 FLAGS=0x0180
 SOUNDFX=0x020d
 }
@@ -1642,14 +1341,10 @@ SCHI=1001
 MANTRA=Vas Corp Por
 ACTION=17
 DELAY=2.25
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=1
-SHADE=1
-SILK=0
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=blackpearl,1
+REAGENT=nightshade,1
 TARG=Select location for energy vortex.
 FLAGS=0x0085
 SOUNDFX=0x0212
@@ -1669,14 +1364,9 @@ SCHI=1001
 MANTRA=An Corp
 ACTION=17
 DELAY=2.25
-ASH=0
-DRAKE=0
-GARLIC=1
-GINSENG=1
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=0
+REAGENT=garlic,1
+REAGENT=ginseng,1
+REAGENT=bloodmoss,1
 TARG=Select ghost to resurrect.
 FLAGS=0x0009
 STATFX=37 6A 00 20
@@ -1697,14 +1387,9 @@ SCHI=1001
 MANTRA=Kal Vas Xen Hur
 ACTION=17
 DELAY=2.25
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 FLAGS=0x0080
 SOUNDFX=0x0217
 }
@@ -1723,14 +1408,10 @@ SCHI=1001
 MANTRA=Kal Vas Xen Corp
 ACTION=17
 DELAY=2.25
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 FLAGS=0x0080
 STATFX=37 2A 00 0a
 SOUNDFX=0x0216
@@ -1750,14 +1431,9 @@ SCHI=1001
 MANTRA=Kal Vas Xen Ylem
 ACTION=17
 DELAY=2.25
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 FLAGS=0x0080
 SOUNDFX=0x0217
 }
@@ -1776,14 +1452,10 @@ SCHI=1001
 MANTRA=Kal Vas Xen Flam
 ACTION=17
 DELAY=2.25
-ASH=1
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=sulfurousash,1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 FLAGS=0x0080
 SOUNDFX=0x0217
 }
@@ -1802,16 +1474,1541 @@ SCHI=1001
 MANTRA=Kal Vas Xen An Flam
 ACTION=16
 DELAY=2.25
-ASH=0
-DRAKE=1
-GARLIC=0
-GINSENG=0
-MOSS=1
-PEARL=0
-SHADE=0
-SILK=1
+REAGENT=mandrakeroot,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
 FLAGS=0x0080
 SOUNDFX=0x0217
+}
+
+
+// =================================================================================================
+// Additional client spell schools
+// These entries reserve the official client spell IDs and names used by their configured spellbooks
+// They remain disabled until a native or JavaScript implementation is assigned to each spell
+// =================================================================================================
+
+// Necromancy
+// Animate Dead
+[SPELL 101]
+{
+NAME=Animate Dead
+ENABLE=1
+MANA=23
+LOSKILL=400
+HISKILL=800
+MANTRA=Uus Corp
+DELAY=1.75
+REAGENT=gravedust,1
+REAGENT=daemonblood,1
+}
+
+// Blood Oath
+[SPELL 102]
+{
+NAME=Blood Oath
+ENABLE=1
+MANA=13
+LOSKILL=200
+HISKILL=600
+MANTRA=In Jux Mani Xen
+DELAY=1.75
+REAGENT=daemonblood,1
+}
+
+// Corpse Skin
+[SPELL 103]
+{
+NAME=Corpse Skin
+ENABLE=1
+MANA=11
+LOSKILL=200
+HISKILL=600
+MANTRA=In Agle Corp Ylem
+DELAY=1.75
+REAGENT=batwing,1
+REAGENT=gravedust,1
+}
+
+// Curse Weapon
+[SPELL 104]
+{
+NAME=Curse Weapon
+ENABLE=1
+MANA=7
+LOSKILL=0
+HISKILL=400
+MANTRA=An Sanct Gra Char
+DELAY=1
+REAGENT=pigiron,1
+}
+
+// Evil Omen
+[SPELL 105]
+{
+NAME=Evil Omen
+ENABLE=1
+MANA=11
+LOSKILL=200
+HISKILL=600
+MANTRA=Pas Tym An Sanct
+DELAY=1
+REAGENT=batwing,1
+REAGENT=noxcrystal,1
+}
+
+// Horrific Beast
+[SPELL 106]
+{
+NAME=Horrific Beast
+ENABLE=1
+MANA=11
+LOSKILL=400
+HISKILL=800
+MANTRA=Rel Xen Vas Bal
+DELAY=2.25
+REAGENT=batwing,1
+REAGENT=daemonblood,1
+}
+
+// Lich Form
+[SPELL 107]
+{
+NAME=Lich Form
+ENABLE=1
+MANA=23
+LOSKILL=700
+HISKILL=1100
+MANTRA=Rel Xen Corp Ort
+DELAY=2.25
+REAGENT=gravedust,1
+REAGENT=daemonblood,1
+REAGENT=noxcrystal,1
+}
+
+// Mind Rot
+[SPELL 108]
+{
+NAME=Mind Rot
+ENABLE=1
+MANA=17
+LOSKILL=300
+HISKILL=700
+MANTRA=Wis An Ben
+DELAY=1.75
+REAGENT=batwing,1
+REAGENT=pigiron,1
+REAGENT=daemonblood,1
+}
+
+// Pain Spike
+[SPELL 109]
+{
+NAME=Pain Spike
+ENABLE=1
+MANA=5
+LOSKILL=200
+HISKILL=600
+MANTRA=In Sar
+DELAY=1.25
+REAGENT=gravedust,1
+REAGENT=pigiron,1
+}
+
+// Poison Strike
+[SPELL 110]
+{
+NAME=Poison Strike
+ENABLE=1
+MANA=17
+LOSKILL=500
+HISKILL=900
+MANTRA=In Vas Nox
+DELAY=0.75
+REAGENT=noxcrystal,1
+}
+
+// Strangle
+[SPELL 111]
+{
+NAME=Strangle
+ENABLE=1
+MANA=29
+LOSKILL=650
+HISKILL=1050
+MANTRA=In Bal Nox
+DELAY=2.25
+REAGENT=daemonblood,1
+REAGENT=noxcrystal,1
+}
+
+// Summon Familiar
+[SPELL 112]
+{
+NAME=Summon Familiar
+ENABLE=1
+MANA=17
+LOSKILL=300
+HISKILL=700
+MANTRA=Kal Xen Bal
+DELAY=2.25
+REAGENT=batwing,1
+REAGENT=gravedust,1
+REAGENT=daemonblood,1
+}
+
+// Vampiric Embrace
+[SPELL 113]
+{
+NAME=Vampiric Embrace
+ENABLE=1
+MANA=23
+LOSKILL=990
+HISKILL=1390
+MANTRA=Rel Xen An Sanct
+DELAY=2.25
+REAGENT=batwing,1
+REAGENT=noxcrystal,1
+REAGENT=pigiron,1
+}
+
+// Vengeful Spirit
+[SPELL 114]
+{
+NAME=Vengeful Spirit
+ENABLE=1
+MANA=41
+LOSKILL=800
+HISKILL=1200
+MANTRA=Kal Xen Bal Beh
+DELAY=2.25
+REAGENT=batwing,1
+REAGENT=gravedust,1
+REAGENT=pigiron,1
+}
+
+// Wither
+[SPELL 115]
+{
+NAME=Wither
+ENABLE=1
+MANA=23
+LOSKILL=600
+HISKILL=1000
+MANTRA=Kal Vas An Flam
+DELAY=1.5
+REAGENT=noxcrystal,1
+REAGENT=gravedust,1
+REAGENT=pigiron,1
+}
+
+// Wraith Form
+[SPELL 116]
+{
+NAME=Wraith Form
+ENABLE=1
+MANA=17
+LOSKILL=200
+HISKILL=600
+MANTRA=Rel Xen Um
+DELAY=2.25
+REAGENT=noxcrystal,1
+REAGENT=pigiron,1
+}
+
+// Exorcism
+[SPELL 117]
+{
+NAME=Exorcism
+ENABLE=1
+MANA=40
+LOSKILL=800
+HISKILL=1200
+MANTRA=Ort Corp Grav
+DELAY=2
+REAGENT=noxcrystal,1
+REAGENT=gravedust,1
+}
+
+
+// Chivalry
+// Cleanse by Fire
+[SPELL 201]
+{
+NAME=Cleanse by Fire
+ENABLE=1
+MANA=10
+LOSKILL=50
+HISKILL=550
+MANTRA=Expor Flamus
+DELAY=1
+TITHING=10
+}
+
+// Close Wounds
+[SPELL 202]
+{
+NAME=Close Wounds
+ENABLE=1
+MANA=10
+LOSKILL=0
+HISKILL=500
+MANTRA=Obsu Vulni
+DELAY=1.5
+TITHING=10
+}
+
+// Consecrate Weapon
+[SPELL 203]
+{
+NAME=Consecrate Weapon
+ENABLE=1
+MANA=10
+LOSKILL=150
+HISKILL=650
+MANTRA=Consecrus Arma
+DELAY=0.5
+TITHING=10
+}
+
+// Dispel Evil
+[SPELL 204]
+{
+NAME=Dispel Evil
+ENABLE=1
+MANA=10
+LOSKILL=350
+HISKILL=850
+MANTRA=Dispiro Malas
+DELAY=0.25
+TITHING=10
+}
+
+// Divine Fury
+[SPELL 205]
+{
+NAME=Divine Fury
+ENABLE=1
+MANA=15
+LOSKILL=250
+HISKILL=750
+MANTRA=Divinum Furis
+DELAY=1
+TITHING=10
+}
+
+// Enemy of One
+[SPELL 206]
+{
+NAME=Enemy of One
+ENABLE=1
+MANA=20
+LOSKILL=450
+HISKILL=950
+MANTRA=Forul Solum
+DELAY=0.5
+TITHING=10
+}
+
+// Holy Light
+[SPELL 207]
+{
+NAME=Holy Light
+ENABLE=1
+MANA=10
+LOSKILL=550
+HISKILL=1050
+MANTRA=Augus Luminos
+DELAY=1.75
+TITHING=10
+}
+
+// Noble Sacrifice
+[SPELL 208]
+{
+NAME=Noble Sacrifice
+ENABLE=1
+MANA=20
+LOSKILL=650
+HISKILL=1150
+MANTRA=Dium Prostra
+DELAY=1.5
+TITHING=30
+}
+
+// Remove Curse
+[SPELL 209]
+{
+NAME=Remove Curse
+ENABLE=1
+MANA=20
+LOSKILL=50
+HISKILL=550
+MANTRA=Extermo Vomica
+DELAY=1.5
+TITHING=10
+}
+
+// Sacred Journey
+[SPELL 210]
+{
+NAME=Sacred Journey
+ENABLE=1
+MANA=10
+LOSKILL=150
+HISKILL=650
+MANTRA=Sanctum Viatas
+DELAY=1.5
+TITHING=15
+}
+
+
+// Bushido
+// Honorable Execution
+[SPELL 401]
+{
+NAME=Honorable Execution
+ENABLE=1
+MANA=0
+LOSKILL=250
+HISKILL=1000
+DELAY=0
+}
+
+// Confidence
+[SPELL 402]
+{
+NAME=Confidence
+ENABLE=1
+MANA=10
+LOSKILL=250
+HISKILL=1000
+DELAY=0.25
+}
+
+// Evasion
+[SPELL 403]
+{
+NAME=Evasion
+ENABLE=1
+MANA=10
+LOSKILL=600
+HISKILL=1000
+DELAY=0.25
+}
+
+// Counter Attack
+[SPELL 404]
+{
+NAME=Counter Attack
+ENABLE=1
+MANA=5
+LOSKILL=400
+HISKILL=1000
+DELAY=0.25
+}
+
+// Lightning Strike
+[SPELL 405]
+{
+NAME=Lightning Strike
+ENABLE=1
+MANA=10
+LOSKILL=500
+HISKILL=1000
+DELAY=0
+}
+
+// Momentum Strike
+[SPELL 406]
+{
+NAME=Momentum Strike
+ENABLE=1
+MANA=10
+LOSKILL=700
+HISKILL=1000
+DELAY=0
+}
+
+
+// Ninjitsu
+// Focus Attack
+[SPELL 501]
+{
+NAME=Focus Attack
+ENABLE=1
+MANA=10
+LOSKILL=300
+HISKILL=1000
+DELAY=0
+}
+
+// Death Strike
+[SPELL 502]
+{
+NAME=Death Strike
+ENABLE=1
+MANA=30
+LOSKILL=850
+HISKILL=1000
+DELAY=0
+}
+
+// Animal Form
+[SPELL 503]
+{
+NAME=Animal Form
+ENABLE=1
+MANA=10
+LOSKILL=0
+HISKILL=1000
+DELAY=1
+}
+
+// Ki Attack
+[SPELL 504]
+{
+NAME=Ki Attack
+ENABLE=1
+MANA=25
+LOSKILL=800
+HISKILL=1000
+DELAY=0
+}
+
+// Surprise Attack
+[SPELL 505]
+{
+NAME=Surprise Attack
+ENABLE=1
+MANA=20
+LOSKILL=600
+HISKILL=1000
+DELAY=0
+}
+
+// Backstab
+[SPELL 506]
+{
+NAME=Backstab
+ENABLE=1
+MANA=30
+LOSKILL=400
+HISKILL=1000
+DELAY=0
+}
+
+// Shadow Jump
+[SPELL 507]
+{
+NAME=Shadow Jump
+ENABLE=1
+MANA=15
+LOSKILL=500
+HISKILL=1000
+DELAY=1
+}
+
+// Mirror Image
+[SPELL 508]
+{
+NAME=Mirror Image
+ENABLE=1
+MANA=10
+LOSKILL=200
+HISKILL=1000
+DELAY=1.5
+}
+
+
+// Spellweaving
+// Arcane Circle
+[SPELL 601]
+{
+NAME=Arcane Circle
+ENABLE=1
+MANA=24
+LOSKILL=0
+HISKILL=500
+MANTRA=Myrshalee
+DELAY=0.5
+}
+
+// Gift of Renewal
+[SPELL 602]
+{
+NAME=Gift of Renewal
+ENABLE=1
+MANA=24
+LOSKILL=0
+HISKILL=500
+MANTRA=Olorisstra
+DELAY=3
+}
+
+// Immolating Weapon
+[SPELL 603]
+{
+NAME=Immolating Weapon
+ENABLE=1
+MANA=32
+LOSKILL=100
+HISKILL=600
+MANTRA=Thalshara
+DELAY=1
+}
+
+// Attunement
+[SPELL 604]
+{
+NAME=Attunement
+ENABLE=1
+MANA=24
+LOSKILL=0
+HISKILL=500
+MANTRA=Haeldril
+DELAY=1
+}
+
+// Thunderstorm
+[SPELL 605]
+{
+NAME=Thunderstorm
+ENABLE=1
+MANA=32
+LOSKILL=100
+HISKILL=600
+MANTRA=Erelonia
+DELAY=1.5
+}
+
+// Nature's Fury
+[SPELL 606]
+{
+NAME=Nature's Fury
+ENABLE=1
+MANA=24
+LOSKILL=0
+HISKILL=500
+MANTRA=Rauvvrae
+DELAY=1.5
+}
+
+// Summon Fey
+[SPELL 607]
+{
+NAME=Summon Fey
+ENABLE=1
+MANA=10
+LOSKILL=380
+HISKILL=880
+MANTRA=Alalithra
+DELAY=1.5
+}
+
+// Summon Fiend
+[SPELL 608]
+{
+NAME=Summon Fiend
+ENABLE=1
+MANA=10
+LOSKILL=380
+HISKILL=880
+MANTRA=Nylisstra
+DELAY=2
+}
+
+// Reaper Form
+[SPELL 609]
+{
+NAME=Reaper Form
+ENABLE=1
+MANA=34
+LOSKILL=240
+HISKILL=740
+MANTRA=Tarisstree
+DELAY=2.5
+}
+
+// Wildfire
+[SPELL 610]
+{
+NAME=Wildfire
+ENABLE=1
+MANA=50
+LOSKILL=660
+HISKILL=1160
+MANTRA=Haelyn
+DELAY=2.5
+}
+
+// Essence of Wind
+[SPELL 611]
+{
+NAME=Essence of Wind
+ENABLE=1
+MANA=40
+LOSKILL=520
+HISKILL=1020
+MANTRA=Anathrae
+DELAY=3
+}
+
+// Dryad Allure
+[SPELL 612]
+{
+NAME=Dryad Allure
+ENABLE=1
+MANA=40
+LOSKILL=520
+HISKILL=1020
+MANTRA=Rathril
+DELAY=3
+}
+
+// Ethereal Voyage
+[SPELL 613]
+{
+NAME=Ethereal Voyage
+ENABLE=1
+MANA=32
+LOSKILL=240
+HISKILL=740
+MANTRA=Orlavdra
+DELAY=3.5
+}
+
+// Word of Death
+[SPELL 614]
+{
+NAME=Word of Death
+ENABLE=1
+MANA=50
+LOSKILL=830
+HISKILL=1330
+MANTRA=Nyraxle
+DELAY=3.5
+}
+
+// Gift of Life
+[SPELL 615]
+{
+NAME=Gift of Life
+ENABLE=1
+MANA=70
+LOSKILL=380
+HISKILL=880
+MANTRA=Illorae
+DELAY=4
+}
+
+// Arcane Empowerment
+[SPELL 616]
+{
+NAME=Arcane Empowerment
+ENABLE=1
+MANA=50
+LOSKILL=240
+HISKILL=740
+MANTRA=Aslavdra
+DELAY=3
+}
+
+
+// Mysticism
+// Nether Bolt
+[SPELL 678]
+{
+NAME=Nether Bolt
+ENABLE=1
+CIRCLE=1
+MANA=4
+LOSKILL=0
+HISKILL=200
+MANTRA=In Corp Ylem
+DELAY=1
+REAGENT=blackpearl,1
+REAGENT=sulfurousash,1
+}
+
+// Healing Stone
+[SPELL 679]
+{
+NAME=Healing Stone
+ENABLE=1
+CIRCLE=1
+MANA=4
+LOSKILL=0
+HISKILL=200
+MANTRA=Kal In Mani
+DELAY=5
+REAGENT=bonereg,1
+REAGENT=garlic,1
+REAGENT=ginseng,1
+REAGENT=spidersilk,1
+}
+
+// Purge Magic
+[SPELL 680]
+{
+NAME=Purge Magic
+ENABLE=1
+CIRCLE=2
+MANA=6
+LOSKILL=0
+HISKILL=343
+MANTRA=An Ort Sanct
+DELAY=1.25
+REAGENT=garlic,1
+REAGENT=mandrakeroot,1
+REAGENT=sulfurousash,1
+REAGENT=fertiledirt,1
+}
+
+// Enchant
+[SPELL 681]
+{
+NAME=Enchant
+ENABLE=1
+CIRCLE=2
+MANA=6
+LOSKILL=0
+HISKILL=343
+MANTRA=In Ort Ylem
+DELAY=1.25
+REAGENT=spidersilk,1
+REAGENT=mandrakeroot,1
+REAGENT=sulfurousash,1
+}
+
+// Sleep
+[SPELL 682]
+{
+NAME=Sleep
+ENABLE=1
+CIRCLE=3
+MANA=9
+LOSKILL=86
+HISKILL=486
+MANTRA=In Zu
+DELAY=1.5
+REAGENT=nightshade,1
+REAGENT=spidersilk,1
+REAGENT=blackpearl,1
+}
+
+// Eagle Strike
+[SPELL 683]
+{
+NAME=Eagle Strike
+ENABLE=1
+CIRCLE=3
+MANA=9
+LOSKILL=86
+HISKILL=486
+MANTRA=Kal Por Xen
+DELAY=1.5
+REAGENT=bloodmoss,1
+REAGENT=bonereg,1
+REAGENT=mandrakeroot,1
+REAGENT=spidersilk,1
+}
+
+// Animated Weapon
+[SPELL 684]
+{
+NAME=Animated Weapon
+ENABLE=1
+CIRCLE=4
+MANA=11
+LOSKILL=229
+HISKILL=629
+MANTRA=In Jux Por Ylem
+DELAY=1.75
+REAGENT=blackpearl,1
+REAGENT=mandrakeroot,1
+REAGENT=nightshade,1
+REAGENT=bonereg,1
+}
+
+// Stone Form
+[SPELL 685]
+{
+NAME=Stone Form
+ENABLE=1
+CIRCLE=4
+MANA=11
+LOSKILL=229
+HISKILL=629
+MANTRA=In Rel Ylem
+DELAY=2
+REAGENT=bloodmoss,1
+REAGENT=fertiledirt,1
+REAGENT=garlic,1
+}
+
+// Spell Trigger
+[SPELL 686]
+{
+NAME=Spell Trigger
+ENABLE=1
+CIRCLE=5
+MANA=14
+LOSKILL=371
+HISKILL=771
+MANTRA=In Vas Ort Ex
+DELAY=2
+REAGENT=garlic,1
+REAGENT=mandrakeroot,1
+REAGENT=spidersilk,1
+REAGENT=dragonsblood,1
+}
+
+// Mass Sleep
+[SPELL 687]
+{
+NAME=Mass Sleep
+ENABLE=1
+CIRCLE=5
+MANA=14
+LOSKILL=371
+HISKILL=771
+MANTRA=Vas Zu
+DELAY=2
+REAGENT=ginseng,1
+REAGENT=nightshade,1
+REAGENT=spidersilk,1
+}
+
+// Cleansing Winds
+[SPELL 688]
+{
+NAME=Cleansing Winds
+ENABLE=1
+CIRCLE=6
+MANA=20
+LOSKILL=514
+HISKILL=914
+MANTRA=In Vas Mani Hur
+DELAY=2.25
+REAGENT=garlic,1
+REAGENT=ginseng,1
+REAGENT=mandrakeroot,1
+REAGENT=dragonsblood,1
+}
+
+// Bombard
+[SPELL 689]
+{
+NAME=Bombard
+ENABLE=1
+CIRCLE=6
+MANA=20
+LOSKILL=514
+HISKILL=914
+MANTRA=Corp Por Ylem
+DELAY=2.25
+REAGENT=bloodmoss,1
+REAGENT=garlic,1
+REAGENT=sulfurousash,1
+REAGENT=dragonsblood,1
+}
+
+// Spell Plague
+[SPELL 690]
+{
+NAME=Spell Plague
+ENABLE=1
+CIRCLE=7
+MANA=40
+LOSKILL=657
+HISKILL=1057
+MANTRA=Vas Rel Jux Ort
+DELAY=2.5
+REAGENT=daemonbone,1
+REAGENT=dragonsblood,1
+REAGENT=nightshade,1
+REAGENT=sulfurousash,1
+}
+
+// Hail Storm
+[SPELL 691]
+{
+NAME=Hail Storm
+ENABLE=1
+CIRCLE=7
+MANA=50
+LOSKILL=657
+HISKILL=1057
+MANTRA=Kal Des Ylem
+DELAY=2.5
+REAGENT=blackpearl,1
+REAGENT=bloodmoss,1
+REAGENT=mandrakeroot,1
+REAGENT=dragonsblood,1
+}
+
+// Nether Cyclone
+[SPELL 692]
+{
+NAME=Nether Cyclone
+ENABLE=1
+CIRCLE=8
+MANA=50
+LOSKILL=800
+HISKILL=1200
+MANTRA=Grav Hur
+DELAY=2.75
+REAGENT=mandrakeroot,1
+REAGENT=nightshade,1
+REAGENT=sulfurousash,1
+REAGENT=bloodmoss,1
+}
+
+// Rising Colossus
+[SPELL 693]
+{
+NAME=Rising Colossus
+ENABLE=1
+CIRCLE=8
+MANA=50
+LOSKILL=800
+HISKILL=1200
+MANTRA=Kal Vas Xen Corp Ylem
+DELAY=2.75
+REAGENT=daemonbone,1
+REAGENT=dragonsblood,1
+REAGENT=fertiledirt,1
+REAGENT=nightshade,1
+}
+
+
+// Skill Masteries
+// Inspire
+[SPELL 701]
+{
+NAME=Inspire
+ENABLE=1
+MANA=16
+LOSKILL=900
+HISKILL=1000
+MANTRA=Unus Por
+DELAY=2.25
+}
+
+// Invigorate
+[SPELL 702]
+{
+NAME=Invigorate
+ENABLE=1
+MANA=22
+LOSKILL=900
+HISKILL=1000
+MANTRA=An Zu
+DELAY=2.25
+}
+
+// Resilience
+[SPELL 703]
+{
+NAME=Resilience
+ENABLE=1
+MANA=16
+LOSKILL=900
+HISKILL=1000
+MANTRA=Kal Mani Tym
+DELAY=2.25
+}
+
+// Perseverance
+[SPELL 704]
+{
+NAME=Perseverance
+ENABLE=1
+MANA=18
+LOSKILL=900
+HISKILL=1000
+MANTRA=Unus Jux Sanct
+DELAY=2.25
+}
+
+// Tribulation
+[SPELL 705]
+{
+NAME=Tribulation
+ENABLE=1
+MANA=24
+LOSKILL=900
+HISKILL=1000
+MANTRA=In Jux Hur Rel
+DELAY=2.25
+}
+
+// Despair
+[SPELL 706]
+{
+NAME=Despair
+ENABLE=1
+MANA=26
+LOSKILL=900
+HISKILL=1000
+MANTRA=Kal Des Mani Tym
+DELAY=2.25
+}
+
+// Death Ray
+[SPELL 707]
+{
+NAME=Death Ray
+ENABLE=1
+MANA=50
+LOSKILL=900
+HISKILL=1000
+MANTRA=In Grav Corp
+DELAY=2.25
+REAGENT=blackpearl,1
+REAGENT=bloodmoss,1
+REAGENT=spidersilk,1
+}
+
+// Ethereal Burst
+[SPELL 708]
+{
+NAME=Ethereal Burst
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+MANTRA=Uus Ort Grav
+DELAY=2.25
+REAGENT=bloodmoss,1
+REAGENT=ginseng,1
+REAGENT=mandrakeroot,1
+}
+
+// Nether Blast
+[SPELL 709]
+{
+NAME=Nether Blast
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+MANTRA=In Vas Por Grav
+DELAY=2
+REAGENT=dragonsblood,1
+REAGENT=daemonbone,1
+}
+
+// Mystic Weapon
+[SPELL 710]
+{
+NAME=Mystic Weapon
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+MANTRA=Vas Ylem Wis
+DELAY=2.25
+REAGENT=fertiledirt,1
+REAGENT=bonereg,1
+}
+
+// Command Undead
+[SPELL 711]
+{
+NAME=Command Undead
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+MANTRA=In Corp Xen Por
+DELAY=3
+REAGENT=daemonblood,1
+REAGENT=pigiron,1
+REAGENT=batwing,1
+}
+
+// Conduit
+[SPELL 712]
+{
+NAME=Conduit
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+MANTRA=Uus Corp Grav
+DELAY=2.25
+REAGENT=noxcrystal,1
+REAGENT=batwing,1
+REAGENT=gravedust,1
+}
+
+// Mana Shield
+[SPELL 713]
+{
+NAME=Mana Shield
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+MANTRA=Faerkulggen
+DELAY=2.25
+}
+
+// Summon Reaper
+[SPELL 714]
+{
+NAME=Summon Reaper
+ENABLE=1
+MANA=50
+LOSKILL=900
+HISKILL=1000
+MANTRA=Lartarisstree
+DELAY=2.25
+}
+
+// Enchanted Summoning
+[SPELL 715]
+{
+NAME=Enchanted Summoning
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+DELAY=0
+}
+
+// Anticipate Hit
+[SPELL 716]
+{
+NAME=Anticipate Hit
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+DELAY=0
+}
+
+// Warcry
+[SPELL 717]
+{
+NAME=Warcry
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Intuition
+[SPELL 718]
+{
+NAME=Intuition
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+DELAY=0
+}
+
+// Rejuvenate
+[SPELL 719]
+{
+NAME=Rejuvenate
+ENABLE=1
+MANA=10
+LOSKILL=900
+HISKILL=1000
+MANTRA=In Vas Ort Grav Mani
+DELAY=2.25
+}
+
+// Holy Fist
+[SPELL 720]
+{
+NAME=Holy Fist
+ENABLE=1
+MANA=50
+LOSKILL=900
+HISKILL=1000
+MANTRA=Kal Vas Grav
+DELAY=2.5
+}
+
+// Shadow
+[SPELL 721]
+{
+NAME=Shadow
+ENABLE=1
+MANA=10
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// White Tiger Form
+[SPELL 722]
+{
+NAME=White Tiger Form
+ENABLE=1
+MANA=10
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Flaming Shot
+[SPELL 723]
+{
+NAME=Flaming Shot
+ENABLE=1
+MANA=30
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Playing the Odds
+[SPELL 724]
+{
+NAME=Playing the Odds
+ENABLE=1
+MANA=25
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Thrust
+[SPELL 725]
+{
+NAME=Thrust
+ENABLE=1
+MANA=30
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Pierce
+[SPELL 726]
+{
+NAME=Pierce
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Stagger
+[SPELL 727]
+{
+NAME=Stagger
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Toughness
+[SPELL 728]
+{
+NAME=Toughness
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Onslaught
+[SPELL 729]
+{
+NAME=Onslaught
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Focused Eye
+[SPELL 730]
+{
+NAME=Focused Eye
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Elemental Fury
+[SPELL 731]
+{
+NAME=Elemental Fury
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Called Shot
+[SPELL 732]
+{
+NAME=Called Shot
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Saving Throw
+[SPELL 733]
+{
+NAME=Saving Throw
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+DELAY=0
+}
+
+// Shield Bash
+[SPELL 734]
+{
+NAME=Shield Bash
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+DELAY=1
+}
+
+// Bodyguard
+[SPELL 735]
+{
+NAME=Bodyguard
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+DELAY=1
+}
+
+// Heightened Senses
+[SPELL 736]
+{
+NAME=Heightened Senses
+ENABLE=1
+MANA=10
+LOSKILL=900
+HISKILL=1000
+DELAY=1
+}
+
+// Tolerance
+[SPELL 737]
+{
+NAME=Tolerance
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Injected Strike
+[SPELL 738]
+{
+NAME=Injected Strike
+ENABLE=1
+MANA=30
+LOSKILL=900
+HISKILL=1000
+DELAY=1
+}
+
+// Potency
+[SPELL 739]
+{
+NAME=Potency
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+DELAY=0
+}
+
+// Rampage
+[SPELL 740]
+{
+NAME=Rampage
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Fists of Fury
+[SPELL 741]
+{
+NAME=Fists of Fury
+ENABLE=1
+MANA=20
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Knockout
+[SPELL 742]
+{
+NAME=Knockout
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+DELAY=0
+}
+
+// Whispering
+[SPELL 743]
+{
+NAME=Whispering
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Combat Training
+[SPELL 744]
+{
+NAME=Combat Training
+ENABLE=1
+MANA=40
+LOSKILL=900
+HISKILL=1000
+DELAY=2.25
+}
+
+// Boarding
+[SPELL 745]
+{
+NAME=Boarding
+ENABLE=1
+MANA=0
+LOSKILL=900
+HISKILL=1000
+DELAY=0
 }
 
 EOF

@@ -43,6 +43,7 @@ packitem=0x0f8d,6
 get=base_reagent
 name=black pearl
 id=0x0f7a
+sectionid=blackpearl
 value=6 2
 }
 
@@ -56,6 +57,7 @@ get=0x0f7a
 get=base_reagent
 name=blood moss
 id=0x0f7b
+sectionid=bloodmoss
 value=6 3
 }
 
@@ -69,6 +71,7 @@ get=0x0f7b
 get=base_reagent
 name=garlic
 id=0x0f84
+sectionid=garlic
 }
 
 [garlic]
@@ -81,6 +84,7 @@ get=0x0f84
 get=base_reagent
 name=ginseng
 id=0x0f85
+sectionid=ginseng
 }
 
 [ginseng]
@@ -93,6 +97,7 @@ get=0x0f85
 get=base_reagent
 name=mandrake root
 id=0x0f86
+sectionid=mandrakeroot
 }
 
 [mandrakeroot]
@@ -105,6 +110,7 @@ get=0x0f86
 get=base_reagent
 name=nightshade
 id=0x0f88
+sectionid=nightshade
 }
 
 [nightshade]
@@ -117,6 +123,7 @@ get=0x0f88
 get=base_reagent
 name=sulfurous ash
 id=0x0f8c
+sectionid=sulfurousash
 }
 
 [sulfurousash]
@@ -129,6 +136,7 @@ get=0x0f8c
 get=base_reagent
 name=spider silk
 id=0x0f8d
+sectionid=spidersilk
 }
 
 [spidersilk]
@@ -143,6 +151,7 @@ get=0x0f8d
 get=base_reagent
 name=bat wing
 id=0x0f78
+sectionid=batwing
 }
 
 [batwing]
@@ -155,6 +164,7 @@ get=0x0f78
 get=base_reagent
 name=blackmoore
 id=0x0f79
+sectionid=blackmoore
 }
 
 [blackmoore]
@@ -167,6 +177,7 @@ get=0x0f79
 get=base_reagent
 name=blood spawn
 id=0x0f7c
+sectionid=bloodspawn
 }
 
 [bloodspawn]
@@ -179,6 +190,7 @@ get=0x0f7c
 get=base_reagent
 name=bone
 id=0x0f7e
+sectionid=bonereg
 }
 
 [bonereg]
@@ -191,6 +203,7 @@ get=0x0f7e
 get=base_reagent
 name=brimstone
 id=0x0f7f
+sectionid=brimstone
 }
 
 [brimstone]
@@ -203,6 +216,7 @@ get=0x0f7f
 get=base_reagent
 name=daemon bone
 id=0x0f80
+sectionid=daemonbone
 }
 
 [daemonbone]
@@ -215,6 +229,7 @@ get=0x0f80
 get=base_reagent
 name=dead wood
 id=0x0f90
+sectionid=deadwood
 }
 
 [deadwood]
@@ -227,6 +242,7 @@ get=0x0f90
 get=base_reagent
 name=dragon's blood
 id=0x0f82
+sectionid=dragonsblood
 }
 
 [dragonsblood]
@@ -239,6 +255,7 @@ get=0x0f82
 get=base_reagent
 name=executioner's cap
 id=0x0f83
+sectionid=executionerscap
 }
 
 [executionerscap]
@@ -251,6 +268,7 @@ get=0x0f83
 get=base_reagent
 name=eye of newt
 id=0x0f87
+sectionid=eyeofnewt
 }
 
 [eyeofnewt]
@@ -263,6 +281,7 @@ get=0x0f87
 get=base_reagent
 name=fertile dirt
 id=0x0f81
+sectionid=fertiledirt
 }
 
 [fertiledirt]
@@ -275,6 +294,7 @@ get=0x0f81
 get=base_reagent
 name=obsidian
 id=0x0f89
+sectionid=obsidian
 }
 
 [obsidian]
@@ -287,6 +307,7 @@ get=0x0f89
 get=base_reagent
 name=pig iron
 id=0x0f8a
+sectionid=pigiron
 }
 
 [pigiron]
@@ -299,6 +320,7 @@ get=0x0f8a
 get=base_reagent
 name=pumice
 id=0x0f8b
+sectionid=pumice
 }
 
 [pumice]
@@ -311,6 +333,7 @@ get=0x0f8b
 get=base_reagent
 name=nox crystal
 id=0x0f8e
+sectionid=noxcrystal
 }
 
 [noxcrystal]
@@ -323,6 +346,7 @@ get=0x0f8e
 get=base_reagent
 name=daemon blood
 id=0x0f7d
+sectionid=daemonblood
 }
 
 [daemonblood]
@@ -335,6 +359,7 @@ get=0x0f7d
 get=base_reagent
 name=grave dust
 id=0x0f8f
+sectionid=gravedust
 }
 
 [gravedust]
@@ -347,6 +372,7 @@ get=0x0f8f
 get=base_reagent
 name=wyrm's heart
 id=0x0f91
+sectionid=wyrmsheart
 }
 
 [wyrmsheart]
@@ -361,6 +387,7 @@ get=0x0f91
 get=base_reagent
 name=black pearl
 id=0x0f7a
+sectionid=blackpearl
 value=6 2
 amount=10
 }
@@ -370,6 +397,7 @@ amount=10
 get=base_reagent
 name=blood moss
 id=0x0f7b
+sectionid=bloodmoss
 value=6 3
 amount=10
 }
@@ -379,6 +407,7 @@ amount=10
 get=base_reagent
 name=garlic
 id=0x0f84
+sectionid=garlic
 amount=10
 }
 
@@ -387,6 +416,7 @@ amount=10
 get=base_reagent
 name=ginseng
 id=0x0f85
+sectionid=ginseng
 amount=10
 }
 
@@ -395,6 +425,7 @@ amount=10
 get=base_reagent
 name=mandrake root
 id=0x0f86
+sectionid=mandrakeroot
 amount=10
 }
 
@@ -403,6 +434,7 @@ amount=10
 get=base_reagent
 name=nightshade
 id=0x0f88
+sectionid=nightshade
 amount=10
 }
 
@@ -411,6 +443,7 @@ amount=10
 get=base_reagent
 name=sulfurous ash
 id=0x0f8c
+sectionid=sulfurousash
 amount=10
 }
 
@@ -419,6 +452,7 @@ amount=10
 get=base_reagent
 name=spider silk
 id=0x0f8d
+sectionid=spidersilk
 amount=10
 }
 
@@ -429,6 +463,7 @@ amount=10
 get=base_reagent
 name=bat wing
 id=0x0f78
+sectionid=batwing
 amount=10
 }
 
@@ -437,6 +472,7 @@ amount=10
 get=base_reagent
 name=blackmoore
 id=0x0f79
+sectionid=blackmoore
 amount=10
 }
 
@@ -445,6 +481,7 @@ amount=10
 get=base_reagent
 name=blood spawn
 id=0x0f7c
+sectionid=bloodspawn
 amount=10
 }
 
@@ -453,6 +490,7 @@ amount=10
 get=base_reagent
 name=bone
 id=0x0f7e
+sectionid=bonereg
 amount=10
 }
 
@@ -461,6 +499,7 @@ amount=10
 get=base_reagent
 name=brimstone
 id=0x0f7f
+sectionid=brimstone
 amount=10
 }
 
@@ -469,6 +508,7 @@ amount=10
 get=base_reagent
 name=daemon bone
 id=0x0f80
+sectionid=daemonbone
 amount=10
 }
 
@@ -477,6 +517,7 @@ amount=10
 get=base_reagent
 name=dead wood
 id=0x0f90
+sectionid=deadwood
 amount=10
 }
 
@@ -485,6 +526,7 @@ amount=10
 get=base_reagent
 name=dragon's blood
 id=0x0f82
+sectionid=dragonsblood
 amount=10
 }
 
@@ -493,6 +535,7 @@ amount=10
 get=base_reagent
 name=executioner's cap
 id=0x0f83
+sectionid=executionerscap
 amount=10
 }
 
@@ -501,6 +544,7 @@ amount=10
 get=base_reagent
 name=eye of newt
 id=0x0f87
+sectionid=eyeofnewt
 amount=10
 }
 
@@ -509,6 +553,7 @@ amount=10
 get=base_reagent
 name=fertile dirt
 id=0x0f81
+sectionid=fertiledirt
 amount=10
 }
 
@@ -517,6 +562,7 @@ amount=10
 get=base_reagent
 name=obsidian
 id=0x0f89
+sectionid=obsidian
 amount=10
 }
 
@@ -525,6 +571,7 @@ amount=10
 get=base_reagent
 name=pig iron
 id=0x0f8a
+sectionid=pigiron
 amount=10
 }
 
@@ -533,6 +580,7 @@ amount=10
 get=base_reagent
 name=pumice
 id=0x0f8b
+sectionid=pumice
 amount=10
 }
 
@@ -541,6 +589,7 @@ amount=10
 get=base_reagent
 name=nox crystal
 id=0x0f8e
+sectionid=noxcrystal
 amount=10
 }
 
@@ -549,6 +598,7 @@ amount=10
 get=base_reagent
 name=daemon blood
 id=0x0f7d
+sectionid=daemonblood
 amount=10
 }
 
@@ -557,6 +607,7 @@ amount=10
 get=base_reagent
 name=grave dust
 id=0x0f8f
+sectionid=gravedust
 amount=10
 }
 
@@ -565,5 +616,6 @@ amount=10
 get=base_reagent
 name=wyrm's heart
 id=0x0f91
+sectionid=wyrmsheart
 amount=10
 }

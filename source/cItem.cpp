@@ -33,6 +33,7 @@
 #include "uox3.h"
 #include "weight.h"
 #include "CPacketSend.h"
+#include "cMagic.h"
 #include "classes.h"
 #include "regions.h"
 #include "ObjectFactory.h"
@@ -124,6 +125,9 @@ tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifa
 durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS ), poisonCharges( DEFITEM_POISONCHARGES ), packXMin( DEFBASE_PACKXMIN ), packXMax( DEFBASE_PACKXMAX ), packYMin( DEFBASE_PACKYMIN ), packYMax( DEFBASE_PACKYMAX ), packZ( DEFBASE_PACKZ )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
+	spellBookFirstSpell = 0;
+	spellBookSpellCount = 0;
+	spellBookFirstScroll = 0;
 	value[0]	= value[1] = value[2] = 0;
 	ammo[0]		= ammo[1] = 0;
 	ammoFX[0]	= ammoFX[1] = ammoFX[2] = 0;
@@ -1727,7 +1731,7 @@ auto CItem::RemoveSelfFromCont() -> void
 	{
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
-			CChar *targChar = dynamic_cast<CChar *>( contObj );
+			CChar *targChar = static_cast<CChar *>( contObj );
 			if( ValidateObject( targChar ))
 			{
 				Weight->SubtractItemWeight( targChar, this );
@@ -1741,7 +1745,7 @@ auto CItem::RemoveSelfFromCont() -> void
 		}
 		else
 		{
-			CItem *targItem = dynamic_cast<CItem *>( contObj );
+			CItem *targItem = static_cast<CItem *>( contObj );
 			if( ValidateObject( targItem ))
 			{
 				Weight->SubtractItemWeight( targItem, this );
@@ -1847,6 +1851,9 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetSpell( 0, GetSpell( 0 ));
 	target->SetSpell( 1, GetSpell( 1 ));
 	target->SetSpell( 2, GetSpell( 2 ));
+	target->SetSpellBookFirstSpell( GetSpellBookFirstSpell() );
+	target->SetSpellBookSpellCount( GetSpellBookSpellCount() );
+	target->SetSpellBookFirstScroll( GetSpellBookFirstScroll() );
 	target->SetStamina( GetStamina() );
 	target->SetStrength( GetStrength() );
 	target->SetStrength2( GetStrength2() );
@@ -1942,6 +1949,10 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "Ammo=0x" << GetAmmoId() << ",0x" << GetAmmoHue() << newLine;
 	outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << newLine;
 	outStream << "Spells=0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << newLine;
+	if( GetSpellBookSpellCount() > 0 )
+	{
+		outStream << "SpellBookData=" << std::dec << GetSpellBookFirstSpell() << "," << GetSpellBookSpellCount() << ",0x" << std::hex << GetSpellBookFirstScroll() << newLine;
+	}
 
 	// Decimal / String Values
 	outStream << std::dec;
@@ -2189,7 +2200,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 							SI08 zVal = 9;
 							if( csecs.size() >= 6 )
 							{
-								zVal = static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" )), nullptr, 0 ));
+								std::string zString = oldstrutil::trim( oldstrutil::removeTrailing( csecs[ 5 ], "//" ) );
+								// Safeguard against legacy saves where GetPackZ was written as whitespace (e.g., ASCII 9 / Tab)
+								if( !zString.empty() )
+								{
+									zVal = static_cast<SI08>( std::stoi( zString, nullptr, 0 ) );
+								}
 							}
 
 							SetPackBounds( xMin, xMax, yMin, yMax, zVal );
@@ -2417,6 +2433,13 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "SNOW" )
 				{
 					SetWeatherDamage( SNOW, static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
+					rValue = true;
+				}
+				else if( UTag == "SPELLBOOKDATA" && csecs.size() == 3 )
+				{
+					SetSpellBookFirstSpell( static_cast<SI32>( std::stol( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+					SetSpellBookSpellCount( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					SetSpellBookFirstScroll( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "SPELLS" )
@@ -3343,12 +3366,12 @@ auto CItem::PlaceInPack() -> void
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpell( UI08 part ) const -> UI32
 {
-	UI32 rValue = 0;
 	if( part < 3 )
 	{
-		rValue = spells[part];
+		UI32 value = spells[part];
+		return value;
 	}
-	return rValue;
+	return 0;
 }
 auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 {
@@ -3357,6 +3380,70 @@ auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 		spells[part] = newValue;
 		UpdateRegion();
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::IsSpellBook()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns whether this item has a valid spellbook configuration, either from
+//|					SPELLBOOKDATA or from the standard spellbook item type.
+//o------------------------------------------------------------------------------------------------o
+auto CItem::IsSpellBook() const -> bool
+{
+	return Magic->GetSpellBookConfig( this ).valid;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetSpellBookFirstSpell()
+//|					CItem::SetSpellBookFirstSpell()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the spell number mapped to the first bit in this spellbook.
+//|					Later bits map to consecutive spell numbers.
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetSpellBookFirstSpell() const -> SI32
+{
+	return spellBookFirstSpell;
+}
+
+auto CItem::SetSpellBookFirstSpell( SI32 newValue ) -> void
+{
+	spellBookFirstSpell = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetSpellBookSpellCount()
+//|					CItem::SetSpellBookSpellCount()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how many consecutive spell bits belong to this spellbook.
+//|					Together with FirstSpell, this defines the inclusive spell range as
+//|					FirstSpell through FirstSpell + SpellCount - 1.
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetSpellBookSpellCount() const -> UI16
+{
+	return spellBookSpellCount;
+}
+
+auto CItem::SetSpellBookSpellCount( UI16 newValue ) -> void
+{
+	spellBookSpellCount = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetSpellBookFirstScroll()
+//|					CItem::SetSpellBookFirstScroll()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the scroll item ID that teaches the spell at FirstSpell.
+//|					Consecutive scroll item IDs map to consecutive spell numbers; zero means
+//|					this spellbook does not accept scroll items.
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetSpellBookFirstScroll() const -> UI16
+{
+	return spellBookFirstScroll;
+}
+
+auto CItem::SetSpellBookFirstScroll( UI16 newValue ) -> void
+{
+	spellBookFirstScroll = newValue;
 }
 
 //o------------------------------------------------------------------------------------------------o
