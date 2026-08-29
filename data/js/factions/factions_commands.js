@@ -46,7 +46,7 @@ var CommandFactionSetupItems = [
 	[ "FACTION_SIGIL_YEW", 4, 2 ],
 	[ "FACTION_SIGIL_VESPER", -3, 4 ],
 	[ "FACTION_SIGIL_MINOC", -1, 4 ],
-	[ "FACTION_SIGIL_COVE", 1, 4 ]
+	[ "FACTION_SIGIL_MAGINCIA", 1, 4 ]
 ];
 
 var CommandFactionRegionChecks = [
@@ -57,7 +57,7 @@ var CommandFactionRegionChecks = [
 	[ "Yew", 7 ],
 	[ "Vesper", 11 ],
 	[ "Minoc", 12 ],
-	[ "Cove", 10 ]
+	[ "Magincia", 15 ]
 ];
 
 var CommandFactionVendorTypes = [
@@ -1028,8 +1028,8 @@ function CommandSetupSectionKey( sectionId )
 		return "sigil_Vesper";
 	if( sectionId === "FACTION_SIGIL_MINOC" )
 		return "sigil_Minoc";
-	if( sectionId === "FACTION_SIGIL_COVE" )
-		return "sigil_Cove";
+	if( sectionId === "FACTION_SIGIL_MAGINCIA" )
+		return "sigil_Magincia";
 
 	return "";
 }

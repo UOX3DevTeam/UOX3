@@ -24,7 +24,7 @@ var CombatRankNames = [
 	"Commander"
 ];
 var CombatMaxSilver = 100000;
-var CombatPlayerKillCooldown = 3600000;
+var CombatPlayerKillCooldown = 10800000;
 var CombatKillPointDecayTime = 86400000;
 var CombatBlockSameAccountRewards = false;
 var CombatFactionNpcDefaultKillPoints = 1;
@@ -141,8 +141,8 @@ function CombatSetKillPoints( pChar, amount )
 	if( !ValidateObject( pChar ) )
 		return;
 
-	if( amount < 0 )
-		amount = 0;
+	if( amount < -6 )
+		amount = -6;
 
 	var factionData = TriggerEvent( CombatPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.killPoints = amount;
@@ -304,7 +304,6 @@ function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
 		return false;
 	}
 
-	TriggerEvent( CombatPlayerDataScriptId, "SetRecentKillTime", pKiller, pKilled.serial, now );
 	return true;
 }
 
@@ -314,21 +313,33 @@ function FactionCombatAwardPlayerKill( pKiller, pKilled )
 		return false;
 
 	var victimKillPoints = CombatGetKillPoints( pKilled );
+	if( victimKillPoints <= -6 )
+	{
+		pKiller.SysMessage( "This victim is not worth enough to receive faction kill points from." );
+		return false;
+	}
+	TriggerEvent( CombatPlayerDataScriptId, "SetRecentKillTime", pKiller, pKilled.serial, GetCurrentClock() );
 	var gainedKillPoints = 1;
 	if( victimKillPoints > 10 )
 		gainedKillPoints = Math.floor( victimKillPoints / 10 );
 	if( gainedKillPoints < 1 )
 		gainedKillPoints = 1;
+	if( gainedKillPoints > 40 )
+		gainedKillPoints = 40;
 
 	var oldRank = CombatGetRank( pKiller );
 	CombatAddKillPoints( pKiller, gainedKillPoints );
 	CombatSetKillPoints( pKilled, victimKillPoints - gainedKillPoints );
 
-	var silverReward = 20 + ( CombatGetRank( pKilled ) * 40 );
-	CombatAddSilver( pKiller, silverReward );
+	var silverReward = victimKillPoints > 0 ? gainedKillPoints * 40 : 0;
+	if( silverReward > 0 )
+		CombatAddSilver( pKiller, silverReward );
 	CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverReward );
 
-	pKiller.SysMessage( "You earned " + gainedKillPoints + " faction kill point(s) and " + silverReward + " silver." );
+	if( silverReward > 0 )
+		pKiller.SysMessage( "You earned " + gainedKillPoints + " faction kill point(s) and " + silverReward + " silver." );
+	else
+		pKiller.SysMessage( "You earned " + gainedKillPoints + " faction kill point(s)." );
 	pKilled.SysMessage( "You lost " + gainedKillPoints + " faction kill point(s)." );
 
 	if( CombatGetRank( pKiller ) > oldRank )

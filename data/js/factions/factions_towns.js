@@ -28,7 +28,7 @@ var FactionTownDefaults = {
 	Yew: { region: 7, owner: "MIN" },
 	Vesper: { region: 11, owner: "MIN" },
 	Minoc: { region: 12, owner: "SL" },
-	Cove: { region: 10, owner: "SL" }
+	Magincia: { region: 15, owner: "SL" }
 };
 
 var FactionTownRegions = {
@@ -39,7 +39,7 @@ var FactionTownRegions = {
 	7: "Yew",
 	11: "Vesper",
 	12: "Minoc",
-	10: "Cove"
+	15: "Magincia"
 };
 
 var FactionTownNameAliases = {
@@ -50,7 +50,8 @@ var FactionTownNameAliases = {
 	yew: "Yew",
 	vesper: "Vesper",
 	minoc: "Minoc",
-	cove: "Cove"
+	magincia: "Magincia",
+	cove: "Magincia"
 };
 
 var FactionTownLastError = "";

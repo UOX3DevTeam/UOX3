@@ -79,12 +79,12 @@
       "sigil": { "x": 2471, "y": 439, "z": 15 },
       "townStone": { "x": 2469, "y": 445, "z": 15 }
     },
-    "Cove": {
-      "section": "FACTION_SIGIL_COVE",
-      "region": 10,
+    "Magincia": {
+      "section": "FACTION_SIGIL_MAGINCIA",
+      "region": 15,
       "owner": "SL",
-      "sigil": { "x": 2232, "y": 1199, "z": 0 },
-      "townStone": { "x": 2232, "y": 1199, "z": 0 }
+      "sigil": { "x": 3714, "y": 2235, "z": 20 },
+      "townStone": { "x": 3712, "y": 2230, "z": 20 }
     }
   }
 }

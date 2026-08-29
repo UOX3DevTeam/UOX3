@@ -42,6 +42,7 @@ function onLogin( socket, pChar )
 
 	// Handle faction login checks from the global script.
 	TriggerEvent( 8501, "FactionCombatOnLogin", socket, pChar );
+	TriggerEvent( 8500, "FactionCoreOnLogin", socket, pChar );
 
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))

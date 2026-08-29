@@ -20,11 +20,14 @@ var FactionElectionTimerDelay = 3600000; // 1 hour
 var FactionElectionController = null;
 var FactionElectionPlayerDataScriptId = 8513;
 
-var ELECTION_CYCLE_MS  = 604800000; // 7 days
-var CAMPAIGN_MS        = 345600000; // 4 days campaign, then 3 days voting
-var VOTING_MS          = 259200000; // 3 days
+var PENDING_MS         = 432000000; // 5 days between elections
+var CAMPAIGN_MS        = 86400000;  // 1 day to declare candidacy
+var VOTING_MS          = 259200000; // 3 days to vote
+var ELECTION_MAX_CANDIDATES = 10;
+var ELECTION_CANDIDATE_RANK = 4; // RunUO rank 5, stored as zero-based rank 4
 
 var ELEC_STATE_NONE     = "none";
+var ELEC_STATE_PENDING  = "pending";
 var ELEC_STATE_RUNNING  = "running";
 var ELEC_STATE_VOTING   = "voting";
 var ELEC_STATE_FINISHED = "finished";
@@ -132,15 +135,18 @@ function _GetCandidates( fkey )
 function _AddCandidate( fkey, serial )
 {
 	var ctrl = _GetCtrl();
-	if( !ctrl ) return;
+	if( !ctrl ) return false;
 	var list = _GetCandidates( fkey );
 	// Avoid duplicates
 	for( var i = 0; i < list.length; i++ )
-		if( list[i] === String( serial ) ) return;
+		if( list[i] === String( serial ) ) return false;
+	if( list.length >= ELECTION_MAX_CANDIDATES )
+		return false;
 	list.push( String( serial ) );
 	ctrl.SetTag( "elec_" + fkey + "_candidates", list.join( "," ) );
 	// init vote count
 	ctrl.SetTag( "elec_" + fkey + "_votes_" + serial, 0 );
+	return true;
 }
 
 function _GetVotes( fkey, serial )
@@ -160,19 +166,28 @@ function _AddVote( fkey, candidateSerial )
 
 function _HasVoted( pChar, fkey )
 {
-	return TriggerEvent( FactionElectionPlayerDataScriptId, "GetFactionVote", pChar, fkey );
+	var ctrl = _GetCtrl();
+	if( !ValidateObject( ctrl ) ) return false;
+	var voters = String( ctrl.GetTag( "elec_" + fkey + "_voters" ) || "" ).split( "," );
+	for( var voterIndex = 0; voterIndex < voters.length; voterIndex++ )
+		if( voters[voterIndex] === String( pChar.serial ) ) return true;
+	return false;
 }
 
 function _MarkVoted( pChar, fkey )
 {
-	TriggerEvent( FactionElectionPlayerDataScriptId, "SetFactionVote", pChar, fkey, true );
+	var ctrl = _GetCtrl();
+	if( !ValidateObject( ctrl ) ) return false;
+	var tagName = "elec_" + fkey + "_voters";
+	var voters = String( ctrl.GetTag( tagName ) || "" );
+	ctrl.SetTag( tagName, voters === "" ? String( pChar.serial ) : voters + "," + pChar.serial );
+	return true;
 }
 
 function _ClearVotedFlags( fkey )
 {
-	// NOTE: UOX3 doesn't provide a global player iterator in core JS by default.
-	// Players' voted tags will expire naturally when the election resets.
-	// GMs can reset via 'electionreset command.
+	var ctrl = _GetCtrl();
+	if( ValidateObject( ctrl ) ) ctrl.SetTag( "elec_" + fkey + "_voters", "" );
 }
 
 // ---------------------------------------------------------------------------
@@ -189,12 +204,13 @@ function StartElection( fkey )
 	var ctrl = _GetCtrl();
 	if( !ctrl ) return false;
 
-	_SetElecState( fkey, ELEC_STATE_RUNNING );
+	_SetElecState( fkey, ELEC_STATE_PENDING );
 	_SetElecStart( fkey, GetCurrentClock() );
 	ctrl.SetTag( "elec_" + fkey + "_candidates", "" );
+	_ClearVotedFlags( fkey );
 
 	// Broadcast
-	_BroadcastFaction( fkey, "An election has begun for the position of Commander! Visit a Faction Stone to declare candidacy." );
+	_BroadcastFaction( fkey, "The next faction commander campaign begins in five days." );
 	return true;
 }
 
@@ -219,15 +235,17 @@ function DeclareCandidacy( pChar )
 		return false;
 	}
 
-	// Must have at least 10 kill points
-	var kp = parseInt( factionData.killPoints, 10 ) || 0;
-	if( kp < 10 )
+	if( factionData.rank < ELECTION_CANDIDATE_RANK )
 	{
-		pChar.SysMessage( "You need at least 10 kill points to run for Commander." );
+		pChar.SysMessage( "You must hold at least faction rank 5 to run for Commander." );
 		return false;
 	}
 
-	_AddCandidate( fkey, pChar.serial );
+	if( !_AddCandidate( fkey, pChar.serial ) )
+	{
+		pChar.SysMessage( "You are already a candidate, or the election has reached its ten-candidate limit." );
+		return false;
+	}
 	pChar.SysMessage( "You have declared your candidacy for Commander!" );
 	_BroadcastFaction( fkey, pChar.name + " has declared candidacy for Commander!" );
 	return true;
@@ -241,6 +259,15 @@ function BeginVoting( fkey )
 	if( _GetElecState( fkey ) !== ELEC_STATE_RUNNING ) return false;
 	_SetElecState( fkey, ELEC_STATE_VOTING );
 	_BroadcastFaction( fkey, "Voting has begun! Visit a Faction Stone to cast your vote for Commander!" );
+	return true;
+}
+
+function BeginCampaign( fkey )
+{
+	if( _GetElecState( fkey ) !== ELEC_STATE_PENDING ) return false;
+	_SetElecState( fkey, ELEC_STATE_RUNNING );
+	_SetElecStart( fkey, GetCurrentClock() );
+	_BroadcastFaction( fkey, "Campaigning has begun for Faction Commander." );
 	return true;
 }
 
@@ -299,9 +326,9 @@ function ConcludeElection( fkey )
 	var ctrl = _GetCtrl();
 	if( candidates.length === 0 )
 	{
-		_ClearCommanderRole( fkey, ctrl );
 		_SetElecState( fkey, ELEC_STATE_FINISHED );
-		_BroadcastFaction( fkey, "The election ended with no candidates. The commander position remains vacant." );
+		StartElection( fkey );
+		_BroadcastFaction( fkey, "The election ended with no candidates. Faction leadership has not changed." );
 		return false;
 	}
 
@@ -314,25 +341,34 @@ function ConcludeElection( fkey )
 		if( v > winnerVotes ) { winnerVotes = v; winnerSerial = candidates[i]; }
 	}
 
-	// Clear old commander
-	_ClearCommanderRole( fkey, ctrl );
-
 	// Promote winner
 	var winner = CalcCharFromSer( parseInt( winnerSerial, 10 ) );
 	if( ValidateObject( winner ) )
 	{
 		var winnerData = TriggerEvent( FactionElectionPlayerDataScriptId, "ReadFactionPlayerData", winner );
+		if( winnerData.faction !== fkey )
+		{
+			_BroadcastFaction( fkey, "The winning candidate is no longer eligible. Faction leadership has not changed." );
+			_SetElecState( fkey, ELEC_STATE_FINISHED );
+			StartElection( fkey );
+			return false;
+		}
+		_ClearCommanderRole( fkey, ctrl );
 		winnerData.commander = true;
 		winnerData.role = "commander";
 		winnerData.roleFaction = fkey;
 		winnerData.roleSetAt = GetCurrentClock();
-		winnerData.rank = 9;
 		TriggerEvent( FactionElectionPlayerDataScriptId, "WriteFactionPlayerData", winner, winnerData );
 		if( ctrl ) ctrl.SetTag( "cmd_" + fkey, winnerSerial );
 		_BroadcastFaction( fkey, winner.name + " has been elected as the new Commander of the " + fkey + "!" );
 	}
+	else
+	{
+		_BroadcastFaction( fkey, "No eligible election winner could be found. Faction leadership has not changed." );
+	}
 
 	_SetElecState( fkey, ELEC_STATE_FINISHED );
+	StartElection( fkey );
 	return true;
 }
 
@@ -355,7 +391,6 @@ function _ClearCommanderRole( fkey, ctrl )
 				oldData.roleFaction = "";
 				oldData.roleSetAt = 0;
 			}
-			oldData.rank = 8; // demote to Legend
 			TriggerEvent( FactionElectionPlayerDataScriptId, "WriteFactionPlayerData", oldCmd, oldData );
 		}
 	}
@@ -380,24 +415,39 @@ function CheckElectionTimers()
 
 		if( state === ELEC_STATE_NONE || state === ELEC_STATE_FINISHED )
 		{
-			// Auto-start a new cycle if one has never started or cycle expired
-			if( start === 0 || ( now - start ) > ELECTION_CYCLE_MS )
-			{
-				StartElection( fkey );
-			}
+			StartElection( fkey );
+		}
+		else if( state === ELEC_STATE_PENDING )
+		{
+			if( ( now - start ) >= PENDING_MS ) BeginCampaign( fkey );
 		}
 		else if( state === ELEC_STATE_RUNNING )
 		{
 			// Switch to voting after campaign period
 			if( ( now - start ) >= CAMPAIGN_MS )
 			{
-				BeginVoting( fkey );
+				var candidates = _GetCandidates( fkey );
+				if( candidates.length === 0 )
+				{
+					_SetElecState( fkey, ELEC_STATE_FINISHED );
+					StartElection( fkey );
+				}
+				else if( candidates.length === 1 )
+				{
+					_SetElecState( fkey, ELEC_STATE_VOTING );
+					ConcludeElection( fkey );
+				}
+				else
+				{
+					BeginVoting( fkey );
+					_SetElecStart( fkey, now );
+				}
 			}
 		}
 		else if( state === ELEC_STATE_VOTING )
 		{
 			// Conclude after voting period
-			if( ( now - start ) >= ELECTION_CYCLE_MS )
+			if( ( now - start ) >= VOTING_MS )
 			{
 				ConcludeElection( fkey );
 			}
@@ -522,5 +572,6 @@ function ResetElection( factionKey )
 	ctrl.SetTag( "elec_" + factionKey + "_state", ELEC_STATE_NONE );
 	ctrl.SetTag( "elec_" + factionKey + "_start", 0 );
 	ctrl.SetTag( "elec_" + factionKey + "_candidates", "" );
+	ctrl.SetTag( "elec_" + factionKey + "_voters", "" );
 	return true;
 }

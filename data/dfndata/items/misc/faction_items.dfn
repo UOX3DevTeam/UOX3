@@ -173,12 +173,12 @@ CUSTOMSTRINGTAG=sigil_town Minoc
 CUSTOMSTRINGTAG=sigil_owner_faction SL
 }
 
-[FACTION_SIGIL_COVE]
+[FACTION_SIGIL_MAGINCIA]
 {
 GET=FACTION_SIGIL
-NAME=Sigil of Cove
-CUSTOMINTTAG=town_region 10
-CUSTOMSTRINGTAG=sigil_town Cove
+NAME=Sigil of Magincia
+CUSTOMINTTAG=town_region 15
+CUSTOMSTRINGTAG=sigil_town Magincia
 CUSTOMSTRINGTAG=sigil_owner_faction SL
 }
 

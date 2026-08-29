@@ -188,8 +188,8 @@ function FactionDataNormalize( pChar, factionData )
 	if( !normalized.recentKills || typeof normalized.recentKills != "object" )
 		normalized.recentKills = {};
 
-	if( normalized.killPoints < 0 )
-		normalized.killPoints = 0;
+	if( normalized.killPoints < -6 )
+		normalized.killPoints = -6;
 	if( normalized.silver < 0 )
 		normalized.silver = 0;
 	if( normalized.silver > FactionPlayerDataMaxSilver )

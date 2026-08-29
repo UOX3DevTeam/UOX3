@@ -6,7 +6,7 @@
 // =============================================================================
 
 var SigilCorruptionTime = 36000000;
-var SigilReturnTimeDefault = 1800000;
+var SigilReturnTimeDefault = 3600000;
 var SigilCaptureSilverReward = 250;
 var SigilCaptureKillPointReward = 10;
 var SigilCaptureScoreReward = 1;
@@ -21,7 +21,7 @@ var SigilTownDefaults = {
 	Yew: "MIN",
 	Vesper: "MIN",
 	Minoc: "SL",
-	Cove: "SL"
+	Magincia: "SL"
 };
 var SigilTownScriptId = 8509;
 var SigilStrongholdScriptId = 8511;
@@ -50,8 +50,8 @@ function SigilNormalizeTown( townName )
 		return "Vesper";
 	if( townName === "minoc" )
 		return "Minoc";
-	if( townName === "cove" )
-		return "Cove";
+	if( townName === "magincia" || townName === "cove" )
+		return "Magincia";
 
 	return "";
 }

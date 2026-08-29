@@ -82,8 +82,8 @@ function SetFactionKillPoints( pChar, amount )
 	if( !ValidateObject( pChar ) )
 		return;
 
-	if( amount < 0 )
-		amount = 0;
+	if( amount < -6 )
+		amount = -6;
 
 	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.killPoints = amount;
@@ -253,8 +253,37 @@ function LeaveFaction( pChar )
 		return false;
 	}
 
-	var cleanedCount = TriggerEvent( 8507, "CleanupFactionOwnedObjects", pChar );
 	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	if( factionData.leaveTime > 0 )
+	{
+		var remaining = FactionLeaveDelay - ( GetCurrentClock() - factionData.leaveTime );
+		if( remaining > 0 )
+		{
+			pChar.SysMessage( "You are already resigning from your faction. " + Math.ceil( remaining / 3600000 ) + " hour(s) remain." );
+			return false;
+		}
+		return FinalizeFactionLeave( pChar, factionData );
+	}
+
+	factionData.leaveTime = GetCurrentClock();
+	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	pChar.SysMessage( "You will leave the " + FactionName( factionKey ) + " in three days." );
+	return true;
+}
+
+function FinalizeFactionLeave( pChar, factionData )
+{
+	if( !ValidateObject( pChar ) )
+		return false;
+
+	if( !factionData || typeof factionData != "object" )
+		factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+
+	var factionKey = factionData.faction;
+	if( !FactionIsValid( factionKey ) )
+		return false;
+
+	var cleanedCount = TriggerEvent( 8507, "CleanupFactionOwnedObjects", pChar );
 	factionData.faction = "";
 	factionData.killPoints = 0;
 	factionData.silver = 0;
@@ -264,12 +293,29 @@ function LeaveFaction( pChar )
 	factionData.role = "";
 	factionData.roleFaction = "";
 	factionData.roleSetAt = 0;
-	factionData.leaveTime = GetCurrentClock();
+	factionData.leaveTime = 0;
 	factionData.recentKills = {};
 	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	if( cleanedCount > 0 )
 		pChar.SysMessage( cleanedCount + " faction item(s) or mount(s) were removed." );
 	pChar.SysMessage( "You have left the " + FactionName( factionKey ) + "." );
+	return true;
+}
+
+function FactionCoreOnLogin( pSock, pChar )
+{
+	if( !ValidateObject( pChar ) || pChar.npc )
+		return false;
+
+	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	if( FactionIsValid( factionData.faction ) && factionData.leaveTime > 0 )
+	{
+		var elapsed = GetCurrentClock() - factionData.leaveTime;
+		if( elapsed >= FactionLeaveDelay )
+			return FinalizeFactionLeave( pChar, factionData );
+
+		pChar.SysMessage( "Your faction resignation is pending. " + Math.ceil( ( FactionLeaveDelay - elapsed ) / 3600000 ) + " hour(s) remain." );
+	}
 	return true;
 }
 
