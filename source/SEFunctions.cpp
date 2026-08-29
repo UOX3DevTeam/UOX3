@@ -5782,20 +5782,20 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 			case 423:	// PASSWORDHASHINGENABLED
 				args.rval().setBoolean( cwmWorldState->ServerData()->PasswordHashingEnabled() );
 				break;
-			case 416:	// FACTIONTOWNTAXINTERVAL
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->FactionTownTaxInterval() )));
+			case 424:	// FACTIONTOWNTAXINTERVAL
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->FactionTownTaxInterval() ));
 				break;
-			case 417:	// FACTIONTOWNDEFAULTTAXRATE
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->FactionTownDefaultTaxRate() )));
+			case 425:	// FACTIONTOWNDEFAULTTAXRATE
+				args.rval().setInt32( static_cast<SI32>( cwmWorldState->ServerData()->FactionTownDefaultTaxRate() ));
 				break;
-			case 418:	// FACTIONTOWNTREASURYGRANT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->FactionTownTreasuryGrant() )));
+			case 426:	// FACTIONTOWNTREASURYGRANT
+				args.rval().setInt32( static_cast<SI32>( cwmWorldState->ServerData()->FactionTownTreasuryGrant() ));
 				break;
-			case 419:	// FACTIONTOWNGUARDLIMIT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FactionTownGuardLimit() )));
+			case 427:	// FACTIONTOWNGUARDLIMIT
+				args.rval().setInt32( static_cast<SI16>( cwmWorldState->ServerData()->FactionTownGuardLimit() ));
 				break;
-			case 420:	// FACTIONTOWNVENDORLIMIT
-				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FactionTownVendorLimit() )));
+			case 428:	// FACTIONTOWNVENDORLIMIT
+				args.rval().setInt32( static_cast<SI16>( cwmWorldState->ServerData()->FactionTownVendorLimit() ));
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

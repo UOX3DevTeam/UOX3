@@ -1083,6 +1083,11 @@ auto CServerData::ResetDefaults() -> void
 	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
 	TownTaxPeriod( 1800 );			// taxed every 30 minutes
 	TownGuardPayment( 3600 );		// guards paid every hour
+	FactionTownTaxInterval( 60 );	// faction towns tax every hour
+	FactionTownDefaultTaxRate( 100 );
+	FactionTownTreasuryGrant( 1000 );
+	FactionTownGuardLimit( 10 );
+	FactionTownVendorLimit( 10 );
 
 	SetClientFeature( CF_BIT_CHAT, true );
 	SetClientFeature( CF_BIT_UOR, true );
@@ -5161,6 +5166,51 @@ auto CServerData::TownGuardPayment( UI32 value ) -> void
 	guardPayment = value;
 }
 
+auto CServerData::FactionTownTaxInterval() const -> UI32
+{
+	return factionTownTaxInterval;
+}
+auto CServerData::FactionTownTaxInterval( UI32 value ) -> void
+{
+	factionTownTaxInterval = value;
+}
+
+auto CServerData::FactionTownDefaultTaxRate() const -> SI32
+{
+	return factionTownDefaultTaxRate;
+}
+auto CServerData::FactionTownDefaultTaxRate( SI32 value ) -> void
+{
+	factionTownDefaultTaxRate = value;
+}
+
+auto CServerData::FactionTownTreasuryGrant() const -> SI32
+{
+	return factionTownTreasuryGrant;
+}
+auto CServerData::FactionTownTreasuryGrant( SI32 value ) -> void
+{
+	factionTownTreasuryGrant = value;
+}
+
+auto CServerData::FactionTownGuardLimit() const -> SI16
+{
+	return factionTownGuardLimit;
+}
+auto CServerData::FactionTownGuardLimit( SI16 value ) -> void
+{
+	factionTownGuardLimit = value;
+}
+
+auto CServerData::FactionTownVendorLimit() const -> SI16
+{
+	return factionTownVendorLimit;
+}
+auto CServerData::FactionTownVendorLimit( SI16 value ) -> void
+{
+	factionTownVendorLimit = value;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::RepMaxKills()
 //o------------------------------------------------------------------------------------------------o
@@ -6228,6 +6278,11 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
 		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
 		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
+		ofsOutput << "FACTIONTOWNTAXINTERVAL=" << FactionTownTaxInterval() << '\n';
+		ofsOutput << "FACTIONTOWNDEFAULTTAXRATE=" << FactionTownDefaultTaxRate() << '\n';
+		ofsOutput << "FACTIONTOWNTREASURYGRANT=" << FactionTownTreasuryGrant() << '\n';
+		ofsOutput << "FACTIONTOWNGUARDLIMIT=" << FactionTownGuardLimit() << '\n';
+		ofsOutput << "FACTIONTOWNVENDORLIMIT=" << FactionTownVendorLimit() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';

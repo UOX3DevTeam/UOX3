@@ -1210,16 +1210,13 @@ void CTownRegion::SendEnemyGump( CSocket *sock )
 	toSend.addCommand( oldstrutil::format( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() ));	// population
 	toSend.addCommand( oldstrutil::format( "text 55 111 %u 3", cwmWorldState->ServerData()->RightTextColour() ));	// Seize townstone
 	toSend.addCommand( oldstrutil::format( "text 55 131 %u 4", cwmWorldState->ServerData()->RightTextColour() ));	// Destroy townstone
-	toSend.addCommand( oldstrutil::format( "text 55 151 %u 5", cwmWorldState->ServerData()->RightTextColour() ));	// faction control
 
 	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 61", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// seize townstone
 	toSend.addCommand( oldstrutil::format( "button 25 131 %u %i 1 0 62", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// destroy townstone
-	toSend.addCommand( oldstrutil::format( "button 25 151 %u %i 1 0 81", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// faction control
 	toSend.addText( oldstrutil::format( "%s (%s) - %s", name.c_str(), Races->Name( race ).c_str(), guardowner.c_str() ));
 	toSend.addText( oldstrutil::format( "Population %i", GetPopulation() ));
 	toSend.addText( "Seize Townstone" );
 	toSend.addText( "Attack Townstone" );
-	toSend.addText( "Faction Control" );
 
 	toSend.Send();
 }
@@ -1260,18 +1257,15 @@ void CTownRegion::SendPotentialMember( CSocket *sock )
 	toSend.addCommand( oldstrutil::format( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() ));	// population
 	toSend.addCommand( oldstrutil::format( "text 55 91 %u 3", cwmWorldState->ServerData()->RightTextColour() ));	// join town
 	toSend.addCommand( oldstrutil::format( "text 55 111 %u 4", cwmWorldState->ServerData()->RightTextColour() ));	// view taxes (to help make decisions about joining?)
-	toSend.addCommand( oldstrutil::format( "text 55 131 %u 5", cwmWorldState->ServerData()->RightTextColour() ));	// faction control
 
 	toSend.addCommand( oldstrutil::format( "button 25 91 %u %i 1 0 41", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// leave town
 	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 3", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view taxes
-	toSend.addCommand( oldstrutil::format( "button 25 131 %u %i 1 0 81", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// faction control
 
 	toSend.addText( oldstrutil::format( "%s (%s) - %s", name.c_str(), Races->Name( race ).c_str(), guardowner.c_str() ));
 
 	toSend.addText( oldstrutil::format(Dictionary->GetEntry( 1127, sLang ), GetPopulation() ));
 	toSend.addText( Dictionary->GetEntry( 1128, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1129, sLang ));
-	toSend.addText( "Faction Control" );
 
 	toSend.Send();
 }
@@ -1308,7 +1302,6 @@ void CTownRegion::SendMayorGump( CSocket *sock )
 	toSend.addCommand( oldstrutil::format( "text 55 171 %u 8", cwmWorldState->ServerData()->RightTextColour() )); // fire a guard
 	toSend.addCommand( oldstrutil::format( "text 55 261 %u 9", cwmWorldState->ServerData()->RightTextColour() )); // treasury amount
 	toSend.addCommand( oldstrutil::format( "text 55 191 %u 10", cwmWorldState->ServerData()->RightTextColour() ));	// make ally
-	toSend.addCommand( oldstrutil::format( "text 55 211 %u 11", cwmWorldState->ServerData()->RightTextColour() ));	// faction control
 
 	toSend.addCommand( oldstrutil::format( "button 25 91 %u %i 1 0 21", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // set taxes
 	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 22", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // list town members
@@ -1317,7 +1310,6 @@ void CTownRegion::SendMayorGump( CSocket *sock )
 	toSend.addCommand( oldstrutil::format( "button 25 171 %u %i 1 0 25", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // fire a guard
 	toSend.addCommand( oldstrutil::format( "button 25 280 %u %i 1 0 40", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // return to main menu
 	toSend.addCommand( oldstrutil::format( "button 25 191 %u %i 1 0 26", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // make ally of other town
-	toSend.addCommand( oldstrutil::format( "button 25 211 %u %i 1 0 81", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // faction control
 
 	toSend.addText( oldstrutil::format( "%s (%s) - %s", name.c_str(), Races->Name( race ).c_str(), guardowner.c_str() ));
 	toSend.addText( oldstrutil::format( Dictionary->GetEntry( 1130, sLang ), GetPopulation() ));
@@ -1329,7 +1321,6 @@ void CTownRegion::SendMayorGump( CSocket *sock )
 	toSend.addText( Dictionary->GetEntry( 1136, sLang ));
 	toSend.addText( oldstrutil::format( Dictionary->GetEntry( 1137, sLang ), goldReserved ));
 	toSend.addText( Dictionary->GetEntry( 1138, sLang ));
-	toSend.addText( "Faction Control" );
 
 	toSend.Send();
 }
@@ -1364,7 +1355,6 @@ void CTownRegion::SendDefaultGump( CSocket *sock )
 	toSend.addCommand( oldstrutil::format( "text 55 191 %u 8", cwmWorldState->ServerData()->RightTextColour() ));	// view budget
 	toSend.addCommand( oldstrutil::format( "text 55 211 %u 9", cwmWorldState->ServerData()->RightTextColour() ));	// view allied towns
 	toSend.addCommand( oldstrutil::format( "text 55 231 %u 10", cwmWorldState->ServerData()->RightTextColour() ));	// view enemy towns
-	toSend.addCommand( oldstrutil::format( "text 55 251 %u 11", cwmWorldState->ServerData()->RightTextColour() ));	// faction control
 
 	toSend.addCommand( oldstrutil::format( "button 25 91 %u %i 1 0 2", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// leave town
 	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 3", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view taxes
@@ -1374,7 +1364,6 @@ void CTownRegion::SendDefaultGump( CSocket *sock )
 	toSend.addCommand( oldstrutil::format( "button 25 191 %u %i 1 0 7", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view budget
 	toSend.addCommand( oldstrutil::format( "button 25 211 %u %i 1 0 8", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view allied towns
 	toSend.addCommand( oldstrutil::format( "button 25 231 %u %i 1 0 9", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view enemy towns
-	toSend.addCommand( oldstrutil::format( "button 25 251 %u %i 1 0 81", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// faction control
 
 	CChar *mChar		= sock->CurrcharObj();
 	UnicodeTypes sLang	= sock->Language();
@@ -1388,7 +1377,6 @@ void CTownRegion::SendDefaultGump( CSocket *sock )
 	toSend.addText( Dictionary->GetEntry( 1145, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1146, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1147, sLang ));
-	toSend.addText( "Faction Control" );
 
 	if( mChar->GetTownPriv() == 2 || mChar->IsGM() ) // if we've got a mayor (remove isGM check!)
 	{

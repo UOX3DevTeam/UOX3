@@ -101,7 +101,8 @@ function onUseChecked( pUser, iUsed )
 	if( pUser.socket == null )
 		return false;
 
-	return OpenFactionTownstone( pUser.socket, pUser, townRegionId );
+	OpenFactionTownstone( pUser.socket, pUser, townRegionId );
+	return false;
 }
 
 function TownstoneSpawnNpc( pSock, pUser, factionKey, npcType, vendorType )

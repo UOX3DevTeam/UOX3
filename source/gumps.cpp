@@ -176,32 +176,12 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 	CChar *mChar = s->CurrcharObj();
 	CTownRegion *targetRegion;
 	CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
-	const UI16 factionTownstoneScript = 8510;
 	switch( button )
 	{
 			// buttons 2-20 are for generic town members
 			// buttons 21-40 are for mayoral functions
 			// buttons 41-60 are for potential candidates
 			// buttons 61-80 are for enemy towns
-		case 81:	// faction townstone controls
-		{
-			targetRegion = CalcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId() );
-			if( targetRegion == nullptr )
-			{
-				s->SysMessage( 553 ); // This is not a valid region!
-				break;
-			}
-			cScript *toExecute = JSMapping->GetScript( factionTownstoneScript );
-			if( toExecute != nullptr )
-			{
-				toExecute->OnFactionTownstone( s, mChar, targetRegion->GetRegionNum() );
-			}
-			else
-			{
-				s->SysMessage( "Faction townstone script is not loaded." );
-			}
-			break;
-		}
 		case 2:		// leave town
 			bool result;
 			// safe to assume we want to remove ourselves from our only town!
