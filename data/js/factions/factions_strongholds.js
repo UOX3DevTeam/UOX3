@@ -1,13 +1,16 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_strongholds.js
 // UOX3 Faction System - faction stronghold locations
 // Script ID suggestion: 8511
 // =============================================================================
 
-var StrongholdController = null;
-var StrongholdLastErrorText = "";
-var StrongholdDefaultRange = 12;
-var StrongholdFactionKeys = [ "TB", "COM", "MIN", "SL" ];
+let strongholdController = null;
+let strongholdLastErrorText = "";
+const strongholdDefaultRange = 12;
+const strongholdFactionKeys = [ "TB", "COM", "MIN", "SL" ];
 
 function StrongholdIsFactionValid( factionKey )
 {
@@ -30,30 +33,30 @@ function StrongholdFactionName( factionKey )
 
 function StrongholdSetLastError( errorText )
 {
-	StrongholdLastErrorText = errorText;
+	strongholdLastErrorText = errorText;
 	return false;
 }
 
 function StrongholdLastError()
 {
-	return StrongholdLastErrorText;
+	return strongholdLastErrorText;
 }
 
 function StrongholdGetController()
 {
-	if( ValidateObject( StrongholdController ) )
-		return StrongholdController;
+	if( ValidateObject( strongholdController ) )
+		return strongholdController;
 
-	StrongholdController = null;
+	strongholdController = null;
 	IterateOver( "ITEM" );
-	return StrongholdController;
+	return strongholdController;
 }
 
 function onIterate( toCheck )
 {
 	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.GetTag( "faction_controller" ) == 1 )
 	{
-		StrongholdController = toCheck;
+		strongholdController = toCheck;
 		return true;
 	}
 
@@ -67,7 +70,7 @@ function StrongholdTag( factionKey, tagName )
 
 function StrongholdParseNumber( value, fallback )
 {
-	var parsed = parseInt( value, 10 );
+	const parsed = parseInt( value, 10 );
 	if( isNaN( parsed ) )
 		return fallback;
 
@@ -76,18 +79,18 @@ function StrongholdParseNumber( value, fallback )
 
 function StrongholdSet( factionKey, pChar, range )
 {
-	StrongholdLastErrorText = "";
+	strongholdLastErrorText = "";
 	factionKey = String( factionKey ).toUpperCase();
 	if( !StrongholdIsFactionValid( factionKey ) )
 		return StrongholdSetLastError( "Invalid faction." );
 	if( !ValidateObject( pChar ) )
 		return StrongholdSetLastError( "Invalid character." );
 
-	var ctrl = StrongholdGetController();
+	const ctrl = StrongholdGetController();
 	if( !ValidateObject( ctrl ) )
 		return StrongholdSetLastError( "Faction controller was not found. Run 'factionsetup or create a faction controller first." );
 
-	range = StrongholdParseNumber( range, StrongholdDefaultRange );
+	range = StrongholdParseNumber( range, strongholdDefaultRange );
 	if( range < 1 )
 		range = 1;
 	if( range > 100 )
@@ -106,12 +109,12 @@ function StrongholdSet( factionKey, pChar, range )
 
 function StrongholdSetLocation( factionKey, x, y, z, worldNum, instanceId, range )
 {
-	StrongholdLastErrorText = "";
+	strongholdLastErrorText = "";
 	factionKey = String( factionKey ).toUpperCase();
 	if( !StrongholdIsFactionValid( factionKey ) )
 		return StrongholdSetLastError( "Invalid faction." );
 
-	var ctrl = StrongholdGetController();
+	const ctrl = StrongholdGetController();
 	if( !ValidateObject( ctrl ) )
 		return StrongholdSetLastError( "Faction controller was not found. Run 'factionsetup or create a faction controller first." );
 
@@ -120,7 +123,7 @@ function StrongholdSetLocation( factionKey, x, y, z, worldNum, instanceId, range
 	z = StrongholdParseNumber( z, 0 );
 	worldNum = StrongholdParseNumber( worldNum, 0 );
 	instanceId = StrongholdParseNumber( instanceId, 0 );
-	range = StrongholdParseNumber( range, StrongholdDefaultRange );
+	range = StrongholdParseNumber( range, strongholdDefaultRange );
 	if( range < 1 )
 		range = 1;
 	if( range > 100 )
@@ -143,7 +146,7 @@ function StrongholdIsConfigured( factionKey )
 	if( !StrongholdIsFactionValid( factionKey ) )
 		return false;
 
-	var ctrl = StrongholdGetController();
+	const ctrl = StrongholdGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
@@ -161,18 +164,18 @@ function StrongholdInfoText( factionKey )
 	if( !StrongholdIsFactionValid( factionKey ) )
 		return "Invalid faction.";
 
-	var ctrl = StrongholdGetController();
+	const ctrl = StrongholdGetController();
 	if( !ValidateObject( ctrl ) )
 		return StrongholdFactionName( factionKey ) + ": faction controller not found.";
 	if( !StrongholdIsConfigured( factionKey ) )
 		return StrongholdFactionName( factionKey ) + ": not configured.";
 
-	var x = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "x" ) ), 0 );
-	var y = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "y" ) ), 0 );
-	var z = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "z" ) ), 0 );
-	var worldNum = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "world" ) ), 0 );
-	var instanceId = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "instance" ) ), 0 );
-	var range = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "range" ) ), StrongholdDefaultRange );
+	let x = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "x" ) ), 0 );
+	let y = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "y" ) ), 0 );
+	let z = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "z" ) ), 0 );
+	let worldNum = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "world" ) ), 0 );
+	let instanceId = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "instance" ) ), 0 );
+	let range = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "range" ) ), strongholdDefaultRange );
 
 	return StrongholdFactionName( factionKey ) + ": " + x + "," + y + "," + z + " world " + worldNum + " instance " + instanceId + " range " + range;
 }
@@ -187,19 +190,19 @@ function StrongholdDistanceText( obj, factionKey )
 	if( !StrongholdIsConfigured( factionKey ) )
 		return "No stronghold configured.";
 
-	var ctrl = StrongholdGetController();
-	var x = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "x" ) ), 0 );
-	var y = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "y" ) ), 0 );
-	var worldNum = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "world" ) ), 0 );
-	var instanceId = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "instance" ) ), 0 );
-	var range = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "range" ) ), StrongholdDefaultRange );
+	const ctrl = StrongholdGetController();
+	let x = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "x" ) ), 0 );
+	let y = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "y" ) ), 0 );
+	let worldNum = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "world" ) ), 0 );
+	let instanceId = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "instance" ) ), 0 );
+	let range = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "range" ) ), strongholdDefaultRange );
 
 	if( obj.worldnumber != worldNum || obj.instanceID != instanceId )
 		return "Wrong map/instance.";
 
-	var dx = obj.x - x;
-	var dy = obj.y - y;
-	var distance = Math.ceil( Math.sqrt( dx * dx + dy * dy ) );
+	const dx = obj.x - x;
+	const dy = obj.y - y;
+	const distance = Math.ceil( Math.sqrt( dx * dx + dy * dy ) );
 	if( distance <= range )
 		return "At stronghold.";
 
@@ -208,30 +211,30 @@ function StrongholdDistanceText( obj, factionKey )
 
 function StrongholdIsObjectAtFactionStronghold( obj, factionKey )
 {
-	StrongholdLastErrorText = "";
+	strongholdLastErrorText = "";
 	factionKey = String( factionKey ).toUpperCase();
 	if( !StrongholdIsFactionValid( factionKey ) )
 		return StrongholdSetLastError( "Invalid faction." );
 	if( !ValidateObject( obj ) )
 		return StrongholdSetLastError( "Invalid object." );
 
-	var ctrl = StrongholdGetController();
+	const ctrl = StrongholdGetController();
 	if( !ValidateObject( ctrl ) )
 		return StrongholdSetLastError( "Faction controller was not found." );
 	if( !StrongholdIsConfigured( factionKey ) )
 		return StrongholdSetLastError( StrongholdFactionName( factionKey ) + " stronghold is not configured." );
 
-	var x = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "x" ) ), 0 );
-	var y = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "y" ) ), 0 );
-	var worldNum = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "world" ) ), 0 );
-	var instanceId = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "instance" ) ), 0 );
-	var range = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "range" ) ), StrongholdDefaultRange );
+	let x = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "x" ) ), 0 );
+	let y = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "y" ) ), 0 );
+	let worldNum = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "world" ) ), 0 );
+	let instanceId = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "instance" ) ), 0 );
+	let range = StrongholdParseNumber( ctrl.GetTag( StrongholdTag( factionKey, "range" ) ), strongholdDefaultRange );
 
 	if( obj.worldnumber != worldNum || obj.instanceID != instanceId )
 		return StrongholdSetLastError( "The sigil is not in your faction stronghold map/instance." );
 
-	var dx = obj.x - x;
-	var dy = obj.y - y;
+	const dx = obj.x - x;
+	const dy = obj.y - y;
 	if( ( dx * dx ) + ( dy * dy ) > ( range * range ) )
 		return StrongholdSetLastError( "The sigil must be within " + range + " tile(s) of your faction stronghold." );
 
@@ -243,8 +246,8 @@ function ShowStrongholdStatus( pSock )
 	if( pSock == null )
 		return false;
 
-	for( var i = 0; i < StrongholdFactionKeys.length; i++ )
-		pSock.SysMessage( StrongholdInfoText( StrongholdFactionKeys[i] ) );
+	for( let i = 0; i < strongholdFactionKeys.length; i++ )
+		pSock.SysMessage( StrongholdInfoText( strongholdFactionKeys[i] ) );
 
 	return true;
 }

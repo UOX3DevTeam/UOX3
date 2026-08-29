@@ -439,6 +439,30 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"FACTIONTOWNTREASURYGRANT", 426},
 	{"FACTIONTOWNGUARDLIMIT", 427},
 	{"FACTIONTOWNVENDORLIMIT", 428},
+	{"FACTIONLEAVEDELAYHOURS", 429},
+	{"FACTIONMAXSILVER", 430},
+	{"FACTIONKILLCOOLDOWNMINUTES", 431},
+	{"FACTIONKILLPOINTDECAYHOURS", 432},
+	{"FACTIONBLOCKSAMEACCOUNTREWARDS", 433},
+	{"FACTIONNPCKILLPOINTS", 434},
+	{"FACTIONNPCSILVERMIN", 435},
+	{"FACTIONNPCSILVERMAX", 436},
+	{"FACTIONELECTIONPENDINGHOURS", 437},
+	{"FACTIONELECTIONCAMPAIGNHOURS", 438},
+	{"FACTIONELECTIONVOTINGHOURS", 439},
+	{"FACTIONELECTIONMAXCANDIDATES", 440},
+	{"FACTIONELECTIONCANDIDATERANK", 441},
+	{"FACTIONSIGILCORRUPTIONMINUTES", 442},
+	{"FACTIONSIGILRETURNMINUTES", 443},
+	{"FACTIONSIGILSILVERREWARD", 444},
+	{"FACTIONSIGILKILLPOINTREWARD", 445},
+	{"FACTIONSIGILSCOREREWARD", 446},
+	{"FACTIONGUARDCOST", 447},
+	{"FACTIONVENDORCOST", 448},
+	{"FACTIONTOWNBASEINCOME", 449},
+	{"FACTIONTOWNTAXCHANGEHOURS", 450},
+	{"FACTIONNPCSCANRANGE", 451},
+	{"FACTIONSIGILPURIFICATIONHOURS", 452},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -1088,6 +1112,7 @@ auto CServerData::ResetDefaults() -> void
 	FactionTownTreasuryGrant( 1000 );
 	FactionTownGuardLimit( 10 );
 	FactionTownVendorLimit( 10 );
+	factionSettings = { 72, 100000, 180, 24, 0, 1, 5, 25, 120, 24, 72, 10, 5, 600, 60, 250, 10, 1, 5000, 5000, 10000, 12, 10, 72 };
 
 	SetClientFeature( CF_BIT_CHAT, true );
 	SetClientFeature( CF_BIT_UOR, true );
@@ -5166,49 +5191,94 @@ auto CServerData::TownGuardPayment( UI32 value ) -> void
 	guardPayment = value;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownTaxInterval()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the interval in minutes between faction town tax cycles
+//o------------------------------------------------------------------------------------------------o
 auto CServerData::FactionTownTaxInterval() const -> UI32
 {
 	return factionTownTaxInterval;
 }
 auto CServerData::FactionTownTaxInterval( UI32 value ) -> void
 {
-	factionTownTaxInterval = value;
+	factionTownTaxInterval = value > 0 ? value : 1;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownDefaultTaxRate()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default percentage offset for faction town income
+//o------------------------------------------------------------------------------------------------o
 auto CServerData::FactionTownDefaultTaxRate() const -> SI32
 {
 	return factionTownDefaultTaxRate;
 }
 auto CServerData::FactionTownDefaultTaxRate( SI32 value ) -> void
 {
-	factionTownDefaultTaxRate = value;
+	factionTownDefaultTaxRate = std::max( -30, std::min( 300, value ));
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownTreasuryGrant()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default silver grant for faction town treasuries
+//o------------------------------------------------------------------------------------------------o
 auto CServerData::FactionTownTreasuryGrant() const -> SI32
 {
 	return factionTownTreasuryGrant;
 }
 auto CServerData::FactionTownTreasuryGrant( SI32 value ) -> void
 {
-	factionTownTreasuryGrant = value;
+	factionTownTreasuryGrant = std::max( 0, value );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownGuardLimit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default managed faction guard limit per town
+//o------------------------------------------------------------------------------------------------o
 auto CServerData::FactionTownGuardLimit() const -> SI16
 {
 	return factionTownGuardLimit;
 }
 auto CServerData::FactionTownGuardLimit( SI16 value ) -> void
 {
-	factionTownGuardLimit = value;
+	factionTownGuardLimit = std::max<SI16>( 0, value );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionTownVendorLimit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default managed faction vendor limit per town
+//o------------------------------------------------------------------------------------------------o
 auto CServerData::FactionTownVendorLimit() const -> SI16
 {
 	return factionTownVendorLimit;
 }
 auto CServerData::FactionTownVendorLimit( SI16 value ) -> void
 {
-	factionTownVendorLimit = value;
+	factionTownVendorLimit = std::max<SI16>( 0, value );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FactionSetting()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets a shard-tunable faction gameplay setting by its internal index
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FactionSetting( UI16 settingIndex, SI32 value ) -> void
+{
+	if( settingIndex < factionSettings.size() )
+	{
+		static const std::array<SI32, 24> minimums = { 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1 };
+		static const std::array<SI32, 24> maximums = { 720, 2000000000, 10080, 720, 1, 1000, 100000, 100000, 720, 720, 720, 100, 10, 10080, 10080, 1000000, 10000, 10000, 1000000, 1000000, 100000000, 720, 30, 720 };
+		factionSettings[settingIndex] = std::max( minimums[settingIndex], std::min( maximums[settingIndex], value ));
+	}
+}
+
+auto CServerData::FactionSetting( UI16 settingIndex ) const -> SI32
+{
+	return settingIndex < factionSettings.size() ? factionSettings[settingIndex] : 0;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6278,11 +6348,17 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
 		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
 		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[factions]" << '\n' << "{" << '\n';
 		ofsOutput << "FACTIONTOWNTAXINTERVAL=" << FactionTownTaxInterval() << '\n';
 		ofsOutput << "FACTIONTOWNDEFAULTTAXRATE=" << FactionTownDefaultTaxRate() << '\n';
 		ofsOutput << "FACTIONTOWNTREASURYGRANT=" << FactionTownTreasuryGrant() << '\n';
 		ofsOutput << "FACTIONTOWNGUARDLIMIT=" << FactionTownGuardLimit() << '\n';
 		ofsOutput << "FACTIONTOWNVENDORLIMIT=" << FactionTownVendorLimit() << '\n';
+		static const std::array<const char *, 24> factionSettingNames = { "FACTIONLEAVEDELAYHOURS", "FACTIONMAXSILVER", "FACTIONKILLCOOLDOWNMINUTES", "FACTIONKILLPOINTDECAYHOURS", "FACTIONBLOCKSAMEACCOUNTREWARDS", "FACTIONNPCKILLPOINTS", "FACTIONNPCSILVERMIN", "FACTIONNPCSILVERMAX", "FACTIONELECTIONPENDINGHOURS", "FACTIONELECTIONCAMPAIGNHOURS", "FACTIONELECTIONVOTINGHOURS", "FACTIONELECTIONMAXCANDIDATES", "FACTIONELECTIONCANDIDATERANK", "FACTIONSIGILCORRUPTIONMINUTES", "FACTIONSIGILRETURNMINUTES", "FACTIONSIGILSILVERREWARD", "FACTIONSIGILKILLPOINTREWARD", "FACTIONSIGILSCOREREWARD", "FACTIONGUARDCOST", "FACTIONVENDORCOST", "FACTIONTOWNBASEINCOME", "FACTIONTOWNTAXCHANGEHOURS", "FACTIONNPCSCANRANGE", "FACTIONSIGILPURIFICATIONHOURS" };
+		for( UI16 factionSettingIndex = 0; factionSettingIndex < factionSettingNames.size(); ++factionSettingIndex )
+			ofsOutput << factionSettingNames[factionSettingIndex] << "=" << FactionSetting( factionSettingIndex ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
@@ -7878,6 +7954,11 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 428: // FACTIONTOWNVENDORLIMIT
 			FactionTownVendorLimit( static_cast<SI16>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 429: case 430: case 431: case 432: case 433: case 434: case 435: case 436:
+		case 437: case 438: case 439: case 440: case 441: case 442: case 443: case 444:
+		case 445: case 446: case 447: case 448: case 449: case 450: case 451: case 452:
+			FactionSetting( static_cast<UI16>( titer->second - 429 ), static_cast<SI32>( std::stoi( value, nullptr, 0 )));
 			break;
 		default:
 			rValue = false;

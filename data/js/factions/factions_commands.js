@@ -1,36 +1,39 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_commands.js
 // UOX3 Faction System - GM testing commands
 // COMMAND_SCRIPTS ID: 1072
 // =============================================================================
 
-var CommandMaxFactionSilver = 100000;
-var CommandFactionCombatScriptId = 8501;
-var CommandFactionSigilScriptId = 8502;
-var CommandFactionElectionScriptId = 8508;
-var CommandFactionTownScriptId = 8509;
-var CommandFactionStrongholdScriptId = 8511;
-var CommandFactionNpcScriptId = 8512;
-var CommandFactionPlayerDataScriptId = 8513;
-var CommandFactionSetupDataScriptId = 8514;
-var CommandFactionGuardCost = 250;
-var CommandFactionVendorCost = 500;
-var CommandFactionAdminHealthButton = 9001;
-var CommandFactionAdminSetupButton = 9002;
-var CommandFactionAdminDedupeButton = 9003;
-var CommandFactionAdminSyncTownsButton = 9004;
-var CommandFactionAdminTownStatusButton = 9005;
-var CommandFactionAdminTreasuryButton = 9006;
-var CommandFactionAdminTaxStartButton = 9007;
-var CommandFactionAdminTaxStopButton = 9008;
-var CommandFactionAdminTaxStatusButton = 9009;
-var CommandFactionAdminSigilsButton = 9010;
-var CommandFactionAdminStrongholdsButton = 9011;
-var CommandFactionAdminRemoveConfirmButton = 9012;
-var CommandFactionAdminRemoveNowButton = 9013;
-var CommandFactionAdminBackButton = 9014;
+const commandMaxFactionSilver = parseInt( GetServerSetting( "FACTIONMAXSILVER" ), 10 );
+const commandFactionCombatScriptId = 8501;
+const commandFactionSigilScriptId = 8502;
+const commandFactionElectionScriptId = 8508;
+const commandFactionTownScriptId = 8509;
+const commandFactionStrongholdScriptId = 8511;
+const commandFactionNpcScriptId = 8512;
+const commandFactionPlayerDataScriptId = 8513;
+const commandFactionSetupDataScriptId = 8514;
+const commandFactionGuardCost = parseInt( GetServerSetting( "FACTIONGUARDCOST" ), 10 );
+const commandFactionVendorCost = parseInt( GetServerSetting( "FACTIONVENDORCOST" ), 10 );
+const commandFactionAdminHealthButton = 9001;
+const commandFactionAdminSetupButton = 9002;
+const commandFactionAdminDedupeButton = 9003;
+const commandFactionAdminSyncTownsButton = 9004;
+const commandFactionAdminTownStatusButton = 9005;
+const commandFactionAdminTreasuryButton = 9006;
+const commandFactionAdminTaxStartButton = 9007;
+const commandFactionAdminTaxStopButton = 9008;
+const commandFactionAdminTaxStatusButton = 9009;
+const commandFactionAdminSigilsButton = 9010;
+const commandFactionAdminStrongholdsButton = 9011;
+const commandFactionAdminRemoveConfirmButton = 9012;
+const commandFactionAdminRemoveNowButton = 9013;
+const commandFactionAdminBackButton = 9014;
 
-var CommandFactionSetupItems = [
+const commandFactionSetupItems = [
 	[ "JOIN_STONE_TB", -4, -2 ],
 	[ "FACTION_STONE_TB", -4, -1 ],
 	[ "JOIN_STONE_COM", -1, -2 ],
@@ -49,7 +52,7 @@ var CommandFactionSetupItems = [
 	[ "FACTION_SIGIL_MAGINCIA", 1, 4 ]
 ];
 
-var CommandFactionRegionChecks = [
+const commandFactionRegionChecks = [
 	[ "Britain", 3 ],
 	[ "Trinsic", 9 ],
 	[ "Moonglow", 13 ],
@@ -60,56 +63,64 @@ var CommandFactionRegionChecks = [
 	[ "Magincia", 15 ]
 ];
 
-var CommandFactionVendorTypes = [
+const commandFactionVendorTypes = [
 	"REAGENT",
 	"BOARD",
 	"BOTTLE",
+	"ORE",
 	"EQUIPMENT",
 	"HORSE"
 ];
 
-var CommandFactionRoles = [
+function CommandFactionVendorPurchaseCost( vendorType )
+{
+	if( vendorType === "BOARD" || vendorType === "ORE" )
+		return 3000;
+	return commandFactionVendorCost;
+}
+
+const commandFactionRoles = [
 	"sheriff",
 	"finance",
 	"commander"
 ];
 
-var CommandFindPlayerName = "";
-var CommandFindPlayerResult = null;
-var CommandFindNpcName = "";
-var CommandFindNpcResult = null;
-var CommandRoleListSocket = null;
-var CommandClearRoleName = "";
-var CommandClearRoleFaction = "";
-var CommandClearRoleExcept = 0;
-var CommandClearRoleTown = "";
-var CommandBroadcastFaction = "";
-var CommandBroadcastMessage = "";
-var CommandBroadcastCount = 0;
-var CommandHealthScanActive = false;
-var CommandHealthControllerCount = 0;
-var CommandHealthFactionStoneCount = 0;
-var CommandHealthJoinStoneCount = 0;
-var CommandHealthSigilCount = 0;
-var CommandHealthSigilHomeCount = 0;
-var CommandHealthTownstoneCount = 0;
-var CommandHealthFactionNpcCounts = {};
-var CommandSetupScanActive = false;
-var CommandSetupFound = {};
-var CommandSetupRanks = {};
-var CommandDedupeActive = false;
-var CommandDedupeKept = {};
-var CommandDedupeRanks = {};
-var CommandDedupeRemovedCount = 0;
-var CommandRemoveFactionsMode = "";
-var CommandRemoveFactionsItems = 0;
-var CommandRemoveFactionsNpcs = 0;
-var CommandRemoveFactionsPlayers = 0;
-var CommandRemoveFactionsRegions = 0;
-var CommandLeaderboardFaction = "";
-var CommandLeaderboardEntries = [];
-var CommandDataMigrateActive = false;
-var CommandDataMigrateCount = 0;
+let commandFindPlayerName = "";
+let commandFindPlayerResult = null;
+let commandFindNpcName = "";
+let commandFindNpcResult = null;
+let commandRoleListSocket = null;
+let commandClearRoleName = "";
+let commandClearRoleFaction = "";
+let commandClearRoleExcept = 0;
+let commandClearRoleTown = "";
+let commandBroadcastFaction = "";
+let commandBroadcastMessage = "";
+let commandBroadcastCount = 0;
+let commandHealthScanActive = false;
+let commandHealthControllerCount = 0;
+let commandHealthFactionStoneCount = 0;
+let commandHealthJoinStoneCount = 0;
+let commandHealthSigilCount = 0;
+let commandHealthSigilHomeCount = 0;
+let commandHealthTownstoneCount = 0;
+let commandHealthFactionNpcCounts = {};
+let commandSetupScanActive = false;
+let commandSetupFound = {};
+let commandSetupRanks = {};
+let commandDedupeActive = false;
+let commandDedupeKept = {};
+let commandDedupeRanks = {};
+let commandDedupeRemovedCount = 0;
+let commandRemoveFactionsMode = "";
+let commandRemoveFactionsItems = 0;
+let commandRemoveFactionsNpcs = 0;
+let commandRemoveFactionsPlayers = 0;
+let commandRemoveFactionsRegions = 0;
+let commandLeaderboardFaction = "";
+let commandLeaderboardEntries = [];
+let commandDataMigrateActive = false;
+let commandDataMigrateCount = 0;
 
 function CommandRegistration()
 {
@@ -182,9 +193,9 @@ function CommandIsFactionValid( factionKey )
 
 function CommandIsVendorTypeValid( vendorType )
 {
-	for( var typeIndex = 0; typeIndex < CommandFactionVendorTypes.length; typeIndex++ )
+	for( let typeIndex = 0; typeIndex < commandFactionVendorTypes.length; typeIndex++ )
 	{
-		if( CommandFactionVendorTypes[typeIndex] === vendorType )
+		if( commandFactionVendorTypes[typeIndex] === vendorType )
 			return true;
 	}
 
@@ -193,9 +204,9 @@ function CommandIsVendorTypeValid( vendorType )
 
 function CommandIsRoleValid( roleName )
 {
-	for( var roleIndex = 0; roleIndex < CommandFactionRoles.length; roleIndex++ )
+	for( let roleIndex = 0; roleIndex < commandFactionRoles.length; roleIndex++ )
 	{
-		if( CommandFactionRoles[roleIndex] === roleName )
+		if( commandFactionRoles[roleIndex] === roleName )
 			return true;
 	}
 
@@ -232,7 +243,7 @@ function CommandFactionUsageName( factionKey )
 
 function CommandRankName( rank )
 {
-	var rankNames = [
+	const rankNames = [
 		"Soldier",
 		"Scout",
 		"Corporal",
@@ -254,7 +265,7 @@ function CommandRankName( rank )
 
 function CommandRankPoints( rank )
 {
-	var rankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
+	const rankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
 
 	rank = parseInt( rank, 10 );
 	if( isNaN( rank ) || rank < 0 || rank >= rankPoints.length )
@@ -275,8 +286,8 @@ function CommandClampSilver( amount )
 {
 	if( amount < 0 )
 		amount = 0;
-	if( amount > CommandMaxFactionSilver )
-		amount = CommandMaxFactionSilver;
+	if( amount > commandMaxFactionSilver )
+		amount = commandMaxFactionSilver;
 
 	return amount;
 }
@@ -295,9 +306,9 @@ function CommandUpdateFactionRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	var killPoints = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) ) );
-	var rank = 0;
-	for( var rankIndex = 9; rankIndex >= 0; rankIndex-- )
+	let killPoints = CommandClampNonNegative( TriggerEvent( commandFactionPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) ) );
+	let rank = 0;
+	for( let rankIndex = 9; rankIndex >= 0; rankIndex-- )
 	{
 		if( killPoints >= CommandRankPoints( rankIndex ) )
 		{
@@ -306,39 +317,39 @@ function CommandUpdateFactionRank( pChar )
 		}
 	}
 
-	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", pChar, "rank", rank );
+	TriggerEvent( commandFactionPlayerDataScriptId, "SetFactionValue", pChar, "rank", rank );
 	return rank;
 }
 
 function CommandParsePlayerAmountArgs( pSock, cmdString, usageText )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 3 )
 	{
 		pSock.SysMessage( usageText );
 		return null;
 	}
 
-	var action = parts[0].toLowerCase();
+	let action = parts[0].toLowerCase();
 	if( action !== "add" && action !== "set" )
 	{
 		pSock.SysMessage( usageText );
 		return null;
 	}
 
-	var amount = parseInt( parts[parts.length - 1], 10 );
+	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
 		pSock.SysMessage( "Amount must be a number." );
 		return null;
 	}
 
-	var playerParts = [];
-	for( var partIndex = 1; partIndex < parts.length - 1; partIndex++ )
+	const playerParts = [];
+	for( let partIndex = 1; partIndex < parts.length - 1; partIndex++ )
 		playerParts.push( parts[partIndex] );
 
-	var targetChar = CommandFindPlayer( playerParts.join( " " ) );
+	let targetChar = CommandFindPlayer( playerParts.join( " " ) );
 	if( !ValidateObject( targetChar ) )
 	{
 		pSock.SysMessage( "Unable to find that player." );
@@ -354,53 +365,53 @@ function CommandParsePlayerAmountArgs( pSock, cmdString, usageText )
 
 function CommandFindPlayer( playerText )
 {
-	CommandFindPlayerResult = null;
-	CommandFindPlayerName = String( playerText ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
-	if( CommandFindPlayerName === "" )
+	commandFindPlayerResult = null;
+	commandFindPlayerName = String( playerText ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
+	if( commandFindPlayerName === "" )
 		return null;
 
-	var serialNum = parseInt( CommandFindPlayerName, 10 );
+	const serialNum = parseInt( commandFindPlayerName, 10 );
 	if( !isNaN( serialNum ) )
 	{
-		var serialChar = CalcCharFromSer( serialNum );
+		const serialChar = CalcCharFromSer( serialNum );
 		if( ValidateObject( serialChar ) && serialChar.isChar && !serialChar.npc )
 		{
-			CommandFindPlayerResult = null;
-			CommandFindPlayerName = "";
+			commandFindPlayerResult = null;
+			commandFindPlayerName = "";
 			return serialChar;
 		}
 	}
 
 	IterateOver( "CHARACTER" );
-	var foundPlayer = CommandFindPlayerResult;
-	CommandFindPlayerResult = null;
-	CommandFindPlayerName = "";
+	const foundPlayer = commandFindPlayerResult;
+	commandFindPlayerResult = null;
+	commandFindPlayerName = "";
 	return foundPlayer;
 }
 
 function CommandFindNpc( npcText )
 {
-	CommandFindNpcResult = null;
-	CommandFindNpcName = String( npcText ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
-	if( CommandFindNpcName === "" )
+	commandFindNpcResult = null;
+	commandFindNpcName = String( npcText ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
+	if( commandFindNpcName === "" )
 		return null;
 
-	var serialNum = parseInt( CommandFindNpcName, 10 );
+	const serialNum = parseInt( commandFindNpcName, 10 );
 	if( !isNaN( serialNum ) )
 	{
-		var serialChar = CalcCharFromSer( serialNum );
+		const serialChar = CalcCharFromSer( serialNum );
 		if( ValidateObject( serialChar ) && serialChar.isChar && serialChar.npc )
 		{
-			CommandFindNpcResult = null;
-			CommandFindNpcName = "";
+			commandFindNpcResult = null;
+			commandFindNpcName = "";
 			return serialChar;
 		}
 	}
 
 	IterateOver( "CHARACTER" );
-	var foundNpc = CommandFindNpcResult;
-	CommandFindNpcResult = null;
-	CommandFindNpcName = "";
+	const foundNpc = commandFindNpcResult;
+	commandFindNpcResult = null;
+	commandFindNpcName = "";
 	return foundNpc;
 }
 
@@ -409,18 +420,18 @@ function CommandSetFactionRole( pChar, roleName, factionKey, townName )
 	if( !ValidateObject( pChar ) || !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 		return false;
 
-	townName = roleName === "commander" ? "" : TriggerEvent( CommandFactionTownScriptId, "TownNormalizeName", townName );
-	if( roleName !== "commander" && TriggerEvent( CommandFactionTownScriptId, "TownGetDefault", townName ) == null )
+	townName = roleName === "commander" ? "" : TriggerEvent( commandFactionTownScriptId, "TownNormalizeName", townName );
+	if( roleName !== "commander" && TriggerEvent( commandFactionTownScriptId, "TownGetDefault", townName ) == null )
 		return false;
 
 	CommandClearFactionRoleHolders( roleName, factionKey, pChar.serial, townName );
-	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let factionData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.role = roleName;
 	factionData.roleFaction = factionKey;
 	factionData.roleTown = townName;
 	factionData.roleSetAt = GetCurrentClock();
 	factionData.commander = ( roleName === "commander" );
-	TriggerEvent( CommandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( commandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 
 	return true;
 }
@@ -430,13 +441,13 @@ function CommandClearFactionRole( pChar )
 	if( !ValidateObject( pChar ) )
 		return false;
 
-	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let factionData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.role = "";
 	factionData.roleFaction = "";
 	factionData.roleTown = "";
 	factionData.roleSetAt = 0;
 	factionData.commander = false;
-	TriggerEvent( CommandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( commandFactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	return true;
 }
 
@@ -445,15 +456,15 @@ function CommandClearFactionRoleHolders( roleName, factionKey, exceptSerial, tow
 	if( !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 		return 0;
 
-	CommandClearRoleName = roleName;
-	CommandClearRoleFaction = factionKey;
-	CommandClearRoleExcept = exceptSerial;
-	CommandClearRoleTown = String( townName || "" );
-	var clearCount = IterateOver( "CHARACTER" );
-	CommandClearRoleName = "";
-	CommandClearRoleFaction = "";
-	CommandClearRoleExcept = 0;
-	CommandClearRoleTown = "";
+	commandClearRoleName = roleName;
+	commandClearRoleFaction = factionKey;
+	commandClearRoleExcept = exceptSerial;
+	commandClearRoleTown = String( townName || "" );
+	const clearCount = IterateOver( "CHARACTER" );
+	commandClearRoleName = "";
+	commandClearRoleFaction = "";
+	commandClearRoleExcept = 0;
+	commandClearRoleTown = "";
 	return clearCount;
 }
 
@@ -462,7 +473,7 @@ function CommandHasFactionRole( pChar, roleName, factionKey )
 	if( !ValidateObject( pChar ) || !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 		return false;
 
-	var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let factionData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	if( factionData.faction !== factionKey )
 		return false;
 	if( roleName === "commander" && factionData.commander )
@@ -483,14 +494,14 @@ function CommandCanAppointFactionRole( pUser, factionKey )
 
 function onIterate( toCheck )
 {
-	if( CommandFindPlayerName !== "" )
+	if( commandFindPlayerName !== "" )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc )
 		{
-			var checkName = String( toCheck.name ).toLowerCase();
-			if( checkName === CommandFindPlayerName )
+			let checkName = String( toCheck.name ).toLowerCase();
+			if( checkName === commandFindPlayerName )
 			{
-				CommandFindPlayerResult = toCheck;
+				commandFindPlayerResult = toCheck;
 				return true;
 			}
 		}
@@ -498,14 +509,14 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandFindNpcName !== "" )
+	if( commandFindNpcName !== "" )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isChar && toCheck.npc )
 		{
-			var npcName = String( toCheck.name ).toLowerCase();
-			if( npcName === CommandFindNpcName )
+			let npcName = String( toCheck.name ).toLowerCase();
+			if( npcName === commandFindNpcName )
 			{
-				CommandFindNpcResult = toCheck;
+				commandFindNpcResult = toCheck;
 				return true;
 			}
 		}
@@ -513,17 +524,17 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandRoleListSocket != null )
+	if( commandRoleListSocket != null )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc )
 		{
-			var roleData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
-			var roleName = roleData.role;
-			var roleFaction = roleData.roleFaction;
+			const roleData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
+			let roleName = roleData.role;
+			let roleFaction = roleData.roleFaction;
 			if( CommandIsRoleValid( roleName ) && CommandIsFactionValid( roleFaction ) )
 			{
-				var townText = roleData.roleTown !== "" ? " of " + roleData.roleTown : "";
-				CommandRoleListSocket.SysMessage( toCheck.name + ": " + CommandFactionUsageName( roleFaction ) + " " + CommandRoleDisplayName( roleName ) + townText );
+				const townText = roleData.roleTown !== "" ? " of " + roleData.roleTown : "";
+				commandRoleListSocket.SysMessage( toCheck.name + ": " + CommandFactionUsageName( roleFaction ) + " " + CommandRoleDisplayName( roleName ) + townText );
 				return true;
 			}
 		}
@@ -531,13 +542,13 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandClearRoleName !== "" )
+	if( commandClearRoleName !== "" )
 	{
-		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.serial != CommandClearRoleExcept )
+		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.serial != commandClearRoleExcept )
 		{
-			var clearRoleData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
-			if( clearRoleData.role === CommandClearRoleName && clearRoleData.roleFaction === CommandClearRoleFaction &&
-				( CommandClearRoleName === "commander" || clearRoleData.roleTown === CommandClearRoleTown ) )
+			const clearRoleData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
+			if( clearRoleData.role === commandClearRoleName && clearRoleData.roleFaction === commandClearRoleFaction &&
+				( commandClearRoleName === "commander" || clearRoleData.roleTown === commandClearRoleTown ) )
 			{
 				CommandClearFactionRole( toCheck );
 				return true;
@@ -547,29 +558,29 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandBroadcastFaction !== "" )
+	if( commandBroadcastFaction !== "" )
 	{
-		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.GetTag( "faction" ) === CommandBroadcastFaction )
+		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.GetTag( "faction" ) === commandBroadcastFaction )
 		{
 			if( toCheck.socket != null )
 			{
-				toCheck.SysMessage( CommandBroadcastMessage );
-				CommandBroadcastCount++;
+				toCheck.SysMessage( commandBroadcastMessage );
+				commandBroadcastCount++;
 			}
 		}
 
 		return false;
 	}
 
-	if( CommandLeaderboardFaction !== "" )
+	if( commandLeaderboardFaction !== "" )
 	{
-		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.GetTag( "faction" ) === CommandLeaderboardFaction )
+		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc && toCheck.GetTag( "faction" ) === commandLeaderboardFaction )
 		{
-			var factionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
-			var killPoints = parseInt( factionData.killPoints, 10 );
-			var silver = parseInt( factionData.silver, 10 );
-			var rank = parseInt( factionData.rank, 10 );
-			var captures = parseInt( factionData.captures, 10 );
+			let factionData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
+			let killPoints = parseInt( factionData.killPoints, 10 );
+			let silver = parseInt( factionData.silver, 10 );
+			let rank = parseInt( factionData.rank, 10 );
+			let captures = parseInt( factionData.captures, 10 );
 			if( isNaN( killPoints ) )
 				killPoints = 0;
 			if( isNaN( silver ) )
@@ -579,7 +590,7 @@ function onIterate( toCheck )
 			if( isNaN( captures ) )
 				captures = 0;
 
-			CommandLeaderboardEntries.push({
+			commandLeaderboardEntries.push({
 				name: String( toCheck.name ),
 				killPoints: killPoints,
 				silver: silver,
@@ -592,13 +603,13 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandDataMigrateActive )
+	if( commandDataMigrateActive )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isChar && !toCheck.npc )
 		{
-			if( TriggerEvent( CommandFactionPlayerDataScriptId, "MigrateFactionTagsToFile", toCheck ) )
+			if( TriggerEvent( commandFactionPlayerDataScriptId, "MigrateFactionTagsToFile", toCheck ) )
 			{
-				CommandDataMigrateCount++;
+				commandDataMigrateCount++;
 				return true;
 			}
 		}
@@ -606,49 +617,49 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandHealthScanActive )
+	if( commandHealthScanActive )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isItem )
 		{
 			if( toCheck.GetTag( "faction_controller" ) == 1 )
-				CommandHealthControllerCount++;
+				commandHealthControllerCount++;
 			if( toCheck.GetTag( "faction_stone" ) == 1 )
-				CommandHealthFactionStoneCount++;
+				commandHealthFactionStoneCount++;
 			if( toCheck.GetTag( "join_stone" ) == 1 )
-				CommandHealthJoinStoneCount++;
+				commandHealthJoinStoneCount++;
 			if( toCheck.GetTag( "sigil" ) == 1 )
 			{
-				CommandHealthSigilCount++;
+				commandHealthSigilCount++;
 				if( toCheck.GetTag( "sigil_home_set" ) == 1 )
-					CommandHealthSigilHomeCount++;
+					commandHealthSigilHomeCount++;
 			}
 			if( toCheck.GetTag( "faction_townstone" ) == 1 )
-				CommandHealthTownstoneCount++;
+				commandHealthTownstoneCount++;
 		}
 		else if( ValidateObject( toCheck ) && toCheck.isChar && toCheck.npc && toCheck.GetTag( "faction_npc" ) == 1 )
 		{
-			var npcFaction = toCheck.GetTag( "npc_faction" );
+			let npcFaction = toCheck.GetTag( "npc_faction" );
 			if( !CommandIsFactionValid( npcFaction ) )
 				npcFaction = toCheck.GetTag( "faction" );
 			if( CommandIsFactionValid( npcFaction ) )
-				CommandHealthFactionNpcCounts[npcFaction]++;
+				commandHealthFactionNpcCounts[npcFaction]++;
 		}
 
 		return false;
 	}
 
-	if( CommandSetupScanActive )
+	if( commandSetupScanActive )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isItem )
 		{
-			var setupKey = CommandDedupeItemKey( toCheck );
+			let setupKey = CommandDedupeItemKey( toCheck );
 			if( setupKey !== "" )
 			{
-				var setupRank = CommandDedupeItemRank( toCheck );
-				if( typeof CommandSetupFound[setupKey] == "undefined" || !ValidateObject( CommandSetupFound[setupKey] ) || setupRank > CommandSetupRanks[setupKey] )
+				const setupRank = CommandDedupeItemRank( toCheck );
+				if( typeof commandSetupFound[setupKey] == "undefined" || !ValidateObject( commandSetupFound[setupKey] ) || setupRank > commandSetupRanks[setupKey] )
 				{
-					CommandSetupFound[setupKey] = toCheck;
-					CommandSetupRanks[setupKey] = setupRank;
+					commandSetupFound[setupKey] = toCheck;
+					commandSetupRanks[setupKey] = setupRank;
 				}
 			}
 		}
@@ -656,33 +667,33 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandDedupeActive )
+	if( commandDedupeActive )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isItem )
 		{
-			var dedupeKey = CommandDedupeItemKey( toCheck );
+			const dedupeKey = CommandDedupeItemKey( toCheck );
 			if( dedupeKey !== "" )
 			{
-				var dedupeRank = CommandDedupeItemRank( toCheck );
-				if( typeof CommandDedupeKept[dedupeKey] != "undefined" && ValidateObject( CommandDedupeKept[dedupeKey] ) )
+				const dedupeRank = CommandDedupeItemRank( toCheck );
+				if( typeof commandDedupeKept[dedupeKey] != "undefined" && ValidateObject( commandDedupeKept[dedupeKey] ) )
 				{
-					if( dedupeRank > CommandDedupeRanks[dedupeKey] )
+					if( dedupeRank > commandDedupeRanks[dedupeKey] )
 					{
-						CommandDedupeKept[dedupeKey].Delete();
-						CommandDedupeKept[dedupeKey] = toCheck;
-						CommandDedupeRanks[dedupeKey] = dedupeRank;
-						CommandDedupeRemovedCount++;
+						commandDedupeKept[dedupeKey].Delete();
+						commandDedupeKept[dedupeKey] = toCheck;
+						commandDedupeRanks[dedupeKey] = dedupeRank;
+						commandDedupeRemovedCount++;
 					}
 					else
 					{
 						toCheck.Delete();
-						CommandDedupeRemovedCount++;
+						commandDedupeRemovedCount++;
 					}
 				}
 				else
 				{
-					CommandDedupeKept[dedupeKey] = toCheck;
-					CommandDedupeRanks[dedupeKey] = dedupeRank;
+					commandDedupeKept[dedupeKey] = toCheck;
+					commandDedupeRanks[dedupeKey] = dedupeRank;
 				}
 			}
 		}
@@ -690,7 +701,7 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandRemoveFactionsMode === "items" )
+	if( commandRemoveFactionsMode === "items" )
 	{
 		if( CommandRemoveFactionItem( toCheck ) )
 			return true;
@@ -698,7 +709,7 @@ function onIterate( toCheck )
 		return false;
 	}
 
-	if( CommandRemoveFactionsMode === "chars" )
+	if( commandRemoveFactionsMode === "chars" )
 	{
 		if( CommandRemoveFactionChar( toCheck ) )
 			return true;
@@ -711,17 +722,17 @@ function onIterate( toCheck )
 
 function command_FACTIONCONTROLLER( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var controller = CreateDFNItem( pSock, pUser, "FACTION_CONTROLLER", 1, "ITEM", true );
+	let controller = CreateDFNItem( pSock, pUser, "FACTION_CONTROLLER", 1, "ITEM", true );
 	if( ValidateObject( controller ) )
 	{
 		pSock.SysMessage( "Faction controller created." );
-		TriggerEvent( CommandFactionElectionScriptId, "RegisterController", controller );
-		TriggerEvent( CommandFactionTownScriptId, "RegisterController", controller );
-		TriggerEvent( CommandFactionTownScriptId, "SyncTownControl" );
+		TriggerEvent( commandFactionElectionScriptId, "RegisterController", controller );
+		TriggerEvent( commandFactionTownScriptId, "RegisterController", controller );
+		TriggerEvent( commandFactionTownScriptId, "SyncTownControl" );
 	}
 	else
 	{
@@ -731,7 +742,7 @@ function command_FACTIONCONTROLLER( pSock, cmdString )
 
 function CommandPlaceFactionItem( pSock, pUser, sectionId, xOffset, yOffset )
 {
-	var newItem = CreateDFNItem( pSock, pUser, sectionId, 1, "ITEM", false );
+	const newItem = CreateDFNItem( pSock, pUser, sectionId, 1, "ITEM", false );
 	if( !ValidateObject( newItem ) )
 		return null;
 
@@ -741,12 +752,12 @@ function CommandPlaceFactionItem( pSock, pUser, sectionId, xOffset, yOffset )
 
 function CommandPlaceFactionItemAt( pSock, pUser, sectionId, location )
 {
-	var newItem = CreateDFNItem( pSock, pUser, sectionId, 1, "ITEM", false );
+	const newItem = CreateDFNItem( pSock, pUser, sectionId, 1, "ITEM", false );
 	if( !ValidateObject( newItem ) )
 		return null;
 
-	var worldNum = typeof location.world == "undefined" ? 0 : parseInt( location.world, 10 );
-	var instanceId = typeof location.instance == "undefined" ? 0 : parseInt( location.instance, 10 );
+	let worldNum = typeof location.world == "undefined" ? 0 : parseInt( location.world, 10 );
+	let instanceId = typeof location.instance == "undefined" ? 0 : parseInt( location.instance, 10 );
 	if( isNaN( worldNum ) )
 		worldNum = 0;
 	if( isNaN( instanceId ) )
@@ -758,15 +769,15 @@ function CommandPlaceFactionItemAt( pSock, pUser, sectionId, location )
 
 function CommandSetupOptions( cmdString )
 {
-	var setupText = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
-	var parts = setupText.length > 0 ? setupText.split( /\s+/ ) : [];
-	var options = {
+	const setupText = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toLowerCase();
+	let parts = setupText.length > 0 ? setupText.split( /\s+/ ) : [];
+	const options = {
 		force: false,
 		local: false,
 		relocate: false
 	};
 
-	for( var partIndex = 0; partIndex < parts.length; partIndex++ )
+	for( let partIndex = 0; partIndex < parts.length; partIndex++ )
 	{
 		if( parts[partIndex] === "force" )
 			options.force = true;
@@ -781,7 +792,7 @@ function CommandSetupOptions( cmdString )
 
 function CommandSetupCreateController( pSock, pUser, forceSetup, stats )
 {
-	var controller = null;
+	let controller = null;
 	if( !forceSetup )
 		controller = CommandSetupFoundObject( "controller" );
 
@@ -805,15 +816,15 @@ function CommandSetupCreateController( pSock, pUser, forceSetup, stats )
 		pSock.SysMessage( "Existing faction controller found; skipping controller creation." );
 	}
 
-	TriggerEvent( CommandFactionElectionScriptId, "RegisterController", controller );
-	TriggerEvent( CommandFactionTownScriptId, "RegisterController", controller );
+	TriggerEvent( commandFactionElectionScriptId, "RegisterController", controller );
+	TriggerEvent( commandFactionTownScriptId, "RegisterController", controller );
 	return controller;
 }
 
 function CommandMoveFactionSetupItem( setupItem, location )
 {
-	var worldNum = typeof location.world == "undefined" ? 0 : parseInt( location.world, 10 );
-	var instanceId = typeof location.instance == "undefined" ? 0 : parseInt( location.instance, 10 );
+	let worldNum = typeof location.world == "undefined" ? 0 : parseInt( location.world, 10 );
+	let instanceId = typeof location.instance == "undefined" ? 0 : parseInt( location.instance, 10 );
 	if( isNaN( worldNum ) )
 		worldNum = 0;
 	if( isNaN( instanceId ) )
@@ -821,7 +832,7 @@ function CommandMoveFactionSetupItem( setupItem, location )
 
 	setupItem.SetLocation( parseInt( location.x, 10 ), parseInt( location.y, 10 ), parseInt( location.z, 10 ), worldNum, instanceId );
 	if( setupItem.GetTag( "sigil" ) == 1 )
-		TriggerEvent( CommandFactionSigilScriptId, "SigilSetHome", setupItem );
+		TriggerEvent( commandFactionSigilScriptId, "SigilSetHome", setupItem );
 }
 
 function CommandTagFactionTownstone( townstone, townName, townData )
@@ -847,8 +858,8 @@ function CommandSetupPlaceSection( pSock, pUser, sectionId, location, forceSetup
 		return null;
 	}
 
-	var setupKey = CommandSetupSectionKey( sectionId );
-	var existingItem = CommandSetupFoundObject( setupKey );
+	let setupKey = CommandSetupSectionKey( sectionId );
+	const existingItem = CommandSetupFoundObject( setupKey );
 	if( !forceSetup && ValidateObject( existingItem ) )
 	{
 		if( relocateSetup )
@@ -861,11 +872,11 @@ function CommandSetupPlaceSection( pSock, pUser, sectionId, location, forceSetup
 		return existingItem;
 	}
 
-	var newItem = CommandPlaceFactionItemAt( pSock, pUser, sectionId, location );
+	const newItem = CommandPlaceFactionItemAt( pSock, pUser, sectionId, location );
 	if( ValidateObject( newItem ) )
 	{
 		if( newItem.GetTag( "sigil" ) == 1 )
-			TriggerEvent( CommandFactionSigilScriptId, "SigilSetHome", newItem );
+			TriggerEvent( commandFactionSigilScriptId, "SigilSetHome", newItem );
 		stats.created++;
 		return newItem;
 	}
@@ -880,8 +891,8 @@ function CommandSetupPlaceTownstone( pSock, pUser, townName, townData, forceSetu
 	if( townData.townStone == null || typeof townData.townStone != "object" )
 		return null;
 
-	var setupKey = "townstone_" + townName;
-	var existingItem = CommandSetupFoundObject( setupKey );
+	let setupKey = "townstone_" + townName;
+	const existingItem = CommandSetupFoundObject( setupKey );
 	if( !forceSetup && ValidateObject( existingItem ) )
 	{
 		CommandTagFactionTownstone( existingItem, townName, townData );
@@ -895,7 +906,7 @@ function CommandSetupPlaceTownstone( pSock, pUser, townName, townData, forceSetu
 		return existingItem;
 	}
 
-	var newItem = CommandPlaceFactionItemAt( pSock, pUser, "townstone", townData.townStone );
+	const newItem = CommandPlaceFactionItemAt( pSock, pUser, "townstone", townData.townStone );
 	if( ValidateObject( newItem ) )
 	{
 		CommandTagFactionTownstone( newItem, townName, townData );
@@ -915,18 +926,18 @@ function CommandFactionSectionId( prefix, factionKey )
 
 function CommandSetupFromData( pSock, pUser, forceSetup, relocateSetup, stats )
 {
-	var setupData = TriggerEvent( CommandFactionSetupDataScriptId, "ReloadFactionSetupData" );
+	let setupData = TriggerEvent( commandFactionSetupDataScriptId, "ReloadFactionSetupData" );
 	if( setupData == null )
 	{
-		pSock.SysMessage( "Unable to load faction setup data: " + TriggerEvent( CommandFactionSetupDataScriptId, "SetupDataLastError" ) );
+		pSock.SysMessage( "Unable to load faction setup data: " + TriggerEvent( commandFactionSetupDataScriptId, "SetupDataLastError" ) );
 		return false;
 	}
 
-	var factionOrder = [ "TB", "COM", "MIN", "SL" ];
-	for( var factionIndex = 0; factionIndex < factionOrder.length; factionIndex++ )
+	const factionOrder = [ "TB", "COM", "MIN", "SL" ];
+	for( let factionIndex = 0; factionIndex < factionOrder.length; factionIndex++ )
 	{
-		var factionKey = factionOrder[factionIndex];
-		var factionData = setupData.factions[factionKey];
+		let factionKey = factionOrder[factionIndex];
+		let factionData = setupData.factions[factionKey];
 		if( factionData == null )
 		{
 			pSock.SysMessage( "No setup data found for faction " + factionKey + "." );
@@ -939,20 +950,20 @@ function CommandSetupFromData( pSock, pUser, forceSetup, relocateSetup, stats )
 
 		if( factionData.stronghold && factionData.stronghold.center )
 		{
-			var center = factionData.stronghold.center;
-			if( TriggerEvent( CommandFactionStrongholdScriptId, "StrongholdSetLocation", factionKey, center.x, center.y, center.z, center.world, center.instance, factionData.stronghold.range ) )
+			const center = factionData.stronghold.center;
+			if( TriggerEvent( commandFactionStrongholdScriptId, "StrongholdSetLocation", factionKey, center.x, center.y, center.z, center.world, center.instance, factionData.stronghold.range ) )
 				stats.strongholds++;
 			else
-				pSock.SysMessage( "Unable to configure " + factionKey + " stronghold: " + TriggerEvent( CommandFactionStrongholdScriptId, "StrongholdLastError" ) );
+				pSock.SysMessage( "Unable to configure " + factionKey + " stronghold: " + TriggerEvent( commandFactionStrongholdScriptId, "StrongholdLastError" ) );
 		}
 	}
 
-	for( var townName in setupData.towns )
+	for( let townName in setupData.towns )
 	{
 		if( !setupData.towns.hasOwnProperty( townName ) )
 			continue;
 
-		var townData = setupData.towns[townName];
+		const townData = setupData.towns[townName];
 		if( townData.enabled === false )
 		{
 			stats.skipped++;
@@ -968,21 +979,21 @@ function CommandSetupFromData( pSock, pUser, forceSetup, relocateSetup, stats )
 
 function CommandSetupLocal( pSock, pUser, forceSetup, stats )
 {
-	for( var itemIndex = 0; itemIndex < CommandFactionSetupItems.length; itemIndex++ )
+	for( let itemIndex = 0; itemIndex < commandFactionSetupItems.length; itemIndex++ )
 	{
-		var setupItem = CommandFactionSetupItems[itemIndex];
-		var setupKey = CommandSetupSectionKey( setupItem[0] );
+		const setupItem = commandFactionSetupItems[itemIndex];
+		let setupKey = CommandSetupSectionKey( setupItem[0] );
 		if( !forceSetup && ValidateObject( CommandSetupFoundObject( setupKey ) ) )
 		{
 			stats.skipped++;
 			continue;
 		}
 
-		var newItem = CommandPlaceFactionItem( pSock, pUser, setupItem[0], setupItem[1], setupItem[2] );
+		const newItem = CommandPlaceFactionItem( pSock, pUser, setupItem[0], setupItem[1], setupItem[2] );
 		if( ValidateObject( newItem ) )
 		{
 			if( newItem.GetTag( "sigil" ) == 1 )
-				TriggerEvent( CommandFactionSigilScriptId, "SigilSetHome", newItem );
+				TriggerEvent( commandFactionSigilScriptId, "SigilSetHome", newItem );
 			stats.created++;
 		}
 		else
@@ -997,11 +1008,11 @@ function CommandSetupLocal( pSock, pUser, forceSetup, stats )
 
 function CommandSetupScanItems()
 {
-	CommandSetupFound = {};
-	CommandSetupRanks = {};
-	CommandSetupScanActive = true;
+	commandSetupFound = {};
+	commandSetupRanks = {};
+	commandSetupScanActive = true;
 	IterateOver( "ITEM" );
-	CommandSetupScanActive = false;
+	commandSetupScanActive = false;
 }
 
 function CommandSetupSectionKey( sectionId )
@@ -1048,22 +1059,22 @@ function CommandSetupFoundObject( setupKey )
 {
 	if( setupKey === "" )
 		return null;
-	if( typeof CommandSetupFound[setupKey] == "undefined" )
+	if( typeof commandSetupFound[setupKey] == "undefined" )
 		return null;
-	if( !ValidateObject( CommandSetupFound[setupKey] ) )
+	if( !ValidateObject( commandSetupFound[setupKey] ) )
 		return null;
 
-	return CommandSetupFound[setupKey];
+	return commandSetupFound[setupKey];
 }
 
 function command_FACTIONSETUP( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var setupOptions = CommandSetupOptions( cmdString );
-	var stats = {
+	const setupOptions = CommandSetupOptions( cmdString );
+	const stats = {
 		created: 0,
 		skipped: 0,
 		failed: 0,
@@ -1074,19 +1085,19 @@ function command_FACTIONSETUP( pSock, cmdString )
 	if( !setupOptions.force )
 		CommandSetupScanItems();
 
-	var controller = CommandSetupCreateController( pSock, pUser, setupOptions.force, stats );
+	let controller = CommandSetupCreateController( pSock, pUser, setupOptions.force, stats );
 	if( !ValidateObject( controller ) )
 	{
-		CommandSetupFound = {};
-		CommandSetupRanks = {};
+		commandSetupFound = {};
+		commandSetupRanks = {};
 		return;
 	}
 
-	var setupOk = setupOptions.local ? CommandSetupLocal( pSock, pUser, setupOptions.force, stats ) : CommandSetupFromData( pSock, pUser, setupOptions.force, setupOptions.relocate, stats );
+	const setupOk = setupOptions.local ? CommandSetupLocal( pSock, pUser, setupOptions.force, stats ) : CommandSetupFromData( pSock, pUser, setupOptions.force, setupOptions.relocate, stats );
 	if( !setupOk )
 	{
-		CommandSetupFound = {};
-		CommandSetupRanks = {};
+		commandSetupFound = {};
+		commandSetupRanks = {};
 		return;
 	}
 
@@ -1101,21 +1112,21 @@ function command_FACTIONSETUP( pSock, cmdString )
 	if( stats.failed > 0 )
 		pSock.SysMessage( "Faction setup had " + stats.failed + " failure(s); check the console and setup data." );
 
-	if( TriggerEvent( CommandFactionTownScriptId, "SyncTownControl" ) )
+	if( TriggerEvent( commandFactionTownScriptId, "SyncTownControl" ) )
 		pSock.SysMessage( "Faction town ownership synced." );
 	else
-		pSock.SysMessage( "Faction setup placed, but town sync failed: " + TriggerEvent( CommandFactionTownScriptId, "TownLastError" ) );
+		pSock.SysMessage( "Faction setup placed, but town sync failed: " + TriggerEvent( commandFactionTownScriptId, "TownLastError" ) );
 
-	CommandSetupFound = {};
-	CommandSetupRanks = {};
+	commandSetupFound = {};
+	commandSetupRanks = {};
 }
 
 function command_FACTIONREGIONCHECK( pSock, cmdString )
 {
-	for( var checkIndex = 0; checkIndex < CommandFactionRegionChecks.length; checkIndex++ )
+	for( let checkIndex = 0; checkIndex < commandFactionRegionChecks.length; checkIndex++ )
 	{
-		var regionCheck = CommandFactionRegionChecks[checkIndex];
-		var townRegion = GetTownRegion( regionCheck[1] );
+		const regionCheck = commandFactionRegionChecks[checkIndex];
+		const townRegion = GetTownRegion( regionCheck[1] );
 		if( townRegion != null && typeof townRegion.id != "undefined" )
 			pSock.SysMessage( regionCheck[0] + " region " + regionCheck[1] + ": loaded as " + townRegion.name );
 		else
@@ -1125,12 +1136,12 @@ function command_FACTIONREGIONCHECK( pSock, cmdString )
 
 function command_FACTIONTOWNS( pSock, cmdString )
 {
-	TriggerEvent( CommandFactionTownScriptId, "ShowTownStatus", pSock );
+	TriggerEvent( commandFactionTownScriptId, "ShowTownStatus", pSock );
 }
 
 function command_FACTIONTOWNSYNC( pSock, cmdString )
 {
-	if( TriggerEvent( CommandFactionTownScriptId, "SyncTownControl" ) )
+	if( TriggerEvent( commandFactionTownScriptId, "SyncTownControl" ) )
 		pSock.SysMessage( "Faction town ownership synced to town regions." );
 	else
 		pSock.SysMessage( "Unable to sync faction town ownership." );
@@ -1139,29 +1150,29 @@ function command_FACTIONTOWNSYNC( pSock, cmdString )
 function command_FACTIONTOWNSET( pSock, cmdString )
 {
 	cmdString = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdString.length > 0 ? cmdString.split( /\s+/ ) : [];
+	let parts = cmdString.length > 0 ? cmdString.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
 		pSock.SysMessage( "Usage: 'factiontownset <town> <TB|COM|MIN|SL>" );
 		return;
 	}
 
-	var factionKey = parts[parts.length - 1].toUpperCase();
-	var townParts = [];
-	for( var partIndex = 0; partIndex < parts.length - 1; partIndex++ )
+	let factionKey = parts[parts.length - 1].toUpperCase();
+	const townParts = [];
+	for( let partIndex = 0; partIndex < parts.length - 1; partIndex++ )
 		townParts.push( parts[partIndex] );
 
-	var townName = townParts.join( " " );
+	let townName = townParts.join( " " );
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "Usage: 'factiontownset <town> <TB|COM|MIN|SL>" );
 		return;
 	}
 
-	if( TriggerEvent( CommandFactionTownScriptId, "ApplyTownControl", townName, factionKey, 0 ) )
+	if( TriggerEvent( commandFactionTownScriptId, "ApplyTownControl", townName, factionKey, 0 ) )
 		pSock.SysMessage( "Faction town ownership updated." );
 	else
-		pSock.SysMessage( "Unable to update that faction town: " + TriggerEvent( CommandFactionTownScriptId, "TownLastError" ) );
+		pSock.SysMessage( "Unable to update that faction town: " + TriggerEvent( commandFactionTownScriptId, "TownLastError" ) );
 }
 
 function CommandShowFactionStatusGump( pSock, pUser, factionKey )
@@ -1169,12 +1180,12 @@ function CommandShowFactionStatusGump( pSock, pUser, factionKey )
 	if( !pSock || !ValidateObject( pUser ) || !CommandIsFactionValid( factionKey ) )
 		return false;
 
-	var playerFaction = pUser.GetTag( "faction" );
-	var isMember = CommandIsFactionValid( playerFaction );
-	var displayFactionName = CommandFactionUsageName( factionKey );
-	var y = 0;
+	const playerFaction = pUser.GetTag( "faction" );
+	const isMember = CommandIsFactionValid( playerFaction );
+	const displayFactionName = CommandFactionUsageName( factionKey );
+	let y = 0;
 
-	var myGump = new Gump();
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 470, CommandIsStaff( pUser ) ? 430 : 390, 9200 );
 	myGump.AddHTMLGump( 20, 15, 430, 25, 0, 0, "<CENTER><b>Faction Status</b></CENTER>" );
@@ -1183,14 +1194,14 @@ function CommandShowFactionStatusGump( pSock, pUser, factionKey )
 	y = 80;
 	if( isMember )
 	{
-		var playerData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pUser );
+		const playerData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", pUser );
 		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Your Faction: " + CommandFactionUsageName( playerFaction ) );
 		y += 25;
 		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Rank: " + CommandRankName( playerData.rank ) );
 		y += 25;
 		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Kill Points: " + playerData.killPoints + ", Silver: " + playerData.silver );
 		y += 25;
-		var roleName = playerData.role;
+		let roleName = playerData.role;
 		if( roleName === "" && playerData.commander )
 			roleName = "commander";
 		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, "Role: " + CommandRoleDisplayName( roleName ) );
@@ -1202,18 +1213,18 @@ function CommandShowFactionStatusGump( pSock, pUser, factionKey )
 		y += 45;
 	}
 
-	myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, TriggerEvent( CommandFactionSigilScriptId, "FactionScoreText", factionKey ) );
+	myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, TriggerEvent( commandFactionSigilScriptId, "FactionScoreText", factionKey ) );
 	y += 25;
-	myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, TriggerEvent( CommandFactionCombatScriptId, "FactionKillStatsText", factionKey ) );
+	myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, TriggerEvent( commandFactionCombatScriptId, "FactionKillStatsText", factionKey ) );
 	y += 25;
-	myGump.AddHTMLGump( 25, y, 420, 35, 0, 0, TriggerEvent( CommandFactionSigilScriptId, "FactionNoticeText", factionKey ) );
+	myGump.AddHTMLGump( 25, y, 420, 35, 0, 0, TriggerEvent( commandFactionSigilScriptId, "FactionNoticeText", factionKey ) );
 	y += 40;
-	myGump.AddHTMLGump( 25, y, 420, 45, 0, 0, "Controlled Towns: " + TriggerEvent( CommandFactionTownScriptId, "TownControlledByFactionList", factionKey ) );
+	myGump.AddHTMLGump( 25, y, 420, 45, 0, 0, "Controlled Towns: " + TriggerEvent( commandFactionTownScriptId, "TownControlledByFactionList", factionKey ) );
 	y += 50;
 
 	if( CommandIsStaff( pUser ) )
 	{
-		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, TriggerEvent( CommandFactionTownScriptId, "TownTreasuryByFactionText", factionKey ) );
+		myGump.AddHTMLGump( 25, y, 420, 20, 0, 0, TriggerEvent( commandFactionTownScriptId, "TownTreasuryByFactionText", factionKey ) );
 		y += 25;
 	}
 
@@ -1229,16 +1240,16 @@ function CommandShowFactionRanksGump( pSock, pUser )
 	if( !pSock || !ValidateObject( pUser ) )
 		return false;
 
-	var rankData = TriggerEvent( CommandFactionPlayerDataScriptId, "ReadFactionPlayerData", pUser );
-	var playerFaction = rankData.faction;
-	var currentRank = parseInt( rankData.rank, 10 );
-	var currentPoints = parseInt( rankData.killPoints, 10 );
+	const rankData = TriggerEvent( commandFactionPlayerDataScriptId, "ReadFactionPlayerData", pUser );
+	const playerFaction = rankData.faction;
+	let currentRank = parseInt( rankData.rank, 10 );
+	let currentPoints = parseInt( rankData.killPoints, 10 );
 	if( isNaN( currentRank ) )
 		currentRank = -1;
 	if( isNaN( currentPoints ) )
 		currentPoints = 0;
 
-	var myGump = new Gump();
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 430, 360, 9200 );
 	myGump.AddHTMLGump( 20, 15, 390, 25, 0, 0, "<CENTER><b>Faction Ranks</b></CENTER>" );
@@ -1248,10 +1259,10 @@ function CommandShowFactionRanksGump( pSock, pUser )
 	else
 		myGump.AddHTMLGump( 25, 45, 380, 20, 0, 0, "You are not currently enlisted in a faction." );
 
-	var y = 75;
-	for( var rankIndex = 0; rankIndex < 10; rankIndex++ )
+	let y = 75;
+	for( let rankIndex = 0; rankIndex < 10; rankIndex++ )
 	{
-		var prefix = rankIndex === currentRank ? "> " : "";
+		const prefix = rankIndex === currentRank ? "> " : "";
 		myGump.AddHTMLGump( 35, y, 360, 20, 0, 0, prefix + CommandRankName( rankIndex ) + ": " + CommandRankPoints( rankIndex ) + " kill points" );
 		y += 24;
 	}
@@ -1265,12 +1276,12 @@ function CommandShowFactionRanksGump( pSock, pUser )
 
 function CommandCollectFactionLeaderboard( factionKey )
 {
-	CommandLeaderboardFaction = factionKey;
-	CommandLeaderboardEntries = [];
+	commandLeaderboardFaction = factionKey;
+	commandLeaderboardEntries = [];
 	IterateOver( "CHARACTER" );
-	CommandLeaderboardFaction = "";
+	commandLeaderboardFaction = "";
 
-	CommandLeaderboardEntries.sort(function( leftEntry, rightEntry )
+	commandLeaderboardEntries.sort(function( leftEntry, rightEntry )
 	{
 		if( rightEntry.killPoints !== leftEntry.killPoints )
 			return rightEntry.killPoints - leftEntry.killPoints;
@@ -1281,7 +1292,7 @@ function CommandCollectFactionLeaderboard( factionKey )
 		return leftEntry.name.toLowerCase() > rightEntry.name.toLowerCase() ? 1 : -1;
 	});
 
-	return CommandLeaderboardEntries;
+	return commandLeaderboardEntries;
 }
 
 function CommandShowFactionLeaderboardGump( pSock, pUser, factionKey )
@@ -1289,8 +1300,8 @@ function CommandShowFactionLeaderboardGump( pSock, pUser, factionKey )
 	if( !pSock || !ValidateObject( pUser ) || !CommandIsFactionValid( factionKey ) )
 		return false;
 
-	var entries = CommandCollectFactionLeaderboard( factionKey );
-	var myGump = new Gump();
+	const entries = CommandCollectFactionLeaderboard( factionKey );
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 520, 390, 9200 );
 	myGump.AddHTMLGump( 20, 15, 480, 25, 0, 0, "<CENTER><b>Faction Leaderboard</b></CENTER>" );
@@ -1301,8 +1312,8 @@ function CommandShowFactionLeaderboardGump( pSock, pUser, factionKey )
 	myGump.AddHTMLGump( 360, 75, 55, 20, 0, 0, "KP" );
 	myGump.AddHTMLGump( 420, 75, 70, 20, 0, 0, "Caps" );
 
-	var y = 100;
-	var maxRows = entries.length;
+	let y = 100;
+	let maxRows = entries.length;
 	if( maxRows > 10 )
 		maxRows = 10;
 
@@ -1312,10 +1323,10 @@ function CommandShowFactionLeaderboardGump( pSock, pUser, factionKey )
 	}
 	else
 	{
-		for( var entryIndex = 0; entryIndex < maxRows; entryIndex++ )
+		for( let entryIndex = 0; entryIndex < maxRows; entryIndex++ )
 		{
-			var entry = entries[entryIndex];
-			var onlineMark = entry.online ? "*" : "";
+			const entry = entries[entryIndex];
+			const onlineMark = entry.online ? "*" : "";
 			myGump.AddHTMLGump( 35, y, 30, 20, 0, 0, String( entryIndex + 1 ) );
 			myGump.AddHTMLGump( 70, y, 175, 20, 0, 0, onlineMark + entry.name );
 			myGump.AddHTMLGump( 250, y, 105, 20, 0, 0, CommandRankName( entry.rank ) );
@@ -1335,22 +1346,22 @@ function CommandShowFactionLeaderboardGump( pSock, pUser, factionKey )
 
 function CommandHealthScanItems()
 {
-	CommandHealthControllerCount = 0;
-	CommandHealthFactionStoneCount = 0;
-	CommandHealthJoinStoneCount = 0;
-	CommandHealthSigilCount = 0;
-	CommandHealthSigilHomeCount = 0;
-	CommandHealthTownstoneCount = 0;
-	CommandHealthFactionNpcCounts = { TB: 0, COM: 0, MIN: 0, SL: 0 };
-	CommandHealthScanActive = true;
+	commandHealthControllerCount = 0;
+	commandHealthFactionStoneCount = 0;
+	commandHealthJoinStoneCount = 0;
+	commandHealthSigilCount = 0;
+	commandHealthSigilHomeCount = 0;
+	commandHealthTownstoneCount = 0;
+	commandHealthFactionNpcCounts = { TB: 0, COM: 0, MIN: 0, SL: 0 };
+	commandHealthScanActive = true;
 	IterateOver( "ITEM" );
 	IterateOver( "CHARACTER" );
-	CommandHealthScanActive = false;
+	commandHealthScanActive = false;
 }
 
 function CommandHealthFactionNpcSummary()
 {
-	return "Faction NPCs: TB " + CommandHealthFactionNpcCounts.TB + ", COM " + CommandHealthFactionNpcCounts.COM + ", MIN " + CommandHealthFactionNpcCounts.MIN + ", SL " + CommandHealthFactionNpcCounts.SL;
+	return "Faction NPCs: TB " + commandHealthFactionNpcCounts.TB + ", COM " + commandHealthFactionNpcCounts.COM + ", MIN " + commandHealthFactionNpcCounts.MIN + ", SL " + commandHealthFactionNpcCounts.SL;
 }
 
 function CommandDedupeItemKey( iItem )
@@ -1363,7 +1374,7 @@ function CommandDedupeItemKey( iItem )
 
 	if( iItem.GetTag( "faction_stone" ) == 1 )
 	{
-		var factionStoneFaction = iItem.GetTag( "stone_faction" );
+		const factionStoneFaction = iItem.GetTag( "stone_faction" );
 		if( CommandIsFactionValid( factionStoneFaction ) )
 			return "faction_stone_" + factionStoneFaction;
 		return "";
@@ -1371,7 +1382,7 @@ function CommandDedupeItemKey( iItem )
 
 	if( iItem.GetTag( "join_stone" ) == 1 )
 	{
-		var joinStoneFaction = iItem.GetTag( "stone_faction" );
+		const joinStoneFaction = iItem.GetTag( "stone_faction" );
 		if( CommandIsFactionValid( joinStoneFaction ) )
 			return "join_stone_" + joinStoneFaction;
 		return "";
@@ -1379,7 +1390,7 @@ function CommandDedupeItemKey( iItem )
 
 	if( iItem.GetTag( "sigil" ) == 1 )
 	{
-		var sigilTown = iItem.GetTag( "sigil_town" );
+		const sigilTown = iItem.GetTag( "sigil_town" );
 		if( sigilTown !== "" && sigilTown != 0 )
 			return "sigil_" + sigilTown;
 		return "";
@@ -1387,7 +1398,7 @@ function CommandDedupeItemKey( iItem )
 
 	if( iItem.GetTag( "faction_townstone" ) == 1 )
 	{
-		var factionTownstoneTown = iItem.GetTag( "faction_town" );
+		const factionTownstoneTown = iItem.GetTag( "faction_town" );
 		if( factionTownstoneTown !== "" && factionTownstoneTown != 0 )
 			return "townstone_" + factionTownstoneTown;
 		return "";
@@ -1401,7 +1412,7 @@ function CommandDedupeItemRank( iItem )
 	if( !ValidateObject( iItem ) || !iItem.isItem )
 		return 0;
 
-	var rankScore = 0;
+	let rankScore = 0;
 
 	if( iItem.GetTag( "faction_controller" ) == 1 )
 	{
@@ -1436,15 +1447,15 @@ function CommandDedupeItemRank( iItem )
 
 function CommandDedupeFactionSetup()
 {
-	CommandDedupeKept = {};
-	CommandDedupeRanks = {};
-	CommandDedupeRemovedCount = 0;
-	CommandDedupeActive = true;
+	commandDedupeKept = {};
+	commandDedupeRanks = {};
+	commandDedupeRemovedCount = 0;
+	commandDedupeActive = true;
 	IterateOver( "ITEM" );
-	CommandDedupeActive = false;
-	CommandDedupeKept = {};
-	CommandDedupeRanks = {};
-	return CommandDedupeRemovedCount;
+	commandDedupeActive = false;
+	commandDedupeKept = {};
+	commandDedupeRanks = {};
+	return commandDedupeRemovedCount;
 }
 
 function CommandIsFactionSetupItem( iItem )
@@ -1495,7 +1506,7 @@ function CommandRemoveFactionItem( iItem )
 		return false;
 
 	iItem.Delete();
-	CommandRemoveFactionsItems++;
+	commandRemoveFactionsItems++;
 	return true;
 }
 
@@ -1504,8 +1515,8 @@ function CommandClearFactionPlayerTags( pChar )
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc )
 		return false;
 
-	var hadFactionData = TriggerEvent( CommandFactionPlayerDataScriptId, "ClearFactionPlayerData", pChar );
-	var factionTags = [
+	let hadFactionData = TriggerEvent( commandFactionPlayerDataScriptId, "ClearFactionPlayerData", pChar );
+	const factionTags = [
 		"faction",
 		"faction_join_time",
 		"faction_kp",
@@ -1525,7 +1536,7 @@ function CommandClearFactionPlayerTags( pChar )
 		"elec_voted_SL"
 	];
 
-	for( var tagIndex = 0; tagIndex < factionTags.length; tagIndex++ )
+	for( let tagIndex = 0; tagIndex < factionTags.length; tagIndex++ )
 	{
 		if( pChar.GetTag( factionTags[tagIndex] ) !== "" && pChar.GetTag( factionTags[tagIndex] ) != 0 )
 			hadFactionData = true;
@@ -1538,11 +1549,11 @@ function CommandClearFactionPlayerTags( pChar )
 	pChar.SetTempTag( "trap_scan_type", null );
 	pChar.SetTempTag( "trap_scan_faction", null );
 
-	if( pChar.HasScriptTrigger( CommandFactionCombatScriptId ) )
-		pChar.RemoveScriptTrigger( CommandFactionCombatScriptId );
+	if( pChar.HasScriptTrigger( commandFactionCombatScriptId ) )
+		pChar.RemoveScriptTrigger( commandFactionCombatScriptId );
 
 	if( hadFactionData )
-		CommandRemoveFactionsPlayers++;
+		commandRemoveFactionsPlayers++;
 
 	return hadFactionData;
 }
@@ -1573,8 +1584,8 @@ function CommandClearGenericFactionNpcTags( pChar )
 	if( !ValidateObject( pChar ) || !pChar.isChar || !pChar.npc )
 		return false;
 
-	var hadFactionData = false;
-	var factionTags = [
+	let hadFactionData = false;
+	const factionTags = [
 		"npc_faction",
 		"faction_npc",
 		"npc_faction_passive",
@@ -1584,7 +1595,7 @@ function CommandClearGenericFactionNpcTags( pChar )
 		"npc_faction_silver"
 	];
 
-	for( var tagIndex = 0; tagIndex < factionTags.length; tagIndex++ )
+	for( let tagIndex = 0; tagIndex < factionTags.length; tagIndex++ )
 	{
 		if( pChar.GetTag( factionTags[tagIndex] ) !== "" && pChar.GetTag( factionTags[tagIndex] ) != 0 )
 			hadFactionData = true;
@@ -1597,9 +1608,9 @@ function CommandClearGenericFactionNpcTags( pChar )
 		pChar.SetTag( "faction", null );
 	}
 
-	if( pChar.HasScriptTrigger( CommandFactionNpcScriptId ) )
+	if( pChar.HasScriptTrigger( commandFactionNpcScriptId ) )
 	{
-		pChar.RemoveScriptTrigger( CommandFactionNpcScriptId );
+		pChar.RemoveScriptTrigger( commandFactionNpcScriptId );
 		hadFactionData = true;
 	}
 
@@ -1617,14 +1628,14 @@ function CommandRemoveFactionChar( pChar )
 		{
 			if( CommandClearGenericFactionNpcTags( pChar ) )
 			{
-				CommandRemoveFactionsNpcs++;
+				commandRemoveFactionsNpcs++;
 				return true;
 			}
 
 			return false;
 		}
 
-		var ownerChar = pChar.owner;
+		const ownerChar = pChar.owner;
 		if( ValidateObject( ownerChar ) && ownerChar.isChar && !ownerChar.npc )
 		{
 			ownerChar.RemoveFollower( pChar );
@@ -1635,7 +1646,7 @@ function CommandRemoveFactionChar( pChar )
 		}
 
 		pChar.Delete();
-		CommandRemoveFactionsNpcs++;
+		commandRemoveFactionsNpcs++;
 		return true;
 	}
 
@@ -1645,11 +1656,11 @@ function CommandRemoveFactionChar( pChar )
 
 function CommandResetFactionTownRegions()
 {
-	var resetCount = 0;
-	for( var regionIndex = 0; regionIndex < CommandFactionRegionChecks.length; regionIndex++ )
+	let resetCount = 0;
+	for( let regionIndex = 0; regionIndex < commandFactionRegionChecks.length; regionIndex++ )
 	{
-		var regionInfo = CommandFactionRegionChecks[regionIndex];
-		var townRegion = GetTownRegion( regionInfo[1] );
+		const regionInfo = commandFactionRegionChecks[regionIndex];
+		const townRegion = GetTownRegion( regionInfo[1] );
 		if( townRegion != null && typeof townRegion.id != "undefined" )
 		{
 			townRegion.owner = "The Town";
@@ -1658,26 +1669,26 @@ function CommandResetFactionTownRegions()
 		}
 	}
 
-	CommandRemoveFactionsRegions = resetCount;
+	commandRemoveFactionsRegions = resetCount;
 	return resetCount;
 }
 
 function CommandRemoveFactionsFromShard()
 {
-	CommandRemoveFactionsItems = 0;
-	CommandRemoveFactionsNpcs = 0;
-	CommandRemoveFactionsPlayers = 0;
-	CommandRemoveFactionsRegions = 0;
+	commandRemoveFactionsItems = 0;
+	commandRemoveFactionsNpcs = 0;
+	commandRemoveFactionsPlayers = 0;
+	commandRemoveFactionsRegions = 0;
 
 	CommandResetFactionTownRegions();
 
-	CommandRemoveFactionsMode = "chars";
+	commandRemoveFactionsMode = "chars";
 	IterateOver( "CHARACTER" );
-	CommandRemoveFactionsMode = "items";
+	commandRemoveFactionsMode = "items";
 	IterateOver( "ITEM" );
-	CommandRemoveFactionsMode = "";
+	commandRemoveFactionsMode = "";
 
-	return CommandRemoveFactionsItems + CommandRemoveFactionsNpcs + CommandRemoveFactionsPlayers;
+	return commandRemoveFactionsItems + commandRemoveFactionsNpcs + commandRemoveFactionsPlayers;
 }
 
 function CommandHealthLine( ok, label, value )
@@ -1687,13 +1698,13 @@ function CommandHealthLine( ok, label, value )
 
 function CommandHealthRegionSummary()
 {
-	var loadedCount = 0;
-	var missingText = "";
+	let loadedCount = 0;
+	let missingText = "";
 
-	for( var regionIndex = 0; regionIndex < CommandFactionRegionChecks.length; regionIndex++ )
+	for( let regionIndex = 0; regionIndex < commandFactionRegionChecks.length; regionIndex++ )
 	{
-		var regionInfo = CommandFactionRegionChecks[regionIndex];
-		var townRegion = GetTownRegion( regionInfo[1] );
+		const regionInfo = commandFactionRegionChecks[regionIndex];
+		const townRegion = GetTownRegion( regionInfo[1] );
 		if( townRegion != null && typeof townRegion.id != "undefined" )
 		{
 			loadedCount++;
@@ -1708,21 +1719,21 @@ function CommandHealthRegionSummary()
 
 	return {
 		loaded: loadedCount,
-		total: CommandFactionRegionChecks.length,
+		total: commandFactionRegionChecks.length,
 		missing: missingText
 	};
 }
 
 function CommandHealthStrongholdSummary()
 {
-	var factionKeys = [ "TB", "COM", "MIN", "SL" ];
-	var configuredCount = 0;
-	var missingText = "";
+	const factionKeys = [ "TB", "COM", "MIN", "SL" ];
+	let configuredCount = 0;
+	let missingText = "";
 
-	for( var factionIndex = 0; factionIndex < factionKeys.length; factionIndex++ )
+	for( let factionIndex = 0; factionIndex < factionKeys.length; factionIndex++ )
 	{
-		var factionKey = factionKeys[factionIndex];
-		if( TriggerEvent( CommandFactionStrongholdScriptId, "StrongholdIsConfigured", factionKey ) )
+		let factionKey = factionKeys[factionIndex];
+		if( TriggerEvent( commandFactionStrongholdScriptId, "StrongholdIsConfigured", factionKey ) )
 		{
 			configuredCount++;
 		}
@@ -1747,26 +1758,26 @@ function CommandShowFactionHealthGump( pSock, pUser )
 		return false;
 
 	CommandHealthScanItems();
-	var regionSummary = CommandHealthRegionSummary();
-	var strongholdSummary = CommandHealthStrongholdSummary();
-	var y = 50;
+	const regionSummary = CommandHealthRegionSummary();
+	const strongholdSummary = CommandHealthStrongholdSummary();
+	let y = 50;
 
-	var myGump = new Gump();
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 560, 525, 9200 );
 	myGump.AddHTMLGump( 20, 15, 520, 25, 0, 0, "<CENTER><b>Faction Health</b></CENTER>" );
 
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthControllerCount === 1, "Faction controllers", CommandHealthControllerCount + " found, expected 1" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( commandHealthControllerCount === 1, "Faction controllers", commandHealthControllerCount + " found, expected 1" ) );
 	y += 25;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthFactionStoneCount === 4, "Faction stones", CommandHealthFactionStoneCount + " found, expected 4" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( commandHealthFactionStoneCount === 4, "Faction stones", commandHealthFactionStoneCount + " found, expected 4" ) );
 	y += 25;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthJoinStoneCount === 4, "Join stones", CommandHealthJoinStoneCount + " found, expected 4" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( commandHealthJoinStoneCount === 4, "Join stones", commandHealthJoinStoneCount + " found, expected 4" ) );
 	y += 25;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthSigilCount === 8, "Sigils", CommandHealthSigilCount + " found, expected 8" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( commandHealthSigilCount === 8, "Sigils", commandHealthSigilCount + " found, expected 8" ) );
 	y += 25;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthSigilHomeCount === 8, "Sigil homes", CommandHealthSigilHomeCount + " set, expected 8" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( commandHealthSigilHomeCount === 8, "Sigil homes", commandHealthSigilHomeCount + " set, expected 8" ) );
 	y += 25;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( CommandHealthTownstoneCount === 8, "Townstones", CommandHealthTownstoneCount + " found, expected 8" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( commandHealthTownstoneCount === 8, "Townstones", commandHealthTownstoneCount + " found, expected 8" ) );
 	y += 30;
 
 	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthLine( regionSummary.loaded === regionSummary.total, "Town regions", regionSummary.loaded + "/" + regionSummary.total + " loaded" ) );
@@ -1785,17 +1796,17 @@ function CommandShowFactionHealthGump( pSock, pUser )
 		y += 40;
 	}
 
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( CommandFactionTownScriptId, "TownTaxStatusText" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( commandFactionTownScriptId, "TownTaxStatusText" ) );
 	y += 30;
 	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, CommandHealthFactionNpcSummary() );
 	y += 30;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( CommandFactionSigilScriptId, "FactionScoreText", "TB" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( commandFactionSigilScriptId, "FactionScoreText", "TB" ) );
 	y += 22;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( CommandFactionSigilScriptId, "FactionScoreText", "COM" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( commandFactionSigilScriptId, "FactionScoreText", "COM" ) );
 	y += 22;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( CommandFactionSigilScriptId, "FactionScoreText", "MIN" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( commandFactionSigilScriptId, "FactionScoreText", "MIN" ) );
 	y += 22;
-	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( CommandFactionSigilScriptId, "FactionScoreText", "SL" ) );
+	myGump.AddHTMLGump( 25, y, 510, 20, 0, 0, TriggerEvent( commandFactionSigilScriptId, "FactionScoreText", "SL" ) );
 	y += 30;
 
 	myGump.AddHTMLGump( 25, y, 510, 40, 0, 0, "Run 'factiondedupe to remove duplicate setup pieces. Run 'factionsetup only for missing stones/sigils, then 'factionsigilhome all if homes are missing." );
@@ -1819,31 +1830,31 @@ function CommandShowFactionAdminGump( pSock, pUser )
 		return false;
 
 	CommandHealthScanItems();
-	var regionSummary = CommandHealthRegionSummary();
-	var strongholdSummary = CommandHealthStrongholdSummary();
+	const regionSummary = CommandHealthRegionSummary();
+	const strongholdSummary = CommandHealthStrongholdSummary();
 
-	var myGump = new Gump();
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 520, 455, 9200 );
 	myGump.AddHTMLGump( 20, 15, 480, 25, 0, 0, "<CENTER><b>Faction Admin</b></CENTER>" );
-	myGump.AddHTMLGump( 25, 50, 470, 20, 0, 0, "Setup: controllers " + CommandHealthControllerCount + "/1, stones " + CommandHealthFactionStoneCount + "/4, join stones " + CommandHealthJoinStoneCount + "/4, sigils " + CommandHealthSigilCount + "/8" );
-	myGump.AddHTMLGump( 25, 75, 470, 20, 0, 0, "Regions: " + regionSummary.loaded + "/" + regionSummary.total + ", Strongholds: " + strongholdSummary.configured + "/" + strongholdSummary.total + ", Sigil homes: " + CommandHealthSigilHomeCount + "/8, townstones " + CommandHealthTownstoneCount + "/8" );
-	myGump.AddHTMLGump( 25, 100, 470, 20, 0, 0, TriggerEvent( CommandFactionTownScriptId, "TownTaxStatusText" ) );
+	myGump.AddHTMLGump( 25, 50, 470, 20, 0, 0, "Setup: controllers " + commandHealthControllerCount + "/1, stones " + commandHealthFactionStoneCount + "/4, join stones " + commandHealthJoinStoneCount + "/4, sigils " + commandHealthSigilCount + "/8" );
+	myGump.AddHTMLGump( 25, 75, 470, 20, 0, 0, "Regions: " + regionSummary.loaded + "/" + regionSummary.total + ", Strongholds: " + strongholdSummary.configured + "/" + strongholdSummary.total + ", Sigil homes: " + commandHealthSigilHomeCount + "/8, townstones " + commandHealthTownstoneCount + "/8" );
+	myGump.AddHTMLGump( 25, 100, 470, 20, 0, 0, TriggerEvent( commandFactionTownScriptId, "TownTaxStatusText" ) );
 	myGump.AddHTMLGump( 25, 125, 470, 20, 0, 0, CommandHealthFactionNpcSummary() );
 
-	CommandAddAdminButton( myGump, 30, 155, CommandFactionAdminHealthButton, "Health Gump" );
-	CommandAddAdminButton( myGump, 30, 185, CommandFactionAdminSetupButton, "Safe Setup" );
-	CommandAddAdminButton( myGump, 30, 215, CommandFactionAdminDedupeButton, "Dedupe Setup" );
-	CommandAddAdminButton( myGump, 30, 245, CommandFactionAdminSyncTownsButton, "Sync Towns" );
-	CommandAddAdminButton( myGump, 30, 275, CommandFactionAdminTownStatusButton, "Town Status" );
-	CommandAddAdminButton( myGump, 30, 305, CommandFactionAdminTreasuryButton, "Treasury" );
+	CommandAddAdminButton( myGump, 30, 155, commandFactionAdminHealthButton, "Health Gump" );
+	CommandAddAdminButton( myGump, 30, 185, commandFactionAdminSetupButton, "Safe Setup" );
+	CommandAddAdminButton( myGump, 30, 215, commandFactionAdminDedupeButton, "Dedupe Setup" );
+	CommandAddAdminButton( myGump, 30, 245, commandFactionAdminSyncTownsButton, "Sync Towns" );
+	CommandAddAdminButton( myGump, 30, 275, commandFactionAdminTownStatusButton, "Town Status" );
+	CommandAddAdminButton( myGump, 30, 305, commandFactionAdminTreasuryButton, "Treasury" );
 
-	CommandAddAdminButton( myGump, 275, 155, CommandFactionAdminTaxStartButton, "Start Tax Timer" );
-	CommandAddAdminButton( myGump, 275, 185, CommandFactionAdminTaxStopButton, "Stop Tax Timer" );
-	CommandAddAdminButton( myGump, 275, 215, CommandFactionAdminTaxStatusButton, "Tax Status" );
-	CommandAddAdminButton( myGump, 275, 245, CommandFactionAdminSigilsButton, "Sigils" );
-	CommandAddAdminButton( myGump, 275, 275, CommandFactionAdminStrongholdsButton, "Strongholds" );
-	CommandAddAdminButton( myGump, 275, 335, CommandFactionAdminRemoveConfirmButton, "Remove Factions" );
+	CommandAddAdminButton( myGump, 275, 155, commandFactionAdminTaxStartButton, "Start Tax Timer" );
+	CommandAddAdminButton( myGump, 275, 185, commandFactionAdminTaxStopButton, "Stop Tax Timer" );
+	CommandAddAdminButton( myGump, 275, 215, commandFactionAdminTaxStatusButton, "Tax Status" );
+	CommandAddAdminButton( myGump, 275, 245, commandFactionAdminSigilsButton, "Sigils" );
+	CommandAddAdminButton( myGump, 275, 275, commandFactionAdminStrongholdsButton, "Strongholds" );
+	CommandAddAdminButton( myGump, 275, 335, commandFactionAdminRemoveConfirmButton, "Remove Factions" );
 
 	myGump.AddButton( 30, 405, 0xFA5, 0xFA7, 1, 0, 0 );
 	myGump.AddHTMLGump( 70, 405, 100, 20, 0, 0, "Close" );
@@ -1857,15 +1868,15 @@ function CommandShowRemoveFactionsConfirmGump( pSock, pUser )
 	if( !pSock || !ValidateObject( pUser ) )
 		return false;
 
-	var myGump = new Gump();
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 430, 230, 9200 );
 	myGump.AddHTMLGump( 20, 15, 390, 25, 0, 0, "<CENTER><b>Remove Factions?</b></CENTER>" );
 	myGump.AddHTMLGump( 25, 55, 380, 70, 0, 0, "This deletes faction setup items, faction items, faction NPCs, faction mounts, traps, and clears player faction tags." );
 	myGump.AddHTMLGump( 25, 130, 380, 25, 0, 0, "Use this only when resetting the faction test install." );
-	myGump.AddButton( 45, 175, 0xFA5, 0xFA7, 1, 0, CommandFactionAdminBackButton );
+	myGump.AddButton( 45, 175, 0xFA5, 0xFA7, 1, 0, commandFactionAdminBackButton );
 	myGump.AddHTMLGump( 85, 175, 100, 20, 0, 0, "Cancel" );
-	myGump.AddButton( 240, 175, 0xFA5, 0xFA7, 1, 0, CommandFactionAdminRemoveNowButton );
+	myGump.AddButton( 240, 175, 0xFA5, 0xFA7, 1, 0, commandFactionAdminRemoveNowButton );
 	myGump.AddHTMLGump( 280, 175, 120, 20, 0, 0, "Remove Now" );
 	myGump.Send( pSock );
 	myGump.Free();
@@ -1874,12 +1885,12 @@ function CommandShowRemoveFactionsConfirmGump( pSock, pUser )
 
 function command_FACTIONSTATUS( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var factionKey = pUser.GetTag( "faction" );
-	var requestedFaction = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase();
+	let factionKey = pUser.GetTag( "faction" );
+	const requestedFaction = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase();
 	if( CommandIsStaff( pUser ) && CommandIsFactionValid( requestedFaction ) )
 		factionKey = requestedFaction;
 
@@ -1894,7 +1905,7 @@ function command_FACTIONSTATUS( pSock, cmdString )
 
 function command_FACTIONRANKS( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
@@ -1903,12 +1914,12 @@ function command_FACTIONRANKS( pSock, cmdString )
 
 function command_FACTIONLEADERBOARD( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var requestedFaction = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase();
-	var factionKey = pUser.GetTag( "faction" );
+	const requestedFaction = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase();
+	let factionKey = pUser.GetTag( "faction" );
 	if( CommandIsFactionValid( requestedFaction ) )
 		factionKey = requestedFaction;
 
@@ -1928,7 +1939,7 @@ function command_FACTIONLEADERS( pSock, cmdString )
 
 function command_FACTIONADMIN( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
@@ -1937,7 +1948,7 @@ function command_FACTIONADMIN( pSock, cmdString )
 
 function command_FACTIONHEALTH( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
@@ -1946,33 +1957,33 @@ function command_FACTIONHEALTH( pSock, cmdString )
 
 function command_FACTIONDEDUPE( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var removedCount = CommandDedupeFactionSetup();
+	const removedCount = CommandDedupeFactionSetup();
 	pSock.SysMessage( "Removed " + removedCount + " duplicate faction setup item(s)." );
 	CommandShowFactionHealthGump( pSock, pUser );
 }
 
 function command_FACTIONDATAMIGRATE( pSock, cmdString )
 {
-	CommandDataMigrateActive = true;
-	CommandDataMigrateCount = 0;
+	commandDataMigrateActive = true;
+	commandDataMigrateCount = 0;
 	IterateOver( "CHARACTER" );
-	CommandDataMigrateActive = false;
-	pSock.SysMessage( "Migrated/synced faction player data for " + CommandDataMigrateCount + " character(s)." );
+	commandDataMigrateActive = false;
+	pSock.SysMessage( "Migrated/synced faction player data for " + commandDataMigrateCount + " character(s)." );
 }
 
 function command_REMOVEFACTIONS( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
 	CommandRemoveFactionsFromShard();
 	pSock.SysMessage( "Faction system removed from shard." );
-	pSock.SysMessage( "Deleted " + CommandRemoveFactionsItems + " faction item(s), deleted/cleared " + CommandRemoveFactionsNpcs + " faction NPC/mount(s), cleared " + CommandRemoveFactionsPlayers + " player(s), reset " + CommandRemoveFactionsRegions + " town region(s)." );
+	pSock.SysMessage( "Deleted " + commandRemoveFactionsItems + " faction item(s), deleted/cleared " + commandRemoveFactionsNpcs + " faction NPC/mount(s), cleared " + commandRemoveFactionsPlayers + " player(s), reset " + commandRemoveFactionsRegions + " town region(s)." );
 }
 
 function onGumpPress( pSock, buttonID, gumpData )
@@ -1980,55 +1991,55 @@ function onGumpPress( pSock, buttonID, gumpData )
 	if( buttonID == 0 )
 		return;
 
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	if( buttonID == CommandFactionAdminHealthButton )
+	if( buttonID == commandFactionAdminHealthButton )
 	{
 		CommandShowFactionHealthGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminSetupButton )
+	if( buttonID == commandFactionAdminSetupButton )
 	{
 		command_FACTIONSETUP( pSock, "" );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminDedupeButton )
+	if( buttonID == commandFactionAdminDedupeButton )
 	{
-		var removedCount = CommandDedupeFactionSetup();
+		const removedCount = CommandDedupeFactionSetup();
 		pSock.SysMessage( "Removed " + removedCount + " duplicate faction setup item(s)." );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminSyncTownsButton )
+	if( buttonID == commandFactionAdminSyncTownsButton )
 	{
 		command_FACTIONTOWNSYNC( pSock, "" );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminTownStatusButton )
+	if( buttonID == commandFactionAdminTownStatusButton )
 	{
-		TriggerEvent( CommandFactionTownScriptId, "ShowTownStatus", pSock );
+		TriggerEvent( commandFactionTownScriptId, "ShowTownStatus", pSock );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminTreasuryButton )
+	if( buttonID == commandFactionAdminTreasuryButton )
 	{
-		TriggerEvent( CommandFactionTownScriptId, "ShowTownTreasury", pSock, "" );
+		TriggerEvent( commandFactionTownScriptId, "ShowTownTreasury", pSock, "" );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminTaxStartButton )
+	if( buttonID == commandFactionAdminTaxStartButton )
 	{
-		if( TriggerEvent( CommandFactionTownScriptId, "StartTownTaxTimer", 60 ) )
+		if( TriggerEvent( commandFactionTownScriptId, "StartTownTaxTimer", 60 ) )
 			pSock.SysMessage( "Faction town tax timer started." );
 		else
 			pSock.SysMessage( "Unable to start faction town tax timer." );
@@ -2036,48 +2047,48 @@ function onGumpPress( pSock, buttonID, gumpData )
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminTaxStopButton )
+	if( buttonID == commandFactionAdminTaxStopButton )
 	{
 		command_FACTIONTAXSTOP( pSock, "" );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminTaxStatusButton )
+	if( buttonID == commandFactionAdminTaxStatusButton )
 	{
-		TriggerEvent( CommandFactionTownScriptId, "ShowTownTaxStatus", pSock );
+		TriggerEvent( commandFactionTownScriptId, "ShowTownTaxStatus", pSock );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminSigilsButton )
+	if( buttonID == commandFactionAdminSigilsButton )
 	{
-		TriggerEvent( CommandFactionSigilScriptId, "ShowSigilStatus", pSock, "" );
+		TriggerEvent( commandFactionSigilScriptId, "ShowSigilStatus", pSock, "" );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminStrongholdsButton )
+	if( buttonID == commandFactionAdminStrongholdsButton )
 	{
-		TriggerEvent( CommandFactionStrongholdScriptId, "ShowStrongholdStatus", pSock );
+		TriggerEvent( commandFactionStrongholdScriptId, "ShowStrongholdStatus", pSock );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminRemoveConfirmButton )
+	if( buttonID == commandFactionAdminRemoveConfirmButton )
 	{
 		CommandShowRemoveFactionsConfirmGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminRemoveNowButton )
+	if( buttonID == commandFactionAdminRemoveNowButton )
 	{
 		command_REMOVEFACTIONS( pSock, "" );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
 
-	if( buttonID == CommandFactionAdminBackButton )
+	if( buttonID == commandFactionAdminBackButton )
 	{
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
@@ -2086,26 +2097,26 @@ function onGumpPress( pSock, buttonID, gumpData )
 
 function command_FACTIONSTRONGHOLD( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
 	cmdString = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdString.length > 0 ? cmdString.split( /\s+/ ) : [];
+	let parts = cmdString.length > 0 ? cmdString.split( /\s+/ ) : [];
 	if( parts.length < 1 )
 	{
 		pSock.SysMessage( "Usage: 'factionstronghold <TB|COM|MIN|SL> [range]" );
 		return;
 	}
 
-	var factionKey = parts[0].toUpperCase();
+	let factionKey = parts[0].toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "Usage: 'factionstronghold <TB|COM|MIN|SL> [range]" );
 		return;
 	}
 
-	var range = 12;
+	let range = 12;
 	if( parts.length > 1 )
 	{
 		range = parseInt( parts[1], 10 );
@@ -2116,21 +2127,21 @@ function command_FACTIONSTRONGHOLD( pSock, cmdString )
 		}
 	}
 
-	if( TriggerEvent( CommandFactionStrongholdScriptId, "StrongholdSet", factionKey, pUser, range ) )
+	if( TriggerEvent( commandFactionStrongholdScriptId, "StrongholdSet", factionKey, pUser, range ) )
 		pSock.SysMessage( CommandFactionUsageName( factionKey ) + " stronghold set at your current location." );
 	else
-		pSock.SysMessage( "Unable to set faction stronghold: " + TriggerEvent( CommandFactionStrongholdScriptId, "StrongholdLastError" ) );
+		pSock.SysMessage( "Unable to set faction stronghold: " + TriggerEvent( commandFactionStrongholdScriptId, "StrongholdLastError" ) );
 }
 
 function command_FACTIONSTRONGHOLDS( pSock, cmdString )
 {
-	if( !TriggerEvent( CommandFactionStrongholdScriptId, "ShowStrongholdStatus", pSock ) )
+	if( !TriggerEvent( commandFactionStrongholdScriptId, "ShowStrongholdStatus", pSock ) )
 		pSock.SysMessage( "Unable to show faction strongholds." );
 }
 
 function CommandSigilTownArg( cmdString )
 {
-	var townName = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let townName = String( cmdString ).replace( /^\s+|\s+$/g, "" );
 	if( townName.toLowerCase() === "all" )
 		return "";
 
@@ -2139,8 +2150,8 @@ function CommandSigilTownArg( cmdString )
 
 function command_FACTIONSIGILHOME( pSock, cmdString )
 {
-	var townName = CommandSigilTownArg( cmdString );
-	var count = TriggerEvent( CommandFactionSigilScriptId, "SigilRegisterHome", townName );
+	let townName = CommandSigilTownArg( cmdString );
+	let count = TriggerEvent( commandFactionSigilScriptId, "SigilRegisterHome", townName );
 	if( count > 0 )
 		pSock.SysMessage( "Registered home location for " + count + " faction sigil(s)." );
 	else
@@ -2149,8 +2160,8 @@ function command_FACTIONSIGILHOME( pSock, cmdString )
 
 function command_FACTIONSIGILRETURN( pSock, cmdString )
 {
-	var townName = CommandSigilTownArg( cmdString );
-	var count = TriggerEvent( CommandFactionSigilScriptId, "SigilReturn", townName );
+	let townName = CommandSigilTownArg( cmdString );
+	let count = TriggerEvent( commandFactionSigilScriptId, "SigilReturn", townName );
 	if( count > 0 )
 		pSock.SysMessage( "Returned " + count + " faction sigil(s) home." );
 	else
@@ -2159,29 +2170,29 @@ function command_FACTIONSIGILRETURN( pSock, cmdString )
 
 function command_FACTIONSIGILS( pSock, cmdString )
 {
-	var townName = CommandSigilTownArg( cmdString );
-	var count = TriggerEvent( CommandFactionSigilScriptId, "ShowSigilStatus", pSock, townName );
+	let townName = CommandSigilTownArg( cmdString );
+	let count = TriggerEvent( commandFactionSigilScriptId, "ShowSigilStatus", pSock, townName );
 	if( count == 0 )
 		pSock.SysMessage( "No faction sigils matched. Usage: 'factionsigils [town|all]" );
 }
 
 function command_FACTIONSIGILRETURNTIME( pSock, cmdString )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
 	if( cmdText === "" )
 	{
-		TriggerEvent( CommandFactionSigilScriptId, "ShowSigilReturnTime", pSock );
+		TriggerEvent( commandFactionSigilScriptId, "ShowSigilReturnTime", pSock );
 		return;
 	}
 
-	var minutes = parseInt( cmdText, 10 );
+	let minutes = parseInt( cmdText, 10 );
 	if( isNaN( minutes ) || minutes < 1 )
 	{
 		pSock.SysMessage( "Usage: 'factionsigilreturntime [minutes]" );
 		return;
 	}
 
-	var count = TriggerEvent( CommandFactionSigilScriptId, "SigilSetReturnTime", minutes );
+	let count = TriggerEvent( commandFactionSigilScriptId, "SigilSetReturnTime", minutes );
 	if( count > 0 )
 		pSock.SysMessage( "Faction sigil return time set to " + minutes + " minute(s) for " + count + " sigil(s)." );
 	else
@@ -2190,13 +2201,13 @@ function command_FACTIONSIGILRETURNTIME( pSock, cmdString )
 
 function command_FACTIONSCORE( pSock, cmdString )
 {
-	if( !TriggerEvent( CommandFactionSigilScriptId, "ShowFactionScore", pSock ) )
+	if( !TriggerEvent( commandFactionSigilScriptId, "ShowFactionScore", pSock ) )
 		pSock.SysMessage( "Unable to show faction score." );
 }
 
 function command_FACTIONSCORERESET( pSock, cmdString )
 {
-	if( TriggerEvent( CommandFactionSigilScriptId, "ResetFactionScore" ) )
+	if( TriggerEvent( commandFactionSigilScriptId, "ResetFactionScore" ) )
 		pSock.SysMessage( "Faction score has been reset." );
 	else
 		pSock.SysMessage( "Unable to reset faction score." );
@@ -2204,13 +2215,13 @@ function command_FACTIONSCORERESET( pSock, cmdString )
 
 function command_FACTIONKILLS( pSock, cmdString )
 {
-	if( !TriggerEvent( CommandFactionCombatScriptId, "ShowFactionKillStats", pSock ) )
+	if( !TriggerEvent( commandFactionCombatScriptId, "ShowFactionKillStats", pSock ) )
 		pSock.SysMessage( "Unable to show faction kill stats." );
 }
 
 function command_FACTIONKILLSRESET( pSock, cmdString )
 {
-	if( TriggerEvent( CommandFactionCombatScriptId, "ResetFactionKillStats" ) )
+	if( TriggerEvent( commandFactionCombatScriptId, "ResetFactionKillStats" ) )
 		pSock.SysMessage( "Faction kill stats have been reset." );
 	else
 		pSock.SysMessage( "Unable to reset faction kill stats." );
@@ -2243,40 +2254,40 @@ function CommandRequireCommander( pSock, pUser, factionKey )
 
 function CommandBroadcastToFaction( factionKey, messageText )
 {
-	CommandBroadcastFaction = factionKey;
-	CommandBroadcastMessage = messageText;
-	CommandBroadcastCount = 0;
+	commandBroadcastFaction = factionKey;
+	commandBroadcastMessage = messageText;
+	commandBroadcastCount = 0;
 	IterateOver( "CHARACTER" );
-	var sentCount = CommandBroadcastCount;
-	CommandBroadcastFaction = "";
-	CommandBroadcastMessage = "";
-	CommandBroadcastCount = 0;
+	const sentCount = commandBroadcastCount;
+	commandBroadcastFaction = "";
+	commandBroadcastMessage = "";
+	commandBroadcastCount = 0;
 	return sentCount;
 }
 
 function command_FACTIONNOTICE( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
-	var factionKey = CommandFactionFromCommanderArgs( pUser, parts );
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let factionKey = CommandFactionFromCommanderArgs( pUser, parts );
 	if( !CommandRequireCommander( pSock, pUser, factionKey ) )
 		return;
 
 	if( CommandIsStaff( pUser ) && parts.length > 0 && CommandIsFactionValid( String( parts[0] ).toUpperCase() ) )
 		parts.shift();
 
-	var messageText = parts.join( " " ).replace( /^\s+|\s+$/g, "" );
+	let messageText = parts.join( " " ).replace( /^\s+|\s+$/g, "" );
 	if( messageText === "" )
 	{
 		pSock.SysMessage( "Usage: 'factionnotice [TB|COM|MIN|SL] <message>" );
 		return;
 	}
 
-	if( TriggerEvent( CommandFactionSigilScriptId, "SetFactionNotice", factionKey, messageText, pUser.name ) )
+	if( TriggerEvent( commandFactionSigilScriptId, "SetFactionNotice", factionKey, messageText, pUser.name ) )
 	{
 		pSock.SysMessage( "Faction notice updated." );
 		CommandBroadcastToFaction( factionKey, CommandFactionUsageName( factionKey ) + " notice: " + messageText );
@@ -2289,19 +2300,19 @@ function command_FACTIONNOTICE( pSock, cmdString )
 
 function command_FACTIONNOTICECLEAR( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var parts = String( cmdString ).replace( /^\s+|\s+$/g, "" ).split( /\s+/ );
+	let parts = String( cmdString ).replace( /^\s+|\s+$/g, "" ).split( /\s+/ );
 	if( parts.length == 1 && parts[0] === "" )
 		parts = [];
 
-	var factionKey = CommandFactionFromCommanderArgs( pUser, parts );
+	let factionKey = CommandFactionFromCommanderArgs( pUser, parts );
 	if( !CommandRequireCommander( pSock, pUser, factionKey ) )
 		return;
 
-	if( TriggerEvent( CommandFactionSigilScriptId, "ClearFactionNotice", factionKey ) )
+	if( TriggerEvent( commandFactionSigilScriptId, "ClearFactionNotice", factionKey ) )
 	{
 		pSock.SysMessage( "Faction notice cleared." );
 		CommandBroadcastToFaction( factionKey, CommandFactionUsageName( factionKey ) + " notice cleared." );
@@ -2314,20 +2325,20 @@ function command_FACTIONNOTICECLEAR( pSock, cmdString )
 
 function command_FACTIONALERT( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
-	var factionKey = CommandFactionFromCommanderArgs( pUser, parts );
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let factionKey = CommandFactionFromCommanderArgs( pUser, parts );
 	if( !CommandRequireCommander( pSock, pUser, factionKey ) )
 		return;
 
 	if( CommandIsStaff( pUser ) && parts.length > 0 && CommandIsFactionValid( String( parts[0] ).toUpperCase() ) )
 		parts.shift();
 
-	var townName = parts.join( " " ).replace( /^\s+|\s+$/g, "" );
+	let townName = parts.join( " " ).replace( /^\s+|\s+$/g, "" );
 	if( townName === "" )
 		townName = CommandCurrentFactionTown( pUser );
 	if( townName === "" )
@@ -2336,7 +2347,7 @@ function command_FACTIONALERT( pSock, cmdString )
 		return;
 	}
 
-	var townOwner = TriggerEvent( CommandFactionTownScriptId, "TownGetOwner", townName );
+	let townOwner = TriggerEvent( commandFactionTownScriptId, "TownGetOwner", townName );
 	if( townOwner === "" )
 	{
 		pSock.SysMessage( "That is not a known faction town." );
@@ -2351,31 +2362,31 @@ function command_FACTIONALERT( pSock, cmdString )
 
 	if( !CommandIsStaff( pUser ) )
 	{
-		if( TriggerEvent( CommandFactionSigilScriptId, "FactionScoreValue", factionKey ) < 1 )
+		if( TriggerEvent( commandFactionSigilScriptId, "FactionScoreValue", factionKey ) < 1 )
 		{
 			pSock.SysMessage( "Your faction needs at least 1 score to issue a town alert." );
 			return;
 		}
 
-		if( !TriggerEvent( CommandFactionSigilScriptId, "SpendFactionScore", factionKey, 1 ) )
+		if( !TriggerEvent( commandFactionSigilScriptId, "SpendFactionScore", factionKey, 1 ) )
 		{
 			pSock.SysMessage( "Unable to spend faction score for that alert." );
 			return;
 		}
 	}
 
-	var sentCount = CommandBroadcastToFaction( factionKey, "Faction alert: " + townName + " needs " + CommandFactionUsageName( factionKey ) + " forces." );
+	const sentCount = CommandBroadcastToFaction( factionKey, "Faction alert: " + townName + " needs " + CommandFactionUsageName( factionKey ) + " forces." );
 	pSock.SysMessage( "Faction alert sent to " + sentCount + " online faction member(s)." );
 }
 
 function CommandCurrentFactionTown( pUser )
 {
-	return TriggerEvent( CommandFactionTownScriptId, "TownNameForObject", pUser );
+	return TriggerEvent( commandFactionTownScriptId, "TownNameForObject", pUser );
 }
 
 function CommandCanPlaceFactionNpc( pSock, pUser, factionKey )
 {
-	var townOwner = TriggerEvent( CommandFactionTownScriptId, "TownOwnerForObject", pUser );
+	let townOwner = TriggerEvent( commandFactionTownScriptId, "TownOwnerForObject", pUser );
 	if( townOwner === "" )
 	{
 		pSock.SysMessage( "You must be in a faction-controlled town to place faction NPCs." );
@@ -2393,8 +2404,8 @@ function CommandCanPlaceFactionNpc( pSock, pUser, factionKey )
 
 function CommandCanPlaceFactionNpcType( pSock, pUser, factionKey, npcType )
 {
-	var townName = CommandCurrentFactionTown( pUser );
-	var limitError = TriggerEvent( CommandFactionTownScriptId, "TownCanPlaceFactionNpc", townName, factionKey, npcType );
+	let townName = CommandCurrentFactionTown( pUser );
+	const limitError = TriggerEvent( commandFactionTownScriptId, "TownCanPlaceFactionNpc", townName, factionKey, npcType );
 	if( limitError !== "" )
 	{
 		pSock.SysMessage( limitError );
@@ -2409,14 +2420,14 @@ function CommandSpendTownTreasury( pSock, pUser, townName, cost, spendText )
 	if( CommandIsStaff( pUser ) )
 		return true;
 
-	var treasury = TriggerEvent( CommandFactionTownScriptId, "TownGetTreasury", townName );
+	const treasury = TriggerEvent( commandFactionTownScriptId, "TownGetTreasury", townName );
 	if( treasury < cost )
 	{
 		pSock.SysMessage( "The " + townName + " treasury needs " + cost + " silver for " + spendText + ". Current treasury: " + treasury + "." );
 		return false;
 	}
 
-	if( !TriggerEvent( CommandFactionTownScriptId, "TownSpendTreasury", townName, cost ) )
+	if( !TriggerEvent( commandFactionTownScriptId, "TownSpendTreasury", townName, cost ) )
 	{
 		pSock.SysMessage( "Unable to spend from the town treasury." );
 		return false;
@@ -2440,12 +2451,12 @@ function CommandCanUseFactionNpcCommand( pSock, pUser, factionKey, requiredRole 
 
 function CommandSpawnFactionNpc( pSock, pUser, sectionId, factionKey, npcType, vendorType )
 {
-	var newNpc = SpawnNPC( sectionId, pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	const newNpc = SpawnNPC( sectionId, pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 	if( !ValidateObject( newNpc ) )
 		return null;
 
-	var townName = CommandCurrentFactionTown( pUser );
-	if( !TriggerEvent( CommandFactionTownScriptId, "TownTagFactionNpc", newNpc, factionKey, townName, npcType, vendorType ) )
+	let townName = CommandCurrentFactionTown( pUser );
+	if( !TriggerEvent( commandFactionTownScriptId, "TownTagFactionNpc", newNpc, factionKey, townName, npcType, vendorType ) )
 		newNpc.SetTag( "faction_spawned", 1 );
 
 	return newNpc;
@@ -2453,7 +2464,7 @@ function CommandSpawnFactionNpc( pSock, pUser, sectionId, factionKey, npcType, v
 
 function CommandTownNameFromArgs( pSock, pUser, cmdString, allowAll, requireTown )
 {
-	var townName = "";
+	let townName = "";
 	if( cmdString != null )
 		townName = String( cmdString ).replace( /^\s+|\s+$/g, "" );
 
@@ -2474,63 +2485,63 @@ function CommandTownNameFromArgs( pSock, pUser, cmdString, allowAll, requireTown
 
 function command_FACTIONTOWNNPCS( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var townName = CommandTownNameFromArgs( pSock, pUser, cmdString, true, false );
-	TriggerEvent( CommandFactionTownScriptId, "ShowTownNpcStatus", pSock, townName );
+	let townName = CommandTownNameFromArgs( pSock, pUser, cmdString, true, false );
+	TriggerEvent( commandFactionTownScriptId, "ShowTownNpcStatus", pSock, townName );
 }
 
 function command_FACTIONTOWNCLEAR( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var townName = CommandTownNameFromArgs( pSock, pUser, cmdString, true, true );
+	let townName = CommandTownNameFromArgs( pSock, pUser, cmdString, true, true );
 	if( townName == null )
 		return;
 
-	var removedCount = TriggerEvent( CommandFactionTownScriptId, "TownClearFactionNpcs", townName, "" );
+	const removedCount = TriggerEvent( commandFactionTownScriptId, "TownClearFactionNpcs", townName, "" );
 	pSock.SysMessage( "Removed " + removedCount + " managed faction NPC(s)." );
 }
 
 function command_FACTIONTOWNLIMIT( pSock, cmdString )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
 		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
 		return;
 	}
 
-	var npcType = parts[0].toLowerCase();
+	const npcType = parts[0].toLowerCase();
 	if( npcType !== "guard" && npcType !== "vendor" )
 	{
 		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
 		return;
 	}
 
-	var amountText = parts[1].toLowerCase();
+	let amountText = parts[1].toLowerCase();
 	if( amountText === "default" || amountText === "ini" || amountText === "clear" )
 	{
-		if( TriggerEvent( CommandFactionTownScriptId, "TownClearNpcLimit", npcType ) )
+		if( TriggerEvent( commandFactionTownScriptId, "TownClearNpcLimit", npcType ) )
 			pSock.SysMessage( "Faction town " + npcType + " limit now uses the INI default." );
 		else
 			pSock.SysMessage( "Unable to clear that faction town limit." );
 		return;
 	}
 
-	var amount = parseInt( amountText, 10 );
+	let amount = parseInt( amountText, 10 );
 	if( isNaN( amount ) || amount < 0 )
 	{
 		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
 		return;
 	}
 
-	if( TriggerEvent( CommandFactionTownScriptId, "TownSetNpcLimit", npcType, amount ) )
+	if( TriggerEvent( commandFactionTownScriptId, "TownSetNpcLimit", npcType, amount ) )
 		pSock.SysMessage( "Faction town " + npcType + " limit set to " + amount + "." );
 	else
 		pSock.SysMessage( "Unable to set that faction town limit." );
@@ -2538,22 +2549,22 @@ function command_FACTIONTOWNLIMIT( pSock, cmdString )
 
 function command_FACTIONTREASURY( pSock, cmdString )
 {
-	var townName = CommandSigilTownArg( cmdString );
-	if( !TriggerEvent( CommandFactionTownScriptId, "ShowTownTreasury", pSock, townName ) )
+	let townName = CommandSigilTownArg( cmdString );
+	if( !TriggerEvent( commandFactionTownScriptId, "ShowTownTreasury", pSock, townName ) )
 		pSock.SysMessage( "Unable to show faction town treasury." );
 }
 
 function command_FACTIONTREASURYGRANT( pSock, cmdString )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
 		pSock.SysMessage( "Usage: 'factiontreasurygrant <town> <amount>" );
 		return;
 	}
 
-	var amount = parseInt( parts[parts.length - 1], 10 );
+	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
 		pSock.SysMessage( "Usage: 'factiontreasurygrant <town> <amount>" );
@@ -2561,8 +2572,8 @@ function command_FACTIONTREASURYGRANT( pSock, cmdString )
 	}
 
 	parts.pop();
-	var townName = parts.join( " " );
-	if( TriggerEvent( CommandFactionTownScriptId, "TownAddTreasury", townName, amount ) )
+	let townName = parts.join( " " );
+	if( TriggerEvent( commandFactionTownScriptId, "TownAddTreasury", townName, amount ) )
 		pSock.SysMessage( "Faction town treasury updated." );
 	else
 		pSock.SysMessage( "Unable to update that faction town treasury." );
@@ -2570,15 +2581,15 @@ function command_FACTIONTREASURYGRANT( pSock, cmdString )
 
 function command_FACTIONTREASURYSET( pSock, cmdString )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
 		pSock.SysMessage( "Usage: 'factiontreasuryset <town> <amount>" );
 		return;
 	}
 
-	var amount = parseInt( parts[parts.length - 1], 10 );
+	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
 		pSock.SysMessage( "Usage: 'factiontreasuryset <town> <amount>" );
@@ -2586,8 +2597,8 @@ function command_FACTIONTREASURYSET( pSock, cmdString )
 	}
 
 	parts.pop();
-	var townName = parts.join( " " );
-	if( TriggerEvent( CommandFactionTownScriptId, "TownSetTreasury", townName, amount ) )
+	let townName = parts.join( " " );
+	if( TriggerEvent( commandFactionTownScriptId, "TownSetTreasury", townName, amount ) )
 		pSock.SysMessage( "Faction town treasury set." );
 	else
 		pSock.SysMessage( "Unable to set that faction town treasury." );
@@ -2595,7 +2606,7 @@ function command_FACTIONTREASURYSET( pSock, cmdString )
 
 function command_FACTIONTAXCYCLE( pSock, cmdString )
 {
-	var totalIncome = TriggerEvent( CommandFactionTownScriptId, "RunTownTaxCycle" );
+	const totalIncome = TriggerEvent( commandFactionTownScriptId, "RunTownTaxCycle" );
 	if( totalIncome >= 0 )
 		pSock.SysMessage( "Faction town tax cycle complete. Total income: " + totalIncome + " silver." );
 	else
@@ -2604,15 +2615,15 @@ function command_FACTIONTAXCYCLE( pSock, cmdString )
 
 function command_FACTIONTAXRATE( pSock, cmdString )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
 		pSock.SysMessage( "Usage: 'factiontaxrate <town> <amount>" );
 		return;
 	}
 
-	var amount = parseInt( parts[parts.length - 1], 10 );
+	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
 		pSock.SysMessage( "Usage: 'factiontaxrate <town> <amount>" );
@@ -2620,8 +2631,8 @@ function command_FACTIONTAXRATE( pSock, cmdString )
 	}
 
 	parts.pop();
-	var townName = parts.join( " " );
-	if( TriggerEvent( CommandFactionTownScriptId, "TownSetTaxRate", townName, amount, true ) )
+	let townName = parts.join( " " );
+	if( TriggerEvent( commandFactionTownScriptId, "TownSetTaxRate", townName, amount, true ) )
 		pSock.SysMessage( "Faction town tax rate set." );
 	else
 		pSock.SysMessage( "Unable to set that faction town tax rate." );
@@ -2629,8 +2640,8 @@ function command_FACTIONTAXRATE( pSock, cmdString )
 
 function command_FACTIONTAXSTART( pSock, cmdString )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var minutes = 0;
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let minutes = 0;
 	if( cmdText !== "" )
 	{
 		minutes = parseInt( cmdText, 10 );
@@ -2641,7 +2652,7 @@ function command_FACTIONTAXSTART( pSock, cmdString )
 		}
 	}
 
-	if( TriggerEvent( CommandFactionTownScriptId, "StartTownTaxTimer", minutes ) )
+	if( TriggerEvent( commandFactionTownScriptId, "StartTownTaxTimer", minutes ) )
 		pSock.SysMessage( "Faction town tax timer started." );
 	else
 		pSock.SysMessage( "Unable to start faction town tax timer." );
@@ -2649,7 +2660,7 @@ function command_FACTIONTAXSTART( pSock, cmdString )
 
 function command_FACTIONTAXSTOP( pSock, cmdString )
 {
-	if( TriggerEvent( CommandFactionTownScriptId, "StopTownTaxTimer" ) )
+	if( TriggerEvent( commandFactionTownScriptId, "StopTownTaxTimer" ) )
 		pSock.SysMessage( "Faction town tax timer stopped." );
 	else
 		pSock.SysMessage( "Unable to stop faction town tax timer." );
@@ -2657,32 +2668,32 @@ function command_FACTIONTAXSTOP( pSock, cmdString )
 
 function command_FACTIONTAXSTATUS( pSock, cmdString )
 {
-	if( !TriggerEvent( CommandFactionTownScriptId, "ShowTownTaxStatus", pSock ) )
+	if( !TriggerEvent( commandFactionTownScriptId, "ShowTownTaxStatus", pSock ) )
 		pSock.SysMessage( "Unable to show faction town tax timer status." );
 }
 
 function command_FACTIONROLE( pSock, cmdString )
 {
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 3 )
 	{
 		pSock.SysMessage( "Usage: 'factionrole <player> <sheriff|finance|commander> <TB|COM|MIN|SL> [town]" );
 		return;
 	}
 
-	var factionIndex = parts.length - 1;
-	var factionKey = parts[factionIndex].toUpperCase();
-	var townName = "";
+	let factionIndex = parts.length - 1;
+	let factionKey = parts[factionIndex].toUpperCase();
+	let townName = "";
 	if( !CommandIsFactionValid( factionKey ) && parts.length >= 4 )
 	{
 		townName = parts[parts.length - 1];
 		factionIndex--;
 		factionKey = parts[factionIndex].toUpperCase();
 	}
-	var roleName = parts[factionIndex - 1].toLowerCase();
-	var playerParts = [];
-	for( var partIndex = 0; partIndex < factionIndex - 1; partIndex++ )
+	let roleName = parts[factionIndex - 1].toLowerCase();
+	const playerParts = [];
+	for( let partIndex = 0; partIndex < factionIndex - 1; partIndex++ )
 		playerParts.push( parts[partIndex] );
 
 	if( !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
@@ -2696,7 +2707,7 @@ function command_FACTIONROLE( pSock, cmdString )
 		return;
 	}
 
-	var targetChar = CommandFindPlayer( playerParts.join( " " ) );
+	let targetChar = CommandFindPlayer( playerParts.join( " " ) );
 	if( !ValidateObject( targetChar ) )
 	{
 		pSock.SysMessage( "Unable to find that player." );
@@ -2721,7 +2732,7 @@ function command_FACTIONROLE( pSock, cmdString )
 
 function command_FACTIONROLECLEAR( pSock, cmdString )
 {
-	var targetChar = CommandFindPlayer( cmdString );
+	let targetChar = CommandFindPlayer( cmdString );
 	if( !ValidateObject( targetChar ) )
 	{
 		pSock.SysMessage( "Usage: 'factionroleclear <player>" );
@@ -2736,9 +2747,9 @@ function command_FACTIONROLECLEAR( pSock, cmdString )
 
 function command_FACTIONROLES( pSock, cmdString )
 {
-	CommandRoleListSocket = pSock;
-	var roleCount = IterateOver( "CHARACTER" );
-	CommandRoleListSocket = null;
+	commandRoleListSocket = pSock;
+	let roleCount = IterateOver( "CHARACTER" );
+	commandRoleListSocket = null;
 
 	if( roleCount == 0 )
 		pSock.SysMessage( "No faction roles are assigned." );
@@ -2746,31 +2757,31 @@ function command_FACTIONROLES( pSock, cmdString )
 
 function command_FACTIONAPPOINT( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
 		pSock.SysMessage( "Usage: 'factionappoint <player> <sheriff|finance> [town]" );
 		return;
 	}
 
-	var factionKey = pUser.GetTag( "faction" );
-	var roleIndex = parts.length - 1;
-	var townName = TriggerEvent( CommandFactionTownScriptId, "TownNameForObject", pUser );
-	var maybeTown = TriggerEvent( CommandFactionTownScriptId, "TownNormalizeName", parts[parts.length - 1] );
-	if( TriggerEvent( CommandFactionTownScriptId, "TownGetDefault", maybeTown ) != null )
+	let factionKey = pUser.GetTag( "faction" );
+	let roleIndex = parts.length - 1;
+	let townName = TriggerEvent( commandFactionTownScriptId, "TownNameForObject", pUser );
+	const maybeTown = TriggerEvent( commandFactionTownScriptId, "TownNormalizeName", parts[parts.length - 1] );
+	if( TriggerEvent( commandFactionTownScriptId, "TownGetDefault", maybeTown ) != null )
 	{
 		townName = maybeTown;
 		roleIndex = parts.length - 2;
 	}
 
-	var roleName = parts[roleIndex].toLowerCase();
-	var playerParts = [];
-	for( var partIndex = 0; partIndex < roleIndex; partIndex++ )
+	let roleName = parts[roleIndex].toLowerCase();
+	const playerParts = [];
+	for( let partIndex = 0; partIndex < roleIndex; partIndex++ )
 		playerParts.push( parts[partIndex] );
 
 	if( roleName !== "sheriff" && roleName !== "finance" )
@@ -2785,7 +2796,7 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 		return;
 	}
 
-	var targetChar = CommandFindPlayer( playerParts.join( " " ) );
+	let targetChar = CommandFindPlayer( playerParts.join( " " ) );
 	if( !ValidateObject( targetChar ) )
 	{
 		pSock.SysMessage( "Unable to find that player." );
@@ -2806,7 +2817,7 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 		pSock.SysMessage( "Only your faction Commander may appoint that role." );
 		return;
 	}
-	if( townName === "" || TriggerEvent( CommandFactionTownScriptId, "TownGetOwner", townName ) !== factionKey )
+	if( townName === "" || TriggerEvent( commandFactionTownScriptId, "TownGetOwner", townName ) !== factionKey )
 	{
 		pSock.SysMessage( "Appointments must be made for a town controlled by your faction." );
 		return;
@@ -2835,11 +2846,11 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 
 function command_FACTIONGUARD( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var factionKey = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase();
+	let factionKey = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "Usage: 'factionguard <TB|COM|MIN|SL>" );
@@ -2854,11 +2865,11 @@ function command_FACTIONGUARD( pSock, cmdString )
 	if( !CommandCanPlaceFactionNpcType( pSock, pUser, factionKey, "guard" ) )
 		return;
 
-	var townName = CommandCurrentFactionTown( pUser );
-	if( !CommandSpendTownTreasury( pSock, pUser, townName, CommandFactionGuardCost, "a faction guard" ) )
+	let townName = CommandCurrentFactionTown( pUser );
+	if( !CommandSpendTownTreasury( pSock, pUser, townName, commandFactionGuardCost, "a faction guard" ) )
 		return;
 
-	var guard = CommandSpawnFactionNpc( pSock, pUser, "FACTION_GUARD_" + factionKey, factionKey, "guard", "" );
+	const guard = CommandSpawnFactionNpc( pSock, pUser, "FACTION_GUARD_" + factionKey, factionKey, "guard", "" );
 	if( ValidateObject( guard ) )
 	{
 		pSock.SysMessage( CommandFactionUsageName( factionKey ) + " faction guard created." );
@@ -2866,20 +2877,20 @@ function command_FACTIONGUARD( pSock, cmdString )
 	else
 	{
 		if( !CommandIsStaff( pUser ) )
-			TriggerEvent( CommandFactionTownScriptId, "TownAddTreasury", townName, CommandFactionGuardCost );
+			TriggerEvent( commandFactionTownScriptId, "TownAddTreasury", townName, commandFactionGuardCost );
 		pSock.SysMessage( "Unable to create faction guard." );
 	}
 }
 
 function command_FACTIONVENDOR( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var parts = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase().split( /\s+/ );
-	var factionKey = "";
-	var vendorType = "";
+	let parts = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase().split( /\s+/ );
+	let factionKey = "";
+	let vendorType = "";
 
 	if( parts.length === 2 )
 	{
@@ -2897,7 +2908,7 @@ function command_FACTIONVENDOR( pSock, cmdString )
 
 	if( !CommandIsFactionValid( factionKey ) || !CommandIsVendorTypeValid( vendorType ) )
 	{
-		pSock.SysMessage( "Usage: 'factionvendor <TB|COM|MIN|SL> <REAGENT|BOARD|BOTTLE|EQUIPMENT|HORSE>" );
+		pSock.SysMessage( "Usage: 'factionvendor <TB|COM|MIN|SL> <REAGENT|BOARD|BOTTLE|EQUIPMENT|HORSE|ORE>" );
 		return;
 	}
 
@@ -2909,11 +2920,12 @@ function command_FACTIONVENDOR( pSock, cmdString )
 	if( !CommandCanPlaceFactionNpcType( pSock, pUser, factionKey, "vendor" ) )
 		return;
 
-	var townName = CommandCurrentFactionTown( pUser );
-	if( !CommandSpendTownTreasury( pSock, pUser, townName, CommandFactionVendorCost, "a faction vendor" ) )
+	let townName = CommandCurrentFactionTown( pUser );
+	const vendorCost = CommandFactionVendorPurchaseCost( vendorType );
+	if( !CommandSpendTownTreasury( pSock, pUser, townName, vendorCost, "a faction vendor" ) )
 		return;
 
-	var vendor = CommandSpawnFactionNpc( pSock, pUser, "FACTION_" + vendorType + "_VENDOR_" + factionKey, factionKey, "vendor", vendorType );
+	const vendor = CommandSpawnFactionNpc( pSock, pUser, "FACTION_" + vendorType + "_VENDOR_" + factionKey, factionKey, "vendor", vendorType );
 	if( ValidateObject( vendor ) )
 	{
 		pSock.SysMessage( CommandFactionUsageName( factionKey ) + " " + vendorType.toLowerCase() + " faction vendor created." );
@@ -2921,7 +2933,7 @@ function command_FACTIONVENDOR( pSock, cmdString )
 	else
 	{
 		if( !CommandIsStaff( pUser ) )
-			TriggerEvent( CommandFactionTownScriptId, "TownAddTreasury", townName, CommandFactionVendorCost );
+			TriggerEvent( commandFactionTownScriptId, "TownAddTreasury", townName, vendorCost );
 		pSock.SysMessage( "Unable to create faction vendor." );
 	}
 }
@@ -2934,17 +2946,17 @@ function CommandFactionNpcUsage( pSock )
 
 function command_FACTIONNPC( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
-	var factionIndex = -1;
-	var factionKey = "";
-	for( var partIndex = 0; partIndex < parts.length; partIndex++ )
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let factionIndex = -1;
+	let factionKey = "";
+	for( let partIndex = 0; partIndex < parts.length; partIndex++ )
 	{
-		var possibleFaction = parts[partIndex].toUpperCase();
+		const possibleFaction = parts[partIndex].toUpperCase();
 		if( CommandIsFactionValid( possibleFaction ) )
 		{
 			factionIndex = partIndex;
@@ -2959,19 +2971,19 @@ function command_FACTIONNPC( pSock, cmdString )
 		return;
 	}
 
-	var npcName = parts.slice( 0, factionIndex ).join( " " );
-	var targetNpc = CommandFindNpc( npcName );
+	let npcName = parts.slice( 0, factionIndex ).join( " " );
+	const targetNpc = CommandFindNpc( npcName );
 	if( !ValidateObject( targetNpc ) )
 	{
 		pSock.SysMessage( "Unable to find that NPC." );
 		return;
 	}
 
-	var passive = 0;
-	var requireTownControl = 0;
-	for( var optionIndex = factionIndex + 1; optionIndex < parts.length; optionIndex++ )
+	let passive = 0;
+	let requireTownControl = 0;
+	for( let optionIndex = factionIndex + 1; optionIndex < parts.length; optionIndex++ )
 	{
-		var optionText = parts[optionIndex].toLowerCase();
+		let optionText = parts[optionIndex].toLowerCase();
 		if( optionText === "passive" )
 		{
 			passive = 1;
@@ -3000,10 +3012,10 @@ function command_FACTIONNPC( pSock, cmdString )
 	targetNpc.SetTag( "faction_npc", 1 );
 	targetNpc.SetTag( "npc_faction_passive", passive );
 	targetNpc.SetTag( "npc_faction_require_town_control", requireTownControl );
-	if( !targetNpc.HasScriptTrigger( CommandFactionNpcScriptId ) )
-		targetNpc.AddScriptTrigger( CommandFactionNpcScriptId );
+	if( !targetNpc.HasScriptTrigger( commandFactionNpcScriptId ) )
+		targetNpc.AddScriptTrigger( commandFactionNpcScriptId );
 
-	var modeText = passive == 1 ? "passive" : "aggressive";
+	let modeText = passive == 1 ? "passive" : "aggressive";
 	if( requireTownControl == 1 )
 		modeText += ", town controlled";
 
@@ -3012,18 +3024,18 @@ function command_FACTIONNPC( pSock, cmdString )
 
 function command_FACTIONNPCCLEAR( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var npcName = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let npcName = String( cmdString ).replace( /^\s+|\s+$/g, "" );
 	if( npcName === "" )
 	{
 		pSock.SysMessage( "Usage: 'factionnpcclear <npc serial|exact name>'" );
 		return;
 	}
 
-	var targetNpc = CommandFindNpc( npcName );
+	const targetNpc = CommandFindNpc( npcName );
 	if( !ValidateObject( targetNpc ) )
 	{
 		pSock.SysMessage( "Unable to find that NPC." );
@@ -3044,21 +3056,21 @@ function command_FACTIONITEMCHECK( pSock, cmdString )
 
 function command_FACTIONITEMCLEANUP( pSock, cmdString )
 {
-	var cleanedCount = TriggerEvent( 8507, "CleanupInvalidFactionItems" );
+	const cleanedCount = TriggerEvent( 8507, "CleanupInvalidFactionItems" );
 	pSock.SysMessage( "Removed " + cleanedCount + " invalid faction item(s) or mount(s)." );
 }
 
 function command_FACTIONSILVER( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
-	var parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
-	var action = "";
-	var amount = 0;
-	var targetChar = pUser;
+	let cmdText = String( cmdString ).replace( /^\s+|\s+$/g, "" );
+	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
+	let action = "";
+	let amount = 0;
+	let targetChar = pUser;
 
 	if( parts.length >= 1 )
 		action = parts[0].toLowerCase();
@@ -3074,7 +3086,7 @@ function command_FACTIONSILVER( pSock, cmdString )
 	}
 	else
 	{
-		var parsed = CommandParsePlayerAmountArgs( pSock, cmdText, "Usage: 'factionsilver <add|set> [player] <amount>" );
+		let parsed = CommandParsePlayerAmountArgs( pSock, cmdText, "Usage: 'factionsilver <add|set> [player] <amount>" );
 		if( parsed == null )
 			return;
 
@@ -3083,8 +3095,8 @@ function command_FACTIONSILVER( pSock, cmdString )
 		targetChar = parsed.targetChar;
 	}
 
-	var currentSilver = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", targetChar, "silver", targetChar.GetTag( "faction_silver" ) ) );
-	var newSilver = currentSilver;
+	const currentSilver = CommandClampNonNegative( TriggerEvent( commandFactionPlayerDataScriptId, "GetFactionValue", targetChar, "silver", targetChar.GetTag( "faction_silver" ) ) );
+	let newSilver = currentSilver;
 
 	if( action === "add" )
 		newSilver = currentSilver + amount;
@@ -3093,7 +3105,7 @@ function command_FACTIONSILVER( pSock, cmdString )
 
 	newSilver = CommandClampSilver( newSilver );
 
-	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", targetChar, "silver", newSilver );
+	TriggerEvent( commandFactionPlayerDataScriptId, "SetFactionValue", targetChar, "silver", newSilver );
 	pSock.SysMessage( targetChar.name + " faction silver set to " + newSilver + "." );
 	if( targetChar.socket != null && targetChar.serial != pUser.serial )
 		targetChar.SysMessage( "Your faction silver is now " + newSilver + "." );
@@ -3101,17 +3113,17 @@ function command_FACTIONSILVER( pSock, cmdString )
 
 function command_FACTIONKP( pSock, cmdString )
 {
-	var parsed = CommandParsePlayerAmountArgs( pSock, cmdString, "Usage: 'factionkp <add|set> <player> <amount>" );
+	let parsed = CommandParsePlayerAmountArgs( pSock, cmdString, "Usage: 'factionkp <add|set> <player> <amount>" );
 	if( parsed == null )
 		return;
 
-	var currentPoints = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "killPoints", parsed.targetChar.GetTag( "faction_kp" ) ) );
-	var newPoints = parsed.action === "add" ? currentPoints + parsed.amount : parsed.amount;
+	let currentPoints = CommandClampNonNegative( TriggerEvent( commandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "killPoints", parsed.targetChar.GetTag( "faction_kp" ) ) );
+	let newPoints = parsed.action === "add" ? currentPoints + parsed.amount : parsed.amount;
 	newPoints = CommandClampNonNegative( newPoints );
 
-	var oldRank = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "rank", parsed.targetChar.GetTag( "faction_rank" ) ) );
-	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "killPoints", newPoints );
-	var newRank = CommandUpdateFactionRank( parsed.targetChar );
+	const oldRank = CommandClampNonNegative( TriggerEvent( commandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "rank", parsed.targetChar.GetTag( "faction_rank" ) ) );
+	TriggerEvent( commandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "killPoints", newPoints );
+	const newRank = CommandUpdateFactionRank( parsed.targetChar );
 
 	pSock.SysMessage( parsed.targetChar.name + " faction kill points set to " + newPoints + " (" + CommandRankName( newRank ) + ")." );
 	if( parsed.targetChar.socket != null )
@@ -3124,15 +3136,15 @@ function command_FACTIONKP( pSock, cmdString )
 
 function command_FACTIONCAPTURE( pSock, cmdString )
 {
-	var parsed = CommandParsePlayerAmountArgs( pSock, cmdString, "Usage: 'factioncapture <add|set> <player> <amount>" );
+	let parsed = CommandParsePlayerAmountArgs( pSock, cmdString, "Usage: 'factioncapture <add|set> <player> <amount>" );
 	if( parsed == null )
 		return;
 
-	var currentCaptures = CommandClampNonNegative( TriggerEvent( CommandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "captures", parsed.targetChar.GetTag( "faction_captures" ) ) );
-	var newCaptures = parsed.action === "add" ? currentCaptures + parsed.amount : parsed.amount;
+	const currentCaptures = CommandClampNonNegative( TriggerEvent( commandFactionPlayerDataScriptId, "GetFactionValue", parsed.targetChar, "captures", parsed.targetChar.GetTag( "faction_captures" ) ) );
+	let newCaptures = parsed.action === "add" ? currentCaptures + parsed.amount : parsed.amount;
 	newCaptures = CommandClampNonNegative( newCaptures );
 
-	TriggerEvent( CommandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "captures", newCaptures );
+	TriggerEvent( commandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "captures", newCaptures );
 	pSock.SysMessage( parsed.targetChar.name + " faction captures set to " + newCaptures + "." );
 	if( parsed.targetChar.socket != null )
 		parsed.targetChar.SysMessage( "Your faction capture count is now " + newCaptures + "." );
@@ -3140,7 +3152,7 @@ function command_FACTIONCAPTURE( pSock, cmdString )
 
 function CommandCreateFactionItem( pSock, pUser, itemType, factionKey )
 {
-	var sectionId = "";
+	let sectionId = "";
 	if( itemType === "ROBE" )
 		sectionId = "FACTION_ROBE_" + factionKey;
 	else if( itemType === "SHIELD" )
@@ -3150,7 +3162,7 @@ function CommandCreateFactionItem( pSock, pUser, itemType, factionKey )
 	else
 		return null;
 
-	var newItem = CreateDFNItem( pSock, pUser, sectionId, 1, "ITEM", true );
+	const newItem = CreateDFNItem( pSock, pUser, sectionId, 1, "ITEM", true );
 	if( ValidateObject( newItem ) )
 	{
 		newItem.SetTag( "faction_item", 1 );
@@ -3167,13 +3179,13 @@ function CommandCreateFactionItem( pSock, pUser, itemType, factionKey )
 
 function command_SPAWNFITEM( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var parts = cmdString.toUpperCase().split( " " );
-	var itemType = parts[0];
-	var factionKey = parts[1];
+	let parts = cmdString.toUpperCase().split( " " );
+	let itemType = parts[0];
+	let factionKey = parts[1];
 
 	if( !CommandIsFactionValid( factionKey ) )
 	{
@@ -3181,7 +3193,7 @@ function command_SPAWNFITEM( pSock, cmdString )
 		return;
 	}
 
-	var newItem = CommandCreateFactionItem( pSock, pUser, itemType, factionKey );
+	const newItem = CommandCreateFactionItem( pSock, pUser, itemType, factionKey );
 	if( !ValidateObject( newItem ) )
 	{
 		pSock.SysMessage( "Unable to create faction item." );
@@ -3193,18 +3205,18 @@ function command_SPAWNFITEM( pSock, cmdString )
 
 function command_SPAWNTRAPDEED( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var trapType = cmdString.toUpperCase();
+	const trapType = cmdString.toUpperCase();
 	if( trapType !== "EXPLOSION" && trapType !== "GAS" && trapType !== "SAW" && trapType !== "SPIKE" )
 	{
 		pSock.SysMessage( "Usage: 'spawntrapdeed <EXPLOSION|GAS|SAW|SPIKE>" );
 		return;
 	}
 
-	var deed = CreateDFNItem( pSock, pUser, "FACTION_TRAP_DEED", 1, "ITEM", true );
+	const deed = CreateDFNItem( pSock, pUser, "FACTION_TRAP_DEED", 1, "ITEM", true );
 	if( ValidateObject( deed ) )
 	{
 		deed.SetTag( "trap_deed", 1 );
@@ -3220,14 +3232,14 @@ function command_SPAWNTRAPDEED( pSock, cmdString )
 
 function command_ELECTIONSTART( pSock, cmdString )
 {
-	var factionKey = cmdString.toUpperCase();
+	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "Usage: 'electionstart <TB|COM|MIN|SL>" );
 		return;
 	}
 
-	if( TriggerEvent( CommandFactionElectionScriptId, "StartElection", factionKey ) )
+	if( TriggerEvent( commandFactionElectionScriptId, "StartElection", factionKey ) )
 		pSock.SysMessage( "Election started for " + factionKey + "." );
 	else
 		pSock.SysMessage( "Could not start election." );
@@ -3235,14 +3247,14 @@ function command_ELECTIONSTART( pSock, cmdString )
 
 function command_ELECTIONVOTE( pSock, cmdString )
 {
-	var factionKey = cmdString.toUpperCase();
+	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "Usage: 'electionvote <TB|COM|MIN|SL>" );
 		return;
 	}
 
-	if( TriggerEvent( CommandFactionElectionScriptId, "BeginVoting", factionKey ) )
+	if( TriggerEvent( commandFactionElectionScriptId, "BeginVoting", factionKey ) )
 		pSock.SysMessage( "Voting phase started for " + factionKey + "." );
 	else
 		pSock.SysMessage( "Could not start voting phase." );
@@ -3250,14 +3262,14 @@ function command_ELECTIONVOTE( pSock, cmdString )
 
 function command_ELECTIONEND( pSock, cmdString )
 {
-	var factionKey = cmdString.toUpperCase();
+	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "Usage: 'electionend <TB|COM|MIN|SL>" );
 		return;
 	}
 
-	if( TriggerEvent( CommandFactionElectionScriptId, "ConcludeElection", factionKey ) )
+	if( TriggerEvent( commandFactionElectionScriptId, "ConcludeElection", factionKey ) )
 		pSock.SysMessage( "Election concluded for " + factionKey + "." );
 	else
 		pSock.SysMessage( "Could not conclude election." );
@@ -3265,30 +3277,30 @@ function command_ELECTIONEND( pSock, cmdString )
 
 function command_ELECTIONSTATUS( pSock, cmdString )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var factionKey = pUser.GetTag( "faction" );
+	let factionKey = pUser.GetTag( "faction" );
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "You are not in a faction." );
 		return;
 	}
 
-	TriggerEvent( CommandFactionElectionScriptId, "ShowElectionStatus", pSock, factionKey );
+	TriggerEvent( commandFactionElectionScriptId, "ShowElectionStatus", pSock, factionKey );
 }
 
 function command_ELECTIONRESET( pSock, cmdString )
 {
-	var factionKey = cmdString.toUpperCase();
+	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
 		pSock.SysMessage( "Usage: 'electionreset <TB|COM|MIN|SL>" );
 		return;
 	}
 
-	if( TriggerEvent( CommandFactionElectionScriptId, "ResetElection", factionKey ) )
+	if( TriggerEvent( commandFactionElectionScriptId, "ResetElection", factionKey ) )
 		pSock.SysMessage( "Election state for " + factionKey + " has been reset." );
 	else
 		pSock.SysMessage( "Could not reset election." );

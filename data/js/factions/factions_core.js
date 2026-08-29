@@ -1,24 +1,27 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_core.js
 // UOX3 Faction System - shared helper script
 // Script ID suggestion: 8500
 // =============================================================================
 
-var FactionNames = {
+const factionNames = {
 	TB: "True Britannians",
 	COM: "Council of Mages",
 	MIN: "Minax",
 	SL: "Shadowlords"
 };
 
-var FactionHues = {
+const factionHues = {
 	TB: 0x0028,
 	COM: 0x010C,
 	MIN: 0x0026,
 	SL: 0x0455
 };
 
-var FactionRankNames = [
+const factionRankNames = [
 	"Soldier",
 	"Scout",
 	"Corporal",
@@ -31,10 +34,10 @@ var FactionRankNames = [
 	"Commander"
 ];
 
-var FactionRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
-var FactionLeaveDelay = 259200000;
-var FactionMaxSilver = 100000;
-var FactionPlayerDataScriptId = 8513;
+const factionRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
+const factionLeaveDelay = parseInt( GetServerSetting( "FACTIONLEAVEDELAYHOURS" ), 10 ) * 3600000;
+const factionMaxSilver = parseInt( GetServerSetting( "FACTIONMAXSILVER" ), 10 );
+const factionPlayerDataScriptId = 8513;
 
 function FactionIsValid( factionKey )
 {
@@ -46,7 +49,7 @@ function FactionName( factionKey )
 	if( !FactionIsValid( factionKey ) )
 		return "Unknown Faction";
 
-	return FactionNames[factionKey];
+	return factionNames[factionKey];
 }
 
 function FactionHue( factionKey )
@@ -54,7 +57,7 @@ function FactionHue( factionKey )
 	if( !FactionIsValid( factionKey ) )
 		return 0;
 
-	return FactionHues[factionKey];
+	return factionHues[factionKey];
 }
 
 function GetFactionKey( pChar )
@@ -62,7 +65,7 @@ function GetFactionKey( pChar )
 	if( !ValidateObject( pChar ) )
 		return "";
 
-	var factionKey = TriggerEvent( FactionPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
+	let factionKey = TriggerEvent( factionPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( FactionIsValid( factionKey ) )
 		return factionKey;
 
@@ -74,7 +77,7 @@ function GetFactionKillPoints( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return TriggerEvent( FactionPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) );
+	return TriggerEvent( factionPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) );
 }
 
 function SetFactionKillPoints( pChar, amount )
@@ -85,10 +88,10 @@ function SetFactionKillPoints( pChar, amount )
 	if( amount < -6 )
 		amount = -6;
 
-	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let factionData = TriggerEvent( factionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.killPoints = amount;
 	factionData.rank = FactionRankForPoints( amount );
-	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 }
 
 function AddFactionKillPoints( pChar, amount )
@@ -101,7 +104,7 @@ function GetFactionSilver( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return TriggerEvent( FactionPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
+	return TriggerEvent( factionPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
 }
 
 function SetFactionSilver( pChar, amount )
@@ -111,10 +114,10 @@ function SetFactionSilver( pChar, amount )
 
 	if( amount < 0 )
 		amount = 0;
-	if( amount > FactionMaxSilver )
-		amount = FactionMaxSilver;
+	if( amount > factionMaxSilver )
+		amount = factionMaxSilver;
 
-	TriggerEvent( FactionPlayerDataScriptId, "SetFactionValue", pChar, "silver", amount );
+	TriggerEvent( factionPlayerDataScriptId, "SetFactionValue", pChar, "silver", amount );
 }
 
 function AddFactionSilver( pChar, amount )
@@ -127,19 +130,19 @@ function UpdateFactionRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return;
 
-	var killPoints = GetFactionKillPoints( pChar );
-	var rank = FactionRankForPoints( killPoints );
-	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let killPoints = GetFactionKillPoints( pChar );
+	let rank = FactionRankForPoints( killPoints );
+	let factionData = TriggerEvent( factionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.rank = rank;
-	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 }
 
 function FactionRankForPoints( killPoints )
 {
-	var rank = 0;
-	for( var rankIndex = FactionRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
+	let rank = 0;
+	for( let rankIndex = factionRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
 	{
-		if( killPoints >= FactionRankPoints[rankIndex] )
+		if( killPoints >= factionRankPoints[rankIndex] )
 		{
 			rank = rankIndex;
 			break;
@@ -154,22 +157,22 @@ function GetFactionRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return TriggerEvent( FactionPlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
+	return TriggerEvent( factionPlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
 }
 
 function GetFactionRankName( pChar )
 {
-	var rank = GetFactionRank( pChar );
-	if( rank < 0 || rank >= FactionRankNames.length )
+	let rank = GetFactionRank( pChar );
+	if( rank < 0 || rank >= factionRankNames.length )
 		rank = 0;
 
-	return FactionRankNames[rank];
+	return factionRankNames[rank];
 }
 
 function AreFactionEnemies( firstChar, secondChar )
 {
-	var firstFaction = GetFactionKey( firstChar );
-	var secondFaction = GetFactionKey( secondChar );
+	let firstFaction = GetFactionKey( firstChar );
+	let secondFaction = GetFactionKey( secondChar );
 	if( firstFaction === "" || secondFaction === "" )
 		return false;
 
@@ -178,8 +181,8 @@ function AreFactionEnemies( firstChar, secondChar )
 
 function AreFactionAllies( firstChar, secondChar )
 {
-	var firstFaction = GetFactionKey( firstChar );
-	var secondFaction = GetFactionKey( secondChar );
+	let firstFaction = GetFactionKey( firstChar );
+	let secondFaction = GetFactionKey( secondChar );
 	if( firstFaction === "" || secondFaction === "" )
 		return false;
 
@@ -197,20 +200,20 @@ function JoinFaction( pChar, factionKey )
 		return false;
 	}
 
-	var currentFaction = GetFactionKey( pChar );
+	const currentFaction = GetFactionKey( pChar );
 	if( currentFaction !== "" )
 	{
 		pChar.SysMessage( "You are already in the " + FactionName( currentFaction ) + "." );
 		return false;
 	}
 
-	var leaveTime = TriggerEvent( FactionPlayerDataScriptId, "GetFactionValue", pChar, "leaveTime", pChar.GetTag( "faction_leave_time" ) );
+	let leaveTime = TriggerEvent( factionPlayerDataScriptId, "GetFactionValue", pChar, "leaveTime", pChar.GetTag( "faction_leave_time" ) );
 	if( leaveTime > 0 )
 	{
-		var remaining = FactionLeaveDelay - ( GetCurrentClock() - leaveTime );
+		const remaining = factionLeaveDelay - ( GetCurrentClock() - leaveTime );
 		if( remaining > 0 )
 		{
-			var remainingHours = Math.ceil( remaining / 3600000 );
+			const remainingHours = Math.ceil( remaining / 3600000 );
 			pChar.SysMessage( "You must wait " + remainingHours + " more hour(s) before joining a faction." );
 			return false;
 		}
@@ -222,7 +225,7 @@ function JoinFaction( pChar, factionKey )
 		return false;
 	}
 
-	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let factionData = TriggerEvent( factionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.faction = factionKey;
 	factionData.joinTime = GetCurrentClock();
 	factionData.killPoints = 0;
@@ -236,7 +239,7 @@ function JoinFaction( pChar, factionKey )
 	factionData.roleTown = "";
 	factionData.roleSetAt = 0;
 	factionData.recentKills = {};
-	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	TriggerEvent( 8501, "FactionCombatAttachTrigger", pChar );
 	pChar.SysMessage( "You have joined the " + FactionName( factionKey ) + "." );
 	return true;
@@ -247,17 +250,17 @@ function LeaveFaction( pChar )
 	if( !ValidateObject( pChar ) )
 		return false;
 
-	var factionKey = GetFactionKey( pChar );
+	let factionKey = GetFactionKey( pChar );
 	if( factionKey === "" )
 	{
 		pChar.SysMessage( "You are not in a faction." );
 		return false;
 	}
 
-	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let factionData = TriggerEvent( factionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	if( factionData.leaveTime > 0 )
 	{
-		var remaining = FactionLeaveDelay - ( GetCurrentClock() - factionData.leaveTime );
+		const remaining = factionLeaveDelay - ( GetCurrentClock() - factionData.leaveTime );
 		if( remaining > 0 )
 		{
 			pChar.SysMessage( "You are already resigning from your faction. " + Math.ceil( remaining / 3600000 ) + " hour(s) remain." );
@@ -267,7 +270,7 @@ function LeaveFaction( pChar )
 	}
 
 	factionData.leaveTime = GetCurrentClock();
-	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	pChar.SysMessage( "You will leave the " + FactionName( factionKey ) + " in three days." );
 	return true;
 }
@@ -278,13 +281,13 @@ function FinalizeFactionLeave( pChar, factionData )
 		return false;
 
 	if( !factionData || typeof factionData != "object" )
-		factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+		factionData = TriggerEvent( factionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 
-	var factionKey = factionData.faction;
+	let factionKey = factionData.faction;
 	if( !FactionIsValid( factionKey ) )
 		return false;
 
-	var cleanedCount = TriggerEvent( 8507, "CleanupFactionOwnedObjects", pChar );
+	const cleanedCount = TriggerEvent( 8507, "CleanupFactionOwnedObjects", pChar );
 	factionData.faction = "";
 	factionData.killPoints = 0;
 	factionData.silver = 0;
@@ -297,7 +300,7 @@ function FinalizeFactionLeave( pChar, factionData )
 	factionData.roleSetAt = 0;
 	factionData.leaveTime = 0;
 	factionData.recentKills = {};
-	TriggerEvent( FactionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	if( cleanedCount > 0 )
 		pChar.SysMessage( cleanedCount + " faction item(s) or mount(s) were removed." );
 	pChar.SysMessage( "You have left the " + FactionName( factionKey ) + "." );
@@ -309,14 +312,14 @@ function FactionCoreOnLogin( pSock, pChar )
 	if( !ValidateObject( pChar ) || pChar.npc )
 		return false;
 
-	var factionData = TriggerEvent( FactionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let factionData = TriggerEvent( factionPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	if( FactionIsValid( factionData.faction ) && factionData.leaveTime > 0 )
 	{
-		var elapsed = GetCurrentClock() - factionData.leaveTime;
-		if( elapsed >= FactionLeaveDelay )
+		const elapsed = GetCurrentClock() - factionData.leaveTime;
+		if( elapsed >= factionLeaveDelay )
 			return FinalizeFactionLeave( pChar, factionData );
 
-		pChar.SysMessage( "Your faction resignation is pending. " + Math.ceil( ( FactionLeaveDelay - elapsed ) / 3600000 ) + " hour(s) remain." );
+		pChar.SysMessage( "Your faction resignation is pending. " + Math.ceil( ( factionLeaveDelay - elapsed ) / 3600000 ) + " hour(s) remain." );
 	}
 	return true;
 }
@@ -326,11 +329,11 @@ function GiveFactionRobe( pChar )
 	if( !ValidateObject( pChar ) )
 		return false;
 
-	var factionKey = GetFactionKey( pChar );
+	let factionKey = GetFactionKey( pChar );
 	if( factionKey === "" )
 		return false;
 
-	var robe = CreateDFNItem( pChar.socket, pChar, "FACTION_ROBE_" + factionKey, 1, "ITEM", true );
+	const robe = CreateDFNItem( pChar.socket, pChar, "FACTION_ROBE_" + factionKey, 1, "ITEM", true );
 	if( !ValidateObject( robe ) )
 	{
 		pChar.SysMessage( "The faction robe could not be created." );

@@ -1,13 +1,16 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_playerdata.js
 // UOX3 Faction System - shared per-player faction data storage
 // Script ID suggestion: 8513
 // =============================================================================
 
-var FactionPlayerDataVersion = 1;
-var FactionPlayerDataFolder = "Factions";
-var FactionPlayerDataMaxSilver = 100000;
-var FactionPlayerDataMirrorTags = [
+const factionPlayerDataVersion = 1;
+const factionPlayerDataFolder = "Factions";
+const factionPlayerDataMaxSilver = parseInt( GetServerSetting( "FACTIONMAXSILVER" ), 10 );
+const factionPlayerDataMirrorTags = [
 	"faction",
 	"faction_join_time",
 	"faction_kp",
@@ -30,7 +33,7 @@ function FactionDataIsValidFaction( factionKey )
 
 function FactionDataParseNumber( value, fallback )
 {
-	var parsed = parseInt( value, 10 );
+	const parsed = parseInt( value, 10 );
 	if( isNaN( parsed ) )
 		return fallback;
 
@@ -68,17 +71,17 @@ function FactionDataAccountFileName( pChar )
 
 function FactionDataReadAccount( pChar )
 {
-	var fileName = FactionDataAccountFileName( pChar );
-	var accountData = {
-		version: FactionPlayerDataVersion,
+	let fileName = FactionDataAccountFileName( pChar );
+	let accountData = {
+		version: factionPlayerDataVersion,
 		characters: {}
 	};
 
 	if( fileName === "" )
 		return accountData;
 
-	var dataFile = new UOXCFile();
-	dataFile.Open( fileName, "r", FactionPlayerDataFolder );
+	const dataFile = new UOXCFile();
+	dataFile.Open( fileName, "r", factionPlayerDataFolder );
 	if( !dataFile || dataFile.Length() <= 0 )
 	{
 		if( dataFile )
@@ -86,10 +89,10 @@ function FactionDataReadAccount( pChar )
 		return accountData;
 	}
 
-	var fileText = "";
+	let fileText = "";
 	while( !dataFile.EOF() )
 	{
-		var rawLine = dataFile.ReadUntil( "\n" );
+		const rawLine = dataFile.ReadUntil( "\n" );
 		if( rawLine != null && typeof rawLine != "undefined" )
 		{
 			fileText += rawLine;
@@ -107,7 +110,7 @@ function FactionDataReadAccount( pChar )
 
 	try
 	{
-		var parsedData = JSON.parse( fileText );
+		let parsedData = JSON.parse( fileText );
 		if( parsedData && typeof parsedData == "object" )
 			accountData = parsedData;
 	}
@@ -118,23 +121,23 @@ function FactionDataReadAccount( pChar )
 
 	if( !accountData.characters )
 		accountData.characters = {};
-	accountData.version = FactionPlayerDataVersion;
+	accountData.version = factionPlayerDataVersion;
 	return accountData;
 }
 
 function FactionDataWriteAccount( pChar, accountData )
 {
-	var fileName = FactionDataAccountFileName( pChar );
+	let fileName = FactionDataAccountFileName( pChar );
 	if( fileName === "" )
 		return false;
 
 	if( !accountData || typeof accountData != "object" )
-		accountData = { version: FactionPlayerDataVersion, characters: {} };
+		accountData = { version: factionPlayerDataVersion, characters: {} };
 	if( !accountData.characters )
 		accountData.characters = {};
-	accountData.version = FactionPlayerDataVersion;
+	accountData.version = factionPlayerDataVersion;
 
-	var fileText = "";
+	let fileText = "";
 	try
 	{
 		fileText = JSON.stringify( accountData, null, "\t" );
@@ -145,8 +148,8 @@ function FactionDataWriteAccount( pChar, accountData )
 		return false;
 	}
 
-	var dataFile = new UOXCFile();
-	dataFile.Open( fileName, "w", FactionPlayerDataFolder );
+	const dataFile = new UOXCFile();
+	dataFile.Open( fileName, "w", factionPlayerDataFolder );
 	if( !dataFile )
 		return false;
 
@@ -158,10 +161,10 @@ function FactionDataWriteAccount( pChar, accountData )
 
 function FactionDataNormalize( pChar, factionData )
 {
-	var normalized = FactionDataDefault();
+	const normalized = FactionDataDefault();
 	if( factionData && typeof factionData == "object" )
 	{
-		for( var dataKey in normalized )
+		for( let dataKey in normalized )
 		{
 			if( typeof factionData[dataKey] != "undefined" )
 				normalized[dataKey] = factionData[dataKey];
@@ -195,8 +198,8 @@ function FactionDataNormalize( pChar, factionData )
 		normalized.killPoints = -6;
 	if( normalized.silver < 0 )
 		normalized.silver = 0;
-	if( normalized.silver > FactionPlayerDataMaxSilver )
-		normalized.silver = FactionPlayerDataMaxSilver;
+	if( normalized.silver > factionPlayerDataMaxSilver )
+		normalized.silver = factionPlayerDataMaxSilver;
 	if( normalized.captures < 0 )
 		normalized.captures = 0;
 	if( normalized.rank < 0 )
@@ -209,11 +212,11 @@ function FactionDataNormalize( pChar, factionData )
 
 function FactionDataFromTags( pChar )
 {
-	var data = FactionDataDefault();
+	const data = FactionDataDefault();
 	if( !ValidateObject( pChar ) )
 		return data;
 
-	var factionKey = pChar.GetTag( "faction" );
+	let factionKey = pChar.GetTag( "faction" );
 	data.faction = FactionDataIsValidFaction( factionKey ) ? factionKey : "";
 	data.joinTime = FactionDataParseNumber( pChar.GetTag( "faction_join_time" ), 0 );
 	data.leaveTime = FactionDataParseNumber( pChar.GetTag( "faction_leave_time" ), 0 );
@@ -223,7 +226,7 @@ function FactionDataFromTags( pChar )
 	data.captures = FactionDataParseNumber( pChar.GetTag( "faction_captures" ), 0 );
 	data.commander = ( pChar.GetTag( "faction_commander" ) == 1 || pChar.GetTag( "faction_commander" ) === "1" );
 	data.role = String( pChar.GetTag( "faction_role" ) || "" );
-	var roleFaction = pChar.GetTag( "faction_role_faction" );
+	let roleFaction = pChar.GetTag( "faction_role_faction" );
 	data.roleFaction = FactionDataIsValidFaction( roleFaction ) ? roleFaction : "";
 	data.roleTown = String( pChar.GetTag( "faction_role_town" ) || "" );
 	data.roleSetAt = FactionDataParseNumber( pChar.GetTag( "faction_role_set_at" ), 0 );
@@ -243,8 +246,8 @@ function ReadFactionPlayerData( pChar )
 	if( !ValidateObject( pChar ) || pChar.npc || !pChar.account )
 		return FactionDataDefault();
 
-	var accountData = FactionDataReadAccount( pChar );
-	var playerKey = String( pChar.serial );
+	let accountData = FactionDataReadAccount( pChar );
+	const playerKey = String( pChar.serial );
 	if( accountData.characters && accountData.characters[playerKey] )
 		return FactionDataNormalize( pChar, accountData.characters[playerKey] );
 
@@ -256,8 +259,8 @@ function WriteFactionPlayerData( pChar, factionData )
 	if( !ValidateObject( pChar ) || pChar.npc || !pChar.account )
 		return false;
 
-	var accountData = FactionDataReadAccount( pChar );
-	var playerKey = String( pChar.serial );
+	let accountData = FactionDataReadAccount( pChar );
+	const playerKey = String( pChar.serial );
 	accountData.characters[playerKey] = FactionDataNormalize( pChar, factionData );
 	if( !FactionDataWriteAccount( pChar, accountData ) )
 		return false;
@@ -294,7 +297,7 @@ function SyncFactionMirrorTags( pChar, factionData )
 
 function GetFactionValue( pChar, dataKey, fallback )
 {
-	var factionData = ReadFactionPlayerData( pChar );
+	let factionData = ReadFactionPlayerData( pChar );
 	if( typeof factionData[dataKey] == "undefined" )
 		return fallback;
 
@@ -303,30 +306,30 @@ function GetFactionValue( pChar, dataKey, fallback )
 
 function SetFactionValue( pChar, dataKey, dataValue )
 {
-	var factionData = ReadFactionPlayerData( pChar );
+	let factionData = ReadFactionPlayerData( pChar );
 	factionData[dataKey] = dataValue;
 	return WriteFactionPlayerData( pChar, factionData );
 }
 
 function AddFactionValue( pChar, dataKey, amount )
 {
-	var factionData = ReadFactionPlayerData( pChar );
-	var currentValue = FactionDataParseNumber( factionData[dataKey], 0 );
+	let factionData = ReadFactionPlayerData( pChar );
+	const currentValue = FactionDataParseNumber( factionData[dataKey], 0 );
 	factionData[dataKey] = currentValue + amount;
 	return WriteFactionPlayerData( pChar, factionData );
 }
 
 function GetRecentKillTime( pChar, targetSerial )
 {
-	var factionData = ReadFactionPlayerData( pChar );
-	var killKey = String( targetSerial );
+	let factionData = ReadFactionPlayerData( pChar );
+	const killKey = String( targetSerial );
 	return FactionDataParseNumber( factionData.recentKills[killKey], 0 );
 }
 
 function SetRecentKillTime( pChar, targetSerial, killTime )
 {
-	var factionData = ReadFactionPlayerData( pChar );
-	var killKey = String( targetSerial );
+	let factionData = ReadFactionPlayerData( pChar );
+	const killKey = String( targetSerial );
 	factionData.recentKills[killKey] = FactionDataParseNumber( killTime, 0 );
 	return WriteFactionPlayerData( pChar, factionData );
 }
@@ -336,7 +339,7 @@ function GetFactionVote( pChar, factionKey )
 	if( !FactionDataIsValidFaction( factionKey ) )
 		return false;
 
-	var factionData = ReadFactionPlayerData( pChar );
+	let factionData = ReadFactionPlayerData( pChar );
 	return factionData.votes[factionKey] ? true : false;
 }
 
@@ -345,7 +348,7 @@ function SetFactionVote( pChar, factionKey, voteValue )
 	if( !FactionDataIsValidFaction( factionKey ) )
 		return false;
 
-	var factionData = ReadFactionPlayerData( pChar );
+	let factionData = ReadFactionPlayerData( pChar );
 	factionData.votes[factionKey] = voteValue ? true : false;
 	return WriteFactionPlayerData( pChar, factionData );
 }
@@ -355,9 +358,9 @@ function ClearFactionPlayerData( pChar )
 	if( !ValidateObject( pChar ) || pChar.npc || !pChar.account )
 		return false;
 
-	var accountData = FactionDataReadAccount( pChar );
-	var playerKey = String( pChar.serial );
-	var hadData = false;
+	let accountData = FactionDataReadAccount( pChar );
+	const playerKey = String( pChar.serial );
+	let hadData = false;
 	if( accountData.characters && accountData.characters[playerKey] )
 	{
 		delete accountData.characters[playerKey];
@@ -365,11 +368,11 @@ function ClearFactionPlayerData( pChar )
 		FactionDataWriteAccount( pChar, accountData );
 	}
 
-	for( var tagIndex = 0; tagIndex < FactionPlayerDataMirrorTags.length; tagIndex++ )
+	for( let tagIndex = 0; tagIndex < factionPlayerDataMirrorTags.length; tagIndex++ )
 	{
-		if( pChar.GetTag( FactionPlayerDataMirrorTags[tagIndex] ) !== "" && pChar.GetTag( FactionPlayerDataMirrorTags[tagIndex] ) != 0 )
+		if( pChar.GetTag( factionPlayerDataMirrorTags[tagIndex] ) !== "" && pChar.GetTag( factionPlayerDataMirrorTags[tagIndex] ) != 0 )
 			hadData = true;
-		pChar.SetTag( FactionPlayerDataMirrorTags[tagIndex], null );
+		pChar.SetTag( factionPlayerDataMirrorTags[tagIndex], null );
 	}
 	pChar.SetTag( "elec_voted_TB", null );
 	pChar.SetTag( "elec_voted_COM", null );
@@ -383,6 +386,6 @@ function MigrateFactionTagsToFile( pChar )
 	if( !ValidateObject( pChar ) || pChar.npc || !pChar.account )
 		return false;
 
-	var factionData = FactionDataFromTags( pChar );
+	let factionData = FactionDataFromTags( pChar );
 	return WriteFactionPlayerData( pChar, factionData );
 }

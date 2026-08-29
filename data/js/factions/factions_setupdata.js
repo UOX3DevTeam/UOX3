@@ -1,23 +1,26 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_setupdata.js
 // UOX3 Faction System - static setup data loader
 // Script ID: 8514
 // =============================================================================
 
-var FactionSetupDataFile = "faction_setup.json";
-var FactionSetupDataFolder = "factions";
-var FactionSetupCachedData = null;
-var FactionSetupLoaded = false;
-var FactionSetupLastErrorText = "";
+const factionSetupDataFile = "faction_setup.json";
+const factionSetupDataFolder = "factions";
+let factionSetupCachedData = null;
+let factionSetupLoaded = false;
+let factionSetupLastErrorText = "";
 
 function SetupDataLastError()
 {
-	return FactionSetupLastErrorText;
+	return factionSetupLastErrorText;
 }
 
 function SetupDataSetLastError( errorText )
 {
-	FactionSetupLastErrorText = errorText;
+	factionSetupLastErrorText = errorText;
 	return null;
 }
 
@@ -38,7 +41,7 @@ function SetupDataSanitizeJsonText( fileText )
 	fileText = fileText.split( "\t" ).join( " " );
 	fileText = fileText.replace( /^\s+|\s+$/g, "" );
 
-	var lastBrace = fileText.lastIndexOf( "}" );
+	const lastBrace = fileText.lastIndexOf( "}" );
 	if( lastBrace >= 0 )
 		fileText = fileText.substring( 0, lastBrace + 1 );
 
@@ -47,16 +50,16 @@ function SetupDataSanitizeJsonText( fileText )
 
 function SetupDataReadFile()
 {
-	var setupFile = new UOXCFile();
-	setupFile.Open( FactionSetupDataFile, "r", FactionSetupDataFolder, true );
+	let setupFile = new UOXCFile();
+	setupFile.Open( factionSetupDataFile, "r", factionSetupDataFolder, true );
 
 	if( setupFile == null || setupFile.Length() < 0 )
-		return SetupDataSetLastError( "Unable to open js/jsdata/factions/" + FactionSetupDataFile + "." );
+		return SetupDataSetLastError( "Unable to open js/jsdata/factions/" + factionSetupDataFile + "." );
 
-	var fileText = "";
+	let fileText = "";
 	while( !setupFile.EOF() )
 	{
-		var rawLine = setupFile.ReadUntil( "\n" );
+		const rawLine = setupFile.ReadUntil( "\n" );
 		if( rawLine != null && typeof rawLine != "undefined" )
 			fileText += rawLine;
 	}
@@ -106,7 +109,7 @@ function SetupDataNormalizeConfig( setupData )
 	if( !setupData.towns || typeof setupData.towns != "object" )
 		return SetupDataSetLastError( "Faction setup data is missing towns." );
 
-	var defaults = {
+	let defaults = {
 		world: parseInt( setupData.world, 10 ),
 		instance: parseInt( setupData.instance, 10 )
 	};
@@ -115,12 +118,12 @@ function SetupDataNormalizeConfig( setupData )
 	if( isNaN( defaults.instance ) )
 		defaults.instance = 0;
 
-	for( var factionKey in setupData.factions )
+	for( let factionKey in setupData.factions )
 	{
 		if( !setupData.factions.hasOwnProperty( factionKey ) )
 			continue;
 
-		var factionData = setupData.factions[factionKey];
+		const factionData = setupData.factions[factionKey];
 		if( SetupDataValidateLocation( factionData.joinStone ) )
 			SetupDataNormalizeLocation( factionData.joinStone, defaults );
 		if( SetupDataValidateLocation( factionData.factionStone ) )
@@ -134,53 +137,53 @@ function SetupDataNormalizeConfig( setupData )
 		}
 	}
 
-	for( var townName in setupData.towns )
+	for( let townName in setupData.towns )
 	{
 		if( !setupData.towns.hasOwnProperty( townName ) )
 			continue;
 
-		var townData = setupData.towns[townName];
+		const townData = setupData.towns[townName];
 		if( townData.sigil && SetupDataValidateLocation( townData.sigil ) )
 			SetupDataNormalizeLocation( townData.sigil, defaults );
 		if( townData.townStone && SetupDataValidateLocation( townData.townStone ) )
 			SetupDataNormalizeLocation( townData.townStone, defaults );
 	}
 
-	FactionSetupLastErrorText = "";
+	factionSetupLastErrorText = "";
 	return setupData;
 }
 
 function LoadFactionSetupData()
 {
-	FactionSetupCachedData = null;
-	FactionSetupLoaded = false;
-	FactionSetupLastErrorText = "";
+	factionSetupCachedData = null;
+	factionSetupLoaded = false;
+	factionSetupLastErrorText = "";
 
-	var fileText = SetupDataReadFile();
+	let fileText = SetupDataReadFile();
 	if( fileText == null || fileText === "" )
 	{
-		if( FactionSetupLastErrorText === "" )
+		if( factionSetupLastErrorText === "" )
 			SetupDataSetLastError( "Faction setup data file is empty." );
 		return null;
 	}
 
-	var setupData = null;
+	let setupData = null;
 	try
 	{
 		setupData = JSON.parse( fileText );
 	}
 	catch( error )
 	{
-		return SetupDataSetLastError( "Unable to parse " + FactionSetupDataFile + " (" + fileText.length + " chars, starts '" + fileText.substr( 0, 1 ) + "', ends '" + fileText.substr( fileText.length - 1, 1 ) + "'): " + error );
+		return SetupDataSetLastError( "Unable to parse " + factionSetupDataFile + " (" + fileText.length + " chars, starts '" + fileText.substr( 0, 1 ) + "', ends '" + fileText.substr( fileText.length - 1, 1 ) + "'): " + error );
 	}
 
 	setupData = SetupDataNormalizeConfig( setupData );
 	if( setupData == null )
 		return null;
 
-	FactionSetupCachedData = setupData;
-	FactionSetupLoaded = true;
-	return FactionSetupCachedData;
+	factionSetupCachedData = setupData;
+	factionSetupLoaded = true;
+	return factionSetupCachedData;
 }
 
 function ReloadFactionSetupData()
@@ -190,8 +193,8 @@ function ReloadFactionSetupData()
 
 function FactionSetupData()
 {
-	if( !FactionSetupLoaded || FactionSetupCachedData == null )
+	if( !factionSetupLoaded || factionSetupCachedData == null )
 		return LoadFactionSetupData();
 
-	return FactionSetupCachedData;
+	return factionSetupCachedData;
 }

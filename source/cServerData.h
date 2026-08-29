@@ -489,6 +489,7 @@ private:
 	SI32		factionTownTreasuryGrant;	//	Default silver grant amount for faction towns
 	SI16		factionTownGuardLimit;		//	Default managed faction guard limit per town
 	SI16		factionTownVendorLimit;		//	Default managed faction vendor limit per town
+	std::array<SI32, 24> factionSettings;		// Shard-tunable faction gameplay settings (INI IDs 429-452)
 
 	void	PostLoadDefaults();
 	static const std::map<std::string, SI32> uox3IniCaseValue;
@@ -1324,6 +1325,9 @@ public:
 
 	auto		FactionTownVendorLimit( SI16 value ) -> void;
 	SI16		FactionTownVendorLimit() const;
+
+	auto		FactionSetting( UI16 settingIndex, SI32 value ) -> void;
+	SI32		FactionSetting( UI16 settingIndex ) const;
 
 	auto		RepMaxKills( UI16 value ) -> void;
 	auto		RepMaxKills() const -> UI16;

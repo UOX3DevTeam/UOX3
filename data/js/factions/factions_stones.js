@@ -1,17 +1,20 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_stones.js
 // UOX3 Faction System - faction stones and join stones
 // Script ID suggestion: 8505
 // =============================================================================
 
-var StoneFactionNames = {
+const stoneFactionNames = {
 	TB: "True Britannians",
 	COM: "Council of Mages",
 	MIN: "Minax",
 	SL: "Shadowlords"
 };
 
-var StoneRankNames = [
+const stoneRankNames = [
 	"Soldier",
 	"Scout",
 	"Corporal",
@@ -24,13 +27,13 @@ var StoneRankNames = [
 	"Commander"
 ];
 
-var StoneRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
-var StoneLeaveDelay = 259200000;
-var StoneSigilScriptId = 8502;
-var StoneCoreScriptId = 8500;
-var StoneElectionScriptId = 8508;
-var StoneTownScriptId = 8509;
-var StonePlayerDataScriptId = 8513;
+const stoneRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
+const stoneLeaveDelay = parseInt( GetServerSetting( "FACTIONLEAVEDELAYHOURS" ), 10 ) * 3600000;
+const stoneSigilScriptId = 8502;
+const stoneCoreScriptId = 8500;
+const stoneElectionScriptId = 8508;
+const stoneTownScriptId = 8509;
+const stonePlayerDataScriptId = 8513;
 
 function StoneIsFactionValid( factionKey )
 {
@@ -42,7 +45,7 @@ function StoneFactionName( factionKey )
 	if( !StoneIsFactionValid( factionKey ) )
 		return "Unknown Faction";
 
-	return StoneFactionNames[factionKey];
+	return stoneFactionNames[factionKey];
 }
 
 function StoneGetFaction( pChar )
@@ -50,7 +53,7 @@ function StoneGetFaction( pChar )
 	if( !ValidateObject( pChar ) )
 		return "";
 
-	var factionKey = TriggerEvent( StonePlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
+	let factionKey = TriggerEvent( stonePlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( StoneIsFactionValid( factionKey ) )
 		return factionKey;
 
@@ -59,11 +62,11 @@ function StoneGetFaction( pChar )
 
 function StoneGetRankName( pChar )
 {
-	var rank = TriggerEvent( StonePlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
-	if( rank < 0 || rank >= StoneRankNames.length )
+	let rank = TriggerEvent( stonePlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
+	if( rank < 0 || rank >= stoneRankNames.length )
 		rank = 0;
 
-	return StoneRankNames[rank];
+	return stoneRankNames[rank];
 }
 
 function StoneRoleName( pChar )
@@ -71,8 +74,8 @@ function StoneRoleName( pChar )
 	if( !ValidateObject( pChar ) )
 		return "None";
 
-	var factionData = TriggerEvent( StonePlayerDataScriptId, "ReadFactionPlayerData", pChar );
-	var roleName = factionData.role;
+	const factionData = TriggerEvent( stonePlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	let roleName = factionData.role;
 	if( roleName === "commander" || factionData.commander )
 		return "Commander";
 	if( roleName === "sheriff" )
@@ -85,29 +88,29 @@ function StoneRoleName( pChar )
 
 function StoneUpdateRank( pChar )
 {
-	var factionData = TriggerEvent( StonePlayerDataScriptId, "ReadFactionPlayerData", pChar );
-	var killPoints = factionData.killPoints;
-	var rank = 0;
-	for( var rankIndex = StoneRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
+	const factionData = TriggerEvent( stonePlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	const killPoints = factionData.killPoints;
+	let rank = 0;
+	for( let rankIndex = stoneRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
 	{
-		if( killPoints >= StoneRankPoints[rankIndex] )
+		if( killPoints >= stoneRankPoints[rankIndex] )
 		{
 			rank = rankIndex;
 			break;
 		}
 	}
 	factionData.rank = rank;
-	TriggerEvent( StonePlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( stonePlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 }
 
 function StoneJoinFaction( pChar, factionKey )
 {
-	return TriggerEvent( StoneCoreScriptId, "JoinFaction", pChar, factionKey );
+	return TriggerEvent( stoneCoreScriptId, "JoinFaction", pChar, factionKey );
 }
 
 function StoneLeaveFaction( pChar )
 {
-	return TriggerEvent( StoneCoreScriptId, "LeaveFaction", pChar );
+	return TriggerEvent( stoneCoreScriptId, "LeaveFaction", pChar );
 }
 
 function onUseChecked( pUser, iUsed )
@@ -115,11 +118,11 @@ function onUseChecked( pUser, iUsed )
 	if( !ValidateObject( pUser ) || !ValidateObject( iUsed ) )
 		return false;
 
-	var pSock = pUser.socket;
+	const pSock = pUser.socket;
 	if( !pSock )
 		return false;
 
-	var stoneFaction = iUsed.GetTag( "stone_faction" );
+	const stoneFaction = iUsed.GetTag( "stone_faction" );
 	if( !StoneIsFactionValid( stoneFaction ) )
 	{
 		pUser.SysMessage( "This stone has no faction assigned." );
@@ -143,7 +146,7 @@ function onUseChecked( pUser, iUsed )
 
 function ShowJoinStoneGump( pSock, pUser, stoneFaction )
 {
-	var myGump = new Gump();
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 430, 260, 9200 );
 	myGump.AddHTMLGump( 20, 15, 390, 25, 0, 0, "<CENTER><b>" + StoneFactionName( stoneFaction ) + "</b></CENTER>" );
@@ -170,8 +173,8 @@ function ShowJoinStoneGump( pSock, pUser, stoneFaction )
 
 function ShowFactionStoneGump( pSock, pUser, stoneFaction )
 {
-	var playerFaction = StoneGetFaction( pUser );
-	var myGump = new Gump();
+	let playerFaction = StoneGetFaction( pUser );
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 440, 400, 9200 );
 	myGump.AddHTMLGump( 20, 15, 400, 25, 0, 0, "<CENTER><b>Faction Stone</b></CENTER>" );
@@ -184,15 +187,15 @@ function ShowFactionStoneGump( pSock, pUser, stoneFaction )
 	else
 	{
 		StoneUpdateRank( pUser );
-		var factionData = TriggerEvent( StonePlayerDataScriptId, "ReadFactionPlayerData", pUser );
+		const factionData = TriggerEvent( stonePlayerDataScriptId, "ReadFactionPlayerData", pUser );
 		myGump.AddHTMLGump( 20, 85, 400, 20, 0, 0, "Your Faction: " + StoneFactionName( playerFaction ) );
 		myGump.AddHTMLGump( 20, 110, 400, 20, 0, 0, "Rank: " + StoneGetRankName( pUser ) );
 		myGump.AddHTMLGump( 20, 135, 400, 20, 0, 0, "Kill Points: " + factionData.killPoints );
 		myGump.AddHTMLGump( 20, 160, 400, 20, 0, 0, "Silver: " + factionData.silver );
 		myGump.AddHTMLGump( 20, 185, 400, 20, 0, 0, "Role: " + StoneRoleName( pUser ) );
-		myGump.AddHTMLGump( 20, 210, 400, 20, 0, 0, TriggerEvent( StoneSigilScriptId, "FactionScoreText", stoneFaction ) );
-		myGump.AddHTMLGump( 20, 235, 400, 35, 0, 0, TriggerEvent( StoneSigilScriptId, "FactionNoticeText", stoneFaction ) );
-		myGump.AddHTMLGump( 20, 275, 400, 35, 0, 0, "Controlled Towns: " + TriggerEvent( StoneTownScriptId, "TownControlledByFactionList", stoneFaction ) );
+		myGump.AddHTMLGump( 20, 210, 400, 20, 0, 0, TriggerEvent( stoneSigilScriptId, "FactionScoreText", stoneFaction ) );
+		myGump.AddHTMLGump( 20, 235, 400, 35, 0, 0, TriggerEvent( stoneSigilScriptId, "FactionNoticeText", stoneFaction ) );
+		myGump.AddHTMLGump( 20, 275, 400, 35, 0, 0, "Controlled Towns: " + TriggerEvent( stoneTownScriptId, "TownControlledByFactionList", stoneFaction ) );
 
 		if( playerFaction === stoneFaction )
 		{
@@ -217,12 +220,12 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( pButton == 0 )
 		return;
 
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var action = pSock.xText;
-	var factionKey = pSock.xText2;
+	let action = pSock.xText;
+	let factionKey = pSock.xText2;
 
 	if( pButton == 1 && action === "join" )
 	{
@@ -244,7 +247,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			return;
 		}
 
-		TriggerEvent( StoneElectionScriptId, "ShowElectionGump", pSock, pUser, factionKey );
+		TriggerEvent( stoneElectionScriptId, "ShowElectionGump", pSock, pUser, factionKey );
 		return;
 	}
 }

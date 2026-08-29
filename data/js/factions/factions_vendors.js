@@ -1,17 +1,20 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_vendors.js
 // UOX3 Faction System - phase 3 faction silver vendors and equipment
 // Script ID: 8504
 // =============================================================================
 
-var VendorMaxSilver = 100000;
-var VendorFactionTownScriptId = 8509;
-var VendorPlayerDataScriptId = 8513;
+const vendorMaxSilver = parseInt( GetServerSetting( "FACTIONMAXSILVER" ), 10 );
+const vendorFactionTownScriptId = 8509;
+const vendorPlayerDataScriptId = 8513;
 
 // Stock fields:
 // [ displayName, createMode, createValue, silverCost, amount, color ]
 // createMode: "blank" uses CreateBlankItem, "section" uses CreateDFNItem
-var VendorStock = {
+const vendorStock = {
 	REAGENT: [
 		[ "Black Pearl x10", "blank", 0x0F7A, 5, 10, 0 ],
 		[ "Bloodmoss x10", "blank", 0x0F7B, 5, 10, 0 ],
@@ -52,7 +55,7 @@ function VendorGetFaction( pChar )
 	if( !ValidateObject( pChar ) )
 		return "";
 
-	var factionKey = TriggerEvent( VendorPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
+	let factionKey = TriggerEvent( vendorPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( VendorIsFactionValid( factionKey ) )
 		return factionKey;
 
@@ -64,11 +67,11 @@ function VendorGetSilver( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	var silver = TriggerEvent( VendorPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
+	let silver = TriggerEvent( vendorPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
 	if( silver < 0 )
 		silver = 0;
-	if( silver > VendorMaxSilver )
-		silver = VendorMaxSilver;
+	if( silver > vendorMaxSilver )
+		silver = vendorMaxSilver;
 
 	return silver;
 }
@@ -80,15 +83,15 @@ function VendorSetSilver( pChar, silver )
 
 	if( silver < 0 )
 		silver = 0;
-	if( silver > VendorMaxSilver )
-		silver = VendorMaxSilver;
+	if( silver > vendorMaxSilver )
+		silver = vendorMaxSilver;
 
-	TriggerEvent( VendorPlayerDataScriptId, "SetFactionValue", pChar, "silver", silver );
+	TriggerEvent( vendorPlayerDataScriptId, "SetFactionValue", pChar, "silver", silver );
 }
 
 function VendorSpendSilver( pChar, amount )
 {
-	var silver = VendorGetSilver( pChar );
+	let silver = VendorGetSilver( pChar );
 	if( silver < amount )
 		return false;
 
@@ -115,18 +118,18 @@ function VendorTradeAccessError( pSock, npcVendor )
 	if( !pSock || !ValidateObject( npcVendor ) )
 		return "That faction vendor is not available.";
 
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return "Only players may trade with faction vendors.";
 
-	var vendorFaction = npcVendor.GetTag( "vendor_faction" );
+	const vendorFaction = npcVendor.GetTag( "vendor_faction" );
 	if( !VendorIsFactionValid( vendorFaction ) )
 		return "This faction vendor is not configured.";
 
-	if( !TriggerEvent( VendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
+	if( !TriggerEvent( vendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
 		return "My faction does not control this town.";
 
-	var playerFaction = VendorGetFaction( pUser );
+	let playerFaction = VendorGetFaction( pUser );
 	if( playerFaction === "" )
 		return "Only " + VendorFactionName( vendorFaction ) + " members may trade with me.";
 	if( playerFaction !== vendorFaction )
@@ -137,7 +140,7 @@ function VendorTradeAccessError( pSock, npcVendor )
 
 function VendorCanTrade( pSock, npcVendor )
 {
-	var accessError = VendorTradeAccessError( pSock, npcVendor );
+	let accessError = VendorTradeAccessError( pSock, npcVendor );
 	if( accessError === "" )
 		return true;
 
@@ -155,24 +158,24 @@ function VendorGetStock( vendorType )
 		vendorType = "REAGENT";
 
 	vendorType = vendorType.toUpperCase();
-	if( !VendorStock[vendorType] )
+	if( !vendorStock[vendorType] )
 		vendorType = "REAGENT";
 
-	return VendorStock[vendorType];
+	return vendorStock[vendorType];
 }
 
 function VendorCreateItem( pSock, pUser, itemData, factionKey )
 {
-	var itemName = itemData[0];
-	var createMode = itemData[1];
-	var createValue = itemData[2];
-	var amount = itemData[4];
-	var color = itemData[5];
-	var newItem = null;
+	const itemName = itemData[0];
+	let createMode = itemData[1];
+	let createValue = itemData[2];
+	const amount = itemData[4];
+	const color = itemData[5];
+	let newItem = null;
 
 	if( createMode === "section" )
 	{
-		var sectionId = createValue.replace( "{FACTION}", factionKey );
+		const sectionId = createValue.replace( "{FACTION}", factionKey );
 		newItem = CreateDFNItem( pSock, pUser, sectionId, amount, "ITEM", true );
 	}
 	else
@@ -202,7 +205,7 @@ function onBuy( pSock, npcVendor )
 	if( !pSock || !ValidateObject( npcVendor ) )
 		return false;
 
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return false;
 
@@ -230,24 +233,24 @@ function onSellToVendor( pSock, npcVendor, itemSold, itemAmount )
 
 function ShowFactionVendorGump( pSock, pUser, npcVendor )
 {
-	var vendorType = npcVendor.GetTag( "vendor_type" );
+	let vendorType = npcVendor.GetTag( "vendor_type" );
 	if( vendorType === "" || vendorType == 0 )
 		vendorType = "REAGENT";
 
 	vendorType = vendorType.toUpperCase();
-	var stock = VendorGetStock( vendorType );
-	var silver = VendorGetSilver( pUser );
-	var height = 120 + ( stock.length * 32 );
+	const stock = VendorGetStock( vendorType );
+	let silver = VendorGetSilver( pUser );
+	const height = 120 + ( stock.length * 32 );
 
-	var myGump = new Gump();
+	const myGump = new Gump();
 	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 460, height, 9200 );
 	myGump.AddHTMLGump( 15, 15, 430, 25, 0, 0, "<CENTER><b>Faction Silver Vendor</b></CENTER>" );
 	myGump.AddHTMLGump( 20, 45, 390, 20, 0, 0, "Vendor Type: " + vendorType );
-	myGump.AddHTMLGump( 20, 68, 390, 20, 0, 0, "Your Silver: " + silver + " / " + VendorMaxSilver );
+	myGump.AddHTMLGump( 20, 68, 390, 20, 0, 0, "Your Silver: " + silver + " / " + vendorMaxSilver );
 
-	var y = 98;
-	for( var stockIndex = 0; stockIndex < stock.length; stockIndex++ )
+	let y = 98;
+	for( let stockIndex = 0; stockIndex < stock.length; stockIndex++ )
 	{
 		myGump.AddButton( 20, y, 0xFA5, 1, 0, stockIndex + 1 );
 		myGump.AddHTMLGump( 60, y, 370, 20, 0, 0, stock[stockIndex][0] + " - " + stock[stockIndex][3] + " silver" );
@@ -268,25 +271,25 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( pButton == 0 )
 		return;
 
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var vendorType = pSock.xText;
-	var stock = VendorGetStock( vendorType );
-	var stockIndex = pButton - 1;
+	let vendorType = pSock.xText;
+	const stock = VendorGetStock( vendorType );
+	let stockIndex = pButton - 1;
 	if( stockIndex < 0 || stockIndex >= stock.length )
 		return;
 
-	var playerFaction = VendorGetFaction( pUser );
+	let playerFaction = VendorGetFaction( pUser );
 	if( playerFaction === "" )
 	{
 		pUser.SysMessage( "Only faction members may spend faction silver." );
 		return;
 	}
 
-	var vendorSerial = pSock.tempInt;
-	var npcVendor = CalcCharFromSer( vendorSerial );
+	const vendorSerial = pSock.tempInt;
+	const npcVendor = CalcCharFromSer( vendorSerial );
 	if( !ValidateObject( npcVendor ) )
 	{
 		pUser.SysMessage( "That vendor is no longer available." );
@@ -298,8 +301,8 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
-	var itemData = stock[stockIndex];
-	var silverCost = itemData[3];
+	const itemData = stock[stockIndex];
+	const silverCost = itemData[3];
 
 	if( !VendorSpendSilver( pUser, silverCost ) )
 	{
@@ -307,7 +310,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
-	var newItem = VendorCreateItem( pSock, pUser, itemData, playerFaction );
+	let newItem = VendorCreateItem( pSock, pUser, itemData, playerFaction );
 	if( !ValidateObject( newItem ) )
 	{
 		VendorSetSilver( pUser, VendorGetSilver( pUser ) + silverCost );

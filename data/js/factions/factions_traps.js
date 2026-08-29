@@ -1,35 +1,40 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_traps.js
 // UOX3 Faction System - faction trap deeds and placed traps
 // Script ID suggestion: 8506
 // =============================================================================
 
-var TrapDamage = {
+const trapDamage = {
 	EXPLOSION: 30,
 	GAS: 15,
 	SAW: 20,
 	SPIKE: 10
 };
 
-var TrapRange = {
+const trapRange = {
 	EXPLOSION: 2,
 	GAS: 3,
 	SAW: 1,
 	SPIKE: 1
 };
 
-var TrapEffect = {
+const trapEffect = {
 	EXPLOSION: 0x36B0,
 	GAS: 0x3709,
 	SAW: 0x1D8,
 	SPIKE: 0x1CF
 };
+const trapTownScriptId = 8509;
+const trapPlacementRange = 12;
 
 function TrapGetFaction( pChar )
 {
 	if( !ValidateObject( pChar ) )
 		return "";
-	var factionKey = pChar.GetTag( "faction" );
+	let factionKey = pChar.GetTag( "faction" );
 	if( factionKey === "TB" || factionKey === "COM" || factionKey === "MIN" || factionKey === "SL" )
 		return factionKey;
 	return "";
@@ -39,18 +44,34 @@ function onUseChecked( pUser, iUsed )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iUsed ) )
 		return true;
+	if( iUsed.GetTag( "trap_placed" ) == 1 )
+	{
+		if( iUsed.GetTag( "trap_faction" ) !== TrapGetFaction( pUser ) )
+		{
+			pUser.SysMessage( "Only a member of the owning faction may remove this trap." );
+			return false;
+		}
+		if( iUsed.GetTag( "trap_placer_serial" ) != pUser.serial && !pUser.isGM )
+		{
+			pUser.SysMessage( "Only the trap's placer may remove it." );
+			return false;
+		}
+		iUsed.Delete();
+		pUser.SysMessage( "You remove the faction trap." );
+		return false;
+	}
 
 	if( iUsed.GetTag( "trap_deed" ) != 1 )
 		return true;
 
-	var trapType = iUsed.GetTag( "trap_deed_type" );
-	if( !TrapDamage[trapType] )
+	let trapType = iUsed.GetTag( "trap_deed_type" );
+	if( !trapDamage[trapType] )
 	{
 		pUser.SysMessage( "This trap deed is invalid." );
 		return false;
 	}
 
-	var factionKey = TrapGetFaction( pUser );
+	let factionKey = TrapGetFaction( pUser );
 	if( factionKey === "" )
 	{
 		pUser.SysMessage( "Only faction members may place faction traps." );
@@ -66,21 +87,38 @@ function onUseChecked( pUser, iUsed )
 
 function onCallback30( pSock, target )
 {
-	var pUser = pSock.currentChar;
+	const pUser = pSock.currentChar;
 	if( !ValidateObject( pUser ) )
 		return;
 
-	var trapType = pUser.GetTempTag( "placing_trap_type" );
-	var trapFaction = pUser.GetTempTag( "placing_trap_faction" );
-	var deedSerial = pUser.GetTempTag( "placing_trap_deed" );
-	if( !TrapDamage[trapType] )
+	let trapType = pUser.GetTempTag( "placing_trap_type" );
+	const trapFaction = pUser.GetTempTag( "placing_trap_faction" );
+	const deedSerial = pUser.GetTempTag( "placing_trap_deed" );
+	if( !trapDamage[trapType] )
 		return;
 
-	var deed = CalcItemFromSer( deedSerial );
-	if( ValidateObject( deed ) )
-		deed.Delete();
+	const deed = CalcItemFromSer( deedSerial );
+	if( !ValidateObject( deed ) || deed.GetTag( "trap_deed" ) != 1 )
+	{
+		pUser.SysMessage( "That trap deed is no longer available." );
+		return;
+	}
 
-	var trap = CreateDFNItem( pSock, pUser, "FACTION_TRAP_" + trapType, 1, "ITEM", false );
+	const targetX = ValidateObject( target ) ? target.x : pUser.x;
+	const targetY = ValidateObject( target ) ? target.y : pUser.y;
+	if( Math.abs( targetX - pUser.x ) > trapPlacementRange || Math.abs( targetY - pUser.y ) > trapPlacementRange )
+	{
+		pUser.SysMessage( "That location is too far away." );
+		return;
+	}
+	let townName = TriggerEvent( trapTownScriptId, "TownNameForObject", pUser );
+	if( townName === "" || TriggerEvent( trapTownScriptId, "TownGetOwner", townName ) !== trapFaction )
+	{
+		pUser.SysMessage( "Faction traps may only be placed in a town controlled by your faction." );
+		return;
+	}
+
+	let trap = CreateDFNItem( pSock, pUser, "FACTION_TRAP_" + trapType, 1, "ITEM", false );
 	if( !ValidateObject( trap ) )
 		trap = CreateDFNItem( pSock, pUser, "FACTION_TRAP_BASE", 1, "ITEM", false );
 
@@ -89,11 +127,14 @@ function onCallback30( pSock, target )
 		pUser.SysMessage( "The trap could not be created." );
 		return;
 	}
+	deed.Delete();
 
 	trap.SetTag( "trap_placed", 1 );
 	trap.SetTag( "trap_type", trapType );
 	trap.SetTag( "trap_faction", trapFaction );
 	trap.SetTag( "trap_last_trigger", 0 );
+	trap.SetTag( "trap_placer_serial", pUser.serial );
+	trap.SetTag( "faction_town", townName );
 	trap.movable = 3;
 
 	if( ValidateObject( target ) )
@@ -113,27 +154,27 @@ function onCollide( targSock, pColliding, iTrap )
 	if( !pColliding.isChar || pColliding.dead )
 		return false;
 
-	var trapFaction = iTrap.GetTag( "trap_faction" );
-	var victimFaction = TrapGetFaction( pColliding );
+	const trapFaction = iTrap.GetTag( "trap_faction" );
+	let victimFaction = TrapGetFaction( pColliding );
 	if( victimFaction === trapFaction )
 		return false;
 
-	var now = GetCurrentClock();
-	var lastTrigger = iTrap.GetTag( "trap_last_trigger" );
+	const now = GetCurrentClock();
+	const lastTrigger = iTrap.GetTag( "trap_last_trigger" );
 	if( lastTrigger > 0 && now - lastTrigger < 10000 )
 		return false;
 	iTrap.SetTag( "trap_last_trigger", now );
 
-	var trapType = iTrap.GetTag( "trap_type" );
-	var damage = TrapDamage[trapType];
+	let trapType = iTrap.GetTag( "trap_type" );
+	let damage = trapDamage[trapType];
 	if( !damage )
 		damage = 10;
 
-	iTrap.StaticEffect( TrapEffect[trapType], 10, 0 );
+	iTrap.StaticEffect( trapEffect[trapType], 10, 0 );
 	iTrap.SoundEffect( 0x22F, true );
 	pColliding.SetTempTag( "trap_scan_type", trapType );
 	pColliding.SetTempTag( "trap_scan_faction", trapFaction );
-	AreaCharacterFunction( "TrapDamageCharacter", pColliding, TrapRange[trapType], targSock );
+	AreaCharacterFunction( "TrapDamageCharacter", pColliding, trapRange[trapType], targSock );
 
 	if( trapType === "EXPLOSION" || trapType === "SAW" )
 		iTrap.Delete();
@@ -148,15 +189,15 @@ function TrapDamageCharacter( srcChar, targetChar, pSock )
 	if( targetChar.dead )
 		return false;
 
-	var trapType = srcChar.GetTempTag( "trap_scan_type" );
-	var trapFaction = srcChar.GetTempTag( "trap_scan_faction" );
+	let trapType = srcChar.GetTempTag( "trap_scan_type" );
+	const trapFaction = srcChar.GetTempTag( "trap_scan_faction" );
 	if( TrapGetFaction( targetChar ) === trapFaction )
 		return false;
 
 	if( trapType === "GAS" )
 		targetChar.poison = 2;
 
-	targetChar.Damage( TrapDamage[trapType], 0, srcChar, false );
+	targetChar.Damage( trapDamage[trapType], 0, srcChar, false );
 	return true;
 }
 

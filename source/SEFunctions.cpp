@@ -5797,6 +5797,11 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 			case 428:	// FACTIONTOWNVENDORLIMIT
 				args.rval().setInt32( static_cast<SI16>( cwmWorldState->ServerData()->FactionTownVendorLimit() ));
 				break;
+			case 429: case 430: case 431: case 432: case 433: case 434: case 435: case 436:
+			case 437: case 438: case 439: case 440: case 441: case 442: case 443: case 444:
+			case 445: case 446: case 447: case 448: case 449: case 450: case 451: case 452:
+				args.rval().setInt32( cwmWorldState->ServerData()->FactionSetting( static_cast<UI16>( settingId - 429 ) ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

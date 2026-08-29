@@ -1,12 +1,15 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_npcs.js
 // UOX3 Faction System - generic faction NPC allegiance
 // Script ID suggestion: 8512
 // =============================================================================
 
-var FactionNpcScanRange = 10;
-var FactionNpcWarnDelay = 30000;
-var FactionNpcTownScriptId = 8509;
+const factionNpcScanRange = parseInt( GetServerSetting( "FACTIONNPCSCANRANGE" ), 10 );
+const factionNpcWarnDelay = 30000;
+const factionNpcTownScriptId = 8509;
 
 function FactionNpcIsFactionValid( factionKey )
 {
@@ -32,7 +35,7 @@ function FactionNpcFactionForPlayer( pChar )
 	if( !ValidateObject( pChar ) || pChar.npc )
 		return "";
 
-	var factionKey = pChar.GetTag( "faction" );
+	let factionKey = pChar.GetTag( "faction" );
 	if( FactionNpcIsFactionValid( factionKey ) )
 		return factionKey;
 
@@ -44,7 +47,7 @@ function FactionNpcFactionForNpc( npcChar )
 	if( !ValidateObject( npcChar ) || !npcChar.npc )
 		return "";
 
-	var factionKey = npcChar.GetTag( "npc_faction" );
+	let factionKey = npcChar.GetTag( "npc_faction" );
 	if( FactionNpcIsFactionValid( factionKey ) )
 		return factionKey;
 
@@ -69,7 +72,7 @@ function FactionNpcIsActive( npcChar, npcFaction )
 		return false;
 
 	if( npcChar.GetTag( "npc_faction_require_town_control" ) == 1 )
-		return TriggerEvent( FactionNpcTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, npcFaction );
+		return TriggerEvent( factionNpcTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, npcFaction );
 
 	return true;
 }
@@ -89,7 +92,7 @@ function FactionNpcIsEnemyTarget( npcChar, targetChar, npcFaction )
 	if( targetChar.serial == npcChar.serial || targetChar.dead || targetChar.npc )
 		return false;
 
-	var targetFaction = FactionNpcFactionForPlayer( targetChar );
+	let targetFaction = FactionNpcFactionForPlayer( targetChar );
 	if( targetFaction === "" || targetFaction === npcFaction )
 		return false;
 
@@ -111,10 +114,10 @@ function FactionNpcEngageTarget( npcChar, targetChar, npcFaction )
 	if( !FactionNpcIsEnemyTarget( npcChar, targetChar, npcFaction ) )
 		return false;
 
-	var now = GetCurrentClock();
-	var warnedKey = "warned_" + targetChar.serial;
-	var lastWarn = npcChar.GetTag( warnedKey );
-	if( lastWarn == 0 || now - lastWarn > FactionNpcWarnDelay )
+	const now = GetCurrentClock();
+	const warnedKey = "warned_" + targetChar.serial;
+	let lastWarn = npcChar.GetTag( warnedKey );
+	if( lastWarn == 0 || now - lastWarn > factionNpcWarnDelay )
 	{
 		npcChar.SetTag( warnedKey, now );
 		npcChar.TextMessage( targetChar.name + " is an enemy of " + FactionNpcName( npcFaction ) + "!" );
@@ -131,7 +134,7 @@ function onAISliver( npcChar )
 	if( !ValidateObject( npcChar ) || npcChar.dead )
 		return false;
 
-	var npcFaction = FactionNpcFactionForNpc( npcChar );
+	let npcFaction = FactionNpcFactionForNpc( npcChar );
 	if( npcFaction === "" )
 		return false;
 
@@ -153,7 +156,7 @@ function onAISliver( npcChar )
 		return false;
 
 	npcChar.SetTempTag( "scan_faction_npc_faction", npcFaction );
-	AreaCharacterFunction( "FactionNpcScanCharacter", npcChar, FactionNpcScanRange, null );
+	AreaCharacterFunction( "FactionNpcScanCharacter", npcChar, factionNpcScanRange, null );
 	return false;
 }
 
@@ -164,7 +167,7 @@ function FactionNpcScanCharacter( npcChar, targetChar, pSock )
 	if( targetChar.serial == npcChar.serial || targetChar.dead || targetChar.npc )
 		return false;
 
-	var npcFaction = npcChar.GetTempTag( "scan_faction_npc_faction" );
+	let npcFaction = npcChar.GetTempTag( "scan_faction_npc_faction" );
 	if( npcFaction === "" )
 		return false;
 
@@ -176,7 +179,7 @@ function onAICombatTarget( pAttacker, pTarget )
 	if( !ValidateObject( pAttacker ) || !ValidateObject( pTarget ) )
 		return true;
 
-	var npcFaction = FactionNpcFactionForNpc( pAttacker );
+	let npcFaction = FactionNpcFactionForNpc( pAttacker );
 	if( npcFaction === "" )
 		return true;
 
@@ -194,11 +197,11 @@ function onClick( pSock, npcChar )
 	if( !ValidateObject( npcChar ) )
 		return false;
 
-	var npcFaction = FactionNpcFactionForNpc( npcChar );
+	let npcFaction = FactionNpcFactionForNpc( npcChar );
 	if( npcFaction === "" )
 		return false;
 
-	var suffix = "Faction NPC";
+	let suffix = "Faction NPC";
 	if( npcChar.GetTag( "npc_faction_passive" ) == 1 )
 		suffix = "Faction NPC - passive";
 	if( !FactionNpcIsActive( npcChar, npcFaction ) )

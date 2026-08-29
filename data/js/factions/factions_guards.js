@@ -1,18 +1,21 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_guards.js
 // UOX3 Faction System - simple faction guard AI
 // Script ID suggestion: 8503
 // =============================================================================
 
-var GuardScanRange = 10;
-var GuardWarnDelay = 30000;
-var GuardFactionTownScriptId = 8509;
+const guardScanRange = 10;
+const guardWarnDelay = 30000;
+const guardFactionTownScriptId = 8509;
 
 function GuardGetFaction( pChar )
 {
 	if( !ValidateObject( pChar ) )
 		return "";
-	var factionKey = pChar.GetTag( "faction" );
+	let factionKey = pChar.GetTag( "faction" );
 	if( factionKey === "TB" || factionKey === "COM" || factionKey === "MIN" || factionKey === "SL" )
 		return factionKey;
 	return "";
@@ -37,7 +40,7 @@ function GuardGetGuardFaction( npcChar )
 	if( !ValidateObject( npcChar ) )
 		return "";
 
-	var guardFaction = npcChar.GetTag( "guard_faction" );
+	let guardFaction = npcChar.GetTag( "guard_faction" );
 	if( guardFaction === "TB" || guardFaction === "COM" || guardFaction === "MIN" || guardFaction === "SL" )
 		return guardFaction;
 
@@ -53,7 +56,7 @@ function GuardIsActive( npcChar, guardFaction )
 	if( !ValidateObject( npcChar ) || guardFaction === "" )
 		return false;
 
-	return TriggerEvent( GuardFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, guardFaction );
+	return TriggerEvent( guardFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcChar, guardFaction );
 }
 
 function GuardIsEnemyTarget( npcChar, targetChar, guardFaction )
@@ -63,7 +66,7 @@ function GuardIsEnemyTarget( npcChar, targetChar, guardFaction )
 	if( targetChar.serial == npcChar.serial || targetChar.dead || targetChar.npc )
 		return false;
 
-	var targetFaction = GuardGetFaction( targetChar );
+	let targetFaction = GuardGetFaction( targetChar );
 	if( targetFaction === "" || targetFaction === guardFaction )
 		return false;
 
@@ -85,10 +88,10 @@ function GuardEngageTarget( npcChar, targetChar, guardFaction )
 	if( !GuardIsEnemyTarget( npcChar, targetChar, guardFaction ) )
 		return false;
 
-	var now = GetCurrentClock();
-	var warnedKey = "warned_" + targetChar.serial;
-	var lastWarn = npcChar.GetTag( warnedKey );
-	if( lastWarn == 0 || now - lastWarn > GuardWarnDelay )
+	const now = GetCurrentClock();
+	const warnedKey = "warned_" + targetChar.serial;
+	let lastWarn = npcChar.GetTag( warnedKey );
+	if( lastWarn == 0 || now - lastWarn > guardWarnDelay )
 	{
 		npcChar.SetTag( warnedKey, now );
 		npcChar.TextMessage( targetChar.name + " is an enemy of " + GuardFactionName( guardFaction ) + "!" );
@@ -105,7 +108,7 @@ function onAISliver( npcChar )
 	if( !ValidateObject( npcChar ) || npcChar.dead )
 		return false;
 
-	var guardFaction = GuardGetGuardFaction( npcChar );
+	let guardFaction = GuardGetGuardFaction( npcChar );
 	if( guardFaction === "" )
 		return false;
 
@@ -124,7 +127,7 @@ function onAISliver( npcChar )
 	}
 
 	npcChar.SetTempTag( "scan_guard_faction", guardFaction );
-	AreaCharacterFunction( "GuardScanCharacter", npcChar, GuardScanRange, null );
+	AreaCharacterFunction( "GuardScanCharacter", npcChar, guardScanRange, null );
 	return false;
 }
 
@@ -135,7 +138,7 @@ function GuardScanCharacter( npcChar, targetChar, pSock )
 	if( targetChar.serial == npcChar.serial || targetChar.dead || targetChar.npc )
 		return false;
 
-	var guardFaction = npcChar.GetTempTag( "scan_guard_faction" );
+	let guardFaction = npcChar.GetTempTag( "scan_guard_faction" );
 	if( guardFaction === "" )
 		return false;
 
@@ -147,7 +150,7 @@ function onAICombatTarget( pAttacker, pTarget )
 	if( !ValidateObject( pAttacker ) || !ValidateObject( pTarget ) )
 		return true;
 
-	var guardFaction = GuardGetGuardFaction( pAttacker );
+	let guardFaction = GuardGetGuardFaction( pAttacker );
 	if( guardFaction === "" )
 		return true;
 
@@ -171,10 +174,10 @@ function onClick( pSock, npcChar )
 	if( !ValidateObject( npcChar ) )
 		return false;
 
-	var guardFaction = GuardGetGuardFaction( npcChar );
+	let guardFaction = GuardGetGuardFaction( npcChar );
 	if( guardFaction !== "" && guardFaction != 0 )
 	{
-		var townOwner = TriggerEvent( GuardFactionTownScriptId, "TownOwnerForObject", npcChar );
+		const townOwner = TriggerEvent( guardFactionTownScriptId, "TownOwnerForObject", npcChar );
 		if( townOwner !== "" && townOwner !== guardFaction )
 			pSock.SysMessage( npcChar.name + " [" + guardFaction + " Guard - inactive in enemy town]" );
 		else

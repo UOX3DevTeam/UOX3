@@ -1,26 +1,29 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_towns.js
 // UOX3 Faction System - town region ownership bridge
 // Script ID: 8509
 // =============================================================================
 
-var FactionTownController = null;
+let factionTownController = null;
 
-var FactionTownNames = {
+const factionTownNames = {
 	TB: "True Britannians",
 	COM: "Council of Mages",
 	MIN: "Minax",
 	SL: "Shadowlords"
 };
 
-var FactionTownOwnerNames = {
+const factionTownOwnerNames = {
 	TB: "True Britannians",
 	COM: "Council of Mages",
 	MIN: "Minax",
 	SL: "Shadowlords"
 };
 
-var FactionTownDefaults = {
+const factionTownDefaults = {
 	Britain: { region: 3, owner: "TB" },
 	Trinsic: { region: 9, owner: "TB" },
 	Moonglow: { region: 13, owner: "COM" },
@@ -31,7 +34,7 @@ var FactionTownDefaults = {
 	Magincia: { region: 15, owner: "SL" }
 };
 
-var FactionTownRegions = {
+const factionTownRegions = {
 	3: "Britain",
 	9: "Trinsic",
 	13: "Moonglow",
@@ -42,7 +45,7 @@ var FactionTownRegions = {
 	15: "Magincia"
 };
 
-var FactionTownNameAliases = {
+const factionTownNameAliases = {
 	britain: "Britain",
 	trinsic: "Trinsic",
 	moonglow: "Moonglow",
@@ -54,29 +57,32 @@ var FactionTownNameAliases = {
 	cove: "Magincia"
 };
 
-var FactionTownLastError = "";
-var FactionTownIterateMode = "";
-var FactionTownIterateTown = "";
-var FactionTownIterateFaction = "";
-var FactionTownIterateSocket = null;
-var FactionTownTreasuryGrant = 1000;
-var FactionTownDefaultTaxRate = 0;
-var FactionTownTaxTimerId = 2;
-var FactionTownDefaultTaxInterval = 86400000;
-var FactionTownTaxChangePeriod = 43200000;
-var FactionTownDailyIncome = 10000;
-var FactionTownTaxOffsets = [ -30, -25, -20, -15, -10, -5, 0, 50, 100, 150, 200, 250, 300 ];
-var FactionTownGuardLimit = 10;
-var FactionTownVendorLimit = 10;
-var FactionTownCountType = "";
+let factionTownLastError = "";
+let factionTownIterateMode = "";
+let factionTownIterateTown = "";
+let factionTownIterateFaction = "";
+let factionTownIterateSocket = null;
+const factionTownTreasuryGrant = 1000;
+const factionTownDefaultTaxRate = 0;
+const factionTownTaxTimerId = 2;
+const factionTownDefaultTaxInterval = 86400000;
+const factionTownTaxChangePeriod = parseInt( GetServerSetting( "FACTIONTOWNTAXCHANGEHOURS" ), 10 ) * 3600000;
+const factionTownDailyIncome = parseInt( GetServerSetting( "FACTIONTOWNBASEINCOME" ), 10 );
+const factionTownTaxOffsets = [ -30, -25, -20, -15, -10, -5, 0, 50, 100, 150, 200, 250, 300 ];
+const factionTownGuardLimit = 10;
+const factionTownVendorLimit = 10;
+let factionTownCountType = "";
+const factionTownPlayerDataScriptId = 8513;
+let factionTownUpkeepTotal = 0;
+let factionTownRemoveDone = false;
 
 function TownIniNumber( settingName, fallbackValue, minValue )
 {
-	var settingValue = fallbackValue;
+	let settingValue = fallbackValue;
 	if( typeof GetServerSetting == "function" )
 	{
-		var rawValue = GetServerSetting( settingName );
-		var parsedValue = parseInt( rawValue, 10 );
+		const rawValue = GetServerSetting( settingName );
+		const parsedValue = parseInt( rawValue, 10 );
 		if( !isNaN( parsedValue ) )
 			settingValue = parsedValue;
 	}
@@ -89,7 +95,7 @@ function TownIniNumber( settingName, fallbackValue, minValue )
 
 function TownDefaultTaxIntervalMinutes()
 {
-	return TownIniNumber( "FACTIONTOWNTAXINTERVAL", Math.ceil( FactionTownDefaultTaxInterval / 60000 ), 1 );
+	return TownIniNumber( "FACTIONTOWNTAXINTERVAL", Math.ceil( factionTownDefaultTaxInterval / 60000 ), 1 );
 }
 
 function TownDefaultTaxIntervalMs()
@@ -99,21 +105,21 @@ function TownDefaultTaxIntervalMs()
 
 function TownDefaultTaxRate()
 {
-	return TownIniNumber( "FACTIONTOWNDEFAULTTAXRATE", FactionTownDefaultTaxRate );
+	return TownIniNumber( "FACTIONTOWNDEFAULTTAXRATE", factionTownDefaultTaxRate );
 }
 
 function TownTreasuryGrantAmount()
 {
-	return TownIniNumber( "FACTIONTOWNTREASURYGRANT", FactionTownTreasuryGrant, 0 );
+	return TownIniNumber( "FACTIONTOWNTREASURYGRANT", factionTownTreasuryGrant, 0 );
 }
 
 function TownDefaultNpcLimit( npcType )
 {
 	npcType = String( npcType ).toLowerCase();
 	if( npcType === "guard" )
-		return TownIniNumber( "FACTIONTOWNGUARDLIMIT", FactionTownGuardLimit, 0 );
+		return TownIniNumber( "FACTIONTOWNGUARDLIMIT", factionTownGuardLimit, 0 );
 	if( npcType === "vendor" )
-		return TownIniNumber( "FACTIONTOWNVENDORLIMIT", FactionTownVendorLimit, 0 );
+		return TownIniNumber( "FACTIONTOWNVENDORLIMIT", factionTownVendorLimit, 0 );
 
 	return 0;
 }
@@ -130,14 +136,14 @@ function TownRegionIsLoaded( townRegion )
 
 function TownNormalizeName( townName )
 {
-	var cleanName = String( townName );
+	let cleanName = String( townName );
 	cleanName = cleanName.replace( /^\s+|\s+$/g, "" );
 	cleanName = cleanName.replace( /^the town of /i, "" );
 
-	var aliasName = cleanName.toLowerCase();
+	let aliasName = cleanName.toLowerCase();
 	aliasName = aliasName.replace( /[^a-z]/g, "" );
-	if( FactionTownNameAliases[aliasName] )
-		return FactionTownNameAliases[aliasName];
+	if( factionTownNameAliases[aliasName] )
+		return factionTownNameAliases[aliasName];
 
 	return cleanName;
 }
@@ -147,7 +153,7 @@ function TownFactionName( factionKey )
 	if( !TownIsFactionValid( factionKey ) )
 		return "Unknown Faction";
 
-	return FactionTownNames[factionKey];
+	return factionTownNames[factionKey];
 }
 
 function TownOwnerName( factionKey )
@@ -155,32 +161,32 @@ function TownOwnerName( factionKey )
 	if( !TownIsFactionValid( factionKey ) )
 		return "The Town";
 
-	return FactionTownOwnerNames[factionKey];
+	return factionTownOwnerNames[factionKey];
 }
 
 function TownGetDefault( townName )
 {
 	townName = TownNormalizeName( townName );
-	if( FactionTownDefaults[townName] )
-		return FactionTownDefaults[townName];
+	if( factionTownDefaults[townName] )
+		return factionTownDefaults[townName];
 
 	return null;
 }
 
 function TownSetLastError( errorMessage )
 {
-	FactionTownLastError = errorMessage;
+	factionTownLastError = errorMessage;
 	return false;
 }
 
 function TownLastError()
 {
-	return FactionTownLastError;
+	return factionTownLastError;
 }
 
 function TownRegionForName( townName )
 {
-	var townInfo = TownGetDefault( townName );
+	let townInfo = TownGetDefault( townName );
 	if( townInfo == null )
 		return 0;
 
@@ -189,7 +195,7 @@ function TownRegionForName( townName )
 
 function TownDefaultOwner( townName )
 {
-	var townInfo = TownGetDefault( townName );
+	let townInfo = TownGetDefault( townName );
 	if( townInfo == null )
 		return "";
 
@@ -207,7 +213,7 @@ function TownDisplayName( townName )
 
 function TownParseNumber( value, fallback )
 {
-	var parsed = parseInt( value, 10 );
+	const parsed = parseInt( value, 10 );
 	if( isNaN( parsed ) )
 		return fallback;
 
@@ -216,8 +222,8 @@ function TownParseNumber( value, fallback )
 
 function TownNameForRegion( townRegionId )
 {
-	if( FactionTownRegions[townRegionId] )
-		return FactionTownRegions[townRegionId];
+	if( factionTownRegions[townRegionId] )
+		return factionTownRegions[townRegionId];
 
 	return "";
 }
@@ -232,7 +238,7 @@ function TownNameForObject( townObject )
 
 function TownOwnerForRegion( townRegionId )
 {
-	var townName = TownNameForRegion( townRegionId );
+	let townName = TownNameForRegion( townRegionId );
 	if( townName === "" )
 		return "";
 
@@ -241,7 +247,7 @@ function TownOwnerForRegion( townRegionId )
 
 function TownOwnerForObject( townObject )
 {
-	var townName = TownNameForObject( townObject );
+	let townName = TownNameForObject( townObject );
 	if( townName === "" )
 		return "";
 
@@ -253,7 +259,7 @@ function TownIsObjectInControlledTownForFaction( townObject, factionKey )
 	if( !TownIsFactionValid( factionKey ) )
 		return false;
 
-	var townOwner = TownOwnerForObject( townObject );
+	let townOwner = TownOwnerForObject( townObject );
 	if( townOwner === "" )
 		return true;
 
@@ -262,10 +268,10 @@ function TownIsObjectInControlledTownForFaction( townObject, factionKey )
 
 function TownControlledByFactionList( factionKey )
 {
-	var townList = "";
-	for( var townName in FactionTownDefaults )
+	let townList = "";
+	for( let townName in factionTownDefaults )
 	{
-		if( FactionTownDefaults.hasOwnProperty( townName ) && TownGetOwner( townName ) === factionKey )
+		if( factionTownDefaults.hasOwnProperty( townName ) && TownGetOwner( townName ) === factionKey )
 		{
 			if( townList !== "" )
 				townList += ", ";
@@ -281,14 +287,14 @@ function TownControlledByFactionList( factionKey )
 
 function TownGetController()
 {
-	if( ValidateObject( FactionTownController ) )
-		return FactionTownController;
+	if( ValidateObject( factionTownController ) )
+		return factionTownController;
 
-	FactionTownController = null;
-	FactionTownIterateMode = "controller";
+	factionTownController = null;
+	factionTownIterateMode = "controller";
 	IterateOver( "ITEM" );
-	FactionTownIterateMode = "";
-	return FactionTownController;
+	factionTownIterateMode = "";
+	return factionTownController;
 }
 
 function RegisterController( ctrl )
@@ -296,13 +302,13 @@ function RegisterController( ctrl )
 	if( !ValidateObject( ctrl ) || ctrl.GetTag( "faction_controller" ) != 1 )
 		return false;
 
-	FactionTownController = ctrl;
+	factionTownController = ctrl;
 	if( ctrl.GetTag( "faction_town_tax_enabled" ) == 1 )
 	{
-		var interval = TownTaxInterval( ctrl );
+		let interval = TownTaxInterval( ctrl );
 		ctrl.SetTag( "faction_town_tax_next", GetCurrentClock() + interval );
-		ctrl.KillJSTimer( FactionTownTaxTimerId, 8509 );
-		ctrl.StartTimer( interval, FactionTownTaxTimerId, 8509 );
+		ctrl.KillJSTimer( factionTownTaxTimerId, 8509 );
+		ctrl.StartTimer( interval, factionTownTaxTimerId, 8509 );
 	}
 
 	return true;
@@ -313,7 +319,7 @@ function TownTaxInterval( ctrl )
 	if( !ValidateObject( ctrl ) )
 		return TownDefaultTaxIntervalMs();
 
-	var interval = TownParseNumber( ctrl.GetTag( "faction_town_tax_interval" ), TownDefaultTaxIntervalMs() );
+	let interval = TownParseNumber( ctrl.GetTag( "faction_town_tax_interval" ), TownDefaultTaxIntervalMs() );
 	if( interval < 60000 )
 		interval = 60000;
 
@@ -322,11 +328,11 @@ function TownTaxInterval( ctrl )
 
 function StartTownTaxTimer( minutes )
 {
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
-	var interval = TownParseNumber( minutes, 0 );
+	let interval = TownParseNumber( minutes, 0 );
 	if( interval > 0 )
 		interval = interval * 60000;
 	else
@@ -337,20 +343,20 @@ function StartTownTaxTimer( minutes )
 	ctrl.SetTag( "faction_town_tax_enabled", 1 );
 	ctrl.SetTag( "faction_town_tax_interval", interval );
 	ctrl.SetTag( "faction_town_tax_next", GetCurrentClock() + interval );
-	ctrl.KillJSTimer( FactionTownTaxTimerId, 8509 );
-	ctrl.StartTimer( interval, FactionTownTaxTimerId, 8509 );
+	ctrl.KillJSTimer( factionTownTaxTimerId, 8509 );
+	ctrl.StartTimer( interval, factionTownTaxTimerId, 8509 );
 	return true;
 }
 
 function StopTownTaxTimer()
 {
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
 	ctrl.SetTag( "faction_town_tax_enabled", 0 );
 	ctrl.SetTag( "faction_town_tax_next", 0 );
-	ctrl.KillJSTimer( FactionTownTaxTimerId, 8509 );
+	ctrl.KillJSTimer( factionTownTaxTimerId, 8509 );
 	return true;
 }
 
@@ -359,7 +365,7 @@ function ShowTownTaxStatus( pSock )
 	if( pSock == null )
 		return false;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 	{
 		pSock.SysMessage( "Faction controller was not found." );
@@ -372,16 +378,16 @@ function ShowTownTaxStatus( pSock )
 
 function TownTaxStatusText()
 {
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return "Tax Timer: faction controller missing.";
 
-	var enabled = ctrl.GetTag( "faction_town_tax_enabled" ) == 1;
-	var interval = Math.ceil( TownTaxInterval( ctrl ) / 60000 );
-	var nextTime = TownParseNumber( ctrl.GetTag( "faction_town_tax_next" ), 0 );
-	var lastIncome = TownParseNumber( ctrl.GetTag( "faction_town_last_tax_income" ), 0 );
-	var statusText = enabled ? "enabled" : "disabled";
-	var taxText = "Tax Timer: " + statusText + ", interval " + interval + " minute(s), last income " + lastIncome + ".";
+	const enabled = ctrl.GetTag( "faction_town_tax_enabled" ) == 1;
+	let interval = Math.ceil( TownTaxInterval( ctrl ) / 60000 );
+	const nextTime = TownParseNumber( ctrl.GetTag( "faction_town_tax_next" ), 0 );
+	const lastIncome = TownParseNumber( ctrl.GetTag( "faction_town_last_tax_income" ), 0 );
+	const statusText = enabled ? "enabled" : "disabled";
+	let taxText = "Tax Timer: " + statusText + ", interval " + interval + " minute(s), last income " + lastIncome + ".";
 	if( enabled && nextTime > GetCurrentClock() )
 		taxText += " Next cycle in " + Math.ceil( ( nextTime - GetCurrentClock() ) / 60000 ) + " minute(s).";
 
@@ -390,67 +396,109 @@ function TownTaxStatusText()
 
 function onTimer( timerObj, timerID )
 {
-	if( timerID != FactionTownTaxTimerId )
+	if( timerID != factionTownTaxTimerId )
 		return;
 	if( !ValidateObject( timerObj ) || timerObj.GetTag( "faction_controller" ) != 1 )
 		return;
 
-	FactionTownController = timerObj;
+	factionTownController = timerObj;
 	if( timerObj.GetTag( "faction_town_tax_enabled" ) != 1 )
 		return;
 
-	var totalIncome = RunTownTaxCycle();
-	var interval = TownTaxInterval( timerObj );
+	let totalIncome = RunTownTaxCycle();
+	let interval = TownTaxInterval( timerObj );
 	timerObj.SetTag( "faction_town_tax_next", GetCurrentClock() + interval );
-	timerObj.StartTimer( interval, FactionTownTaxTimerId, 8509 );
+	timerObj.StartTimer( interval, factionTownTaxTimerId, 8509 );
 	if( totalIncome > 0 )
 		Console.Print( "Faction town tax cycle generated " + totalIncome + " silver." );
 }
 
 function onIterate( toCheck )
 {
-	if( FactionTownIterateMode === "controller" )
+	if( factionTownIterateMode === "controller" )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.GetTag( "faction_controller" ) == 1 )
 		{
-			FactionTownController = toCheck;
+			factionTownController = toCheck;
 			return true;
 		}
 
 		return false;
 	}
 
-	if( FactionTownIterateMode === "countnpcs" || FactionTownIterateMode === "clearnpcs" || FactionTownIterateMode === "listnpcs" )
+	if( factionTownIterateMode === "countnpcs" || factionTownIterateMode === "clearnpcs" || factionTownIterateMode === "listnpcs" )
 	{
-		if( !TownFactionNpcMatches( toCheck, FactionTownIterateTown, FactionTownIterateFaction ) )
+		if( !TownFactionNpcMatches( toCheck, factionTownIterateTown, factionTownIterateFaction ) )
 			return false;
 
-		if( FactionTownIterateMode === "countnpcs" && FactionTownCountType !== "" && toCheck.GetTag( "faction_npc_type" ) !== FactionTownCountType )
+		if( factionTownIterateMode === "countnpcs" && factionTownCountType !== "" && toCheck.GetTag( "faction_npc_type" ) !== factionTownCountType )
 			return false;
 
-		if( FactionTownIterateMode === "clearnpcs" )
+		if( factionTownIterateMode === "clearnpcs" )
 		{
 			toCheck.Delete();
 			return true;
 		}
 
-		if( FactionTownIterateMode === "listnpcs" && FactionTownIterateSocket != null )
+		if( factionTownIterateMode === "listnpcs" && factionTownIterateSocket != null )
 		{
-			var npcTown = toCheck.GetTag( "faction_town" );
-			var npcType = toCheck.GetTag( "faction_npc_type" );
-			var vendorType = toCheck.GetTag( "faction_vendor_type" );
-			var npcFaction = TownFactionForNpc( toCheck );
-			var typeText = npcType;
-			var townText = "No town";
+			let npcTown = toCheck.GetTag( "faction_town" );
+			let npcType = toCheck.GetTag( "faction_npc_type" );
+			const vendorType = toCheck.GetTag( "faction_vendor_type" );
+			const npcFaction = TownFactionForNpc( toCheck );
+			let typeText = npcType;
+			let townText = "No town";
 			if( vendorType !== "" )
 				typeText += " " + vendorType;
 			if( npcTown !== "" )
 				townText = TownDisplayName( npcTown );
 
-			FactionTownIterateSocket.SysMessage( townText + ": " + TownFactionName( npcFaction ) + " " + typeText + " " + toCheck.name );
+			factionTownIterateSocket.SysMessage( townText + ": " + TownFactionName( npcFaction ) + " " + typeText + " " + toCheck.name );
 		}
 
 		return true;
+	}
+
+	if( factionTownIterateMode === "upkeep" || factionTownIterateMode === "removeupkeep" )
+	{
+		if( factionTownIterateMode === "removeupkeep" && factionTownRemoveDone )
+			return false;
+		if( !TownFactionNpcMatches( toCheck, factionTownIterateTown, factionTownIterateFaction ) )
+			return false;
+		if( factionTownIterateMode === "upkeep" )
+		{
+			let npcUpkeep = TownParseNumber( toCheck.GetTag( "faction_upkeep" ), 0 );
+			if( npcUpkeep <= 0 )
+			{
+				let legacyVendorType = String( toCheck.GetTag( "faction_vendor_type" ) || "" ).toUpperCase();
+				npcUpkeep = toCheck.GetTag( "faction_npc_type" ) === "guard" ? 1000 : (( legacyVendorType === "BOARD" || legacyVendorType === "ORE" ) ? 500 : 1000 );
+				toCheck.SetTag( "faction_upkeep", npcUpkeep );
+			}
+			factionTownUpkeepTotal += npcUpkeep;
+			return true;
+		}
+		toCheck.Delete();
+		factionTownRemoveDone = true;
+		return true;
+	}
+
+	if( factionTownIterateMode === "clearoffices" )
+	{
+		if( !ValidateObject( toCheck ) || !toCheck.isChar || toCheck.npc )
+			return false;
+		const officeData = TriggerEvent( factionTownPlayerDataScriptId, "ReadFactionPlayerData", toCheck );
+		if(( officeData.role === "sheriff" || officeData.role === "finance" ) && officeData.roleTown === factionTownIterateTown )
+		{
+			officeData.role = "";
+			officeData.roleFaction = "";
+			officeData.roleTown = "";
+			officeData.roleSetAt = 0;
+			TriggerEvent( factionTownPlayerDataScriptId, "WriteFactionPlayerData", toCheck, officeData );
+			if( toCheck.socket != null )
+				toCheck.SysMessage( "Your office in " + TownDisplayName( factionTownIterateTown ) + " ended when control changed." );
+			return true;
+		}
+		return false;
 	}
 
 	return false;
@@ -461,7 +509,7 @@ function TownFactionForNpc( npcChar )
 	if( !ValidateObject( npcChar ) )
 		return "";
 
-	var factionKey = npcChar.GetTag( "faction" );
+	let factionKey = npcChar.GetTag( "faction" );
 	if( TownIsFactionValid( factionKey ) )
 		return factionKey;
 
@@ -494,7 +542,7 @@ function TownFactionNpcMatches( npcChar, townName, factionKey )
 		return false;
 
 	townName = TownNormalizeName( townName );
-	var npcTown = TownNormalizeName( npcChar.GetTag( "faction_town" ) );
+	let npcTown = TownNormalizeName( npcChar.GetTag( "faction_town" ) );
 	if( npcTown === "" )
 		npcTown = TownNameForObject( npcChar );
 
@@ -523,6 +571,9 @@ function TownTagFactionNpc( npcChar, factionKey, townName, npcType, vendorType )
 	npcChar.SetTag( "faction_npc_type", npcType );
 	npcChar.SetTag( "faction_vendor_type", vendorType );
 	npcChar.SetTag( "faction_spawned_at", GetCurrentClock() );
+	let vendorKey = String( vendorType || "" ).toUpperCase();
+	let upkeep = npcType === "guard" ? 1000 : (( vendorKey === "BOARD" || vendorKey === "ORE" ) ? 500 : 1000 );
+	npcChar.SetTag( "faction_upkeep", upkeep );
 
 	return true;
 }
@@ -533,13 +584,13 @@ function TownCountFactionNpcs( townName, factionKey )
 	if( factionKey !== "" && !TownIsFactionValid( factionKey ) )
 		return 0;
 
-	FactionTownIterateMode = "countnpcs";
-	FactionTownIterateTown = townName;
-	FactionTownIterateFaction = factionKey;
-	var npcCount = IterateOver( "CHARACTER" );
-	FactionTownIterateMode = "";
-	FactionTownIterateTown = "";
-	FactionTownIterateFaction = "";
+	factionTownIterateMode = "countnpcs";
+	factionTownIterateTown = townName;
+	factionTownIterateFaction = factionKey;
+	let npcCount = IterateOver( "CHARACTER" );
+	factionTownIterateMode = "";
+	factionTownIterateTown = "";
+	factionTownIterateFaction = "";
 
 	return npcCount;
 }
@@ -554,15 +605,15 @@ function TownCountFactionNpcsByType( townName, factionKey, npcType )
 	if( npcType !== "guard" && npcType !== "vendor" )
 		return 0;
 
-	FactionTownIterateMode = "countnpcs";
-	FactionTownIterateTown = townName;
-	FactionTownIterateFaction = factionKey;
-	FactionTownCountType = npcType;
-	var npcCount = IterateOver( "CHARACTER" );
-	FactionTownIterateMode = "";
-	FactionTownIterateTown = "";
-	FactionTownIterateFaction = "";
-	FactionTownCountType = "";
+	factionTownIterateMode = "countnpcs";
+	factionTownIterateTown = townName;
+	factionTownIterateFaction = factionKey;
+	factionTownCountType = npcType;
+	let npcCount = IterateOver( "CHARACTER" );
+	factionTownIterateMode = "";
+	factionTownIterateTown = "";
+	factionTownIterateFaction = "";
+	factionTownCountType = "";
 
 	return npcCount;
 }
@@ -573,10 +624,10 @@ function TownNpcLimitForType( npcType )
 	if( npcType !== "guard" && npcType !== "vendor" )
 		return 0;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( ValidateObject( ctrl ) )
 	{
-		var tagLimit = TownParseNumber( ctrl.GetTag( "faction_town_" + npcType + "_limit" ), -1 );
+		const tagLimit = TownParseNumber( ctrl.GetTag( "faction_town_" + npcType + "_limit" ), -1 );
 		if( tagLimit >= 0 )
 			return tagLimit;
 	}
@@ -590,7 +641,7 @@ function TownSetNpcLimit( npcType, amount )
 	if( npcType !== "guard" && npcType !== "vendor" )
 		return false;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
@@ -608,7 +659,7 @@ function TownClearNpcLimit( npcType )
 	if( npcType !== "guard" && npcType !== "vendor" )
 		return false;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
@@ -627,12 +678,12 @@ function TownCanPlaceFactionNpc( townName, factionKey, npcType )
 	if( npcType !== "guard" && npcType !== "vendor" )
 		return "Invalid faction NPC type.";
 
-	var owner = TownGetOwner( townName );
+	let owner = TownGetOwner( townName );
 	if( owner !== factionKey )
 		return "Only " + TownFactionName( owner ) + " may place faction NPCs in " + TownDisplayName( townName ) + ".";
 
-	var limit = TownNpcLimitForType( npcType );
-	var currentCount = TownCountFactionNpcsByType( townName, factionKey, npcType );
+	const limit = TownNpcLimitForType( npcType );
+	const currentCount = TownCountFactionNpcsByType( townName, factionKey, npcType );
 	if( limit > 0 && currentCount >= limit )
 		return TownDisplayName( townName ) + " already has " + currentCount + "/" + limit + " faction " + npcType + "(s).";
 
@@ -647,8 +698,8 @@ function TownNpcLimitSummary( townName, factionKey )
 	if( townName === "" || TownGetDefault( townName ) == null || !TownIsFactionValid( factionKey ) )
 		return "Faction NPC Limits: unknown town.";
 
-	var guards = TownCountFactionNpcsByType( townName, factionKey, "guard" );
-	var vendors = TownCountFactionNpcsByType( townName, factionKey, "vendor" );
+	const guards = TownCountFactionNpcsByType( townName, factionKey, "guard" );
+	const vendors = TownCountFactionNpcsByType( townName, factionKey, "vendor" );
 	return "Faction NPC Limits: guards " + guards + "/" + TownNpcLimitForType( "guard" ) + ", vendors " + vendors + "/" + TownNpcLimitForType( "vendor" ) + ".";
 }
 
@@ -660,13 +711,13 @@ function TownClearFactionNpcs( townName, factionKey )
 	if( factionKey !== "" && !TownIsFactionValid( factionKey ) )
 		return 0;
 
-	FactionTownIterateMode = "clearnpcs";
-	FactionTownIterateTown = townName;
-	FactionTownIterateFaction = factionKey;
-	var removedCount = IterateOver( "CHARACTER" );
-	FactionTownIterateMode = "";
-	FactionTownIterateTown = "";
-	FactionTownIterateFaction = "";
+	factionTownIterateMode = "clearnpcs";
+	factionTownIterateTown = townName;
+	factionTownIterateFaction = factionKey;
+	let removedCount = IterateOver( "CHARACTER" );
+	factionTownIterateMode = "";
+	factionTownIterateTown = "";
+	factionTownIterateFaction = "";
 
 	return removedCount;
 }
@@ -683,7 +734,7 @@ function ShowTownNpcStatus( pSock, townName )
 		return false;
 	}
 
-	var npcCount = TownCountFactionNpcs( townName, "" );
+	let npcCount = TownCountFactionNpcs( townName, "" );
 	if( npcCount == 0 )
 	{
 		pSock.SysMessage( "No managed faction NPCs found." );
@@ -695,15 +746,15 @@ function ShowTownNpcStatus( pSock, townName )
 	if( townName !== "" )
 		pSock.SysMessage( TownNpcLimitSummary( townName, "" ) );
 
-	FactionTownIterateMode = "listnpcs";
-	FactionTownIterateTown = townName;
-	FactionTownIterateFaction = "";
-	FactionTownIterateSocket = pSock;
+	factionTownIterateMode = "listnpcs";
+	factionTownIterateTown = townName;
+	factionTownIterateFaction = "";
+	factionTownIterateSocket = pSock;
 	IterateOver( "CHARACTER" );
-	FactionTownIterateMode = "";
-	FactionTownIterateTown = "";
-	FactionTownIterateFaction = "";
-	FactionTownIterateSocket = null;
+	factionTownIterateMode = "";
+	factionTownIterateTown = "";
+	factionTownIterateFaction = "";
+	factionTownIterateSocket = null;
 
 	return true;
 }
@@ -711,10 +762,10 @@ function ShowTownNpcStatus( pSock, townName )
 function TownGetOwner( townName )
 {
 	townName = TownNormalizeName( townName );
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( ValidateObject( ctrl ) )
 	{
-		var owner = ctrl.GetTag( "faction_town_" + townName + "_owner" );
+		let owner = ctrl.GetTag( "faction_town_" + townName + "_owner" );
 		if( TownIsFactionValid( owner ) )
 			return owner;
 	}
@@ -728,7 +779,7 @@ function TownSetOwner( townName, factionKey )
 	if( !TownIsFactionValid( factionKey ) || TownGetDefault( townName ) == null )
 		return false;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( ValidateObject( ctrl ) )
 	{
 		ctrl.SetTag( "faction_town_" + townName + "_owner", factionKey );
@@ -761,9 +812,9 @@ function TownLastTaxChangeTag( townName )
 function TownTaxRateIsValid( amount )
 {
 	amount = TownParseNumber( amount, 9999 );
-	for( var taxIndex = 0; taxIndex < FactionTownTaxOffsets.length; taxIndex++ )
+	for( let taxIndex = 0; taxIndex < factionTownTaxOffsets.length; taxIndex++ )
 	{
-		if( FactionTownTaxOffsets[taxIndex] == amount )
+		if( factionTownTaxOffsets[taxIndex] == amount )
 			return true;
 	}
 
@@ -772,15 +823,15 @@ function TownTaxRateIsValid( amount )
 
 function TownTaxChangeRemaining( townName )
 {
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return -1;
 
-	var lastChange = TownParseNumber( ctrl.GetTag( TownLastTaxChangeTag( townName ) ), 0 );
+	const lastChange = TownParseNumber( ctrl.GetTag( TownLastTaxChangeTag( townName ) ), 0 );
 	if( lastChange <= 0 )
 		return 0;
 
-	var remaining = ( lastChange + FactionTownTaxChangePeriod ) - GetCurrentClock();
+	const remaining = ( lastChange + factionTownTaxChangePeriod ) - GetCurrentClock();
 	return remaining > 0 ? remaining : 0;
 }
 
@@ -790,7 +841,7 @@ function TownGetTreasury( townName )
 	if( TownGetDefault( townName ) == null )
 		return -1;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return -1;
 
@@ -803,7 +854,7 @@ function TownSetTreasury( townName, amount )
 	if( TownGetDefault( townName ) == null )
 		return false;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
@@ -817,7 +868,7 @@ function TownSetTreasury( townName, amount )
 
 function TownAddTreasury( townName, amount )
 {
-	var currentAmount = TownGetTreasury( townName );
+	const currentAmount = TownGetTreasury( townName );
 	if( currentAmount < 0 )
 		return false;
 
@@ -826,7 +877,7 @@ function TownAddTreasury( townName, amount )
 
 function TownSpendTreasury( townName, amount )
 {
-	var currentAmount = TownGetTreasury( townName );
+	const currentAmount = TownGetTreasury( townName );
 	amount = TownParseNumber( amount, 0 );
 	if( currentAmount < 0 || amount < 0 || currentAmount < amount )
 		return false;
@@ -845,11 +896,11 @@ function TownGetTaxRate( townName )
 	if( TownGetDefault( townName ) == null )
 		return -1;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return -1;
 
-	var taxRate = ctrl.GetTag( TownTaxRateTag( townName ) );
+	const taxRate = ctrl.GetTag( TownTaxRateTag( townName ) );
 	if( ctrl.GetTag( TownTaxRateSetTag( townName ) ) != 1 )
 		return TownDefaultTaxRate();
 
@@ -862,7 +913,7 @@ function TownSetTaxRate( townName, amount, forceChange )
 	if( TownGetDefault( townName ) == null )
 		return false;
 
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
@@ -880,29 +931,72 @@ function TownSetTaxRate( townName, amount, forceChange )
 
 function RunTownTaxCycle()
 {
-	var ctrl = TownGetController();
+	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 		return -1;
 
-	var totalIncome = 0;
-	for( var townName in FactionTownDefaults )
+	let totalIncome = 0;
+	for( let townName in factionTownDefaults )
 	{
-		var owner = TownGetOwner( townName );
+		let owner = TownGetOwner( townName );
 		if( !TownIsFactionValid( owner ) )
 			continue;
 
-		var taxRate = TownGetTaxRate( townName );
-		var income = Math.floor( FactionTownDailyIncome * ( 100 + taxRate ) / 100 );
+		const taxRate = TownGetTaxRate( townName );
+		let income = Math.floor( factionTownDailyIncome * ( 100 + taxRate ) / 100 );
 		if( income < 0 )
 			income = 0;
 
-		if( TownAddTreasury( townName, income ) )
-			totalIncome += income;
+		const available = TownGetTreasury( townName ) + income;
+		let upkeep = TownFactionNpcUpkeep( townName, owner );
+		while( upkeep > available && TownRemoveOneFactionNpcForUpkeep( townName, owner ) )
+			upkeep = TownFactionNpcUpkeep( townName, owner );
+		TownSetTreasury( townName, Math.max( 0, available - upkeep ) );
+		totalIncome += income;
 	}
 
 	ctrl.SetTag( "faction_town_last_tax_cycle", GetCurrentClock() );
 	ctrl.SetTag( "faction_town_last_tax_income", totalIncome );
 	return totalIncome;
+}
+
+function TownFactionNpcUpkeep( townName, factionKey )
+{
+	factionTownIterateMode = "upkeep";
+	factionTownIterateTown = TownNormalizeName( townName );
+	factionTownIterateFaction = factionKey;
+	factionTownUpkeepTotal = 0;
+	IterateOver( "CHARACTER" );
+	let upkeep = factionTownUpkeepTotal;
+	factionTownIterateMode = "";
+	factionTownIterateTown = "";
+	factionTownIterateFaction = "";
+	factionTownUpkeepTotal = 0;
+	return upkeep;
+}
+
+function TownRemoveOneFactionNpcForUpkeep( townName, factionKey )
+{
+	factionTownIterateMode = "removeupkeep";
+	factionTownIterateTown = TownNormalizeName( townName );
+	factionTownIterateFaction = factionKey;
+	factionTownRemoveDone = false;
+	const removed = IterateOver( "CHARACTER" );
+	factionTownIterateMode = "";
+	factionTownIterateTown = "";
+	factionTownIterateFaction = "";
+	factionTownRemoveDone = false;
+	return removed > 0;
+}
+
+function TownClearOffices( townName )
+{
+	factionTownIterateMode = "clearoffices";
+	factionTownIterateTown = TownNormalizeName( townName );
+	const cleared = IterateOver( "CHARACTER" );
+	factionTownIterateMode = "";
+	factionTownIterateTown = "";
+	return cleared;
 }
 
 function ShowTownTreasury( pSock, townName )
@@ -923,7 +1017,7 @@ function ShowTownTreasury( pSock, townName )
 		return true;
 	}
 
-	for( var defaultTown in FactionTownDefaults )
+	for( let defaultTown in factionTownDefaults )
 		pSock.SysMessage( TownDisplayName( defaultTown ) + ": treasury " + TownGetTreasury( defaultTown ) + " silver, tax " + TownGetTaxRate( defaultTown ) + ", owner " + TownFactionName( TownGetOwner( defaultTown ) ) );
 
 	return true;
@@ -934,9 +1028,9 @@ function TownTreasuryByFactionText( factionKey )
 	if( !TownIsFactionValid( factionKey ) )
 		return "Treasury: 0, Tax: 0";
 
-	var totalTreasury = 0;
-	var totalTax = 0;
-	for( var townName in FactionTownDefaults )
+	let totalTreasury = 0;
+	let totalTax = 0;
+	for( let townName in factionTownDefaults )
 	{
 		if( TownGetOwner( townName ) === factionKey )
 		{
@@ -950,7 +1044,7 @@ function TownTreasuryByFactionText( factionKey )
 
 function ApplyTownControl( townName, factionKey, townRegionId )
 {
-	FactionTownLastError = "";
+	factionTownLastError = "";
 	townName = TownNormalizeName( townName );
 	if( !TownIsFactionValid( factionKey ) )
 		return TownSetLastError( "Invalid faction key: " + factionKey );
@@ -964,17 +1058,20 @@ function ApplyTownControl( townName, factionKey, townRegionId )
 	if( townRegionId == 0 )
 		return TownSetLastError( "No town region configured for " + townName );
 
-	var townRegion = GetTownRegion( townRegionId );
+	const townRegion = GetTownRegion( townRegionId );
 	if( !TownRegionIsLoaded( townRegion ) )
 		return TownSetLastError( "Town region " + townRegionId + " is not loaded." );
 
-	var oldOwner = TownGetOwner( townName );
+	const oldOwner = TownGetOwner( townName );
 	if( !TownSetOwner( townName, factionKey ) )
 		return TownSetLastError( "Unable to store town owner for " + townName );
 
-	var removedCount = 0;
+	let removedCount = 0;
 	if( TownIsFactionValid( oldOwner ) && oldOwner !== factionKey )
+	{
 		removedCount = TownClearFactionNpcs( townName, oldOwner );
+		TownClearOffices( townName );
+	}
 
 	if( oldOwner !== factionKey )
 		TownGrantTreasury( townName );
@@ -997,19 +1094,19 @@ function ApplySigilTownControl( iSigil )
 	if( !ValidateObject( iSigil ) )
 		return false;
 
-	var factionKey = iSigil.GetTag( "sigil_owner_faction" );
-	var townName = iSigil.GetTag( "sigil_town" );
-	var townRegionId = iSigil.GetTag( "town_region" );
+	let factionKey = iSigil.GetTag( "sigil_owner_faction" );
+	let townName = iSigil.GetTag( "sigil_town" );
+	let townRegionId = iSigil.GetTag( "town_region" );
 
 	return ApplyTownControl( townName, factionKey, townRegionId );
 }
 
 function SyncTownControl()
 {
-	for( var townName in FactionTownDefaults )
+	for( let townName in factionTownDefaults )
 	{
-		if( FactionTownDefaults.hasOwnProperty( townName ) )
-			ApplyTownControl( townName, TownGetOwner( townName ), FactionTownDefaults[townName].region );
+		if( factionTownDefaults.hasOwnProperty( townName ) )
+			ApplyTownControl( townName, TownGetOwner( townName ), factionTownDefaults[townName].region );
 	}
 
 	return true;
@@ -1020,13 +1117,13 @@ function ShowTownStatus( pSock )
 	if( !pSock )
 		return false;
 
-	for( var townName in FactionTownDefaults )
+	for( let townName in factionTownDefaults )
 	{
-		if( FactionTownDefaults.hasOwnProperty( townName ) )
+		if( factionTownDefaults.hasOwnProperty( townName ) )
 		{
-			var townInfo = FactionTownDefaults[townName];
-			var townRegion = GetTownRegion( townInfo.region );
-			var displayName = TownRegionIsLoaded( townRegion ) ? townRegion.name : townName;
+			let townInfo = factionTownDefaults[townName];
+			const townRegion = GetTownRegion( townInfo.region );
+			const displayName = TownRegionIsLoaded( townRegion ) ? townRegion.name : townName;
 			pSock.SysMessage( displayName + ": " + TownFactionName( TownGetOwner( townName ) ) );
 		}
 	}

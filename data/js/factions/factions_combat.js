@@ -1,3 +1,6 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
+
 // =============================================================================
 // factions_combat.js
 // UOX3 Faction System - phase 1 combat rewards
@@ -7,11 +10,11 @@
 // This script is also attached to players so onKill can award faction rewards.
 // =============================================================================
 
-var CombatScriptId = 8501;
-var CombatTownScriptId = 8509;
-var CombatPlayerDataScriptId = 8513;
-var CombatRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
-var CombatRankNames = [
+const combatScriptId = 8501;
+const combatTownScriptId = 8509;
+const combatPlayerDataScriptId = 8513;
+const combatRankPoints = [ 0, 5, 10, 20, 40, 80, 160, 320, 640, 1280 ];
+const combatRankNames = [
 	"Soldier",
 	"Scout",
 	"Corporal",
@@ -23,15 +26,15 @@ var CombatRankNames = [
 	"General",
 	"Commander"
 ];
-var CombatMaxSilver = 100000;
-var CombatPlayerKillCooldown = 10800000;
-var CombatKillPointDecayTime = 86400000;
-var CombatBlockSameAccountRewards = false;
-var CombatFactionNpcDefaultKillPoints = 1;
-var CombatFactionNpcDefaultSilverMin = 5;
-var CombatFactionNpcDefaultSilverMax = 25;
-var CombatController = null;
-var CombatIterateMode = "";
+const combatMaxSilver = parseInt( GetServerSetting( "FACTIONMAXSILVER" ), 10 );
+const combatPlayerKillCooldown = parseInt( GetServerSetting( "FACTIONKILLCOOLDOWNMINUTES" ), 10 ) * 60000;
+const combatKillPointDecayTime = parseInt( GetServerSetting( "FACTIONKILLPOINTDECAYHOURS" ), 10 ) * 3600000;
+const combatBlockSameAccountRewards = ( GetServerSetting( "FACTIONBLOCKSAMEACCOUNTREWARDS" ) != 0 );
+const combatFactionNpcDefaultKillPoints = parseInt( GetServerSetting( "FACTIONNPCKILLPOINTS" ), 10 );
+const combatFactionNpcDefaultSilverMin = parseInt( GetServerSetting( "FACTIONNPCSILVERMIN" ), 10 );
+const combatFactionNpcDefaultSilverMax = parseInt( GetServerSetting( "FACTIONNPCSILVERMAX" ), 10 );
+let combatController = null;
+let combatIterateMode = "";
 
 function CombatIsValidFaction( factionKey )
 {
@@ -54,7 +57,7 @@ function CombatFactionName( factionKey )
 
 function CombatParseNumber( value, fallback )
 {
-	var parsed = parseInt( value, 10 );
+	const parsed = parseInt( value, 10 );
 	if( isNaN( parsed ) )
 		return fallback;
 
@@ -63,14 +66,14 @@ function CombatParseNumber( value, fallback )
 
 function CombatGetController()
 {
-	if( ValidateObject( CombatController ) )
-		return CombatController;
+	if( ValidateObject( combatController ) )
+		return combatController;
 
-	CombatController = null;
-	CombatIterateMode = "controller";
+	combatController = null;
+	combatIterateMode = "controller";
 	IterateOver( "ITEM" );
-	CombatIterateMode = "";
-	return CombatController;
+	combatIterateMode = "";
+	return combatController;
 }
 
 function CombatGetFaction( pChar )
@@ -78,7 +81,7 @@ function CombatGetFaction( pChar )
 	if( !ValidateObject( pChar ) )
 		return "";
 
-	var factionKey = TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
+	let factionKey = TriggerEvent( combatPlayerDataScriptId, "GetFactionValue", pChar, "faction", pChar.GetTag( "faction" ) );
 	if( CombatIsValidFaction( factionKey ) )
 		return factionKey;
 
@@ -90,7 +93,7 @@ function CombatGetKillPoints( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) );
+	return TriggerEvent( combatPlayerDataScriptId, "GetFactionValue", pChar, "killPoints", pChar.GetTag( "faction_kp" ) );
 }
 
 function CombatGetSilver( pChar )
@@ -98,7 +101,7 @@ function CombatGetSilver( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
+	return TriggerEvent( combatPlayerDataScriptId, "GetFactionValue", pChar, "silver", pChar.GetTag( "faction_silver" ) );
 }
 
 function CombatGetRank( pChar )
@@ -106,16 +109,16 @@ function CombatGetRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return 0;
 
-	return TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
+	return TriggerEvent( combatPlayerDataScriptId, "GetFactionValue", pChar, "rank", pChar.GetTag( "faction_rank" ) );
 }
 
 function CombatGetRankName( pChar )
 {
-	var rank = CombatGetRank( pChar );
-	if( rank < 0 || rank >= CombatRankNames.length )
+	let rank = CombatGetRank( pChar );
+	if( rank < 0 || rank >= combatRankNames.length )
 		rank = 0;
 
-	return CombatRankNames[rank];
+	return combatRankNames[rank];
 }
 
 function CombatUpdateRank( pChar )
@@ -123,17 +126,17 @@ function CombatUpdateRank( pChar )
 	if( !ValidateObject( pChar ) )
 		return;
 
-	var killPoints = CombatGetKillPoints( pChar );
-	var rank = 0;
-	for( var rankIndex = CombatRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
+	let killPoints = CombatGetKillPoints( pChar );
+	let rank = 0;
+	for( let rankIndex = combatRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
 	{
-		if( killPoints >= CombatRankPoints[rankIndex] )
+		if( killPoints >= combatRankPoints[rankIndex] )
 		{
 			rank = rankIndex;
 			break;
 		}
 	}
-	TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "rank", rank );
+	TriggerEvent( combatPlayerDataScriptId, "SetFactionValue", pChar, "rank", rank );
 }
 
 function CombatSetKillPoints( pChar, amount )
@@ -144,18 +147,18 @@ function CombatSetKillPoints( pChar, amount )
 	if( amount < -6 )
 		amount = -6;
 
-	var factionData = TriggerEvent( CombatPlayerDataScriptId, "ReadFactionPlayerData", pChar );
+	const factionData = TriggerEvent( combatPlayerDataScriptId, "ReadFactionPlayerData", pChar );
 	factionData.killPoints = amount;
 	factionData.rank = CombatRankForPoints( amount );
-	TriggerEvent( CombatPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
+	TriggerEvent( combatPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 }
 
 function CombatRankForPoints( killPoints )
 {
-	var rank = 0;
-	for( var rankIndex = CombatRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
+	let rank = 0;
+	for( let rankIndex = combatRankPoints.length - 1; rankIndex >= 0; rankIndex-- )
 	{
-		if( killPoints >= CombatRankPoints[rankIndex] )
+		if( killPoints >= combatRankPoints[rankIndex] )
 		{
 			rank = rankIndex;
 			break;
@@ -170,12 +173,12 @@ function CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverRewar
 	if( !ValidateObject( pKiller ) || !ValidateObject( pKilled ) )
 		return false;
 
-	var killerFaction = CombatGetFaction( pKiller );
-	var killedFaction = CombatGetFaction( pKilled );
+	let killerFaction = CombatGetFaction( pKiller );
+	let killedFaction = CombatGetFaction( pKilled );
 	if( !CombatIsValidFaction( killerFaction ) || !CombatIsValidFaction( killedFaction ) )
 		return false;
 
-	var ctrl = CombatGetController();
+	const ctrl = CombatGetController();
 	if( ValidateObject( ctrl ) )
 	{
 		ctrl.SetTag( "combat_kills_" + killerFaction, CombatParseNumber( ctrl.GetTag( "combat_kills_" + killerFaction ), 0 ) + 1 );
@@ -187,8 +190,8 @@ function CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverRewar
 		ctrl.SetTag( "combat_last_time_" + killerFaction, GetCurrentClock() );
 	}
 
-	var townName = TriggerEvent( CombatTownScriptId, "TownNameForObject", pKiller );
-	var locationText = "";
+	const townName = TriggerEvent( combatTownScriptId, "TownNameForObject", pKiller );
+	let locationText = "";
 	if( townName !== "" )
 		locationText = " near " + townName;
 
@@ -208,10 +211,10 @@ function CombatSetSilver( pChar, amount )
 
 	if( amount < 0 )
 		amount = 0;
-	if( amount > CombatMaxSilver )
-		amount = CombatMaxSilver;
+	if( amount > combatMaxSilver )
+		amount = combatMaxSilver;
 
-	TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "silver", amount );
+	TriggerEvent( combatPlayerDataScriptId, "SetFactionValue", pChar, "silver", amount );
 }
 
 function CombatAddSilver( pChar, amount )
@@ -224,8 +227,8 @@ function FactionCombatAttachTrigger( pChar )
 	if( !ValidateObject( pChar ) || pChar.npc )
 		return;
 
-	if( !pChar.HasScriptTrigger( CombatScriptId ) )
-		pChar.AddScriptTrigger( CombatScriptId );
+	if( !pChar.HasScriptTrigger( combatScriptId ) )
+		pChar.AddScriptTrigger( combatScriptId );
 }
 
 function FactionCombatOnLogin( pSock, pChar )
@@ -238,17 +241,17 @@ function FactionCombatOnLogin( pSock, pChar )
 	if( CombatGetFaction( pChar ) === "" )
 		return;
 
-	var now = GetCurrentClock();
-	var lastDecay = TriggerEvent( CombatPlayerDataScriptId, "GetFactionValue", pChar, "kpDecayTime", pChar.GetTag( "faction_kp_decay_time" ) );
+	const now = GetCurrentClock();
+	const lastDecay = TriggerEvent( combatPlayerDataScriptId, "GetFactionValue", pChar, "kpDecayTime", pChar.GetTag( "faction_kp_decay_time" ) );
 	if( lastDecay > 0 )
 	{
-		var daysPassed = Math.floor( ( now - lastDecay ) / CombatKillPointDecayTime );
+		const daysPassed = Math.floor( ( now - lastDecay ) / combatKillPointDecayTime );
 		if( daysPassed > 0 )
 		{
-			var killPoints = CombatGetKillPoints( pChar );
+			let killPoints = CombatGetKillPoints( pChar );
 			if( killPoints > 0 )
 			{
-				var decayAmount = daysPassed;
+				let decayAmount = daysPassed;
 				if( decayAmount > killPoints )
 					decayAmount = killPoints;
 
@@ -257,7 +260,7 @@ function FactionCombatOnLogin( pSock, pChar )
 			}
 		}
 	}
-	TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "kpDecayTime", now );
+	TriggerEvent( combatPlayerDataScriptId, "SetFactionValue", pChar, "kpDecayTime", now );
 }
 
 function FactionCombatOnLogout( pSock, pChar )
@@ -266,7 +269,7 @@ function FactionCombatOnLogout( pSock, pChar )
 		return;
 
 	if( CombatGetFaction( pChar ) !== "" )
-		TriggerEvent( CombatPlayerDataScriptId, "SetFactionValue", pChar, "kpDecayTime", GetCurrentClock() );
+		TriggerEvent( combatPlayerDataScriptId, "SetFactionValue", pChar, "kpDecayTime", GetCurrentClock() );
 }
 
 function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
@@ -280,14 +283,14 @@ function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
 	if( pKiller.serial == pKilled.serial )
 		return false;
 
-	var killerFaction = CombatGetFaction( pKiller );
-	var killedFaction = CombatGetFaction( pKilled );
+	let killerFaction = CombatGetFaction( pKiller );
+	let killedFaction = CombatGetFaction( pKilled );
 	if( killerFaction === "" || killedFaction === "" )
 		return false;
 	if( killerFaction === killedFaction )
 		return false;
 
-	if( CombatBlockSameAccountRewards && ValidateObject( pKiller.account ) && ValidateObject( pKilled.account ) )
+	if( combatBlockSameAccountRewards && ValidateObject( pKiller.account ) && ValidateObject( pKilled.account ) )
 	{
 		if( pKiller.account.id == pKilled.account.id )
 		{
@@ -296,9 +299,9 @@ function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
 		}
 	}
 
-	var now = GetCurrentClock();
-	var lastKill = TriggerEvent( CombatPlayerDataScriptId, "GetRecentKillTime", pKiller, pKilled.serial );
-	if( lastKill > 0 && ( now - lastKill ) < CombatPlayerKillCooldown )
+	const now = GetCurrentClock();
+	const lastKill = TriggerEvent( combatPlayerDataScriptId, "GetRecentKillTime", pKiller, pKilled.serial );
+	if( lastKill > 0 && ( now - lastKill ) < combatPlayerKillCooldown )
 	{
 		pKiller.SysMessage( "You recently defeated this enemy and gain no faction reward." );
 		return false;
@@ -312,14 +315,14 @@ function FactionCombatAwardPlayerKill( pKiller, pKilled )
 	if( !FactionCombatCanRewardPlayerKill( pKiller, pKilled ) )
 		return false;
 
-	var victimKillPoints = CombatGetKillPoints( pKilled );
+	const victimKillPoints = CombatGetKillPoints( pKilled );
 	if( victimKillPoints <= -6 )
 	{
 		pKiller.SysMessage( "This victim is not worth enough to receive faction kill points from." );
 		return false;
 	}
-	TriggerEvent( CombatPlayerDataScriptId, "SetRecentKillTime", pKiller, pKilled.serial, GetCurrentClock() );
-	var gainedKillPoints = 1;
+	TriggerEvent( combatPlayerDataScriptId, "SetRecentKillTime", pKiller, pKilled.serial, GetCurrentClock() );
+	let gainedKillPoints = 1;
 	if( victimKillPoints > 10 )
 		gainedKillPoints = Math.floor( victimKillPoints / 10 );
 	if( gainedKillPoints < 1 )
@@ -327,11 +330,11 @@ function FactionCombatAwardPlayerKill( pKiller, pKilled )
 	if( gainedKillPoints > 40 )
 		gainedKillPoints = 40;
 
-	var oldRank = CombatGetRank( pKiller );
+	const oldRank = CombatGetRank( pKiller );
 	CombatAddKillPoints( pKiller, gainedKillPoints );
 	CombatSetKillPoints( pKilled, victimKillPoints - gainedKillPoints );
 
-	var silverReward = victimKillPoints > 0 ? gainedKillPoints * 40 : 0;
+	let silverReward = victimKillPoints > 0 ? gainedKillPoints * 40 : 0;
 	if( silverReward > 0 )
 		CombatAddSilver( pKiller, silverReward );
 	CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverReward );
@@ -358,16 +361,16 @@ function FactionCombatAwardGuardKill( pKiller, pKilled )
 	if( !pKilled.npc )
 		return false;
 
-	var guardFaction = pKilled.GetTag( "guard_faction" );
+	const guardFaction = pKilled.GetTag( "guard_faction" );
 	if( !CombatIsValidFaction( guardFaction ) )
 		return false;
 
-	var killerFaction = CombatGetFaction( pKiller );
+	let killerFaction = CombatGetFaction( pKiller );
 	if( killerFaction === "" || killerFaction === guardFaction )
 		return false;
 
-	var silverReward = RandomNumber( 10, 50 );
-	var oldRank = CombatGetRank( pKiller );
+	let silverReward = RandomNumber( 10, 50 );
+	const oldRank = CombatGetRank( pKiller );
 	CombatAddKillPoints( pKiller, 1 );
 	CombatAddSilver( pKiller, silverReward );
 
@@ -385,7 +388,7 @@ function CombatGetFactionNpcFaction( npcChar )
 	if( npcChar.GetTag( "faction_npc" ) != 1 )
 		return "";
 
-	var factionKey = npcChar.GetTag( "npc_faction" );
+	let factionKey = npcChar.GetTag( "npc_faction" );
 	if( CombatIsValidFaction( factionKey ) )
 		return factionKey;
 
@@ -405,11 +408,11 @@ function FactionCombatAwardFactionNpcKill( pKiller, pKilled )
 	if( pKilled.GetTag( "npc_faction_no_reward" ) == 1 )
 		return false;
 
-	var npcFaction = CombatGetFactionNpcFaction( pKilled );
+	let npcFaction = CombatGetFactionNpcFaction( pKilled );
 	if( npcFaction === "" )
 		return false;
 
-	var killerFaction = CombatGetFaction( pKiller );
+	let killerFaction = CombatGetFaction( pKiller );
 	if( killerFaction === "" )
 		return false;
 	if( killerFaction === npcFaction )
@@ -418,19 +421,19 @@ function FactionCombatAwardFactionNpcKill( pKiller, pKilled )
 		return false;
 	}
 
-	var killPoints = CombatParseNumber( pKilled.GetTag( "npc_faction_kp" ), CombatFactionNpcDefaultKillPoints );
-	var silverReward = CombatParseNumber( pKilled.GetTag( "npc_faction_silver" ), -1 );
+	let killPoints = CombatParseNumber( pKilled.GetTag( "npc_faction_kp" ), combatFactionNpcDefaultKillPoints );
+	let silverReward = CombatParseNumber( pKilled.GetTag( "npc_faction_silver" ), -1 );
 	if( killPoints < 0 )
 		killPoints = 0;
 	if( silverReward < 0 )
-		silverReward = RandomNumber( CombatFactionNpcDefaultSilverMin, CombatFactionNpcDefaultSilverMax );
+		silverReward = RandomNumber( combatFactionNpcDefaultSilverMin, combatFactionNpcDefaultSilverMax );
 	if( silverReward < 0 )
 		silverReward = 0;
 
 	if( killPoints <= 0 && silverReward <= 0 )
 		return false;
 
-	var oldRank = CombatGetRank( pKiller );
+	const oldRank = CombatGetRank( pKiller );
 	if( killPoints > 0 )
 		CombatAddKillPoints( pKiller, killPoints );
 	if( silverReward > 0 )
@@ -466,22 +469,22 @@ function ShowFactionKillStats( pSock )
 	if( pSock == null )
 		return false;
 
-	var ctrl = CombatGetController();
+	const ctrl = CombatGetController();
 	if( !ValidateObject( ctrl ) )
 	{
 		pSock.SysMessage( "Faction controller was not found." );
 		return false;
 	}
 
-	var factionKeys = [ "TB", "COM", "MIN", "SL" ];
-	for( var i = 0; i < factionKeys.length; i++ )
+	const factionKeys = [ "TB", "COM", "MIN", "SL" ];
+	for( let i = 0; i < factionKeys.length; i++ )
 	{
-		var factionKey = factionKeys[i];
-		var kills = CombatParseNumber( ctrl.GetTag( "combat_kills_" + factionKey ), 0 );
-		var deaths = CombatParseNumber( ctrl.GetTag( "combat_deaths_" + factionKey ), 0 );
-		var lastKiller = ctrl.GetTag( "combat_last_killer_" + factionKey );
-		var lastVictim = ctrl.GetTag( "combat_last_victim_" + factionKey );
-		var lastText = "None";
+		let factionKey = factionKeys[i];
+		const kills = CombatParseNumber( ctrl.GetTag( "combat_kills_" + factionKey ), 0 );
+		const deaths = CombatParseNumber( ctrl.GetTag( "combat_deaths_" + factionKey ), 0 );
+		const lastKiller = ctrl.GetTag( "combat_last_killer_" + factionKey );
+		const lastVictim = ctrl.GetTag( "combat_last_victim_" + factionKey );
+		let lastText = "None";
 		if( lastKiller !== "" && lastKiller != 0 )
 			lastText = lastKiller + " defeated " + lastVictim;
 
@@ -496,7 +499,7 @@ function FactionKillStatsText( factionKey )
 	if( !CombatIsValidFaction( factionKey ) )
 		return "Kills: 0, Deaths: 0";
 
-	var ctrl = CombatGetController();
+	const ctrl = CombatGetController();
 	if( !ValidateObject( ctrl ) )
 		return "Kills: 0, Deaths: 0";
 
@@ -505,14 +508,14 @@ function FactionKillStatsText( factionKey )
 
 function ResetFactionKillStats()
 {
-	var ctrl = CombatGetController();
+	const ctrl = CombatGetController();
 	if( !ValidateObject( ctrl ) )
 		return false;
 
-	var factionKeys = [ "TB", "COM", "MIN", "SL" ];
-	for( var i = 0; i < factionKeys.length; i++ )
+	const factionKeys = [ "TB", "COM", "MIN", "SL" ];
+	for( let i = 0; i < factionKeys.length; i++ )
 	{
-		var factionKey = factionKeys[i];
+		let factionKey = factionKeys[i];
 		ctrl.SetTag( "combat_kills_" + factionKey, 0 );
 		ctrl.SetTag( "combat_deaths_" + factionKey, 0 );
 		ctrl.SetTag( "combat_last_killer_" + factionKey, "" );
@@ -527,11 +530,11 @@ function ResetFactionKillStats()
 
 function onIterate( toCheck )
 {
-	if( CombatIterateMode === "controller" )
+	if( combatIterateMode === "controller" )
 	{
 		if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.GetTag( "faction_controller" ) == 1 )
 		{
-			CombatController = toCheck;
+			combatController = toCheck;
 			return true;
 		}
 	}
