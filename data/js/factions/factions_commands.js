@@ -341,7 +341,7 @@ function CommandParsePlayerAmountArgs( pSock, cmdString, usageText )
 	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
-		pSock.SysMessage( "Amount must be a number." );
+		pSock.SysMessage( GetDictionaryEntry( 25126, pSock.language ) );
 		return null;
 	}
 
@@ -352,7 +352,7 @@ function CommandParsePlayerAmountArgs( pSock, cmdString, usageText )
 	let targetChar = CommandFindPlayer( playerParts.join( " " ) );
 	if( !ValidateObject( targetChar ) )
 	{
-		pSock.SysMessage( "Unable to find that player." );
+		pSock.SysMessage( GetDictionaryEntry( 25127, pSock.language ) );
 		return null;
 	}
 
@@ -534,7 +534,7 @@ function onIterate( toCheck )
 			if( CommandIsRoleValid( roleName ) && CommandIsFactionValid( roleFaction ) )
 			{
 				const townText = roleData.roleTown !== "" ? " of " + roleData.roleTown : "";
-				commandRoleListSocket.SysMessage( toCheck.name + ": " + CommandFactionUsageName( roleFaction ) + " " + CommandRoleDisplayName( roleName ) + townText );
+				commandRoleListSocket.SysMessage( GetDictionaryEntry( 25128, commandRoleListSocket.language ).replace( /%s/, String( toCheck.name ) ).replace( /%s/, String( CommandFactionUsageName( roleFaction ) ) ).replace( /%s/, String( CommandRoleDisplayName( roleName ) ) ).replace( /%s/, String( townText ) ) );
 				return true;
 			}
 		}
@@ -729,14 +729,14 @@ function command_FACTIONCONTROLLER( pSock, cmdString )
 	let controller = CreateDFNItem( pSock, pUser, "FACTION_CONTROLLER", 1, "ITEM", true );
 	if( ValidateObject( controller ) )
 	{
-		pSock.SysMessage( "Faction controller created." );
+		pSock.SysMessage( GetDictionaryEntry( 25129, pSock.language ) );
 		TriggerEvent( commandFactionElectionScriptId, "RegisterController", controller );
 		TriggerEvent( commandFactionTownScriptId, "RegisterController", controller );
 		TriggerEvent( commandFactionTownScriptId, "SyncTownControl" );
 	}
 	else
 	{
-		pSock.SysMessage( "Unable to create faction controller." );
+		pSock.SysMessage( GetDictionaryEntry( 25130, pSock.language ) );
 	}
 }
 
@@ -802,18 +802,18 @@ function CommandSetupCreateController( pSock, pUser, forceSetup, stats )
 		if( ValidateObject( controller ) )
 		{
 			stats.created++;
-			pSock.SysMessage( "Faction controller created in your backpack." );
+			pSock.SysMessage( GetDictionaryEntry( 25131, pSock.language ) );
 		}
 		else
 		{
-			pSock.SysMessage( "Unable to create faction controller." );
+			pSock.SysMessage( GetDictionaryEntry( 25130, pSock.language ) );
 			return null;
 		}
 	}
 	else
 	{
 		stats.skipped++;
-		pSock.SysMessage( "Existing faction controller found; skipping controller creation." );
+		pSock.SysMessage( GetDictionaryEntry( 25132, pSock.language ) );
 	}
 
 	TriggerEvent( commandFactionElectionScriptId, "RegisterController", controller );
@@ -853,7 +853,7 @@ function CommandSetupPlaceSection( pSock, pUser, sectionId, location, forceSetup
 {
 	if( location == null || typeof location != "object" )
 	{
-		pSock.SysMessage( "No location configured for " + sectionId + "." );
+		pSock.SysMessage( GetDictionaryEntry( 25133, pSock.language ).replace( /%s/, String( sectionId ) ) );
 		stats.failed++;
 		return null;
 	}
@@ -881,7 +881,7 @@ function CommandSetupPlaceSection( pSock, pUser, sectionId, location, forceSetup
 		return newItem;
 	}
 
-	pSock.SysMessage( "Unable to create " + sectionId + "." );
+	pSock.SysMessage( GetDictionaryEntry( 25134, pSock.language ).replace( /%s/, String( sectionId ) ) );
 	stats.failed++;
 	return null;
 }
@@ -914,7 +914,7 @@ function CommandSetupPlaceTownstone( pSock, pUser, townName, townData, forceSetu
 		return newItem;
 	}
 
-	pSock.SysMessage( "Unable to create faction townstone for " + townName + "." );
+	pSock.SysMessage( GetDictionaryEntry( 25135, pSock.language ).replace( /%s/, String( townName ) ) );
 	stats.failed++;
 	return null;
 }
@@ -929,7 +929,7 @@ function CommandSetupFromData( pSock, pUser, forceSetup, relocateSetup, stats )
 	let setupData = TriggerEvent( commandFactionSetupDataScriptId, "ReloadFactionSetupData" );
 	if( setupData == null )
 	{
-		pSock.SysMessage( "Unable to load faction setup data: " + TriggerEvent( commandFactionSetupDataScriptId, "SetupDataLastError" ) );
+		pSock.SysMessage( GetDictionaryEntry( 25136, pSock.language ).replace( /%s/, String( TriggerEvent( commandFactionSetupDataScriptId, "SetupDataLastError" ) ) ) );
 		return false;
 	}
 
@@ -940,7 +940,7 @@ function CommandSetupFromData( pSock, pUser, forceSetup, relocateSetup, stats )
 		let factionData = setupData.factions[factionKey];
 		if( factionData == null )
 		{
-			pSock.SysMessage( "No setup data found for faction " + factionKey + "." );
+			pSock.SysMessage( GetDictionaryEntry( 25137, pSock.language ).replace( /%s/, String( factionKey ) ) );
 			stats.failed++;
 			continue;
 		}
@@ -954,7 +954,7 @@ function CommandSetupFromData( pSock, pUser, forceSetup, relocateSetup, stats )
 			if( TriggerEvent( commandFactionStrongholdScriptId, "StrongholdSetLocation", factionKey, center.x, center.y, center.z, center.world, center.instance, factionData.stronghold.range ) )
 				stats.strongholds++;
 			else
-				pSock.SysMessage( "Unable to configure " + factionKey + " stronghold: " + TriggerEvent( commandFactionStrongholdScriptId, "StrongholdLastError" ) );
+				pSock.SysMessage( GetDictionaryEntry( 25138, pSock.language ).replace( /%s/, String( factionKey ) ).replace( /%s/, String( TriggerEvent( commandFactionStrongholdScriptId, "StrongholdLastError" ) ) ) );
 		}
 	}
 
@@ -999,7 +999,7 @@ function CommandSetupLocal( pSock, pUser, forceSetup, stats )
 		else
 		{
 			stats.failed++;
-			pSock.SysMessage( "Unable to create " + setupItem[0] + "." );
+			pSock.SysMessage( GetDictionaryEntry( 25134, pSock.language ).replace( /%s/, String( setupItem[0] ) ) );
 		}
 	}
 
@@ -1102,20 +1102,20 @@ function command_FACTIONSETUP( pSock, cmdString )
 	}
 
 	if( setupOptions.force && setupOptions.local )
-		pSock.SysMessage( "Faction setup force-placed " + stats.created + " setup item(s) around you." );
+		pSock.SysMessage( GetDictionaryEntry( 25139, pSock.language ).replace( /%s/, String( stats.created ) ) );
 	else if( setupOptions.force )
-		pSock.SysMessage( "Faction setup force-placed " + stats.created + " setup item(s) from data." );
+		pSock.SysMessage( GetDictionaryEntry( 25140, pSock.language ).replace( /%s/, String( stats.created ) ) );
 	else if( setupOptions.local )
-		pSock.SysMessage( "Faction local setup created " + stats.created + " missing setup item(s), skipped " + stats.skipped + " existing item(s)." );
+		pSock.SysMessage( GetDictionaryEntry( 25141, pSock.language ).replace( /%s/, String( stats.created ) ).replace( /%s/, String( stats.skipped ) ) );
 	else
-		pSock.SysMessage( "Faction data setup created " + stats.created + " missing setup item(s), moved " + stats.relocated + " existing item(s), skipped " + stats.skipped + " existing item(s), configured " + stats.strongholds + " stronghold(s)." );
+		pSock.SysMessage( GetDictionaryEntry( 25142, pSock.language ).replace( /%s/, String( stats.created ) ).replace( /%s/, String( stats.relocated ) ).replace( /%s/, String( stats.skipped ) ).replace( /%s/, String( stats.strongholds ) ) );
 	if( stats.failed > 0 )
-		pSock.SysMessage( "Faction setup had " + stats.failed + " failure(s); check the console and setup data." );
+		pSock.SysMessage( GetDictionaryEntry( 25143, pSock.language ).replace( /%s/, String( stats.failed ) ) );
 
 	if( TriggerEvent( commandFactionTownScriptId, "SyncTownControl" ) )
-		pSock.SysMessage( "Faction town ownership synced." );
+		pSock.SysMessage( GetDictionaryEntry( 25144, pSock.language ) );
 	else
-		pSock.SysMessage( "Faction setup placed, but town sync failed: " + TriggerEvent( commandFactionTownScriptId, "TownLastError" ) );
+		pSock.SysMessage( GetDictionaryEntry( 25145, pSock.language ).replace( /%s/, String( TriggerEvent( commandFactionTownScriptId, "TownLastError" ) ) ) );
 
 	commandSetupFound = {};
 	commandSetupRanks = {};
@@ -1128,9 +1128,9 @@ function command_FACTIONREGIONCHECK( pSock, cmdString )
 		const regionCheck = commandFactionRegionChecks[checkIndex];
 		const townRegion = GetTownRegion( regionCheck[1] );
 		if( townRegion != null && typeof townRegion.id != "undefined" )
-			pSock.SysMessage( regionCheck[0] + " region " + regionCheck[1] + ": loaded as " + townRegion.name );
+			pSock.SysMessage( GetDictionaryEntry( 25146, pSock.language ).replace( /%s/, String( regionCheck[0] ) ).replace( /%s/, String( regionCheck[1] ) ).replace( /%s/, String( townRegion.name ) ) );
 		else
-			pSock.SysMessage( regionCheck[0] + " region " + regionCheck[1] + ": NOT LOADED" );
+			pSock.SysMessage( GetDictionaryEntry( 25147, pSock.language ).replace( /%s/, String( regionCheck[0] ) ).replace( /%s/, String( regionCheck[1] ) ) );
 	}
 }
 
@@ -1142,9 +1142,9 @@ function command_FACTIONTOWNS( pSock, cmdString )
 function command_FACTIONTOWNSYNC( pSock, cmdString )
 {
 	if( TriggerEvent( commandFactionTownScriptId, "SyncTownControl" ) )
-		pSock.SysMessage( "Faction town ownership synced to town regions." );
+		pSock.SysMessage( GetDictionaryEntry( 25148, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to sync faction town ownership." );
+		pSock.SysMessage( GetDictionaryEntry( 25149, pSock.language ) );
 }
 
 function command_FACTIONTOWNSET( pSock, cmdString )
@@ -1153,7 +1153,7 @@ function command_FACTIONTOWNSET( pSock, cmdString )
 	let parts = cmdString.length > 0 ? cmdString.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
-		pSock.SysMessage( "Usage: 'factiontownset <town> <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25150, pSock.language ) );
 		return;
 	}
 
@@ -1165,14 +1165,14 @@ function command_FACTIONTOWNSET( pSock, cmdString )
 	let townName = townParts.join( " " );
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'factiontownset <town> <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25150, pSock.language ) );
 		return;
 	}
 
 	if( TriggerEvent( commandFactionTownScriptId, "ApplyTownControl", townName, factionKey, 0 ) )
-		pSock.SysMessage( "Faction town ownership updated." );
+		pSock.SysMessage( GetDictionaryEntry( 25151, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to update that faction town: " + TriggerEvent( commandFactionTownScriptId, "TownLastError" ) );
+		pSock.SysMessage( GetDictionaryEntry( 25152, pSock.language ).replace( /%s/, String( TriggerEvent( commandFactionTownScriptId, "TownLastError" ) ) ) );
 }
 
 function CommandShowFactionStatusGump( pSock, pUser, factionKey )
@@ -1896,7 +1896,7 @@ function command_FACTIONSTATUS( pSock, cmdString )
 
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "You are not currently in a faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25153, pSock.language ) );
 		return;
 	}
 
@@ -1925,7 +1925,7 @@ function command_FACTIONLEADERBOARD( pSock, cmdString )
 
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'factionleaderboard <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25154, pSock.language ) );
 		return;
 	}
 
@@ -1962,7 +1962,7 @@ function command_FACTIONDEDUPE( pSock, cmdString )
 		return;
 
 	const removedCount = CommandDedupeFactionSetup();
-	pSock.SysMessage( "Removed " + removedCount + " duplicate faction setup item(s)." );
+	pSock.SysMessage( GetDictionaryEntry( 25155, pSock.language ).replace( /%s/, String( removedCount ) ) );
 	CommandShowFactionHealthGump( pSock, pUser );
 }
 
@@ -1972,7 +1972,7 @@ function command_FACTIONDATAMIGRATE( pSock, cmdString )
 	commandDataMigrateCount = 0;
 	IterateOver( "CHARACTER" );
 	commandDataMigrateActive = false;
-	pSock.SysMessage( "Migrated/synced faction player data for " + commandDataMigrateCount + " character(s)." );
+	pSock.SysMessage( GetDictionaryEntry( 25156, pSock.language ).replace( /%s/, String( commandDataMigrateCount ) ) );
 }
 
 function command_REMOVEFACTIONS( pSock, cmdString )
@@ -1982,8 +1982,8 @@ function command_REMOVEFACTIONS( pSock, cmdString )
 		return;
 
 	CommandRemoveFactionsFromShard();
-	pSock.SysMessage( "Faction system removed from shard." );
-	pSock.SysMessage( "Deleted " + commandRemoveFactionsItems + " faction item(s), deleted/cleared " + commandRemoveFactionsNpcs + " faction NPC/mount(s), cleared " + commandRemoveFactionsPlayers + " player(s), reset " + commandRemoveFactionsRegions + " town region(s)." );
+	pSock.SysMessage( GetDictionaryEntry( 25157, pSock.language ) );
+	pSock.SysMessage( GetDictionaryEntry( 25158, pSock.language ).replace( /%s/, String( commandRemoveFactionsItems ) ).replace( /%s/, String( commandRemoveFactionsNpcs ) ).replace( /%s/, String( commandRemoveFactionsPlayers ) ).replace( /%s/, String( commandRemoveFactionsRegions ) ) );
 }
 
 function onGumpPress( pSock, buttonID, gumpData )
@@ -2011,7 +2011,7 @@ function onGumpPress( pSock, buttonID, gumpData )
 	if( buttonID == commandFactionAdminDedupeButton )
 	{
 		const removedCount = CommandDedupeFactionSetup();
-		pSock.SysMessage( "Removed " + removedCount + " duplicate faction setup item(s)." );
+		pSock.SysMessage( GetDictionaryEntry( 25155, pSock.language ).replace( /%s/, String( removedCount ) ) );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
@@ -2040,9 +2040,9 @@ function onGumpPress( pSock, buttonID, gumpData )
 	if( buttonID == commandFactionAdminTaxStartButton )
 	{
 		if( TriggerEvent( commandFactionTownScriptId, "StartTownTaxTimer", 60 ) )
-			pSock.SysMessage( "Faction town tax timer started." );
+			pSock.SysMessage( GetDictionaryEntry( 25159, pSock.language ) );
 		else
-			pSock.SysMessage( "Unable to start faction town tax timer." );
+			pSock.SysMessage( GetDictionaryEntry( 25160, pSock.language ) );
 		CommandShowFactionAdminGump( pSock, pUser );
 		return;
 	}
@@ -2105,14 +2105,14 @@ function command_FACTIONSTRONGHOLD( pSock, cmdString )
 	let parts = cmdString.length > 0 ? cmdString.split( /\s+/ ) : [];
 	if( parts.length < 1 )
 	{
-		pSock.SysMessage( "Usage: 'factionstronghold <TB|COM|MIN|SL> [range]" );
+		pSock.SysMessage( GetDictionaryEntry( 25161, pSock.language ) );
 		return;
 	}
 
 	let factionKey = parts[0].toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'factionstronghold <TB|COM|MIN|SL> [range]" );
+		pSock.SysMessage( GetDictionaryEntry( 25161, pSock.language ) );
 		return;
 	}
 
@@ -2122,21 +2122,21 @@ function command_FACTIONSTRONGHOLD( pSock, cmdString )
 		range = parseInt( parts[1], 10 );
 		if( isNaN( range ) )
 		{
-			pSock.SysMessage( "Stronghold range must be a number." );
+			pSock.SysMessage( GetDictionaryEntry( 25162, pSock.language ) );
 			return;
 		}
 	}
 
 	if( TriggerEvent( commandFactionStrongholdScriptId, "StrongholdSet", factionKey, pUser, range ) )
-		pSock.SysMessage( CommandFactionUsageName( factionKey ) + " stronghold set at your current location." );
+		pSock.SysMessage( GetDictionaryEntry( 25163, pSock.language ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ) );
 	else
-		pSock.SysMessage( "Unable to set faction stronghold: " + TriggerEvent( commandFactionStrongholdScriptId, "StrongholdLastError" ) );
+		pSock.SysMessage( GetDictionaryEntry( 25164, pSock.language ).replace( /%s/, String( TriggerEvent( commandFactionStrongholdScriptId, "StrongholdLastError" ) ) ) );
 }
 
 function command_FACTIONSTRONGHOLDS( pSock, cmdString )
 {
 	if( !TriggerEvent( commandFactionStrongholdScriptId, "ShowStrongholdStatus", pSock ) )
-		pSock.SysMessage( "Unable to show faction strongholds." );
+		pSock.SysMessage( GetDictionaryEntry( 25165, pSock.language ) );
 }
 
 function CommandSigilTownArg( cmdString )
@@ -2153,9 +2153,9 @@ function command_FACTIONSIGILHOME( pSock, cmdString )
 	let townName = CommandSigilTownArg( cmdString );
 	let count = TriggerEvent( commandFactionSigilScriptId, "SigilRegisterHome", townName );
 	if( count > 0 )
-		pSock.SysMessage( "Registered home location for " + count + " faction sigil(s)." );
+		pSock.SysMessage( GetDictionaryEntry( 25166, pSock.language ).replace( /%s/, String( count ) ) );
 	else
-		pSock.SysMessage( "No faction sigils matched. Usage: 'factionsigilhome <town|all>" );
+		pSock.SysMessage( GetDictionaryEntry( 25167, pSock.language ) );
 }
 
 function command_FACTIONSIGILRETURN( pSock, cmdString )
@@ -2163,9 +2163,9 @@ function command_FACTIONSIGILRETURN( pSock, cmdString )
 	let townName = CommandSigilTownArg( cmdString );
 	let count = TriggerEvent( commandFactionSigilScriptId, "SigilReturn", townName );
 	if( count > 0 )
-		pSock.SysMessage( "Returned " + count + " faction sigil(s) home." );
+		pSock.SysMessage( GetDictionaryEntry( 25168, pSock.language ).replace( /%s/, String( count ) ) );
 	else
-		pSock.SysMessage( "No faction sigils with registered homes matched. Usage: 'factionsigilreturn <town|all>" );
+		pSock.SysMessage( GetDictionaryEntry( 25169, pSock.language ) );
 }
 
 function command_FACTIONSIGILS( pSock, cmdString )
@@ -2173,7 +2173,7 @@ function command_FACTIONSIGILS( pSock, cmdString )
 	let townName = CommandSigilTownArg( cmdString );
 	let count = TriggerEvent( commandFactionSigilScriptId, "ShowSigilStatus", pSock, townName );
 	if( count == 0 )
-		pSock.SysMessage( "No faction sigils matched. Usage: 'factionsigils [town|all]" );
+		pSock.SysMessage( GetDictionaryEntry( 25170, pSock.language ) );
 }
 
 function command_FACTIONSIGILRETURNTIME( pSock, cmdString )
@@ -2188,43 +2188,43 @@ function command_FACTIONSIGILRETURNTIME( pSock, cmdString )
 	let minutes = parseInt( cmdText, 10 );
 	if( isNaN( minutes ) || minutes < 1 )
 	{
-		pSock.SysMessage( "Usage: 'factionsigilreturntime [minutes]" );
+		pSock.SysMessage( GetDictionaryEntry( 25171, pSock.language ) );
 		return;
 	}
 
 	let count = TriggerEvent( commandFactionSigilScriptId, "SigilSetReturnTime", minutes );
 	if( count > 0 )
-		pSock.SysMessage( "Faction sigil return time set to " + minutes + " minute(s) for " + count + " sigil(s)." );
+		pSock.SysMessage( GetDictionaryEntry( 25172, pSock.language ).replace( /%s/, String( minutes ) ).replace( /%s/, String( count ) ) );
 	else
-		pSock.SysMessage( "No faction sigils found." );
+		pSock.SysMessage( GetDictionaryEntry( 25173, pSock.language ) );
 }
 
 function command_FACTIONSCORE( pSock, cmdString )
 {
 	if( !TriggerEvent( commandFactionSigilScriptId, "ShowFactionScore", pSock ) )
-		pSock.SysMessage( "Unable to show faction score." );
+		pSock.SysMessage( GetDictionaryEntry( 25174, pSock.language ) );
 }
 
 function command_FACTIONSCORERESET( pSock, cmdString )
 {
 	if( TriggerEvent( commandFactionSigilScriptId, "ResetFactionScore" ) )
-		pSock.SysMessage( "Faction score has been reset." );
+		pSock.SysMessage( GetDictionaryEntry( 25175, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to reset faction score." );
+		pSock.SysMessage( GetDictionaryEntry( 25176, pSock.language ) );
 }
 
 function command_FACTIONKILLS( pSock, cmdString )
 {
 	if( !TriggerEvent( commandFactionCombatScriptId, "ShowFactionKillStats", pSock ) )
-		pSock.SysMessage( "Unable to show faction kill stats." );
+		pSock.SysMessage( GetDictionaryEntry( 25177, pSock.language ) );
 }
 
 function command_FACTIONKILLSRESET( pSock, cmdString )
 {
 	if( TriggerEvent( commandFactionCombatScriptId, "ResetFactionKillStats" ) )
-		pSock.SysMessage( "Faction kill stats have been reset." );
+		pSock.SysMessage( GetDictionaryEntry( 25178, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to reset faction kill stats." );
+		pSock.SysMessage( GetDictionaryEntry( 25179, pSock.language ) );
 }
 
 function CommandFactionFromCommanderArgs( pUser, parts )
@@ -2239,7 +2239,7 @@ function CommandRequireCommander( pSock, pUser, factionKey )
 {
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "You are not in a faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25105, pSock.language ) );
 		return false;
 	}
 
@@ -2248,7 +2248,7 @@ function CommandRequireCommander( pSock, pUser, factionKey )
 	if( CommandHasFactionRole( pUser, "commander", factionKey ) )
 		return true;
 
-	pSock.SysMessage( "Only your faction Commander may use that command." );
+	pSock.SysMessage( GetDictionaryEntry( 25180, pSock.language ) );
 	return false;
 }
 
@@ -2283,18 +2283,18 @@ function command_FACTIONNOTICE( pSock, cmdString )
 	let messageText = parts.join( " " ).replace( /^\s+|\s+$/g, "" );
 	if( messageText === "" )
 	{
-		pSock.SysMessage( "Usage: 'factionnotice [TB|COM|MIN|SL] <message>" );
+		pSock.SysMessage( GetDictionaryEntry( 25181, pSock.language ) );
 		return;
 	}
 
 	if( TriggerEvent( commandFactionSigilScriptId, "SetFactionNotice", factionKey, messageText, pUser.name ) )
 	{
-		pSock.SysMessage( "Faction notice updated." );
+		pSock.SysMessage( GetDictionaryEntry( 25182, pSock.language ) );
 		CommandBroadcastToFaction( factionKey, CommandFactionUsageName( factionKey ) + " notice: " + messageText );
 	}
 	else
 	{
-		pSock.SysMessage( "Unable to update faction notice." );
+		pSock.SysMessage( GetDictionaryEntry( 25183, pSock.language ) );
 	}
 }
 
@@ -2314,12 +2314,12 @@ function command_FACTIONNOTICECLEAR( pSock, cmdString )
 
 	if( TriggerEvent( commandFactionSigilScriptId, "ClearFactionNotice", factionKey ) )
 	{
-		pSock.SysMessage( "Faction notice cleared." );
+		pSock.SysMessage( GetDictionaryEntry( 25184, pSock.language ) );
 		CommandBroadcastToFaction( factionKey, CommandFactionUsageName( factionKey ) + " notice cleared." );
 	}
 	else
 	{
-		pSock.SysMessage( "Unable to clear faction notice." );
+		pSock.SysMessage( GetDictionaryEntry( 25185, pSock.language ) );
 	}
 }
 
@@ -2343,20 +2343,20 @@ function command_FACTIONALERT( pSock, cmdString )
 		townName = CommandCurrentFactionTown( pUser );
 	if( townName === "" )
 	{
-		pSock.SysMessage( "Usage: 'factionalert [TB|COM|MIN|SL] <town>" );
+		pSock.SysMessage( GetDictionaryEntry( 25186, pSock.language ) );
 		return;
 	}
 
 	let townOwner = TriggerEvent( commandFactionTownScriptId, "TownGetOwner", townName );
 	if( townOwner === "" )
 	{
-		pSock.SysMessage( "That is not a known faction town." );
+		pSock.SysMessage( GetDictionaryEntry( 25187, pSock.language ) );
 		return;
 	}
 
 	if( townOwner !== "" && townOwner !== factionKey && !CommandIsStaff( pUser ) )
 	{
-		pSock.SysMessage( "You may only alert towns controlled by your faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25188, pSock.language ) );
 		return;
 	}
 
@@ -2364,19 +2364,19 @@ function command_FACTIONALERT( pSock, cmdString )
 	{
 		if( TriggerEvent( commandFactionSigilScriptId, "FactionScoreValue", factionKey ) < 1 )
 		{
-			pSock.SysMessage( "Your faction needs at least 1 score to issue a town alert." );
+			pSock.SysMessage( GetDictionaryEntry( 25189, pSock.language ) );
 			return;
 		}
 
 		if( !TriggerEvent( commandFactionSigilScriptId, "SpendFactionScore", factionKey, 1 ) )
 		{
-			pSock.SysMessage( "Unable to spend faction score for that alert." );
+			pSock.SysMessage( GetDictionaryEntry( 25190, pSock.language ) );
 			return;
 		}
 	}
 
 	const sentCount = CommandBroadcastToFaction( factionKey, "Faction alert: " + townName + " needs " + CommandFactionUsageName( factionKey ) + " forces." );
-	pSock.SysMessage( "Faction alert sent to " + sentCount + " online faction member(s)." );
+	pSock.SysMessage( GetDictionaryEntry( 25191, pSock.language ).replace( /%s/, String( sentCount ) ) );
 }
 
 function CommandCurrentFactionTown( pUser )
@@ -2389,13 +2389,13 @@ function CommandCanPlaceFactionNpc( pSock, pUser, factionKey )
 	let townOwner = TriggerEvent( commandFactionTownScriptId, "TownOwnerForObject", pUser );
 	if( townOwner === "" )
 	{
-		pSock.SysMessage( "You must be in a faction-controlled town to place faction NPCs." );
+		pSock.SysMessage( GetDictionaryEntry( 25192, pSock.language ) );
 		return false;
 	}
 
 	if( townOwner !== "" && townOwner !== factionKey )
 	{
-		pSock.SysMessage( "Only " + CommandFactionUsageName( townOwner ) + " may place faction NPCs in this town." );
+		pSock.SysMessage( GetDictionaryEntry( 25193, pSock.language ).replace( /%s/, String( CommandFactionUsageName( townOwner ) ) ) );
 		return false;
 	}
 
@@ -2423,17 +2423,17 @@ function CommandSpendTownTreasury( pSock, pUser, townName, cost, spendText )
 	const treasury = TriggerEvent( commandFactionTownScriptId, "TownGetTreasury", townName );
 	if( treasury < cost )
 	{
-		pSock.SysMessage( "The " + townName + " treasury needs " + cost + " silver for " + spendText + ". Current treasury: " + treasury + "." );
+		pSock.SysMessage( GetDictionaryEntry( 25194, pSock.language ).replace( /%s/, String( townName ) ).replace( /%s/, String( cost ) ).replace( /%s/, String( spendText ) ).replace( /%s/, String( treasury ) ) );
 		return false;
 	}
 
 	if( !TriggerEvent( commandFactionTownScriptId, "TownSpendTreasury", townName, cost ) )
 	{
-		pSock.SysMessage( "Unable to spend from the town treasury." );
+		pSock.SysMessage( GetDictionaryEntry( 25195, pSock.language ) );
 		return false;
 	}
 
-	pSock.SysMessage( "Spent " + cost + " silver from the " + townName + " treasury." );
+	pSock.SysMessage( GetDictionaryEntry( 25196, pSock.language ).replace( /%s/, String( cost ) ).replace( /%s/, String( townName ) ) );
 	return true;
 }
 
@@ -2445,7 +2445,7 @@ function CommandCanUseFactionNpcCommand( pSock, pUser, factionKey, requiredRole 
 	if( CommandHasFactionRole( pUser, requiredRole, factionKey ) )
 		return true;
 
-	pSock.SysMessage( "Only a " + CommandRoleDisplayName( requiredRole ) + " of " + CommandFactionUsageName( factionKey ) + " may use that command." );
+	pSock.SysMessage( GetDictionaryEntry( 25197, pSock.language ).replace( /%s/, String( CommandRoleDisplayName( requiredRole ) ) ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ) );
 	return false;
 }
 
@@ -2476,7 +2476,7 @@ function CommandTownNameFromArgs( pSock, pUser, cmdString, allowAll, requireTown
 
 	if( townName === "" && requireTown )
 	{
-		pSock.SysMessage( "Stand in a faction town, specify a town name, or use all." );
+		pSock.SysMessage( GetDictionaryEntry( 25198, pSock.language ) );
 		return null;
 	}
 
@@ -2504,7 +2504,7 @@ function command_FACTIONTOWNCLEAR( pSock, cmdString )
 		return;
 
 	const removedCount = TriggerEvent( commandFactionTownScriptId, "TownClearFactionNpcs", townName, "" );
-	pSock.SysMessage( "Removed " + removedCount + " managed faction NPC(s)." );
+	pSock.SysMessage( GetDictionaryEntry( 25199, pSock.language ).replace( /%s/, String( removedCount ) ) );
 }
 
 function command_FACTIONTOWNLIMIT( pSock, cmdString )
@@ -2513,14 +2513,14 @@ function command_FACTIONTOWNLIMIT( pSock, cmdString )
 	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
-		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
+		pSock.SysMessage( GetDictionaryEntry( 25200, pSock.language ) );
 		return;
 	}
 
 	const npcType = parts[0].toLowerCase();
 	if( npcType !== "guard" && npcType !== "vendor" )
 	{
-		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
+		pSock.SysMessage( GetDictionaryEntry( 25200, pSock.language ) );
 		return;
 	}
 
@@ -2528,30 +2528,30 @@ function command_FACTIONTOWNLIMIT( pSock, cmdString )
 	if( amountText === "default" || amountText === "ini" || amountText === "clear" )
 	{
 		if( TriggerEvent( commandFactionTownScriptId, "TownClearNpcLimit", npcType ) )
-			pSock.SysMessage( "Faction town " + npcType + " limit now uses the INI default." );
+			pSock.SysMessage( GetDictionaryEntry( 25201, pSock.language ).replace( /%s/, String( npcType ) ) );
 		else
-			pSock.SysMessage( "Unable to clear that faction town limit." );
+			pSock.SysMessage( GetDictionaryEntry( 25202, pSock.language ) );
 		return;
 	}
 
 	let amount = parseInt( amountText, 10 );
 	if( isNaN( amount ) || amount < 0 )
 	{
-		pSock.SysMessage( "Usage: 'factiontownlimit <guard|vendor> <amount|default>" );
+		pSock.SysMessage( GetDictionaryEntry( 25200, pSock.language ) );
 		return;
 	}
 
 	if( TriggerEvent( commandFactionTownScriptId, "TownSetNpcLimit", npcType, amount ) )
-		pSock.SysMessage( "Faction town " + npcType + " limit set to " + amount + "." );
+		pSock.SysMessage( GetDictionaryEntry( 25203, pSock.language ).replace( /%s/, String( npcType ) ).replace( /%s/, String( amount ) ) );
 	else
-		pSock.SysMessage( "Unable to set that faction town limit." );
+		pSock.SysMessage( GetDictionaryEntry( 25204, pSock.language ) );
 }
 
 function command_FACTIONTREASURY( pSock, cmdString )
 {
 	let townName = CommandSigilTownArg( cmdString );
 	if( !TriggerEvent( commandFactionTownScriptId, "ShowTownTreasury", pSock, townName ) )
-		pSock.SysMessage( "Unable to show faction town treasury." );
+		pSock.SysMessage( GetDictionaryEntry( 25205, pSock.language ) );
 }
 
 function command_FACTIONTREASURYGRANT( pSock, cmdString )
@@ -2560,23 +2560,23 @@ function command_FACTIONTREASURYGRANT( pSock, cmdString )
 	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
-		pSock.SysMessage( "Usage: 'factiontreasurygrant <town> <amount>" );
+		pSock.SysMessage( GetDictionaryEntry( 25206, pSock.language ) );
 		return;
 	}
 
 	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
-		pSock.SysMessage( "Usage: 'factiontreasurygrant <town> <amount>" );
+		pSock.SysMessage( GetDictionaryEntry( 25206, pSock.language ) );
 		return;
 	}
 
 	parts.pop();
 	let townName = parts.join( " " );
 	if( TriggerEvent( commandFactionTownScriptId, "TownAddTreasury", townName, amount ) )
-		pSock.SysMessage( "Faction town treasury updated." );
+		pSock.SysMessage( GetDictionaryEntry( 25207, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to update that faction town treasury." );
+		pSock.SysMessage( GetDictionaryEntry( 25208, pSock.language ) );
 }
 
 function command_FACTIONTREASURYSET( pSock, cmdString )
@@ -2585,32 +2585,32 @@ function command_FACTIONTREASURYSET( pSock, cmdString )
 	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
-		pSock.SysMessage( "Usage: 'factiontreasuryset <town> <amount>" );
+		pSock.SysMessage( GetDictionaryEntry( 25209, pSock.language ) );
 		return;
 	}
 
 	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
-		pSock.SysMessage( "Usage: 'factiontreasuryset <town> <amount>" );
+		pSock.SysMessage( GetDictionaryEntry( 25209, pSock.language ) );
 		return;
 	}
 
 	parts.pop();
 	let townName = parts.join( " " );
 	if( TriggerEvent( commandFactionTownScriptId, "TownSetTreasury", townName, amount ) )
-		pSock.SysMessage( "Faction town treasury set." );
+		pSock.SysMessage( GetDictionaryEntry( 25210, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to set that faction town treasury." );
+		pSock.SysMessage( GetDictionaryEntry( 25211, pSock.language ) );
 }
 
 function command_FACTIONTAXCYCLE( pSock, cmdString )
 {
 	const totalIncome = TriggerEvent( commandFactionTownScriptId, "RunTownTaxCycle" );
 	if( totalIncome >= 0 )
-		pSock.SysMessage( "Faction town tax cycle complete. Total income: " + totalIncome + " silver." );
+		pSock.SysMessage( GetDictionaryEntry( 25212, pSock.language ).replace( /%s/, String( totalIncome ) ) );
 	else
-		pSock.SysMessage( "Unable to run faction town tax cycle." );
+		pSock.SysMessage( GetDictionaryEntry( 25213, pSock.language ) );
 }
 
 function command_FACTIONTAXRATE( pSock, cmdString )
@@ -2619,23 +2619,23 @@ function command_FACTIONTAXRATE( pSock, cmdString )
 	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
-		pSock.SysMessage( "Usage: 'factiontaxrate <town> <amount>" );
+		pSock.SysMessage( GetDictionaryEntry( 25214, pSock.language ) );
 		return;
 	}
 
 	let amount = parseInt( parts[parts.length - 1], 10 );
 	if( isNaN( amount ) )
 	{
-		pSock.SysMessage( "Usage: 'factiontaxrate <town> <amount>" );
+		pSock.SysMessage( GetDictionaryEntry( 25214, pSock.language ) );
 		return;
 	}
 
 	parts.pop();
 	let townName = parts.join( " " );
 	if( TriggerEvent( commandFactionTownScriptId, "TownSetTaxRate", townName, amount, true ) )
-		pSock.SysMessage( "Faction town tax rate set." );
+		pSock.SysMessage( GetDictionaryEntry( 25215, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to set that faction town tax rate." );
+		pSock.SysMessage( GetDictionaryEntry( 25216, pSock.language ) );
 }
 
 function command_FACTIONTAXSTART( pSock, cmdString )
@@ -2647,29 +2647,29 @@ function command_FACTIONTAXSTART( pSock, cmdString )
 		minutes = parseInt( cmdText, 10 );
 		if( isNaN( minutes ) || minutes < 1 )
 		{
-			pSock.SysMessage( "Usage: 'factiontaxstart [minutes]" );
+			pSock.SysMessage( GetDictionaryEntry( 25217, pSock.language ) );
 			return;
 		}
 	}
 
 	if( TriggerEvent( commandFactionTownScriptId, "StartTownTaxTimer", minutes ) )
-		pSock.SysMessage( "Faction town tax timer started." );
+		pSock.SysMessage( GetDictionaryEntry( 25159, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to start faction town tax timer." );
+		pSock.SysMessage( GetDictionaryEntry( 25160, pSock.language ) );
 }
 
 function command_FACTIONTAXSTOP( pSock, cmdString )
 {
 	if( TriggerEvent( commandFactionTownScriptId, "StopTownTaxTimer" ) )
-		pSock.SysMessage( "Faction town tax timer stopped." );
+		pSock.SysMessage( GetDictionaryEntry( 25218, pSock.language ) );
 	else
-		pSock.SysMessage( "Unable to stop faction town tax timer." );
+		pSock.SysMessage( GetDictionaryEntry( 25219, pSock.language ) );
 }
 
 function command_FACTIONTAXSTATUS( pSock, cmdString )
 {
 	if( !TriggerEvent( commandFactionTownScriptId, "ShowTownTaxStatus", pSock ) )
-		pSock.SysMessage( "Unable to show faction town tax timer status." );
+		pSock.SysMessage( GetDictionaryEntry( 25220, pSock.language ) );
 }
 
 function command_FACTIONROLE( pSock, cmdString )
@@ -2678,7 +2678,7 @@ function command_FACTIONROLE( pSock, cmdString )
 	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 3 )
 	{
-		pSock.SysMessage( "Usage: 'factionrole <player> <sheriff|finance|commander> <TB|COM|MIN|SL> [town]" );
+		pSock.SysMessage( GetDictionaryEntry( 25221, pSock.language ) );
 		return;
 	}
 
@@ -2698,36 +2698,36 @@ function command_FACTIONROLE( pSock, cmdString )
 
 	if( !CommandIsRoleValid( roleName ) || !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'factionrole <player> <sheriff|finance|commander> <TB|COM|MIN|SL> [town]" );
+		pSock.SysMessage( GetDictionaryEntry( 25221, pSock.language ) );
 		return;
 	}
 	if( roleName !== "commander" && townName === "" )
 	{
-		pSock.SysMessage( "Sheriff and finance appointments require a faction town." );
+		pSock.SysMessage( GetDictionaryEntry( 25222, pSock.language ) );
 		return;
 	}
 
 	let targetChar = CommandFindPlayer( playerParts.join( " " ) );
 	if( !ValidateObject( targetChar ) )
 	{
-		pSock.SysMessage( "Unable to find that player." );
+		pSock.SysMessage( GetDictionaryEntry( 25127, pSock.language ) );
 		return;
 	}
 
 	if( targetChar.GetTag( "faction" ) !== factionKey )
 	{
-		pSock.SysMessage( targetChar.name + " must be a member of " + CommandFactionUsageName( factionKey ) + " before receiving that role." );
+		pSock.SysMessage( GetDictionaryEntry( 25223, pSock.language ).replace( /%s/, String( targetChar.name ) ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ) );
 		return;
 	}
 
 	if( !CommandSetFactionRole( targetChar, roleName, factionKey, townName ) )
 	{
-		pSock.SysMessage( "Unable to assign that faction role or town." );
+		pSock.SysMessage( GetDictionaryEntry( 25224, pSock.language ) );
 		return;
 	}
-	pSock.SysMessage( targetChar.name + " is now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + ( townName !== "" ? " of " + townName : "" ) + "." );
+	pSock.SysMessage( GetDictionaryEntry( 25225, pSock.language ).replace( /%s/, String( targetChar.name ) ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ).replace( /%s/, String( CommandRoleDisplayName( roleName ) ) ).replace( /%s/, String( ( townName !== "" ? " of " + townName : "" ) ) ) );
 	if( targetChar.socket != null )
-		targetChar.SysMessage( "You are now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + "." );
+		targetChar.SysMessage( GetDictionaryEntry( 25226, ( targetChar.socket == null ? 0 : targetChar.socket.language ) ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ).replace( /%s/, String( CommandRoleDisplayName( roleName ) ) ) );
 }
 
 function command_FACTIONROLECLEAR( pSock, cmdString )
@@ -2735,14 +2735,14 @@ function command_FACTIONROLECLEAR( pSock, cmdString )
 	let targetChar = CommandFindPlayer( cmdString );
 	if( !ValidateObject( targetChar ) )
 	{
-		pSock.SysMessage( "Usage: 'factionroleclear <player>" );
+		pSock.SysMessage( GetDictionaryEntry( 25227, pSock.language ) );
 		return;
 	}
 
 	CommandClearFactionRole( targetChar );
-	pSock.SysMessage( "Faction role cleared for " + targetChar.name + "." );
+	pSock.SysMessage( GetDictionaryEntry( 25228, pSock.language ).replace( /%s/, String( targetChar.name ) ) );
 	if( targetChar.socket != null )
-		targetChar.SysMessage( "Your faction role has been cleared." );
+		targetChar.SysMessage( GetDictionaryEntry( 25229, ( targetChar.socket == null ? 0 : targetChar.socket.language ) ) );
 }
 
 function command_FACTIONROLES( pSock, cmdString )
@@ -2752,7 +2752,7 @@ function command_FACTIONROLES( pSock, cmdString )
 	commandRoleListSocket = null;
 
 	if( roleCount == 0 )
-		pSock.SysMessage( "No faction roles are assigned." );
+		pSock.SysMessage( GetDictionaryEntry( 25230, pSock.language ) );
 }
 
 function command_FACTIONAPPOINT( pSock, cmdString )
@@ -2765,7 +2765,7 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 	let parts = cmdText.length > 0 ? cmdText.split( /\s+/ ) : [];
 	if( parts.length < 2 )
 	{
-		pSock.SysMessage( "Usage: 'factionappoint <player> <sheriff|finance> [town]" );
+		pSock.SysMessage( GetDictionaryEntry( 25231, pSock.language ) );
 		return;
 	}
 
@@ -2786,20 +2786,20 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 
 	if( roleName !== "sheriff" && roleName !== "finance" )
 	{
-		pSock.SysMessage( "Usage: 'factionappoint <player> <sheriff|finance> [town]" );
+		pSock.SysMessage( GetDictionaryEntry( 25231, pSock.language ) );
 		return;
 	}
 
 	if( !CommandIsFactionValid( factionKey ) && !CommandIsStaff( pUser ) )
 	{
-		pSock.SysMessage( "You are not in a faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25105, pSock.language ) );
 		return;
 	}
 
 	let targetChar = CommandFindPlayer( playerParts.join( " " ) );
 	if( !ValidateObject( targetChar ) )
 	{
-		pSock.SysMessage( "Unable to find that player." );
+		pSock.SysMessage( GetDictionaryEntry( 25127, pSock.language ) );
 		return;
 	}
 
@@ -2808,40 +2808,40 @@ function command_FACTIONAPPOINT( pSock, cmdString )
 
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Unable to determine appointment faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25232, pSock.language ) );
 		return;
 	}
 
 	if( !CommandCanAppointFactionRole( pUser, factionKey ) )
 	{
-		pSock.SysMessage( "Only your faction Commander may appoint that role." );
+		pSock.SysMessage( GetDictionaryEntry( 25233, pSock.language ) );
 		return;
 	}
 	if( townName === "" || TriggerEvent( commandFactionTownScriptId, "TownGetOwner", townName ) !== factionKey )
 	{
-		pSock.SysMessage( "Appointments must be made for a town controlled by your faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25234, pSock.language ) );
 		return;
 	}
 
 	if( targetChar.GetTag( "faction" ) !== factionKey )
 	{
-		pSock.SysMessage( targetChar.name + " must be a member of your faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25235, pSock.language ).replace( /%s/, String( targetChar.name ) ) );
 		return;
 	}
 	if( targetChar.GetTag( "faction_commander" ) == 1 )
 	{
-		pSock.SysMessage( "The faction Commander cannot also hold a town office." );
+		pSock.SysMessage( GetDictionaryEntry( 25236, pSock.language ) );
 		return;
 	}
 
 	if( !CommandSetFactionRole( targetChar, roleName, factionKey, townName ) )
 	{
-		pSock.SysMessage( "Unable to assign that town office." );
+		pSock.SysMessage( GetDictionaryEntry( 25237, pSock.language ) );
 		return;
 	}
-	pSock.SysMessage( targetChar.name + " is now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + " of " + townName + "." );
+	pSock.SysMessage( GetDictionaryEntry( 25238, pSock.language ).replace( /%s/, String( targetChar.name ) ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ).replace( /%s/, String( CommandRoleDisplayName( roleName ) ) ).replace( /%s/, String( townName ) ) );
 	if( targetChar.socket != null )
-		targetChar.SysMessage( "You are now " + CommandFactionUsageName( factionKey ) + " " + CommandRoleDisplayName( roleName ) + " of " + townName + "." );
+		targetChar.SysMessage( GetDictionaryEntry( 25239, ( targetChar.socket == null ? 0 : targetChar.socket.language ) ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ).replace( /%s/, String( CommandRoleDisplayName( roleName ) ) ).replace( /%s/, String( townName ) ) );
 }
 
 function command_FACTIONGUARD( pSock, cmdString )
@@ -2853,7 +2853,7 @@ function command_FACTIONGUARD( pSock, cmdString )
 	let factionKey = String( cmdString ).replace( /^\s+|\s+$/g, "" ).toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'factionguard <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25240, pSock.language ) );
 		return;
 	}
 
@@ -2872,13 +2872,13 @@ function command_FACTIONGUARD( pSock, cmdString )
 	const guard = CommandSpawnFactionNpc( pSock, pUser, "FACTION_GUARD_" + factionKey, factionKey, "guard", "" );
 	if( ValidateObject( guard ) )
 	{
-		pSock.SysMessage( CommandFactionUsageName( factionKey ) + " faction guard created." );
+		pSock.SysMessage( GetDictionaryEntry( 25241, pSock.language ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ) );
 	}
 	else
 	{
 		if( !CommandIsStaff( pUser ) )
 			TriggerEvent( commandFactionTownScriptId, "TownAddTreasury", townName, commandFactionGuardCost );
-		pSock.SysMessage( "Unable to create faction guard." );
+		pSock.SysMessage( GetDictionaryEntry( 25242, pSock.language ) );
 	}
 }
 
@@ -2908,7 +2908,7 @@ function command_FACTIONVENDOR( pSock, cmdString )
 
 	if( !CommandIsFactionValid( factionKey ) || !CommandIsVendorTypeValid( vendorType ) )
 	{
-		pSock.SysMessage( "Usage: 'factionvendor <TB|COM|MIN|SL> <REAGENT|BOARD|BOTTLE|EQUIPMENT|HORSE|ORE>" );
+		pSock.SysMessage( GetDictionaryEntry( 25243, pSock.language ) );
 		return;
 	}
 
@@ -2928,20 +2928,20 @@ function command_FACTIONVENDOR( pSock, cmdString )
 	const vendor = CommandSpawnFactionNpc( pSock, pUser, "FACTION_" + vendorType + "_VENDOR_" + factionKey, factionKey, "vendor", vendorType );
 	if( ValidateObject( vendor ) )
 	{
-		pSock.SysMessage( CommandFactionUsageName( factionKey ) + " " + vendorType.toLowerCase() + " faction vendor created." );
+		pSock.SysMessage( GetDictionaryEntry( 25244, pSock.language ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ).replace( /%s/, String( vendorType.toLowerCase() ) ) );
 	}
 	else
 	{
 		if( !CommandIsStaff( pUser ) )
 			TriggerEvent( commandFactionTownScriptId, "TownAddTreasury", townName, vendorCost );
-		pSock.SysMessage( "Unable to create faction vendor." );
+		pSock.SysMessage( GetDictionaryEntry( 25245, pSock.language ) );
 	}
 }
 
 function CommandFactionNpcUsage( pSock )
 {
-	pSock.SysMessage( "Usage: 'factionnpc <npc serial|exact name> <TB|COM|MIN|SL> [aggressive|passive] [town]'" );
-	pSock.SysMessage( "Use town to require the NPC to be in a town controlled by its faction before it fights." );
+	pSock.SysMessage( GetDictionaryEntry( 25246, pSock.language ) );
+	pSock.SysMessage( GetDictionaryEntry( 25247, pSock.language ) );
 }
 
 function command_FACTIONNPC( pSock, cmdString )
@@ -2975,7 +2975,7 @@ function command_FACTIONNPC( pSock, cmdString )
 	const targetNpc = CommandFindNpc( npcName );
 	if( !ValidateObject( targetNpc ) )
 	{
-		pSock.SysMessage( "Unable to find that NPC." );
+		pSock.SysMessage( GetDictionaryEntry( 25248, pSock.language ) );
 		return;
 	}
 
@@ -3019,7 +3019,7 @@ function command_FACTIONNPC( pSock, cmdString )
 	if( requireTownControl == 1 )
 		modeText += ", town controlled";
 
-	pSock.SysMessage( targetNpc.name + " is now a " + CommandFactionUsageName( factionKey ) + " faction NPC (" + modeText + ")." );
+	pSock.SysMessage( GetDictionaryEntry( 25249, pSock.language ).replace( /%s/, String( targetNpc.name ) ).replace( /%s/, String( CommandFactionUsageName( factionKey ) ) ).replace( /%s/, String( modeText ) ) );
 }
 
 function command_FACTIONNPCCLEAR( pSock, cmdString )
@@ -3031,33 +3031,33 @@ function command_FACTIONNPCCLEAR( pSock, cmdString )
 	let npcName = String( cmdString ).replace( /^\s+|\s+$/g, "" );
 	if( npcName === "" )
 	{
-		pSock.SysMessage( "Usage: 'factionnpcclear <npc serial|exact name>'" );
+		pSock.SysMessage( GetDictionaryEntry( 25250, pSock.language ) );
 		return;
 	}
 
 	const targetNpc = CommandFindNpc( npcName );
 	if( !ValidateObject( targetNpc ) )
 	{
-		pSock.SysMessage( "Unable to find that NPC." );
+		pSock.SysMessage( GetDictionaryEntry( 25248, pSock.language ) );
 		return;
 	}
 
 	if( CommandClearGenericFactionNpcTags( targetNpc ) )
-		pSock.SysMessage( targetNpc.name + " is no longer a generic faction NPC." );
+		pSock.SysMessage( GetDictionaryEntry( 25251, pSock.language ).replace( /%s/, String( targetNpc.name ) ) );
 	else
-		pSock.SysMessage( targetNpc.name + " did not have generic faction NPC tags." );
+		pSock.SysMessage( GetDictionaryEntry( 25252, pSock.language ).replace( /%s/, String( targetNpc.name ) ) );
 }
 
 function command_FACTIONITEMCHECK( pSock, cmdString )
 {
 	if( !TriggerEvent( 8507, "ShowFactionItemCheck", pSock ) )
-		pSock.SysMessage( "Unable to check faction items." );
+		pSock.SysMessage( GetDictionaryEntry( 25253, pSock.language ) );
 }
 
 function command_FACTIONITEMCLEANUP( pSock, cmdString )
 {
 	const cleanedCount = TriggerEvent( 8507, "CleanupInvalidFactionItems" );
-	pSock.SysMessage( "Removed " + cleanedCount + " invalid faction item(s) or mount(s)." );
+	pSock.SysMessage( GetDictionaryEntry( 25254, pSock.language ).replace( /%s/, String( cleanedCount ) ) );
 }
 
 function command_FACTIONSILVER( pSock, cmdString )
@@ -3080,7 +3080,7 @@ function command_FACTIONSILVER( pSock, cmdString )
 		amount = parseInt( parts[1], 10 );
 		if( action !== "add" && action !== "set" || isNaN( amount ) )
 		{
-			pSock.SysMessage( "Usage: 'factionsilver <add|set> [player] <amount>" );
+			pSock.SysMessage( GetDictionaryEntry( 25255, pSock.language ) );
 			return;
 		}
 	}
@@ -3106,9 +3106,9 @@ function command_FACTIONSILVER( pSock, cmdString )
 	newSilver = CommandClampSilver( newSilver );
 
 	TriggerEvent( commandFactionPlayerDataScriptId, "SetFactionValue", targetChar, "silver", newSilver );
-	pSock.SysMessage( targetChar.name + " faction silver set to " + newSilver + "." );
+	pSock.SysMessage( GetDictionaryEntry( 25256, pSock.language ).replace( /%s/, String( targetChar.name ) ).replace( /%s/, String( newSilver ) ) );
 	if( targetChar.socket != null && targetChar.serial != pUser.serial )
-		targetChar.SysMessage( "Your faction silver is now " + newSilver + "." );
+		targetChar.SysMessage( GetDictionaryEntry( 25257, ( targetChar.socket == null ? 0 : targetChar.socket.language ) ).replace( /%s/, String( newSilver ) ) );
 }
 
 function command_FACTIONKP( pSock, cmdString )
@@ -3125,12 +3125,12 @@ function command_FACTIONKP( pSock, cmdString )
 	TriggerEvent( commandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "killPoints", newPoints );
 	const newRank = CommandUpdateFactionRank( parsed.targetChar );
 
-	pSock.SysMessage( parsed.targetChar.name + " faction kill points set to " + newPoints + " (" + CommandRankName( newRank ) + ")." );
+	pSock.SysMessage( GetDictionaryEntry( 25258, pSock.language ).replace( /%s/, String( parsed.targetChar.name ) ).replace( /%s/, String( newPoints ) ).replace( /%s/, String( CommandRankName( newRank ) ) ) );
 	if( parsed.targetChar.socket != null )
 	{
-		parsed.targetChar.SysMessage( "Your faction kill points are now " + newPoints + "." );
+		parsed.targetChar.SysMessage( GetDictionaryEntry( 25259, ( parsed.targetChar.socket == null ? 0 : parsed.targetChar.socket.language ) ).replace( /%s/, String( newPoints ) ) );
 		if( newRank !== oldRank )
-			parsed.targetChar.SysMessage( "Your faction rank is now " + CommandRankName( newRank ) + "." );
+			parsed.targetChar.SysMessage( GetDictionaryEntry( 25118, ( parsed.targetChar.socket == null ? 0 : parsed.targetChar.socket.language ) ).replace( /%s/, String( CommandRankName( newRank ) ) ) );
 	}
 }
 
@@ -3145,9 +3145,9 @@ function command_FACTIONCAPTURE( pSock, cmdString )
 	newCaptures = CommandClampNonNegative( newCaptures );
 
 	TriggerEvent( commandFactionPlayerDataScriptId, "SetFactionValue", parsed.targetChar, "captures", newCaptures );
-	pSock.SysMessage( parsed.targetChar.name + " faction captures set to " + newCaptures + "." );
+	pSock.SysMessage( GetDictionaryEntry( 25260, pSock.language ).replace( /%s/, String( parsed.targetChar.name ) ).replace( /%s/, String( newCaptures ) ) );
 	if( parsed.targetChar.socket != null )
-		parsed.targetChar.SysMessage( "Your faction capture count is now " + newCaptures + "." );
+		parsed.targetChar.SysMessage( GetDictionaryEntry( 25261, ( parsed.targetChar.socket == null ? 0 : parsed.targetChar.socket.language ) ).replace( /%s/, String( newCaptures ) ) );
 }
 
 function CommandCreateFactionItem( pSock, pUser, itemType, factionKey )
@@ -3189,18 +3189,18 @@ function command_SPAWNFITEM( pSock, cmdString )
 
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'spawnfitem <robe|shield|horse> <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25262, pSock.language ) );
 		return;
 	}
 
 	const newItem = CommandCreateFactionItem( pSock, pUser, itemType, factionKey );
 	if( !ValidateObject( newItem ) )
 	{
-		pSock.SysMessage( "Unable to create faction item." );
+		pSock.SysMessage( GetDictionaryEntry( 25263, pSock.language ) );
 		return;
 	}
 
-	pSock.SysMessage( "Faction item created." );
+	pSock.SysMessage( GetDictionaryEntry( 25264, pSock.language ) );
 }
 
 function command_SPAWNTRAPDEED( pSock, cmdString )
@@ -3212,7 +3212,7 @@ function command_SPAWNTRAPDEED( pSock, cmdString )
 	const trapType = cmdString.toUpperCase();
 	if( trapType !== "EXPLOSION" && trapType !== "GAS" && trapType !== "SAW" && trapType !== "SPIKE" )
 	{
-		pSock.SysMessage( "Usage: 'spawntrapdeed <EXPLOSION|GAS|SAW|SPIKE>" );
+		pSock.SysMessage( GetDictionaryEntry( 25265, pSock.language ) );
 		return;
 	}
 
@@ -3222,11 +3222,11 @@ function command_SPAWNTRAPDEED( pSock, cmdString )
 		deed.SetTag( "trap_deed", 1 );
 		deed.SetTag( "trap_deed_type", trapType );
 		deed.name = "Faction " + trapType + " Trap Deed";
-		pSock.SysMessage( "Trap deed created." );
+		pSock.SysMessage( GetDictionaryEntry( 25266, pSock.language ) );
 	}
 	else
 	{
-		pSock.SysMessage( "Unable to create trap deed." );
+		pSock.SysMessage( GetDictionaryEntry( 25267, pSock.language ) );
 	}
 }
 
@@ -3235,14 +3235,14 @@ function command_ELECTIONSTART( pSock, cmdString )
 	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'electionstart <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25268, pSock.language ) );
 		return;
 	}
 
 	if( TriggerEvent( commandFactionElectionScriptId, "StartElection", factionKey ) )
-		pSock.SysMessage( "Election started for " + factionKey + "." );
+		pSock.SysMessage( GetDictionaryEntry( 25269, pSock.language ).replace( /%s/, String( factionKey ) ) );
 	else
-		pSock.SysMessage( "Could not start election." );
+		pSock.SysMessage( GetDictionaryEntry( 25270, pSock.language ) );
 }
 
 function command_ELECTIONVOTE( pSock, cmdString )
@@ -3250,14 +3250,14 @@ function command_ELECTIONVOTE( pSock, cmdString )
 	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'electionvote <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25271, pSock.language ) );
 		return;
 	}
 
 	if( TriggerEvent( commandFactionElectionScriptId, "BeginVoting", factionKey ) )
-		pSock.SysMessage( "Voting phase started for " + factionKey + "." );
+		pSock.SysMessage( GetDictionaryEntry( 25272, pSock.language ).replace( /%s/, String( factionKey ) ) );
 	else
-		pSock.SysMessage( "Could not start voting phase." );
+		pSock.SysMessage( GetDictionaryEntry( 25273, pSock.language ) );
 }
 
 function command_ELECTIONEND( pSock, cmdString )
@@ -3265,14 +3265,14 @@ function command_ELECTIONEND( pSock, cmdString )
 	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'electionend <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25274, pSock.language ) );
 		return;
 	}
 
 	if( TriggerEvent( commandFactionElectionScriptId, "ConcludeElection", factionKey ) )
-		pSock.SysMessage( "Election concluded for " + factionKey + "." );
+		pSock.SysMessage( GetDictionaryEntry( 25275, pSock.language ).replace( /%s/, String( factionKey ) ) );
 	else
-		pSock.SysMessage( "Could not conclude election." );
+		pSock.SysMessage( GetDictionaryEntry( 25276, pSock.language ) );
 }
 
 function command_ELECTIONSTATUS( pSock, cmdString )
@@ -3284,7 +3284,7 @@ function command_ELECTIONSTATUS( pSock, cmdString )
 	let factionKey = pUser.GetTag( "faction" );
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "You are not in a faction." );
+		pSock.SysMessage( GetDictionaryEntry( 25105, pSock.language ) );
 		return;
 	}
 
@@ -3296,12 +3296,12 @@ function command_ELECTIONRESET( pSock, cmdString )
 	let factionKey = cmdString.toUpperCase();
 	if( !CommandIsFactionValid( factionKey ) )
 	{
-		pSock.SysMessage( "Usage: 'electionreset <TB|COM|MIN|SL>" );
+		pSock.SysMessage( GetDictionaryEntry( 25277, pSock.language ) );
 		return;
 	}
 
 	if( TriggerEvent( commandFactionElectionScriptId, "ResetElection", factionKey ) )
-		pSock.SysMessage( "Election state for " + factionKey + " has been reset." );
+		pSock.SysMessage( GetDictionaryEntry( 25278, pSock.language ).replace( /%s/, String( factionKey ) ) );
 	else
-		pSock.SysMessage( "Could not reset election." );
+		pSock.SysMessage( GetDictionaryEntry( 25279, pSock.language ) );
 }

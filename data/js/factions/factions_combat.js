@@ -256,7 +256,7 @@ function FactionCombatOnLogin( pSock, pChar )
 					decayAmount = killPoints;
 
 				CombatSetKillPoints( pChar, killPoints - decayAmount );
-				pChar.SysMessage( "Your faction standing decayed by " + decayAmount + " kill point(s)." );
+				pChar.SysMessage( GetDictionaryEntry( 25111, ( pChar.socket == null ? 0 : pChar.socket.language ) ).replace( /%s/, String( decayAmount ) ) );
 			}
 		}
 	}
@@ -294,7 +294,7 @@ function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
 	{
 		if( pKiller.account.id == pKilled.account.id )
 		{
-			pKiller.SysMessage( "You gain no faction reward for killing a character on the same account." );
+			pKiller.SysMessage( GetDictionaryEntry( 25112, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ) );
 			return false;
 		}
 	}
@@ -303,7 +303,7 @@ function FactionCombatCanRewardPlayerKill( pKiller, pKilled )
 	const lastKill = TriggerEvent( combatPlayerDataScriptId, "GetRecentKillTime", pKiller, pKilled.serial );
 	if( lastKill > 0 && ( now - lastKill ) < combatPlayerKillCooldown )
 	{
-		pKiller.SysMessage( "You recently defeated this enemy and gain no faction reward." );
+		pKiller.SysMessage( GetDictionaryEntry( 25113, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ) );
 		return false;
 	}
 
@@ -318,7 +318,7 @@ function FactionCombatAwardPlayerKill( pKiller, pKilled )
 	const victimKillPoints = CombatGetKillPoints( pKilled );
 	if( victimKillPoints <= -6 )
 	{
-		pKiller.SysMessage( "This victim is not worth enough to receive faction kill points from." );
+		pKiller.SysMessage( GetDictionaryEntry( 25114, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ) );
 		return false;
 	}
 	TriggerEvent( combatPlayerDataScriptId, "SetRecentKillTime", pKiller, pKilled.serial, GetCurrentClock() );
@@ -340,13 +340,13 @@ function FactionCombatAwardPlayerKill( pKiller, pKilled )
 	CombatRecordPlayerKill( pKiller, pKilled, gainedKillPoints, silverReward );
 
 	if( silverReward > 0 )
-		pKiller.SysMessage( "You earned " + gainedKillPoints + " faction kill point(s) and " + silverReward + " silver." );
+		pKiller.SysMessage( GetDictionaryEntry( 25115, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( gainedKillPoints ) ).replace( /%s/, String( silverReward ) ) );
 	else
-		pKiller.SysMessage( "You earned " + gainedKillPoints + " faction kill point(s)." );
-	pKilled.SysMessage( "You lost " + gainedKillPoints + " faction kill point(s)." );
+		pKiller.SysMessage( GetDictionaryEntry( 25116, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( gainedKillPoints ) ) );
+	pKilled.SysMessage( GetDictionaryEntry( 25117, ( pKilled.socket == null ? 0 : pKilled.socket.language ) ).replace( /%s/, String( gainedKillPoints ) ) );
 
 	if( CombatGetRank( pKiller ) > oldRank )
-		pKiller.SysMessage( "Your faction rank is now " + CombatGetRankName( pKiller ) + "." );
+		pKiller.SysMessage( GetDictionaryEntry( 25118, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( CombatGetRankName( pKiller ) ) ) );
 
 	pKiller.StaticEffect( 0x373A, 10, 16 );
 	return true;
@@ -374,9 +374,9 @@ function FactionCombatAwardGuardKill( pKiller, pKilled )
 	CombatAddKillPoints( pKiller, 1 );
 	CombatAddSilver( pKiller, silverReward );
 
-	pKiller.SysMessage( "You earned 1 faction kill point and " + silverReward + " silver for slaying a faction guard." );
+	pKiller.SysMessage( GetDictionaryEntry( 25119, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( silverReward ) ) );
 	if( CombatGetRank( pKiller ) > oldRank )
-		pKiller.SysMessage( "Your faction rank is now " + CombatGetRankName( pKiller ) + "." );
+		pKiller.SysMessage( GetDictionaryEntry( 25118, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( CombatGetRankName( pKiller ) ) ) );
 
 	return true;
 }
@@ -417,7 +417,7 @@ function FactionCombatAwardFactionNpcKill( pKiller, pKilled )
 		return false;
 	if( killerFaction === npcFaction )
 	{
-		pKiller.SysMessage( "You gain no faction reward for killing an allied faction NPC." );
+		pKiller.SysMessage( GetDictionaryEntry( 25120, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ) );
 		return false;
 	}
 
@@ -440,14 +440,14 @@ function FactionCombatAwardFactionNpcKill( pKiller, pKilled )
 		CombatAddSilver( pKiller, silverReward );
 
 	if( killPoints > 0 && silverReward > 0 )
-		pKiller.SysMessage( "You earned " + killPoints + " faction kill point(s) and " + silverReward + " silver for slaying an enemy faction NPC." );
+		pKiller.SysMessage( GetDictionaryEntry( 25121, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( killPoints ) ).replace( /%s/, String( silverReward ) ) );
 	else if( killPoints > 0 )
-		pKiller.SysMessage( "You earned " + killPoints + " faction kill point(s) for slaying an enemy faction NPC." );
+		pKiller.SysMessage( GetDictionaryEntry( 25122, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( killPoints ) ) );
 	else
-		pKiller.SysMessage( "You earned " + silverReward + " silver for slaying an enemy faction NPC." );
+		pKiller.SysMessage( GetDictionaryEntry( 25123, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( silverReward ) ) );
 
 	if( CombatGetRank( pKiller ) > oldRank )
-		pKiller.SysMessage( "Your faction rank is now " + CombatGetRankName( pKiller ) + "." );
+		pKiller.SysMessage( GetDictionaryEntry( 25118, ( pKiller.socket == null ? 0 : pKiller.socket.language ) ).replace( /%s/, String( CombatGetRankName( pKiller ) ) ) );
 
 	return true;
 }
@@ -472,7 +472,7 @@ function ShowFactionKillStats( pSock )
 	const ctrl = CombatGetController();
 	if( !ValidateObject( ctrl ) )
 	{
-		pSock.SysMessage( "Faction controller was not found." );
+		pSock.SysMessage( GetDictionaryEntry( 25124, pSock.language ) );
 		return false;
 	}
 
@@ -488,7 +488,7 @@ function ShowFactionKillStats( pSock )
 		if( lastKiller !== "" && lastKiller != 0 )
 			lastText = lastKiller + " defeated " + lastVictim;
 
-		pSock.SysMessage( CombatFactionName( factionKey ) + ": kills " + kills + ", deaths " + deaths + ", last " + lastText );
+		pSock.SysMessage( GetDictionaryEntry( 25125, pSock.language ).replace( /%s/, String( CombatFactionName( factionKey ) ) ).replace( /%s/, String( kills ) ).replace( /%s/, String( deaths ) ).replace( /%s/, String( lastText ) ) );
 	}
 
 	return true;

@@ -125,7 +125,7 @@ function onUseChecked( pUser, iUsed )
 	const stoneFaction = iUsed.GetTag( "stone_faction" );
 	if( !StoneIsFactionValid( stoneFaction ) )
 	{
-		pUser.SysMessage( "This stone has no faction assigned." );
+		pUser.SysMessage( GetDictionaryEntry( 25320, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
@@ -243,7 +243,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( StoneGetFaction( pUser ) !== factionKey )
 		{
-			pUser.SysMessage( "You may only use your own faction election stone." );
+			pUser.SysMessage( GetDictionaryEntry( 25321, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 			return;
 		}
 

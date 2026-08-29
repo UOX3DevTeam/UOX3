@@ -120,7 +120,7 @@ function FactionNpcEngageTarget( npcChar, targetChar, npcFaction )
 	if( lastWarn == 0 || now - lastWarn > factionNpcWarnDelay )
 	{
 		npcChar.SetTag( warnedKey, now );
-		npcChar.TextMessage( targetChar.name + " is an enemy of " + FactionNpcName( npcFaction ) + "!" );
+		npcChar.TextMessage( GetDictionaryEntry( 25362, targetChar.socket == null ? 0 : targetChar.socket.language ).replace( /%s/, targetChar.name ).replace( /%s/, FactionNpcName( npcFaction ) ) );
 	}
 
 	npcChar.target = targetChar;
@@ -207,6 +207,6 @@ function onClick( pSock, npcChar )
 	if( !FactionNpcIsActive( npcChar, npcFaction ) )
 		suffix = "Faction NPC - inactive";
 
-	pSock.SysMessage( npcChar.name + " [" + FactionNpcName( npcFaction ) + " " + suffix + "]" );
+	pSock.SysMessage( GetDictionaryEntry( 25306, pSock.language ).replace( /%s/, String( npcChar.name ) ).replace( /%s/, String( FactionNpcName( npcFaction ) ) ).replace( /%s/, String( suffix ) ) );
 	return true;
 }

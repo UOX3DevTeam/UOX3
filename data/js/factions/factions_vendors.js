@@ -124,16 +124,16 @@ function VendorTradeAccessError( pSock, npcVendor )
 
 	const vendorFaction = npcVendor.GetTag( "vendor_faction" );
 	if( !VendorIsFactionValid( vendorFaction ) )
-		return "This faction vendor is not configured.";
+		return GetDictionaryEntry( 25358, pSock.language );
 
 	if( !TriggerEvent( vendorFactionTownScriptId, "TownIsObjectInControlledTownForFaction", npcVendor, vendorFaction ) )
-		return "My faction does not control this town.";
+		return GetDictionaryEntry( 25359, pSock.language );
 
 	let playerFaction = VendorGetFaction( pUser );
 	if( playerFaction === "" )
-		return "Only " + VendorFactionName( vendorFaction ) + " members may trade with me.";
+		return GetDictionaryEntry( 25360, pSock.language ).replace( /%s/, VendorFactionName( vendorFaction ) );
 	if( playerFaction !== vendorFaction )
-		return "I do not trade with enemies of " + VendorFactionName( vendorFaction ) + ".";
+		return GetDictionaryEntry( 25361, pSock.language ).replace( /%s/, VendorFactionName( vendorFaction ) );
 
 	return "";
 }
@@ -284,7 +284,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	let playerFaction = VendorGetFaction( pUser );
 	if( playerFaction === "" )
 	{
-		pUser.SysMessage( "Only faction members may spend faction silver." );
+		pUser.SysMessage( GetDictionaryEntry( 25353, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
@@ -292,7 +292,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	const npcVendor = CalcCharFromSer( vendorSerial );
 	if( !ValidateObject( npcVendor ) )
 	{
-		pUser.SysMessage( "That vendor is no longer available." );
+		pUser.SysMessage( GetDictionaryEntry( 25354, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
@@ -306,7 +306,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( !VendorSpendSilver( pUser, silverCost ) )
 	{
-		pUser.SysMessage( "You do not have enough faction silver." );
+		pUser.SysMessage( GetDictionaryEntry( 25355, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
@@ -314,11 +314,11 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( newItem ) )
 	{
 		VendorSetSilver( pUser, VendorGetSilver( pUser ) + silverCost );
-		pUser.SysMessage( "That item could not be created. Your silver was refunded." );
+		pUser.SysMessage( GetDictionaryEntry( 25356, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
-	pUser.SysMessage( "You bought " + itemData[0] + " for " + silverCost + " silver." );
+	pUser.SysMessage( GetDictionaryEntry( 25357, ( pUser.socket == null ? 0 : pUser.socket.language ) ).replace( /%s/, String( itemData[0] ) ).replace( /%s/, String( silverCost ) ) );
 
 	if( ValidateObject( npcVendor ) )
 		ShowFactionVendorGump( pSock, pUser, npcVendor );

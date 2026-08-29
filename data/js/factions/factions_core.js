@@ -196,14 +196,14 @@ function JoinFaction( pChar, factionKey )
 
 	if( !FactionIsValid( factionKey ) )
 	{
-		pChar.SysMessage( "Invalid faction." );
+		pChar.SysMessage( GetDictionaryEntry( 25100, pChar.socket == null ? 0 : pChar.socket.language ) );
 		return false;
 	}
 
 	const currentFaction = GetFactionKey( pChar );
 	if( currentFaction !== "" )
 	{
-		pChar.SysMessage( "You are already in the " + FactionName( currentFaction ) + "." );
+		pChar.SysMessage( GetDictionaryEntry( 25101, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, FactionName( currentFaction ) ) );
 		return false;
 	}
 
@@ -214,14 +214,14 @@ function JoinFaction( pChar, factionKey )
 		if( remaining > 0 )
 		{
 			const remainingHours = Math.ceil( remaining / 3600000 );
-			pChar.SysMessage( "You must wait " + remainingHours + " more hour(s) before joining a faction." );
+			pChar.SysMessage( GetDictionaryEntry( 25102, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, remainingHours ) );
 			return false;
 		}
 	}
 
 	if( pChar.murdercount >= GetMurderThreshold() && ( factionKey === "TB" || factionKey === "COM" ) )
 	{
-		pChar.SysMessage( "Murderers may not join the " + FactionName( factionKey ) + "." );
+		pChar.SysMessage( GetDictionaryEntry( 25103, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, FactionName( factionKey ) ) );
 		return false;
 	}
 
@@ -241,7 +241,7 @@ function JoinFaction( pChar, factionKey )
 	factionData.recentKills = {};
 	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	TriggerEvent( 8501, "FactionCombatAttachTrigger", pChar );
-	pChar.SysMessage( "You have joined the " + FactionName( factionKey ) + "." );
+	pChar.SysMessage( GetDictionaryEntry( 25104, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, FactionName( factionKey ) ) );
 	return true;
 }
 
@@ -253,7 +253,7 @@ function LeaveFaction( pChar )
 	let factionKey = GetFactionKey( pChar );
 	if( factionKey === "" )
 	{
-		pChar.SysMessage( "You are not in a faction." );
+		pChar.SysMessage( GetDictionaryEntry( 25105, pChar.socket == null ? 0 : pChar.socket.language ) );
 		return false;
 	}
 
@@ -263,7 +263,7 @@ function LeaveFaction( pChar )
 		const remaining = factionLeaveDelay - ( GetCurrentClock() - factionData.leaveTime );
 		if( remaining > 0 )
 		{
-			pChar.SysMessage( "You are already resigning from your faction. " + Math.ceil( remaining / 3600000 ) + " hour(s) remain." );
+			pChar.SysMessage( GetDictionaryEntry( 25106, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, Math.ceil( remaining / 3600000 ) ) );
 			return false;
 		}
 		return FinalizeFactionLeave( pChar, factionData );
@@ -271,7 +271,7 @@ function LeaveFaction( pChar )
 
 	factionData.leaveTime = GetCurrentClock();
 	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
-	pChar.SysMessage( "You will leave the " + FactionName( factionKey ) + " in three days." );
+	pChar.SysMessage( GetDictionaryEntry( 25107, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, FactionName( factionKey ) ) );
 	return true;
 }
 
@@ -302,8 +302,8 @@ function FinalizeFactionLeave( pChar, factionData )
 	factionData.recentKills = {};
 	TriggerEvent( factionPlayerDataScriptId, "WriteFactionPlayerData", pChar, factionData );
 	if( cleanedCount > 0 )
-		pChar.SysMessage( cleanedCount + " faction item(s) or mount(s) were removed." );
-	pChar.SysMessage( "You have left the " + FactionName( factionKey ) + "." );
+		pChar.SysMessage( GetDictionaryEntry( 25280, ( pChar.socket == null ? 0 : pChar.socket.language ) ).replace( /%s/, String( cleanedCount ) ) );
+	pChar.SysMessage( GetDictionaryEntry( 25108, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, FactionName( factionKey ) ) );
 	return true;
 }
 
@@ -319,7 +319,7 @@ function FactionCoreOnLogin( pSock, pChar )
 		if( elapsed >= factionLeaveDelay )
 			return FinalizeFactionLeave( pChar, factionData );
 
-		pChar.SysMessage( "Your faction resignation is pending. " + Math.ceil( ( factionLeaveDelay - elapsed ) / 3600000 ) + " hour(s) remain." );
+		pChar.SysMessage( GetDictionaryEntry( 25109, pChar.socket == null ? 0 : pChar.socket.language ).replace( /%s/, Math.ceil( ( factionLeaveDelay - elapsed ) / 3600000 ) ) );
 	}
 	return true;
 }
@@ -336,7 +336,7 @@ function GiveFactionRobe( pChar )
 	const robe = CreateDFNItem( pChar.socket, pChar, "FACTION_ROBE_" + factionKey, 1, "ITEM", true );
 	if( !ValidateObject( robe ) )
 	{
-		pChar.SysMessage( "The faction robe could not be created." );
+		pChar.SysMessage( GetDictionaryEntry( 25110, pChar.socket == null ? 0 : pChar.socket.language ) );
 		return false;
 	}
 

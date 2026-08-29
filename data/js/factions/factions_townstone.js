@@ -110,7 +110,7 @@ function onUseChecked( pUser, iUsed )
 
 	if( isNaN( townRegionId ) || townRegionId <= 0 )
 	{
-		pUser.SysMessage( "This faction townstone is not linked to a town region." );
+		pUser.SysMessage( GetDictionaryEntry( 25329, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
@@ -128,7 +128,7 @@ function TownstoneSpawnNpc( pSock, pUser, factionKey, npcType, vendorType )
 	const playerTownOwner = TriggerEvent( townstoneTownScriptId, "TownOwnerForObject", pUser );
 	if( townOwner !== factionKey || playerTownOwner !== factionKey )
 	{
-		pSock.SysMessage( "You must be in a town controlled by " + TownstoneFactionName( factionKey ) + "." );
+		pSock.SysMessage( GetDictionaryEntry( 25330, pSock.language ).replace( /%s/, String( TownstoneFactionName( factionKey ) ) ) );
 		return false;
 	}
 
@@ -145,13 +145,13 @@ function TownstoneSpawnNpc( pSock, pUser, factionKey, npcType, vendorType )
 		const treasury = TriggerEvent( townstoneTownScriptId, "TownGetTreasury", townName );
 		if( treasury < cost )
 		{
-			pSock.SysMessage( "The " + townName + " treasury needs " + cost + " silver. Current treasury: " + treasury + "." );
+			pSock.SysMessage( GetDictionaryEntry( 25331, pSock.language ).replace( /%s/, String( townName ) ).replace( /%s/, String( cost ) ).replace( /%s/, String( treasury ) ) );
 			return false;
 		}
 
 		if( !TriggerEvent( townstoneTownScriptId, "TownSpendTreasury", townName, cost ) )
 		{
-			pSock.SysMessage( "Unable to spend from the town treasury." );
+			pSock.SysMessage( GetDictionaryEntry( 25195, pSock.language ) );
 			return false;
 		}
 	}
@@ -167,7 +167,7 @@ function TownstoneSpawnNpc( pSock, pUser, factionKey, npcType, vendorType )
 	{
 		if( !TownstoneIsStaff( pUser ) )
 			TriggerEvent( townstoneTownScriptId, "TownAddTreasury", townName, cost );
-		pSock.SysMessage( "Unable to create faction NPC." );
+		pSock.SysMessage( GetDictionaryEntry( 25332, pSock.language ) );
 		return false;
 	}
 
@@ -183,7 +183,7 @@ function OpenFactionTownstone( pSock, pUser, townRegionId )
 	let townName = TriggerEvent( townstoneTownScriptId, "TownNameForRegion", townRegionId );
 	if( townName === "" )
 	{
-		pSock.SysMessage( "This town is not configured for factions." );
+		pSock.SysMessage( GetDictionaryEntry( 25333, pSock.language ) );
 		return false;
 	}
 
@@ -290,7 +290,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	const ownerFaction = TriggerEvent( townstoneTownScriptId, "TownGetOwner", townName );
 	if( !TownstoneIsFactionValid( ownerFaction ) )
 	{
-		pSock.SysMessage( "This town is not currently faction-controlled." );
+		pSock.SysMessage( GetDictionaryEntry( 25334, pSock.language ) );
 		return;
 	}
 
@@ -308,12 +308,12 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( !TownstoneIsStaff( pUser ) )
 		{
-			pSock.SysMessage( "Only staff may clear faction NPCs from a townstone." );
+			pSock.SysMessage( GetDictionaryEntry( 25335, pSock.language ) );
 			return;
 		}
 
 		const removedCount = TriggerEvent( townstoneTownScriptId, "TownClearFactionNpcs", townName, "" );
-		pSock.SysMessage( "Removed " + removedCount + " managed faction NPC(s)." );
+		pSock.SysMessage( GetDictionaryEntry( 25199, pSock.language ).replace( /%s/, String( removedCount ) ) );
 		OpenFactionTownstone( pSock, pUser, townRegionId );
 		return;
 	}
@@ -322,12 +322,12 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( !TownstoneCanUseRole( pUser, "sheriff", ownerFaction, townName ) )
 		{
-			pSock.SysMessage( "Only this faction's Sheriff may place guards." );
+			pSock.SysMessage( GetDictionaryEntry( 25336, pSock.language ) );
 			return;
 		}
 
 		if( TownstoneSpawnNpc( pSock, pUser, ownerFaction, "guard", "" ) )
-			pSock.SysMessage( "Faction guard created." );
+			pSock.SysMessage( GetDictionaryEntry( 25337, pSock.language ) );
 		OpenFactionTownstone( pSock, pUser, townRegionId );
 		return;
 	}
@@ -336,7 +336,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( !TownstoneCanUseRole( pUser, "finance", ownerFaction, townName ) )
 		{
-			pSock.SysMessage( "Only this town's Finance Minister may set its tax rate." );
+			pSock.SysMessage( GetDictionaryEntry( 25338, pSock.language ) );
 			return;
 		}
 		OpenTownTaxGump( pSock, pUser, townName, townRegionId );
@@ -347,12 +347,12 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( !TownstoneCanUseRole( pUser, "finance", ownerFaction, townName ) )
 		{
-			pSock.SysMessage( "Only this town's Finance Minister may set its tax rate." );
+			pSock.SysMessage( GetDictionaryEntry( 25338, pSock.language ) );
 			return;
 		}
 		const taxOffset = townstoneTaxOffsets[pButton - 300];
 		if( TriggerEvent( townstoneTownScriptId, "TownSetTaxRate", townName, taxOffset, TownstoneIsStaff( pUser ) ) )
-			pSock.SysMessage( townName + " tax rate changed to " + ( taxOffset > 0 ? "+" : "" ) + taxOffset + "%." );
+			pSock.SysMessage( GetDictionaryEntry( 25339, pSock.language ).replace( /%s/, String( townName ) ).replace( /%s/, String( ( taxOffset > 0 ? "+" : "" ) ) ).replace( /%s/, String( taxOffset ) ) );
 		else
 			pSock.SysMessage( TriggerEvent( townstoneTownScriptId, "TownLastError" ) );
 		OpenFactionTownstone( pSock, pUser, townRegionId );
@@ -365,12 +365,12 @@ function onGumpPress( pSock, pButton, gumpData )
 		{
 			if( !TownstoneCanUseRole( pUser, "finance", ownerFaction, townName ) )
 			{
-				pSock.SysMessage( "Only this faction's Finance Minister may place vendors." );
+				pSock.SysMessage( GetDictionaryEntry( 25340, pSock.language ) );
 				return;
 			}
 
 			if( TownstoneSpawnNpc( pSock, pUser, ownerFaction, "vendor", townstoneVendorTypes[vendorIndex][1] ) )
-				pSock.SysMessage( townstoneVendorTypes[vendorIndex][2] + " created." );
+				pSock.SysMessage( GetDictionaryEntry( 25341, pSock.language ).replace( /%s/, String( townstoneVendorTypes[vendorIndex][2] ) ) );
 			OpenFactionTownstone( pSock, pUser, townRegionId );
 			return;
 		}

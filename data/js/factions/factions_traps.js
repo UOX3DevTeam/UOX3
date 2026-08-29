@@ -48,16 +48,16 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( iUsed.GetTag( "trap_faction" ) !== TrapGetFaction( pUser ) )
 		{
-			pUser.SysMessage( "Only a member of the owning faction may remove this trap." );
+			pUser.SysMessage( GetDictionaryEntry( 25342, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 			return false;
 		}
 		if( iUsed.GetTag( "trap_placer_serial" ) != pUser.serial && !pUser.isGM )
 		{
-			pUser.SysMessage( "Only the trap's placer may remove it." );
+			pUser.SysMessage( GetDictionaryEntry( 25343, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 			return false;
 		}
 		iUsed.Delete();
-		pUser.SysMessage( "You remove the faction trap." );
+		pUser.SysMessage( GetDictionaryEntry( 25344, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
@@ -67,14 +67,14 @@ function onUseChecked( pUser, iUsed )
 	let trapType = iUsed.GetTag( "trap_deed_type" );
 	if( !trapDamage[trapType] )
 	{
-		pUser.SysMessage( "This trap deed is invalid." );
+		pUser.SysMessage( GetDictionaryEntry( 25345, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
 	let factionKey = TrapGetFaction( pUser );
 	if( factionKey === "" )
 	{
-		pUser.SysMessage( "Only faction members may place faction traps." );
+		pUser.SysMessage( GetDictionaryEntry( 25346, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
@@ -100,7 +100,7 @@ function onCallback30( pSock, target )
 	const deed = CalcItemFromSer( deedSerial );
 	if( !ValidateObject( deed ) || deed.GetTag( "trap_deed" ) != 1 )
 	{
-		pUser.SysMessage( "That trap deed is no longer available." );
+		pUser.SysMessage( GetDictionaryEntry( 25347, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
@@ -108,13 +108,13 @@ function onCallback30( pSock, target )
 	const targetY = ValidateObject( target ) ? target.y : pUser.y;
 	if( Math.abs( targetX - pUser.x ) > trapPlacementRange || Math.abs( targetY - pUser.y ) > trapPlacementRange )
 	{
-		pUser.SysMessage( "That location is too far away." );
+		pUser.SysMessage( GetDictionaryEntry( 25348, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 	let townName = TriggerEvent( trapTownScriptId, "TownNameForObject", pUser );
 	if( townName === "" || TriggerEvent( trapTownScriptId, "TownGetOwner", townName ) !== trapFaction )
 	{
-		pUser.SysMessage( "Faction traps may only be placed in a town controlled by your faction." );
+		pUser.SysMessage( GetDictionaryEntry( 25349, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
@@ -124,7 +124,7 @@ function onCallback30( pSock, target )
 
 	if( !ValidateObject( trap ) )
 	{
-		pUser.SysMessage( "The trap could not be created." );
+		pUser.SysMessage( GetDictionaryEntry( 25350, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 	deed.Delete();
@@ -142,7 +142,7 @@ function onCallback30( pSock, target )
 	else
 		trap.Teleport( pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 
-	pUser.SysMessage( "You have placed a faction trap." );
+	pUser.SysMessage( GetDictionaryEntry( 25351, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 }
 
 function onCollide( targSock, pColliding, iTrap )
@@ -208,7 +208,7 @@ function onClick( pSock, iTrap )
 	if( iTrap.GetTag( "trap_placed" ) != 1 )
 		return false;
 
-	pSock.SysMessage( "Faction Trap [" + iTrap.GetTag( "trap_faction" ) + "]" );
+	pSock.SysMessage( GetDictionaryEntry( 25352, pSock.language ).replace( /%s/, String( iTrap.GetTag( "trap_faction" ) ) ) );
 	return true;
 }
 

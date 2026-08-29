@@ -152,7 +152,7 @@ function ItemCanControlHorse( pUser, iUsed )
 			if( pUser.socket != null )
 				pUser.socket.SysMessage( GetDictionaryEntry( 2390, pUser.socket.language ) );
 			else
-				pUser.SysMessage( "That would exceed your maximum pet control slots." );
+				pUser.SysMessage( GetDictionaryEntry( 2390, 0 ) );
 
 			return false;
 		}
@@ -162,7 +162,7 @@ function ItemCanControlHorse( pUser, iUsed )
 		if( pUser.socket != null )
 			pUser.socket.SysMessage( GetDictionaryEntry( 2400, pUser.socket.language ) );
 		else
-			pUser.SysMessage( "You have too many followers already." );
+			pUser.SysMessage( GetDictionaryEntry( 2400, 0 ) );
 
 		return false;
 	}
@@ -219,7 +219,7 @@ function onEquip( pChar, iEquipped )
 	const requiredFaction = iEquipped.GetTag( "item_faction" );
 	if( !ItemCanUseFactionObject( pChar, requiredFaction ) )
 	{
-		pChar.SysMessage( "Only members of that faction may equip this item." );
+		pChar.SysMessage( GetDictionaryEntry( 25295, ( pChar.socket == null ? 0 : pChar.socket.language ) ) );
 		return false;
 	}
 
@@ -247,13 +247,13 @@ function onUseChecked( pUser, iUsed )
 	const requiredFaction = iUsed.GetTag( "item_faction" );
 	if( !ItemIsFactionValid( requiredFaction ) )
 	{
-		pUser.SysMessage( "This faction war horse deed has no faction assigned." );
+		pUser.SysMessage( GetDictionaryEntry( 25296, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
 	if( ItemGetFaction( pUser ) !== requiredFaction )
 	{
-		pUser.SysMessage( "Only members of that faction may use this war horse deed." );
+		pUser.SysMessage( GetDictionaryEntry( 25297, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
@@ -264,19 +264,19 @@ function onUseChecked( pUser, iUsed )
 	const horse = SpawnNPC( horseSection, pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 	if( !ValidateObject( horse ) )
 	{
-		pUser.SysMessage( "The faction war horse could not be created." );
+		pUser.SysMessage( GetDictionaryEntry( 25298, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
 	if( !ItemSetupFactionHorse( pUser, horse, requiredFaction, iUsed ) )
 	{
 		horse.Delete();
-		pUser.SysMessage( "The faction war horse could not be controlled." );
+		pUser.SysMessage( GetDictionaryEntry( 25299, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
 	iUsed.Delete();
-	pUser.SysMessage( "You summon a faction war horse." );
+	pUser.SysMessage( GetDictionaryEntry( 25300, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 	return false;
 }
 
@@ -291,7 +291,7 @@ function onCharDoubleClick( pUser, targChar, nonMouseClickEvent )
 	const requiredFaction = targChar.GetTag( "item_faction" );
 	if( !ItemCanUseFactionObject( pUser, requiredFaction ) )
 	{
-		pUser.SysMessage( "This faction war horse refuses you." );
+		pUser.SysMessage( GetDictionaryEntry( 25301, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return false;
 	}
 
@@ -314,7 +314,7 @@ function onClick( pSock, targetObj )
 	let factionKey = targetObj.GetTag( "item_faction" );
 	if( factionKey !== "" && factionKey != 0 )
 	{
-		pSock.SysMessage( targetObj.name + " [" + factionKey + "]" );
+		pSock.SysMessage( GetDictionaryEntry( 25302, pSock.language ).replace( /%s/, String( targetObj.name ) ).replace( /%s/, String( factionKey ) ) );
 		return true;
 	}
 
@@ -365,7 +365,7 @@ function ShowFactionItemCheck( pSock )
 	factionItemCleanupMode = "checkhorses";
 	IterateOver( "CHARACTER" );
 	if( factionItemCleanupCount == 0 )
-		pSock.SysMessage( "No invalid player-owned faction items or mounts found." );
+		pSock.SysMessage( GetDictionaryEntry( 25303, pSock.language ) );
 
 	factionItemCleanupMode = "";
 	factionItemCleanupSocket = null;
@@ -388,7 +388,7 @@ function onIterate( toCheck )
 		if( factionItemCleanupMode === "checkitems" )
 		{
 			if( factionItemCleanupSocket != null )
-				factionItemCleanupSocket.SysMessage( ownerChar.name + " has invalid faction item: " + toCheck.name + " [" + itemFaction + "]" );
+				factionItemCleanupSocket.SysMessage( GetDictionaryEntry( 25304, factionItemCleanupSocket.language ).replace( /%s/, String( ownerChar.name ) ).replace( /%s/, String( toCheck.name ) ).replace( /%s/, String( itemFaction ) ) );
 		}
 		else
 		{
@@ -417,7 +417,7 @@ function onIterate( toCheck )
 		if( factionItemCleanupMode === "checkhorses" )
 		{
 			if( factionItemCleanupSocket != null )
-				factionItemCleanupSocket.SysMessage( horseOwner.name + " has invalid faction mount: " + toCheck.name + " [" + horseFaction + "]" );
+				factionItemCleanupSocket.SysMessage( GetDictionaryEntry( 25305, factionItemCleanupSocket.language ).replace( /%s/, String( horseOwner.name ) ).replace( /%s/, String( toCheck.name ) ).replace( /%s/, String( horseFaction ) ) );
 		}
 		else
 		{

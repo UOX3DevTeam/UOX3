@@ -368,7 +368,7 @@ function ShowTownTaxStatus( pSock )
 	const ctrl = TownGetController();
 	if( !ValidateObject( ctrl ) )
 	{
-		pSock.SysMessage( "Faction controller was not found." );
+		pSock.SysMessage( GetDictionaryEntry( 25124, pSock.language ) );
 		return false;
 	}
 
@@ -453,7 +453,7 @@ function onIterate( toCheck )
 			if( npcTown !== "" )
 				townText = TownDisplayName( npcTown );
 
-			factionTownIterateSocket.SysMessage( townText + ": " + TownFactionName( npcFaction ) + " " + typeText + " " + toCheck.name );
+			factionTownIterateSocket.SysMessage( GetDictionaryEntry( 25322, factionTownIterateSocket.language ).replace( /%s/, String( townText ) ).replace( /%s/, String( TownFactionName( npcFaction ) ) ).replace( /%s/, String( typeText ) ).replace( /%s/, String( toCheck.name ) ) );
 		}
 
 		return true;
@@ -495,7 +495,7 @@ function onIterate( toCheck )
 			officeData.roleSetAt = 0;
 			TriggerEvent( factionTownPlayerDataScriptId, "WriteFactionPlayerData", toCheck, officeData );
 			if( toCheck.socket != null )
-				toCheck.SysMessage( "Your office in " + TownDisplayName( factionTownIterateTown ) + " ended when control changed." );
+				toCheck.SysMessage( GetDictionaryEntry( 25323, ( toCheck.socket == null ? 0 : toCheck.socket.language ) ).replace( /%s/, String( TownDisplayName( factionTownIterateTown ) ) ) );
 			return true;
 		}
 		return false;
@@ -730,14 +730,14 @@ function ShowTownNpcStatus( pSock, townName )
 	townName = TownNormalizeName( townName );
 	if( townName !== "" && TownGetDefault( townName ) == null )
 	{
-		pSock.SysMessage( "Unknown faction town: " + townName );
+		pSock.SysMessage( GetDictionaryEntry( 25324, pSock.language ).replace( /%s/, String( townName ) ) );
 		return false;
 	}
 
 	let npcCount = TownCountFactionNpcs( townName, "" );
 	if( npcCount == 0 )
 	{
-		pSock.SysMessage( "No managed faction NPCs found." );
+		pSock.SysMessage( GetDictionaryEntry( 25325, pSock.language ) );
 		if( townName !== "" )
 			pSock.SysMessage( TownNpcLimitSummary( townName, "" ) );
 		return true;
@@ -1009,16 +1009,16 @@ function ShowTownTreasury( pSock, townName )
 	{
 		if( TownGetDefault( townName ) == null )
 		{
-			pSock.SysMessage( "Unknown faction town." );
+			pSock.SysMessage( GetDictionaryEntry( 25326, pSock.language ) );
 			return false;
 		}
 
-		pSock.SysMessage( TownDisplayName( townName ) + ": treasury " + TownGetTreasury( townName ) + " silver, tax " + TownGetTaxRate( townName ) + ", owner " + TownFactionName( TownGetOwner( townName ) ) );
+		pSock.SysMessage( GetDictionaryEntry( 25327, pSock.language ).replace( /%s/, String( TownDisplayName( townName ) ) ).replace( /%s/, String( TownGetTreasury( townName ) ) ).replace( /%s/, String( TownGetTaxRate( townName ) ) ).replace( /%s/, String( TownFactionName( TownGetOwner( townName ) ) ) ) );
 		return true;
 	}
 
 	for( let defaultTown in factionTownDefaults )
-		pSock.SysMessage( TownDisplayName( defaultTown ) + ": treasury " + TownGetTreasury( defaultTown ) + " silver, tax " + TownGetTaxRate( defaultTown ) + ", owner " + TownFactionName( TownGetOwner( defaultTown ) ) );
+		pSock.SysMessage( GetDictionaryEntry( 25327, pSock.language ).replace( /%s/, String( TownDisplayName( defaultTown ) ) ).replace( /%s/, String( TownGetTreasury( defaultTown ) ) ).replace( /%s/, String( TownGetTaxRate( defaultTown ) ) ).replace( /%s/, String( TownFactionName( TownGetOwner( defaultTown ) ) ) ) );
 
 	return true;
 }
@@ -1124,7 +1124,7 @@ function ShowTownStatus( pSock )
 			let townInfo = factionTownDefaults[townName];
 			const townRegion = GetTownRegion( townInfo.region );
 			const displayName = TownRegionIsLoaded( townRegion ) ? townRegion.name : townName;
-			pSock.SysMessage( displayName + ": " + TownFactionName( TownGetOwner( townName ) ) );
+			pSock.SysMessage( GetDictionaryEntry( 25328, pSock.language ).replace( /%s/, String( displayName ) ).replace( /%s/, String( TownFactionName( TownGetOwner( townName ) ) ) ) );
 		}
 	}
 

@@ -62,6 +62,8 @@
 					<div class="spoiler">
 						<h4>August 29th, 2026</h4>
 						<ul>
+							<li>Moved all faction player and administrator notifications into the UOX3 dictionaries with parameterized entries for dynamic values.</li>
+							<li>Added an optional Factions System generator to the Felucca add-ons in the administrator welcome gump.</li>
 							<li>Moved the legacy civic townstone interface, including all buttons and secondary views, from C++ to <span class="hl">js/server/townstone.js</span>.</li>
 							<li>Added complete <a href="#uox3Factions">Factions</a> feature documentation and clarified that faction townstones do not replace UOX3's legacy civic townstones.</li>
 							<li>Documented every shard-tunable option in the new <a href="#uoxINISettings">[factions] UOX.INI section</a>.</li>
@@ -6090,7 +6092,7 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 					<div class="note"><p><strong>Faction and civic townstones are separate systems.</strong> UOX3's original townstones implement its custom civic town system with mayors, residents and civic taxes. Faction townstones are JavaScript control panels layered onto faction-controlled towns and do not replace or remove the legacy civic system.</p></div>
 
 					<h3>Setup and Administration</h3>
-					<p>Static faction locations are stored in <span class="hl">js/jsdata/factions/faction_setup.json</span>. Run <span class="hl">'factionsetup</span> to create or repair the configured stones, stronghold objects, sigils and faction townstones. The setup command can also relocate existing setup objects when the JSON coordinates change. Use <span class="hl">'factionhealth</span> or the <span class="hl">'factionadmin</span> gump to inspect setup health, town ownership, NPC counts and player data.</p>
+					<p>Static faction locations are stored in <span class="hl">js/jsdata/factions/faction_setup.json</span>. New shards can select <strong>Factions System</strong> under the Felucca add-ons in the administrator welcome gump to generate the configured faction world objects. Run <span class="hl">'factionsetup</span> later to create or repair the configured stones, stronghold objects, sigils and faction townstones. The setup command can also relocate existing setup objects when the JSON coordinates change. Use <span class="hl">'factionhealth</span> or the <span class="hl">'factionadmin</span> gump to inspect setup health, town ownership, NPC counts and player data.</p>
 					<ul>
 						<li><span class="hl">'factionsetup</span> - Creates, repairs or relocates the configured faction world objects.</li>
 						<li><span class="hl">'factionadmin</span> - Opens the staff faction administration gump.</li>

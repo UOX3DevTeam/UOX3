@@ -379,14 +379,14 @@ function onGumpPress( pSock, pButton, gumpData )
 	const iSigil = CalcItemFromSer( sigilSerial );
 	if( !ValidateObject( iSigil ) )
 	{
-		pUser.SysMessage( "That sigil is no longer available." );
+		pUser.SysMessage( GetDictionaryEntry( 25307, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
 	let playerFaction = SigilGetFaction( pUser );
 	if( playerFaction === "" )
 	{
-		pUser.SysMessage( "Only faction members may corrupt sigils." );
+		pUser.SysMessage( GetDictionaryEntry( 25308, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		return;
 	}
 
@@ -394,7 +394,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( !TriggerEvent( sigilStrongholdScriptId, "StrongholdIsObjectAtFactionStronghold", iSigil, playerFaction ) )
 		{
-			pUser.SysMessage( "You must bring this sigil to your faction stronghold first: " + TriggerEvent( sigilStrongholdScriptId, "StrongholdLastError" ) );
+			pUser.SysMessage( GetDictionaryEntry( 25309, ( pUser.socket == null ? 0 : pUser.socket.language ) ).replace( /%s/, String( TriggerEvent( sigilStrongholdScriptId, "StrongholdLastError" ) ) ) );
 			return;
 		}
 
@@ -406,7 +406,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		iSigil.SetTag( "sigil_corrupt_start", GetCurrentClock() );
 		iSigil.SetTag( "sigil_corrupted", 0 );
 		iSigil.StartTimer( 60000, sigilCorruptionTimerId, 8502 );
-		pUser.SysMessage( "You have begun corrupting this sigil." );
+		pUser.SysMessage( GetDictionaryEntry( 25310, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 		BroadcastMessage( playerFaction + " has begun corrupting the sigil of " + iSigil.GetTag( "sigil_town" ) + "." );
 	}
 	else if( pButton == 2 )
@@ -414,7 +414,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		const corruptedFaction = iSigil.GetTag( "sigil_corrupted_faction" );
 		if( corruptedFaction !== playerFaction || !SigilIsNearHome( iSigil, 3 ) )
 		{
-			pUser.SysMessage( "Bring your faction's corrupted sigil to its correct town monolith." );
+			pUser.SysMessage( GetDictionaryEntry( 25311, ( pUser.socket == null ? 0 : pUser.socket.language ) ) );
 			return;
 		}
 		iSigil.SetTag( "sigil_owner_faction", playerFaction );
@@ -543,7 +543,7 @@ function SigilAwardCapture( iSigil, factionKey )
 		factionData.rank = SigilRankForPoints( killPoints );
 		TriggerEvent( sigilPlayerDataScriptId, "WriteFactionPlayerData", corruptor, factionData );
 		if( corruptor.socket != null )
-			corruptor.SysMessage( "You earned " + sigilCaptureSilverReward + " faction silver and " + sigilCaptureKillPointReward + " kill points for capturing " + SigilDisplayTown( iSigil.GetTag( "sigil_town" ) ) + "." );
+			corruptor.SysMessage( GetDictionaryEntry( 25312, ( corruptor.socket == null ? 0 : corruptor.socket.language ) ).replace( /%s/, String( sigilCaptureSilverReward ) ).replace( /%s/, String( sigilCaptureKillPointReward ) ).replace( /%s/, String( SigilDisplayTown( iSigil.GetTag( "sigil_town" ) ) ) ) );
 	}
 
 	iSigil.SetTag( "sigil_corruptor_serial", 0 );
@@ -603,7 +603,7 @@ function onPickup( iSigil, pGrabber, containerObj )
 	if( SigilParseNumber( iSigil.GetTag( "sigil_purification_start" ), 0 ) > 0 )
 	{
 		if( ValidateObject( pGrabber ) )
-			pGrabber.SysMessage( "That sigil is locked to the town monolith while it purifies." );
+			pGrabber.SysMessage( GetDictionaryEntry( 25313, ( pGrabber.socket == null ? 0 : pGrabber.socket.language ) ) );
 		return false;
 	}
 
@@ -611,7 +611,7 @@ function onPickup( iSigil, pGrabber, containerObj )
 	if( grabberFaction === "" )
 	{
 		if( ValidateObject( pGrabber ) )
-			pGrabber.SysMessage( "Only faction members may take faction sigils." );
+			pGrabber.SysMessage( GetDictionaryEntry( 25314, ( pGrabber.socket == null ? 0 : pGrabber.socket.language ) ) );
 		return false;
 	}
 
@@ -644,7 +644,7 @@ function onClick( pSock, iSigil )
 	if( iSigil.GetTag( "sigil" ) != 1 )
 		return false;
 
-	pSock.SysMessage( "Faction Sigil [" + iSigil.GetTag( "sigil_town" ) + "]" );
+	pSock.SysMessage( GetDictionaryEntry( 25315, pSock.language ).replace( /%s/, String( iSigil.GetTag( "sigil_town" ) ) ) );
 	return true;
 }
 
@@ -717,7 +717,7 @@ function ShowSigilReturnTime( pSock )
 	if( pSock == null )
 		return false;
 
-	pSock.SysMessage( "Default sigil return time: " + Math.ceil( sigilReturnTimeDefault / 60000 ) + " minute(s)." );
+	pSock.SysMessage( GetDictionaryEntry( 25316, pSock.language ).replace( /%s/, String( Math.ceil( sigilReturnTimeDefault / 60000 ) ) ) );
 	sigilIterateMode = "delaystatus";
 	sigilIterateTown = "";
 	sigilIterateSocket = pSock;
@@ -728,7 +728,7 @@ function ShowSigilReturnTime( pSock )
 	sigilIterateSocket = null;
 	sigilIterateCount = 0;
 	if( count == 0 )
-		pSock.SysMessage( "No faction sigils found." );
+		pSock.SysMessage( GetDictionaryEntry( 25173, pSock.language ) );
 
 	return true;
 }
@@ -741,7 +741,7 @@ function ShowFactionScore( pSock )
 	const ctrl = SigilGetController();
 	if( !ValidateObject( ctrl ) )
 	{
-		pSock.SysMessage( "Faction controller was not found." );
+		pSock.SysMessage( GetDictionaryEntry( 25124, pSock.language ) );
 		return false;
 	}
 
@@ -755,7 +755,7 @@ function ShowFactionScore( pSock )
 		if( lastTown === "" || lastTown == 0 )
 			lastTown = "None";
 
-		pSock.SysMessage( SigilFactionName( factionKey ) + ": score " + score + ", captures " + captures + ", last capture " + SigilDisplayTown( lastTown ) );
+		pSock.SysMessage( GetDictionaryEntry( 25317, pSock.language ).replace( /%s/, String( SigilFactionName( factionKey ) ) ).replace( /%s/, String( score ) ).replace( /%s/, String( captures ) ).replace( /%s/, String( SigilDisplayTown( lastTown ) ) ) );
 	}
 
 	return true;
@@ -921,7 +921,7 @@ function onIterate( toCheck )
 			else
 				carriedText += ", no return timer";
 
-			sigilIterateSocket.SysMessage( SigilDisplayTown( toCheck.GetTag( "sigil_town" ) ) + ": owner " + SigilOwnerFaction( toCheck ) + ", at " + toCheck.x + "," + toCheck.y + "," + toCheck.z + ", " + homeText + carriedText );
+			sigilIterateSocket.SysMessage( GetDictionaryEntry( 25318, sigilIterateSocket.language ).replace( /%s/, String( SigilDisplayTown( toCheck.GetTag( "sigil_town" ) ) ) ).replace( /%s/, String( SigilOwnerFaction( toCheck ) ) ).replace( /%s/, String( toCheck.x ) ).replace( /%s/, String( toCheck.y ) ).replace( /%s/, String( toCheck.z ) ).replace( /%s/, String( homeText ) ).replace( /%s/, String( carriedText ) ) );
 		}
 		return false;
 	}
@@ -939,7 +939,7 @@ function onIterate( toCheck )
 	{
 		sigilIterateCount++;
 		if( sigilIterateSocket != null )
-			sigilIterateSocket.SysMessage( SigilDisplayTown( toCheck.GetTag( "sigil_town" ) ) + ": return time " + Math.ceil( SigilReturnDelay( toCheck ) / 60000 ) + " minute(s)." );
+			sigilIterateSocket.SysMessage( GetDictionaryEntry( 25319, sigilIterateSocket.language ).replace( /%s/, String( SigilDisplayTown( toCheck.GetTag( "sigil_town" ) ) ) ).replace( /%s/, String( Math.ceil( SigilReturnDelay( toCheck ) / 60000 ) ) ) );
 		return false;
 	}
 

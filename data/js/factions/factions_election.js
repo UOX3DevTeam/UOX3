@@ -227,29 +227,29 @@ function DeclareCandidacy( pChar )
 	const fkey = factionData.faction;
 	if( !fkey || fkey.length === 0 )
 	{
-		pChar.SysMessage( "You must be in a faction to run for Commander." );
+		pChar.SysMessage( GetDictionaryEntry( 25281, ( pChar.socket == null ? 0 : pChar.socket.language ) ) );
 		return false;
 	}
 
 	let state = _GetElecState( fkey );
 	if( state !== electionStateRunning )
 	{
-		pChar.SysMessage( "There is no active candidacy period for your faction right now." );
+		pChar.SysMessage( GetDictionaryEntry( 25282, ( pChar.socket == null ? 0 : pChar.socket.language ) ) );
 		return false;
 	}
 
 	if( factionData.rank < electionCandidateRank )
 	{
-		pChar.SysMessage( "You must hold at least faction rank 5 to run for Commander." );
+		pChar.SysMessage( GetDictionaryEntry( 25283, ( pChar.socket == null ? 0 : pChar.socket.language ) ) );
 		return false;
 	}
 
 	if( !_AddCandidate( fkey, pChar.serial ) )
 	{
-		pChar.SysMessage( "You are already a candidate, or the election has reached its ten-candidate limit." );
+		pChar.SysMessage( GetDictionaryEntry( 25284, ( pChar.socket == null ? 0 : pChar.socket.language ) ) );
 		return false;
 	}
-	pChar.SysMessage( "You have declared your candidacy for Commander!" );
+	pChar.SysMessage( GetDictionaryEntry( 25285, ( pChar.socket == null ? 0 : pChar.socket.language ) ) );
 	_BroadcastFaction( fkey, pChar.name + " has declared candidacy for Commander!" );
 	return true;
 }
@@ -283,19 +283,19 @@ function CastVote( pVoter, candidateSerial )
 	const fkey = TriggerEvent( factionElectionPlayerDataScriptId, "GetFactionValue", pVoter, "faction", pVoter.GetTag( "faction" ) );
 	if( !fkey || fkey.length === 0 )
 	{
-		pVoter.SysMessage( "You must be in a faction to vote." );
+		pVoter.SysMessage( GetDictionaryEntry( 25286, ( pVoter.socket == null ? 0 : pVoter.socket.language ) ) );
 		return false;
 	}
 
 	if( _GetElecState( fkey ) !== electionStateVoting )
 	{
-		pVoter.SysMessage( "Voting is not currently open in your faction." );
+		pVoter.SysMessage( GetDictionaryEntry( 25287, ( pVoter.socket == null ? 0 : pVoter.socket.language ) ) );
 		return false;
 	}
 
 	if( _HasVoted( pVoter, fkey ) )
 	{
-		pVoter.SysMessage( "You have already cast your vote in this election." );
+		pVoter.SysMessage( GetDictionaryEntry( 25288, ( pVoter.socket == null ? 0 : pVoter.socket.language ) ) );
 		return false;
 	}
 
@@ -308,13 +308,13 @@ function CastVote( pVoter, candidateSerial )
 	}
 	if( !found )
 	{
-		pVoter.SysMessage( "That character is not a candidate." );
+		pVoter.SysMessage( GetDictionaryEntry( 25289, ( pVoter.socket == null ? 0 : pVoter.socket.language ) ) );
 		return false;
 	}
 
 	_AddVote( fkey, candidateSerial );
 	_MarkVoted( pVoter, fkey );
-	pVoter.SysMessage( "Your vote has been cast!" );
+	pVoter.SysMessage( GetDictionaryEntry( 25290, ( pVoter.socket == null ? 0 : pVoter.socket.language ) ) );
 	return true;
 }
 
@@ -555,14 +555,14 @@ function ShowElectionStatus( pSock, factionKey )
 	if( !pSock )
 		return false;
 
-	pSock.SysMessage( "Election state for " + factionKey + ": " + _GetElecState( factionKey ) );
+	pSock.SysMessage( GetDictionaryEntry( 25291, pSock.language ).replace( /%s/, String( factionKey ) ).replace( /%s/, String( _GetElecState( factionKey ) ) ) );
 	const candidates = _GetCandidates( factionKey );
 	for( let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++ )
 	{
 		const candidateSerial = Number( candidates[candidateIndex] );
 		const candidate = CalcCharFromSer( candidateSerial );
 		const candidateName = ValidateObject( candidate ) ? candidate.name : "Serial " + candidateSerial;
-		pSock.SysMessage( candidateName + " - " + _GetVotes( factionKey, candidateSerial ) + " vote(s)" );
+		pSock.SysMessage( GetDictionaryEntry( 25292, pSock.language ).replace( /%s/, String( candidateName ) ).replace( /%s/, String( _GetVotes( factionKey, candidateSerial ) ) ) );
 	}
 
 	return true;

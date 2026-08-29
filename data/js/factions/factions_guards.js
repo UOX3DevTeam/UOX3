@@ -94,7 +94,7 @@ function GuardEngageTarget( npcChar, targetChar, guardFaction )
 	if( lastWarn == 0 || now - lastWarn > guardWarnDelay )
 	{
 		npcChar.SetTag( warnedKey, now );
-		npcChar.TextMessage( targetChar.name + " is an enemy of " + GuardFactionName( guardFaction ) + "!" );
+		npcChar.TextMessage( GetDictionaryEntry( 25362, targetChar.socket == null ? 0 : targetChar.socket.language ).replace( /%s/, targetChar.name ).replace( /%s/, GuardFactionName( guardFaction ) ) );
 	}
 
 	npcChar.target = targetChar;
@@ -179,9 +179,9 @@ function onClick( pSock, npcChar )
 	{
 		const townOwner = TriggerEvent( guardFactionTownScriptId, "TownOwnerForObject", npcChar );
 		if( townOwner !== "" && townOwner !== guardFaction )
-			pSock.SysMessage( npcChar.name + " [" + guardFaction + " Guard - inactive in enemy town]" );
+			pSock.SysMessage( GetDictionaryEntry( 25293, pSock.language ).replace( /%s/, String( npcChar.name ) ).replace( /%s/, String( guardFaction ) ) );
 		else
-			pSock.SysMessage( npcChar.name + " [" + guardFaction + " Guard]" );
+			pSock.SysMessage( GetDictionaryEntry( 25294, pSock.language ).replace( /%s/, String( npcChar.name ) ).replace( /%s/, String( guardFaction ) ) );
 		return true;
 	}
 	return false;
