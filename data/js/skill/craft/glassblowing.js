@@ -254,160 +254,160 @@ function PageX( socket, pUser, pageNum )
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
 function onTimer( pUser, timerID )
 {
-    if( !ValidateObject( pUser ))
-        return;
+	if( !ValidateObject( pUser ))
+		return;
 
-    var pSocket = pUser.socket;
-    if( pSocket == null )
-        return;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return;
 
-    if( timerID >= 1 && timerID <= 8 )
-    {
-        PageX( pSocket, pUser, timerID );
-    }
-    else if( timerID == 999 )
-    {
-        PageX( pSocket, pUser, 999 );
-    }
+	if( timerID >= 1 && timerID <= 8 )
+	{
+		PageX( pSocket, pUser, timerID );
+	}
+	else if( timerID == 999 )
+	{
+		PageX( pSocket, pUser, 999 );
+	}
 }
 
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
-    if( socket == null )
-        return;
+	if( socket == null )
+		return;
 
-    var pUser = socket.currentChar;
+	var pUser = socket.currentChar;
 
-    if( !ValidateObject( pUser ) || pUser.dead )
-        return;
+	if( !ValidateObject( pUser ) || pUser.dead )
+		return;
 
-    var bItem = socket.tempObj;
-    if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
-    {
-        socket.SysMessage( GetDictionaryEntry( 461, socket.language ));
-        return;
-    }
+	var bItem = socket.tempObj;
+	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 461, socket.language ));
+		return;
+	}
 
-    if( bItem.movable == 3 )
-    {
-        socket.SysMessage( GetDictionaryEntry( 6031, socket.language ));
-        return;
-    }
+	if( bItem.movable == 3 )
+	{
+		socket.SysMessage( GetDictionaryEntry( 6031, socket.language ));
+		return;
+	}
 
-    var iPackOwner = GetPackOwner( bItem, 0 );
-    if( ValidateObject( iPackOwner ))
-    {
-        if( iPackOwner.serial != pUser.serial )
-        {
-            socket.SysMessage( GetDictionaryEntry( 6032, socket.language ));
-            return;
-        }
-    }
-    else
-    {
-        socket.SysMessage( GetDictionaryEntry( 6022, socket.language ));
-        return;
-    }
+	var iPackOwner = GetPackOwner( bItem, 0 );
+	if( ValidateObject( iPackOwner ))
+	{
+		if( iPackOwner.serial != pUser.serial )
+		{
+			socket.SysMessage( GetDictionaryEntry( 6032, socket.language ));
+			return;
+		}
+	}
+	else
+	{
+		socket.SysMessage( GetDictionaryEntry( 6022, socket.language ));
+		return;
+	}
 
-    var gumpID = glassblowingID + 0xffff;
+	var gumpID = glassblowingID + 0xffff;
 
-    // Subpage back / forward
-    if( pButton >= 8001 && pButton < 9000 )
-    {
-        var subPage = pButton - 8000;
-        var pageNum = pUser.GetTempTag( "page" );
-        pUser.SetTempTag( "subPage", subPage );
-        PageX( socket, pUser, pageNum );
-        return;
-    }
+	// Subpage back / forward
+	if( pButton >= 8001 && pButton < 9000 )
+	{
+		var subPage = pButton - 8000;
+		var pageNum = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage );
+		PageX( socket, pUser, pageNum );
+		return;
+	}
 
-    if( pButton >= 9001 && pButton < 10000 )
-    {
-        var subPage2 = pButton - 9000;
-        var pageNum2 = pUser.GetTempTag( "page" );
-        pUser.SetTempTag( "subPage", subPage2 );
-        PageX( socket, pUser, pageNum2 );
-        return;
-    }
+	if( pButton >= 9001 && pButton < 10000 )
+	{
+		var subPage2 = pButton - 9000;
+		var pageNum2 = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage2 );
+		PageX( socket, pUser, pageNum2 );
+		return;
+	}
 
-    // Page tabs
-    if( pButton >= 1 && pButton <= 8 )
-    {
-        pUser.SetTempTag( "page", pButton );
-        pUser.SetTempTag( "subPage", 1 );
-        PageX( socket, pUser, pButton );
-        return;
-    }
+	// Page tabs
+	if( pButton >= 1 && pButton <= 8 )
+	{
+		pUser.SetTempTag( "page", pButton );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, pButton );
+		return;
+	}
 
-    // Last Ten
-    if( pButton == 11000 )
-    {
-        pUser.SetTempTag( "page", 999 );
-        pUser.SetTempTag( "subPage", 1 );
-        PageX( socket, pUser, 999 );
-        return;
-    }
+	// Last Ten
+	if( pButton == 11000 )
+	{
+		pUser.SetTempTag( "page", 999 );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, 999 );
+		return;
+	}
 
-    // Close gump
-    if( pButton == 0 )
-    {
-        pUser.SetTempTag( "MakeLast_Glass", null );
-        pUser.SetTempTag( "CRAFT", null );
-        socket.CloseGump( gumpID, 0 );
-        return;
-    }
+	// Close gump
+	if( pButton == 0 )
+	{
+		pUser.SetTempTag( "MakeLast_Glass", null );
+		pUser.SetTempTag( "CRAFT", null );
+		socket.CloseGump( gumpID, 0 );
+		return;
+	}
 
-    var makeID = 0;
-    var timerID = 0;
+	var makeID = 0;
+	var timerID = 0;
 
-    // Make Last
-    if( pButton == 5000 )
-    {
-        var last = pUser.GetTempTag( "MakeLast_Glass" );
-        if( last )
-            pButton = last;
-        else
-            return;
-    }
+	// Make Last
+	if( pButton == 5000 )
+	{
+		var last = pUser.GetTempTag( "MakeLast_Glass" );
+		if( last )
+			pButton = last;
+		else
+			return;
+	}
 
-    // Craft buttons use makeID directly
-    if( GlassBlowingMap[pButton] != undefined )
-    {
-        makeID = pButton;
-        var data = GlassBlowingMap[makeID];
-        timerID = data.timerID || 1;
+	// Craft buttons use makeID directly
+	if( GlassBlowingMap[pButton] != undefined )
+	{
+		makeID = pButton;
+		var data = GlassBlowingMap[makeID];
+		timerID = data.timerID || 1;
 
-        if( !eraOK( data ))
-        {
-            socket.SysMessage( "That item is not available in this era." );
-            return;
-        }
+		if( !eraOK( data ))
+		{
+			socket.SysMessage( "That item is not available in this era." );
+			return;
+		}
 
-        if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
-        {
-            socket.SysMessage( "You must learn that recipe from a scroll." );
-            return;
-        }
+		if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+		{
+			socket.SysMessage( "You must learn that recipe from a scroll." );
+			return;
+		}
 
-        pUser.SetTempTag( "MakeLast_Glass", makeID );
+		pUser.SetTempTag( "MakeLast_Glass", makeID );
 
-        MakeItem( socket, pUser, makeID );
-        AddToLastTen( pUser, makeID );
+		MakeItem( socket, pUser, makeID );
+		AddToLastTen( pUser, makeID );
 
-        if( GetServerSetting( "ToolUseLimit" ))
-        {
-            bItem.usesLeft -= 1;
-            if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
-            {
-                bItem.Delete();
-                socket.SysMessage( GetDictionaryEntry( 10202, socket.language ));
-            }
-        }
+		if( GetServerSetting( "ToolUseLimit" ))
+		{
+			bItem.usesLeft -= 1;
+			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+			{
+				bItem.Delete();
+				socket.SysMessage( GetDictionaryEntry( 10202, socket.language ));
+			}
+		}
 
-        pUser.StartTimer( gumpDelay, timerID, glassblowingID );
-        return;
-    }
+		pUser.StartTimer( gumpDelay, timerID, glassblowingID );
+		return;
+	}
 
 	// Detail buttons: 20000 + makeID
 	if( pButton >= 20000 && pButton < 30000 )
@@ -475,49 +475,49 @@ function onGumpPress( socket, pButton, gumpData )
 // Last Ten
 function AddToLastTen( pUser, makeID )
 {
-    var raw = pUser.GetTempTag( "LastTenGlassblowing" ) || "";
-    var list = raw.split( "," );
+	var raw = pUser.GetTempTag( "LastTenGlassblowing" ) || "";
+	var list = raw.split( "," );
 
-    for( var i = 0; i < list.length; i++ )
-    {
-        if( parseInt( list[i] ) == makeID )
-        {
-            list.splice( i, 1 );
-            break;
-        }
-    }
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( parseInt( list[i] ) == makeID )
+		{
+			list.splice( i, 1 );
+			break;
+		}
+	}
 
-    var newList = [ makeID ];
-    for( var j = 0; j < list.length && newList.length < 10; j++ )
-    {
-        var entry = parseInt( list[j] );
-        if( !isNaN( entry ) && entry > 0 )
-            newList.push( entry );
-    }
+	var newList = [ makeID ];
+	for( var j = 0; j < list.length && newList.length < 10; j++ )
+	{
+		var entry = parseInt( list[j] );
+		if( !isNaN( entry ) && entry > 0 )
+			newList.push( entry );
+	}
 
-    pUser.SetTempTag( "LastTenGlassblowing", newList.join( "," ) );
+	pUser.SetTempTag( "LastTenGlassblowing", newList.join( "," ) );
 }
 
 function HasLearnedRecipe( pUser, recipeID )
 {
-    var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
-    if( !myData || myData.length == 0 )
-        return false;
+	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	if( !myData || myData.length == 0 )
+		return false;
 
-    for( var i = 0; i < myData.length; i++ )
-    {
-        var data = myData[i].split( "," );
-        if( data[0] == recipeID )
-            return true;
-    }
-    return false;
+	for( var i = 0; i < myData.length; i++ )
+	{
+		var data = myData[i].split( "," );
+		if( data[0] == recipeID )
+			return true;
+	}
+	return false;
 }
 
 function eraOK( entry )
 {
-    if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
-        return false;
-    if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
-        return false;
-    return true;
+	if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
+		return false;
+	if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
+		return false;
+	return true;
 }

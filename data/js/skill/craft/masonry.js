@@ -370,7 +370,7 @@ function onCallback1( pSock, ourObj )
 		{
 			// Calculate amount of resources returned based on player's mining skill, item's wear and tear,
 			// and amount of resources that went into making the item in the first place
-			if ( ourObj.health >= 1 || ourObj.usesLeft >= 1 ) 
+			if ( ourObj.health >= 1 || ourObj.usesLeft >= 1 )
 			{
 				var healthPercentage = 0;
 				if( ourObj.health >= 1 )
@@ -379,7 +379,7 @@ function onCallback1( pSock, ourObj )
 				}
 
 				var usesPercentage = 0;
-				if( ourObj.usesLeft >= 1 ) 
+				if( ourObj.usesLeft >= 1 )
 				{
 					usesPercentage = Math.floor( ( ourObj.usesLeft * 100 ) / ourObj.maxUses );
 				}
@@ -830,7 +830,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( entry.recipeID && entry.recipeID > 0 )
 					pUser.SetTempTag( "needRecipeID", entry.recipeID );
 				else
-					pUser.SetTempTag( "needRecipeID", 0 ); 
+					pUser.SetTempTag( "needRecipeID", 0 );
 
 				pUser.SetTempTag( "ITEMDETAILS", graniteMakeID );
 				TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
@@ -857,14 +857,14 @@ function onGumpPress( pSock, pButton, gumpData )
 			return;
 		}
 
-		if( entry2.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, entry2.recipeID ))
+		if( entry2.recipeID && !TriggerEvent( 4022, "NeedRecipe", pSock, entry2.recipeID ))
 		{
 			pSock.SysMessage( "You must learn that recipe from a scroll." );
 			return;
 		}
 
 		// No colored granited weapons if disabled and using non-iron ingots
-		if( !allowColouredWeapons && resourceHue > 0 && entry2.page > 3 )
+		if( !allowColouredWeapons && resourceHue > 0 && entry2.page == 6 )
 		{
 			pSock.SysMessage( "You cannot use colored granited ingots for weapons on this shard." );
 			return;

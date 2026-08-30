@@ -24,7 +24,7 @@ function onUseChecked( pUser, iUsed )
 		{
 			socket.SysMessage( GetDictionaryEntry( 774, socket.language )); //That is locked down and you cannot use it
 		}
-		else 
+		else
 		{
 			pUser.SetTag( "StoneCrafting", 1 );
 			socket.SysMessage( GetDictionaryEntry( 6299, socket.language )); // You have learned to make items from stone. You will need miners to gather stones for you to make these items.

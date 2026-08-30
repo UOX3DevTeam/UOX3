@@ -24,10 +24,10 @@ function onUseChecked( pUser, iUsed )
 		{
 			socket.SysMessage( GetDictionaryEntry( 774, socket.language )); //That is locked down and you cannot use it
 		}
-		else 
+		else
 		{
 			pUser.SetTag( "GlassBlowing", 1 );
-			socket.SysMessage( GetDictionaryEntry( 6303, socket.language )); // You have learned to make items from glass.  You will need to find miners to mine fine 
+			socket.SysMessage( GetDictionaryEntry( 6303, socket.language )); // You have learned to make items from glass.  You will need to find miners to mine fine
 			iUsed.Delete();
 		}
 	}

@@ -92,12 +92,5 @@
         "function": "Page20"
       }
     ]
-  },
-  {
-    "craft": "artcraft",
-    "craftIndex": 100,
-    "scriptID": 4040,
-    "maxPage": 2,
-    "sectionIDs": [ "paintbrush" ]
   }
 ]

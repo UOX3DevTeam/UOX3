@@ -6160,6 +6160,8 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 		<li><span class="hl">masonry.json</span> - Masonry menu entries</li>
 		<li><span class="hl">tailoring.json</span> - Tailoring menu entries</li>
 		<li><span class="hl">tinkering.json</span> - Tinkering menu entries</li>
+		<li><span class="hl">crafttools.json</span> - Maps crafting-tool DFN sections to crafting scripts and menus</li>
+		<li><span class="hl">customcrafts.json</span> - Defines optional shard-specific crafting skills handled by the generic custom-craft script</li>
 		<li><span class="hl">resourcemap.json</span> - Shared resource definitions used by crafting menus</li>
 	</ul>
 </div>
@@ -6548,12 +6550,12 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 <label for="spoiler_json_full_custom_item">Full Custom Item Example <i class="fas fa-angle-down"></i></label>
 <div class="spoiler">
 <pre><code class="language-json">{
-	"makeID": 5000,
+	"makeID": 4900,
 	"label": "Mythril Gearbox",
 	"customName": "mythril gearbox",
 	"page": 7,
 	"timerID": 7,
-	"recipeID": 5000,
+	"recipeID": 4900,
 	"minEra": "ml",
 	"harvest": [10015, 11863],
 	"harvestNames": ["Mythril Ingots", "Gears"]
@@ -6561,6 +6563,59 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 
 	<p>This entry adds a custom item to a crafting page, gives it a custom menu name, requires a recipe, limits it to Mondain's Legacy or later and gives clearer resource names in the detail gump.</p>
 </div>
+
+<h3>Adding a Custom Crafting Skill</h3>
+<p>The generic custom-craft script lets shard owners add a new crafting skill or themed crafting menu without copying an existing skill script. The framework is registered as script <span class="hl">4040</span>, but no custom craft is enabled by default. A custom craft requires a tool definition, a tool-map entry, a custom-craft definition and a craft-entry map.</p>
+
+<ol>
+	<li>Create a tool item in the item DFNs and attach script <span class="hl">4031</span>, the shared crafting-tool script.</li>
+	<li>Add the tool's DFN section ID to a new entry in <span class="hl">crafttools.json</span>. Use script ID <span class="hl">4040</span> and a unique <span class="hl">craft</span> name.</li>
+	<li>Add a definition with the same <span class="hl">craft</span> name to <span class="hl">customcrafts.json</span>.</li>
+	<li>Create <span class="hl">&lt;mapFile&gt;.json</span> in the crafting-data directory and add its menu entries.</li>
+	<li>Make sure every nonzero <span class="hl">makeID</span> in that map points to a valid CreateEntry.</li>
+</ol>
+
+<input type="checkbox" id="spoiler_json_custom_craft">
+<label for="spoiler_json_custom_craft">Custom Craft Configuration Example <i class="fas fa-angle-down"></i></label>
+<div class="spoiler">
+	<p>Example entry in <span class="hl">crafttools.json</span>:</p>
+<pre><code class="language-json">{
+	"craft": "artcraft",
+	"craftIndex": 100,
+	"scriptID": 4040,
+	"maxPage": 2,
+	"sectionIDs": ["paintbrush"]
+}</code></pre>
+
+	<p>Matching entry in <span class="hl">customcrafts.json</span>:</p>
+<pre><code class="language-json">{
+	"craft": "artcraft",
+	"mapFile": "artcraft",
+	"skillID": 0,
+	"maxPage": 2,
+	"menuName": "Art Craft",
+	"showLastTen": true,
+	"categories": [
+		{ "page": 1, "label": "Drawings" },
+		{ "page": 2, "label": "Paintings" }
+	]
+}</code></pre>
+
+	<p>The matching <span class="hl">artcraft.json</span> file then contains normal craft entries with valid CreateEntry IDs:</p>
+<pre><code class="language-json">[
+	{
+		"makeID": 4900,
+		"customName": "charcoal sketch",
+		"page": 1,
+		"timerID": 1,
+		"harvestNames": ["Charcoal", "Paper"]
+	}
+]</code></pre>
+
+	<p>The names <span class="hl">artcraft</span> and <span class="hl">paintbrush</span> are examples only. The tool's <span class="hl">paintbrush</span> DFN section and CreateEntry <span class="hl">4900</span> must exist before this example can be enabled. Keep CreateEntry IDs below <span class="hl">5000</span> for compatibility with the legacy create-menu button range.</p>
+</div>
+
+<p>The generic menu supports category pages, last-ten history, recipe and era restrictions, item-detail resources and optional repair/recycle actions. Repair and recycle settings are configured in the matching <span class="hl">customcrafts.json</span> definition. Leave <span class="hl">customcrafts.json</span> as an empty array when the shard has no custom crafting skills.</p>
 
 <h3>Adding a New Resource</h3>
 <p>To add a new selectable resource such as a new ore, granite or scale type, add a new item entry to the correct resource set in <span class="hl">resourcemap.json</span>. The new entry should have a unique index, display label, dictionary ID, item ID, hue and skill requirement.</p>
@@ -6585,11 +6640,41 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 	<li>The JSON files control menu data, not the low-level item creation rules.</li>
 	<li>The actual crafted item, resource consumption, skill checks, sounds and delays still come from the CreateEntry system.</li>
 	<li><span class="hl">makeID</span>, <span class="hl">oreMake</span> and <span class="hl">graniteMake</span> values must point to valid CreateEntries.</li>
+	<li>Keep CreateEntry IDs below <span class="hl">5000</span>. The legacy create-menu system reserves button IDs starting at 5000 for submenus.</li>
 	<li><span class="hl">label</span> is for admin readability. Use <span class="hl">dictID</span> or <span class="hl">customName</span> for menu display text.</li>
 	<li><span class="hl">craftComplete</span> only supports behavior types that the crafting complete script knows how to handle.</li>
 	<li>If an entry does not appear, check its <span class="hl">page</span>, <span class="hl">minEra</span>, <span class="hl">maxEra</span> and recipe requirement.</li>
 	<li>If resource counts look wrong, check the <span class="hl">itemID</span> and <span class="hl">hue</span> in <span class="hl">resourcemap.json</span>.</li>
 </ul>
+
+<h3>CreateEntry ID Allocation</h3>
+<p>CreateEntry IDs are shared by every file in <span class="hl">dfndata/create/</span>; the file name does not create a separate namespace. Use the ranges below to prevent duplicate IDs and preserve room for future additions.</p>
+
+<table class="table">
+	<thead>
+		<tr><th>Range</th><th>Purpose</th><th>Expansion guidance</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>1–499</td><td>Original/base crafting skills</td><td>Continue using each skill's existing local gaps; coordinate new base-skill blocks to avoid overlap.</td></tr>
+		<tr><td>500–1299</td><td>Colored blacksmithing variants</td><td>One 100-ID block per material. Existing entries use the first 24 IDs of each block, leaving 76 per material.</td></tr>
+		<tr><td>1300–1399</td><td>Base blacksmithing expansion</td><td>Use after the original blacksmithing entries; colored variants remain in their material blocks.</td></tr>
+		<tr><td>1400–1499</td><td>Reserved</td><td>Keep free for future core crafting expansion.</td></tr>
+		<tr><td>1500–1999</td><td>Cooking</td><td>Current entries end at 1655, leaving the remainder for cooking additions.</td></tr>
+		<tr><td>2000–2099</td><td>Cartography</td><td>Current entries use 2000–2007; add new cartography entries from 2008 upward.</td></tr>
+		<tr><td>2100–2199</td><td>Carpentry expansion</td><td>Use when the original 50–124 range is full.</td></tr>
+		<tr><td>2200–2299</td><td>Tailoring expansion</td><td>Use when the original 130–185 range is full.</td></tr>
+		<tr><td>2300–2399</td><td>Bowcraft/Fletching expansion</td><td>Use when the original 190–208 range is full.</td></tr>
+		<tr><td>2400–2499</td><td>Tinkering expansion</td><td>Use when the original 210–316 allocations are full.</td></tr>
+		<tr><td>2500–2599</td><td>Alchemy expansion</td><td>Use when the original 290–309 range is full.</td></tr>
+		<tr><td>2600–2699</td><td>Inscription expansion</td><td>Use when the original 400–475 range is full.</td></tr>
+		<tr><td>2700–2999</td><td>Reserved</td><td>Keep available for future core crafting skills.</td></tr>
+		<tr><td>3000–3499</td><td>Glassblowing</td><td>Current entries use 3000–3019, leaving 3020–3499 for expansion.</td></tr>
+		<tr><td>3500–4399</td><td>Masonry variants</td><td>One 100-ID block per granite type. Current blocks leave at least 41 IDs per material.</td></tr>
+		<tr><td>4400–4999</td><td>Shard-specific custom crafts</td><td>Divide this into documented blocks, such as 4400–4499 and 4500–4599, one block per custom craft.</td></tr>
+	</tbody>
+</table>
+
+<p>Do not reuse an ID in another create DFN. Before adding entries, search all files under <span class="hl">dfndata/create/</span>, not only the file being edited. Resource variants should keep the same offset inside each material's 100-ID block so JSON arrays such as <span class="hl">oreMake</span> and <span class="hl">graniteMake</span> remain easy to audit.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>

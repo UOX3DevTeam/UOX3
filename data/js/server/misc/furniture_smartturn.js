@@ -186,197 +186,197 @@ function SmartTurn( iTurn )
 		iTurn.id = 0x183b;
 	}
 	else if( iTurn.id == 0x01CF ) // RoughWindowless
-    {
-        iTurn.id = 0x01D0;
-    }
-    else if( iTurn.id == 0x01D0 )
-    {
-        iTurn.id = 0x01D1;
-    }
-    else if( iTurn.id == 0x01D1 )
-    {
-        iTurn.id = 0x01D0;
-    }
+	{
+		iTurn.id = 0x01D0;
+	}
+	else if( iTurn.id == 0x01D0 )
+	{
+		iTurn.id = 0x01D1;
+	}
+	else if( iTurn.id == 0x01D1 )
+	{
+		iTurn.id = 0x01D0;
+	}
 	else if( iTurn.id == 0x01D2 )
-    {
-        iTurn.id = 0x01CF;
-    }
-    else if( iTurn.id == 0x01D3 ) // RoughWindow
-    {
-        iTurn.id = 0x01D4;
-    }
-    else if( iTurn.id == 0x01D4 )
-    {
-        iTurn.id = 0x01D3;
-    }
+	{
+		iTurn.id = 0x01CF;
+	}
+	else if( iTurn.id == 0x01D3 ) // RoughWindow
+	{
+		iTurn.id = 0x01D4;
+	}
+	else if( iTurn.id == 0x01D4 )
+	{
+		iTurn.id = 0x01D3;
+	}
 	else if( iTurn.id == 0x01D5 ) // RoughArch
-    {
-        iTurn.id = 0x01D6;
-    }
-    else if( iTurn.id == 0x01D6 )
-    {
-        iTurn.id = 0x01D7;
-    }
-    else if( iTurn.id == 0x01D7 )
-    {
-        iTurn.id = 0x01D8;
-    }
-    else if( iTurn.id == 0x01D8 )
-    {
-        iTurn.id = 0x01D9;
-    }
-    else if( iTurn.id == 0x01D9 )
-    {
-        iTurn.id = 0x01D5;
-    }
+	{
+		iTurn.id = 0x01D6;
+	}
+	else if( iTurn.id == 0x01D6 )
+	{
+		iTurn.id = 0x01D7;
+	}
+	else if( iTurn.id == 0x01D7 )
+	{
+		iTurn.id = 0x01D8;
+	}
+	else if( iTurn.id == 0x01D8 )
+	{
+		iTurn.id = 0x01D9;
+	}
+	else if( iTurn.id == 0x01D9 )
+	{
+		iTurn.id = 0x01D5;
+	}
 	else if( iTurn.id == 0x01DB ) // RoughRoundedArch
-    {
-        iTurn.id = 0x01DC;
-    }
-    else if( iTurn.id == 0x01DC )
-    {
-        iTurn.id = 0x01DD;
-    }
-    else if( iTurn.id == 0x01DD )
-    {
-        iTurn.id = 0x01DE;
-    }
-    else if( iTurn.id == 0x01DE )
-    {
-        iTurn.id = 0x01DF;
-    }
-    else if( iTurn.id == 0x01DF )
-    {
-        iTurn.id = 0x01DB;
-    }
-    else if( iTurn.id == 0x01E0 )  // RoughSmallArch
-    {
-        iTurn.id = 0x01E1;
-    }
-    else if( iTurn.id == 0x01E1 )
-    {
-        iTurn.id = 0x01E2;
-    }
-    else if( iTurn.id == 0x01E2 )
-    {
-        iTurn.id = 0x01E3;
-    }
-    else if( iTurn.id == 0x01E3 )
-    {
-        iTurn.id = 0x01E4;
-    }
-    else if( iTurn.id == 0x01E4 )
-    {
-        iTurn.id = 0x01E5;
-    }
-    else if( iTurn.id == 0x01E5 )
-    {
-        iTurn.id = 0x01E0;
-    }
-    else if( iTurn.id == 0x01E6 )  // RoughAngledPillar
-    {
-        iTurn.id = 0x01E7;
-    }
-    else if( iTurn.id == 0x01E7 )
-    {
-        iTurn.id = 0x01E6;
-    }
+	{
+		iTurn.id = 0x01DC;
+	}
+	else if( iTurn.id == 0x01DC )
+	{
+		iTurn.id = 0x01DD;
+	}
+	else if( iTurn.id == 0x01DD )
+	{
+		iTurn.id = 0x01DE;
+	}
+	else if( iTurn.id == 0x01DE )
+	{
+		iTurn.id = 0x01DF;
+	}
+	else if( iTurn.id == 0x01DF )
+	{
+		iTurn.id = 0x01DB;
+	}
+	else if( iTurn.id == 0x01E0 )  // RoughSmallArch
+	{
+		iTurn.id = 0x01E1;
+	}
+	else if( iTurn.id == 0x01E1 )
+	{
+		iTurn.id = 0x01E2;
+	}
+	else if( iTurn.id == 0x01E2 )
+	{
+		iTurn.id = 0x01E3;
+	}
+	else if( iTurn.id == 0x01E3 )
+	{
+		iTurn.id = 0x01E4;
+	}
+	else if( iTurn.id == 0x01E4 )
+	{
+		iTurn.id = 0x01E5;
+	}
+	else if( iTurn.id == 0x01E5 )
+	{
+		iTurn.id = 0x01E0;
+	}
+	else if( iTurn.id == 0x01E6 )  // RoughAngledPillar
+	{
+		iTurn.id = 0x01E7;
+	}
+	else if( iTurn.id == 0x01E7 )
+	{
+		iTurn.id = 0x01E6;
+	}
 	else if( iTurn.id == 0x01E8 )  // ShortRough
-    {
-        iTurn.id = 0x01E9;
-    }
-    else if( iTurn.id == 0x01E9 )
-    {
-        iTurn.id = 0x01EA;
-    }
-    else if( iTurn.id == 0x01EA )
-    {
-        iTurn.id = 0x01E9;
-    }
+	{
+		iTurn.id = 0x01E9;
+	}
+	else if( iTurn.id == 0x01E9 )
+	{
+		iTurn.id = 0x01EA;
+	}
+	else if( iTurn.id == 0x01EA )
+	{
+		iTurn.id = 0x01E9;
+	}
 	else if( iTurn.id == 0x01EB )
-    {
-        iTurn.id = 0x01E8;
-    }
-    else if( iTurn.id == 0x0789 ) // Rough steps
-    {
-        iTurn.id = 0x078A;
-    }
-    else if( iTurn.id == 0x078A )
-    {
-        iTurn.id = 0x078B;
-    }
-    else if( iTurn.id == 0x078B )
-    {
-        iTurn.id = 0x078C;
-    }
-    else if( iTurn.id == 0x078C )
-    {
-        iTurn.id = 0x0789;
-    }
-    else if( iTurn.id == 0x078D ) // Rough corner steps
-    {
-        iTurn.id = 0x078E;
-    }
-    else if( iTurn.id == 0x078E )
-    {
-        iTurn.id = 0x078F;
-    }
-    else if( iTurn.id == 0x078F )
-    {
-        iTurn.id = 0x0790;
-    }
-    else if( iTurn.id == 0x0790 )
-    {
-        iTurn.id = 0x078D;
-    }
-    else if( iTurn.id == 0x0791 ) // Rough rounded corner steps
-    {
-        iTurn.id = 0x0792;
-    }
-    else if( iTurn.id == 0x0792 )
-    {
-        iTurn.id = 0x0793;
-    }
-    else if( iTurn.id == 0x0793 )
-    {
-        iTurn.id = 0x0794;
-    }
-    else if( iTurn.id == 0x0794 )
-    {
-        iTurn.id = 0x0791;
-    }
-    else if( iTurn.id == 0x0795 ) // Rough inset steps
-    {
-        iTurn.id = 0x0796;
-    }
-    else if( iTurn.id == 0x0796 )
-    {
-        iTurn.id = 0x0797;
-    }
-    else if( iTurn.id == 0x0797 )
-    {
-        iTurn.id = 0x0798;
-    }
-    else if( iTurn.id == 0x0798 )
-    {
-        iTurn.id = 0x0795;
-    }
-    else if( iTurn.id == 0x0799 ) // Rough rounded inset steps
-    {
-        iTurn.id = 0x079A;
-    }
-    else if( iTurn.id == 0x079A )
-    {
-        iTurn.id = 0x079B;
-    }
-    else if( iTurn.id == 0x079B )
-    {
-        iTurn.id = 0x079C;
-    }
-    else if( iTurn.id == 0x079C )
-    {
-        iTurn.id = 0x0799;
-    }
+	{
+		iTurn.id = 0x01E8;
+	}
+	else if( iTurn.id == 0x0789 ) // Rough steps
+	{
+		iTurn.id = 0x078A;
+	}
+	else if( iTurn.id == 0x078A )
+	{
+		iTurn.id = 0x078B;
+	}
+	else if( iTurn.id == 0x078B )
+	{
+		iTurn.id = 0x078C;
+	}
+	else if( iTurn.id == 0x078C )
+	{
+		iTurn.id = 0x0789;
+	}
+	else if( iTurn.id == 0x078D ) // Rough corner steps
+	{
+		iTurn.id = 0x078E;
+	}
+	else if( iTurn.id == 0x078E )
+	{
+		iTurn.id = 0x078F;
+	}
+	else if( iTurn.id == 0x078F )
+	{
+		iTurn.id = 0x0790;
+	}
+	else if( iTurn.id == 0x0790 )
+	{
+		iTurn.id = 0x078D;
+	}
+	else if( iTurn.id == 0x0791 ) // Rough rounded corner steps
+	{
+		iTurn.id = 0x0792;
+	}
+	else if( iTurn.id == 0x0792 )
+	{
+		iTurn.id = 0x0793;
+	}
+	else if( iTurn.id == 0x0793 )
+	{
+		iTurn.id = 0x0794;
+	}
+	else if( iTurn.id == 0x0794 )
+	{
+		iTurn.id = 0x0791;
+	}
+	else if( iTurn.id == 0x0795 ) // Rough inset steps
+	{
+		iTurn.id = 0x0796;
+	}
+	else if( iTurn.id == 0x0796 )
+	{
+		iTurn.id = 0x0797;
+	}
+	else if( iTurn.id == 0x0797 )
+	{
+		iTurn.id = 0x0798;
+	}
+	else if( iTurn.id == 0x0798 )
+	{
+		iTurn.id = 0x0795;
+	}
+	else if( iTurn.id == 0x0799 ) // Rough rounded inset steps
+	{
+		iTurn.id = 0x079A;
+	}
+	else if( iTurn.id == 0x079A )
+	{
+		iTurn.id = 0x079B;
+	}
+	else if( iTurn.id == 0x079B )
+	{
+		iTurn.id = 0x079C;
+	}
+	else if( iTurn.id == 0x079C )
+	{
+		iTurn.id = 0x0799;
+	}
 }
 
 var divorcedPairs = [ // they are paired up, but more than one index apart and out of order, [hex ID, add or subtract distance]

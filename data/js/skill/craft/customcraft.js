@@ -13,6 +13,7 @@ var customCraftDefinitions = null;
 var customCraftDefinitionsLoaded = false;
 var customCraftDefinitionsLoadError = false;
 var CustomCraftMap = {};
+var loadedCustomCraftName = "";
 
 /** @type { () => object|null } */
 function LoadCustomCraftDefinitions()
@@ -105,6 +106,7 @@ function GetActiveCustomCraftDefinition( pUser )
 function LoadCustomCraftMap( craftDefinition )
 {
 	CustomCraftMap = {};
+	loadedCustomCraftName = "";
 
 	if( !craftDefinition )
 		return false;
@@ -132,6 +134,7 @@ function LoadCustomCraftMap( craftDefinition )
 	}
 
 	Console.Print( "CustomCraft system: Loaded " + craftEntries.length + " entries for " + mapFile + ".\n" );
+	loadedCustomCraftName = craftDefinition.craft;
 	return true;
 }
 
@@ -149,7 +152,7 @@ function PageX( socket, pUser, pageNum )
 		return;
 	}
 
-	if( !CustomCraftMap || Object.keys( CustomCraftMap ).length == 0 )
+	if( loadedCustomCraftName != craftDefinition.craft || !CustomCraftMap || Object.keys( CustomCraftMap ).length == 0 )
 	{
 		if( !LoadCustomCraftMap( craftDefinition ))
 		{
@@ -351,7 +354,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !craftDefinition )
 		return;
 
-	if( !CustomCraftMap || Object.keys( CustomCraftMap ).length == 0 )
+	if( loadedCustomCraftName != craftDefinition.craft || !CustomCraftMap || Object.keys( CustomCraftMap ).length == 0 )
 	{
 		if( !LoadCustomCraftMap( craftDefinition ))
 			return;
@@ -585,6 +588,8 @@ function ReloadCustomCraftDefinitions()
 	customCraftDefinitions = null;
 	customCraftDefinitionsLoaded = false;
 	customCraftDefinitionsLoadError = false;
+	CustomCraftMap = {};
+	loadedCustomCraftName = "";
 
 	LoadCustomCraftDefinitions();
 }

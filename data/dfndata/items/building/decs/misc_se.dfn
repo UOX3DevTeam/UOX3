@@ -1,5 +1,5 @@
 [0x241C]
-{ 
+{
 get=base_item
 name=Small Urn
 id=0x241C
@@ -8,7 +8,7 @@ movable=1
 }
 
 [0x241A]
-{ 
+{
 get=base_item
 name=Tower Sculpture
 id=0x241A

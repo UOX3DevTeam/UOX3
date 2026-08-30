@@ -1,5 +1,5 @@
 [base_chair_sa]
-{ 
+{
 get=base_item
 weight=10000
 movable=2

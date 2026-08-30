@@ -190,7 +190,7 @@ function ItemDetailGump( pUser )
 	var createID = createEntry.id; // section id of item to craft
 	var addItem = createEntry.addItem; // section header of item to craft
 	var sound = createEntry.sound; // sound to play when crafting item
-    var delay = createEntry.delay; // how long it takes to craft the item
+	var delay = createEntry.delay; // how long it takes to craft the item
 	var spell = createEntry.spell; // spell requirement to craft the item
 	var resources = createEntry.resources; // list of resources needed
 	var skills = createEntry.skills; // list of skill requirements
@@ -205,7 +205,7 @@ function ItemDetailGump( pUser )
 		var resource = resources[i]
 		var amountNeeded = resource[0];
 		var resourceColour = resource[1];
-        var resourceIDs = resource[2];
+		var resourceIDs = resource[2];
 	}
 	ItemDetailsGump( itemGump, pUser );
 	itemGump.AddText( 330, 40, textHue, createName );
@@ -221,10 +221,10 @@ function ItemDetailGump( pUser )
 	var rank = 0;
 	var rndNum1 = 0;
 	var supportSkillTooLow = false;
-    for( var i = 0; i < skills.length; i++ )
-    {
-        var skillReq = skills[i];
-        var skillNumber = skillReq[0];
+	for( var i = 0; i < skills.length; i++ )
+	{
+		var skillReq = skills[i];
+		var skillNumber = skillReq[0];
 		var minSkill = skillReq[1];
 		var maxSkill = skillReq[2];
 
@@ -400,7 +400,7 @@ function ItemDetailsGump( itemGump, pUser )
 	itemGump.AddTiledGump( 165, 302, 355, 80, 2624 );
 	itemGump.AddTiledGump( 10, 387, 510, 22, 2624 );
 	itemGump.AddCheckerTrans( 10, 10, 510, 399 );
-    itemGump.AddHTMLGump( 170, 40, 150, 20, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10000, socket.language ) + "</basefont> </center>" );  // ITEM
+	itemGump.AddHTMLGump( 170, 40, 150, 20, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10000, socket.language ) + "</basefont> </center>" );  // ITEM
 
 	itemGump.AddHTMLGump( 10, 217, 150, 22, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10001, socket.language ) + "</basefont> </center>" );  //<CENTER>MATERIALS</CENTER>
 	itemGump.AddHTMLGump( 10, 302, 150, 22, false, false, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10002, socket.language ) + "</basefont> </center>" );  // <CENTER>OTHER</CENTER>
@@ -581,7 +581,7 @@ function onGumpPress( pSock, pButton, gumpData )
 						default: TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
 					}
 					break;
-			  	case 10: // masonry
+				case 10: // masonry
 					pUser.SetTempTag( "ITEMDETAILS", null )
 					pSock.CloseGump( gumpID, 0 );
 					switch( pUser.GetTempTag("page" ))
@@ -612,15 +612,15 @@ function onGumpPress( pSock, pButton, gumpData )
 
 function HasLearnedRecipe( pUser, recipeID )
 {
-    var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
-    if( !myData || myData.length == 0 )
-        return false;
+	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	if( !myData || myData.length == 0 )
+		return false;
 
-    for( var i = 0; i < myData.length; i++ )
-    {
-        var data = myData[i].split( "," );
-        if( data[0] == recipeID )
-            return true;
-    }
-    return false;
+	for( var i = 0; i < myData.length; i++ )
+	{
+		var data = myData[i].split( "," );
+		if( data[0] == recipeID )
+			return true;
+	}
+	return false;
 }

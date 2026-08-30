@@ -346,7 +346,7 @@ HOUSE_ITEM=1058
 HOUSE_ITEM=1059
 }
 
-// House Addon - stone anvil (east) 
+// House Addon - stone anvil (east)
 [HOUSE 324]
 {
 ID=0x14F0
@@ -359,7 +359,7 @@ HOUSE_DEED=stoneanvileastdeed
 HOUSE_ITEM=1060
 }
 
-// House Addon - stone anvil (south) 
+// House Addon - stone anvil (south)
 [HOUSE 325]
 {
 ID=0x14F0

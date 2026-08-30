@@ -60,8 +60,6 @@
 	{ "makeID": 276, "label": "Clock", "dictID": 11941, "page": 7, "timerID": 7, "harvest": [11802, 11862] },
 	{ "makeID": 277, "label": "Clock", "dictID": 11942, "page": 7, "timerID": 7, "harvest": [11802, 11862] },
 	{ "makeID": 278, "label": "Clock Parts", "dictID": 11943, "page": 7, "timerID": 7, "harvest": [11801, 11863] },
-	{ "makeID": 279, "label": "Locked Box", "dictID": 11944, "page": 7, "timerID": 7, "harvest": [10634] },
-	{ "makeID": 280, "label": "Locked Chest", "dictID": 11945, "page": 7, "timerID": 7, "harvest": [10638] },
 	{ "makeID": 281, "label": "Potion Keg", "dictID": 11946, "page": 7, "timerID": 7, "harvest": [10642, 11861, 10612, 10928] },
 	{ "makeID": 282, "label": "Sextant", "dictID": 11947, "page": 7, "timerID": 7, "harvest": [11948] },
 	{ "makeID": 283, "label": "Sextant Parts", "dictID": 11948, "page": 7, "timerID": 7, "harvest": [11801, 11863] },

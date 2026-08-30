@@ -5,7 +5,7 @@
 	{ "buttonID": 103, "label": "Ringmail Tunic", "dictID": 10220, "page": 1, "timerID": 1, "oreMake": [10, 509, 609, 709, 809, 909, 1209, 1009, 1109], "harvest": [10015] },
 	{ "buttonID": 104, "label": "Chainmail Coif", "dictID": 10221, "page": 1, "timerID": 1, "oreMake": [11, 510, 610, 710, 810, 910, 1210, 1010, 1110], "harvest": [10015] },
 	{ "buttonID": 105, "label": "Chainmail Leggings", "dictID": 10222, "page": 1, "timerID": 1, "oreMake": [12, 511, 611, 711, 811, 911, 1211, 1011, 1111], "harvest": [10015] },
-	{ "buttonID": 106, "label": "Chainmail Tunic", "dictID": 10223, "page": 1, "timerID": 1, "oreMake": [13, 512, 612, 7012, 812, 912, 1212, 1012, 1112], "harvest": [10015] },
+	{ "buttonID": 106, "label": "Chainmail Tunic", "dictID": 10223, "page": 1, "timerID": 1, "oreMake": [13, 512, 612, 712, 812, 912, 1212, 1012, 1112], "harvest": [10015] },
 	{ "buttonID": 107, "label": "Platemail Arms", "dictID": 10224, "page": 1, "timerID": 1, "oreMake": [16, 515, 615, 715, 815, 915, 1215, 1015, 1115], "harvest": [10015] },
 	{ "buttonID": 108, "label": "Platemail Gloves", "dictID": 10225, "page": 1, "timerID": 1, "oreMake": [15, 514, 614, 714, 814, 914, 1214, 1014, 1114], "harvest": [10015] },
 	{ "buttonID": 109, "label": "Platemail Gorget", "dictID": 10226, "page": 1, "timerID": 1, "oreMake": [14, 513, 613, 713, 813, 913, 1213, 1013, 1113], "harvest": [10015] },
