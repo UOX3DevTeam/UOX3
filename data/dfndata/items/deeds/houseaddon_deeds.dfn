@@ -486,3 +486,39 @@ origin=uor
 {
 get=dc_anvil_deed si_anvil_deed c_anvil_deed b_anvil_deed g_anvil_deed a_anvil_deed ve_anvil_deed va_anvil_deed
 }
+
+[mediumstonetableeastdeed]
+{
+name=stone table (east)
+id=0x14f0
+morex=210
+value=1000 500
+restock=15
+}
+
+[mediumstonetablesouthdeed]
+{
+name=stone table (south)
+id=0x14f0
+morex=211
+value=1000 500
+restock=15
+}
+
+[largestonetableeastdeed]
+{
+name=large stone table (east)
+id=0x14f0
+morex=212
+value=1000 500
+restock=15
+}
+
+[largestonetablesouthdeed]
+{
+name=large stone table (south)
+id=0x14f0
+morex=213
+value=1000 500
+restock=15
+}

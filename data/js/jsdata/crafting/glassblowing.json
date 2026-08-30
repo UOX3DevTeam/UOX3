@@ -1,0 +1,22 @@
+[
+	{ "makeID": 3000, "label": "empty bottle", "dictID": 13600, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3001, "label": "flask (small)", "dictID": 13601, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3002, "label": "flask (medium)", "dictID": 13602, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3003, "label": "flask (curved)", "dictID": 13603, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3004, "label": "flask (large #1)", "dictID": 13604, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3005, "label": "flask (large #2)", "dictID": 13605, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3006, "label": "flask (bubbling blue)", "dictID": 13606, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3007, "label": "flask (bubbling purple)", "dictID": 13607, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3008, "label": "flask (bubbling red)", "dictID": 13608, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3009, "label": "empty vials", "dictID": 13609, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3010, "label": "full vials", "dictID": 13610, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3011, "label": "spinning hourglass", "dictID": 13611, "page": 1, "timerID": 1, "harvest": [13504] },
+	{ "makeID": 3012, "label": "hollow prism", "customName": "hollow prism", "page": 1, "timerID": 1, "harvest": [13504], "minEra": "ml" },
+	{ "makeID": 3013, "label": "gargoyle floor mirror", "customName": "gargoyle floor mirror", "page": 1, "timerID": 1, "harvest": [13504], "minEra": "sa" },
+	{ "makeID": 3014, "label": "gargoyle wall mirror", "customName": "gargoyle wall mirror", "page": 1, "timerID": 1, "harvest": [13504], "minEra": "sa" },
+	{ "makeID": 3015, "label": "empty venom vial", "customName": "empty venom vial", "page": 1, "timerID": 1, "harvest": [13504], "minEra": "sa" },
+	{ "makeID": 3016, "label": "empty oil flask", "customName": "empty oil flask", "page": 1, "timerID": 1, "harvest": [13504], "minEra": "sa" },
+	{ "makeID": 3017, "label": "workable glass", "customName": "workable glass", "page": 1, "timerID": 1, "harvest": [13504], "minEra": "sa" },
+	{ "makeID": 3018, "label": "glass sword", "customName": "glass sword", "page": 2, "timerID": 2, "harvest": [13504], "minEra": "sa" },
+	{ "makeID": 3019, "label": "glass staff", "customName": "glass staff", "page": 2, "timerID": 2, "harvest": [13504], "minEra": "sa" }
+]

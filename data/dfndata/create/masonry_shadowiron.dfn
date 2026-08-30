@@ -1,0 +1,704 @@
+[ITEM 3700]
+{
+NAME=Vase
+ID=0x0b46
+RESOURCE=STONE 1 0x966
+SKILL=11 520 1020
+ADDITEM=0x0b46
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3701]
+{
+NAME=Large Vase
+ID=0x0b45
+RESOURCE=STONE 3 0x966
+SKILL=11 520 1020
+ADDITEM=0x0b45
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3702]
+{
+NAME=small Urn
+ID=0x241c
+RESOURCE=STONE 3 0x966
+SKILL=11 820 1030
+ADDITEM=0x241c
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3703]
+{
+NAME=Tower sculpture
+ID=0x241a
+RESOURCE=STONE 3 0x966
+SKILL=11 820 1030
+ADDITEM=0x241a
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3704]
+{
+NAME=gargoyle painting
+ID=0x403d
+RESOURCE=STONE 3 0x966
+SKILL=11 820 1330
+ADDITEM=0x403d
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3705]
+{
+NAME=gargoyle sculpture
+ID=0x403f
+RESOURCE=STONE 3 0x966
+SKILL=11 820 1320
+ADDITEM=0x403f
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3706]
+{
+NAME=gargoyle vase
+ID=0x4042
+RESOURCE=STONE 3 0x966
+SKILL=11 800 1260
+ADDITEM=0x4042
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3707]
+{
+NAME=Tall 18th anniversary Vase
+ID=0x9bc7
+RESOURCE=STONE 6 0x966
+SKILL=11 600 1100
+ADDITEM=0x9bc7
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3708]
+{
+NAME=short 18th anniversary Vase
+ID=0x9bca
+RESOURCE=STONE 6 0x966
+SKILL=11 600 1100
+ADDITEM=0x9bca
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	        furniture        /////
+//////////////////////////////////////
+
+[ITEM 3709]
+{
+NAME=stone chair
+ID=0x1218
+RESOURCE=STONE 4 0x966
+SKILL=11 550 1050
+ADDITEM=0x1218
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3710]
+{
+NAME=stone table (east)
+ID=0x14f0
+RESOURCE=STONE 6 0x966
+SKILL=11 650 1150
+ADDITEM=mediumstonetableeastdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3711]
+{
+NAME=stone table (south)
+ID=0x14f0
+RESOURCE=STONE 6 0x966
+SKILL=11 650 1150
+ADDITEM=mediumstonetablesouthdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3712]
+{
+NAME=large stone table (east)
+ID=0x14f0
+RESOURCE=STONE 9 0x966
+SKILL=11 750 1250
+ADDITEM=largestonetableeastdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3713]
+{
+NAME=large stone table (south)
+ID=0x14f0
+RESOURCE=STONE 9 0x966
+SKILL=11 750 1250
+ADDITEM=largestonetablesouthdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3714]
+{
+NAME=ritual table
+ID=0x14f0
+RESOURCE=STONE 8 0x966
+SKILL=11 940 1030
+ADDITEM=ritualtabledeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	        statues          /////
+//////////////////////////////////////
+
+[ITEM 3715]
+{
+NAME=small statue (south)
+ID=0x139a
+RESOURCE=STONE 3 0x966
+SKILL=11 600 1100
+ADDITEM=0x139a
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3716]
+{
+NAME=small statue (north)
+ID=0x139b
+RESOURCE=STONE 3 0x966
+SKILL=11 600 1100
+ADDITEM=0x139b
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3717]
+{
+NAME=small statue (east)
+ID=0x139c
+RESOURCE=STONE 3 0x966
+SKILL=11 600 1100
+ADDITEM=0x139c
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3718]
+{
+NAME=pegasus statuette
+ID=0x139d
+RESOURCE=STONE 4 0x966
+SKILL=11 700 1200
+ADDITEM=0x139d
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3719]
+{
+NAME=gargoyle statue
+ID=0x494e
+RESOURCE=STONE 20 0x966
+SKILL=11 540 1040
+ADDITEM=0x494e
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3720]
+{
+NAME=gryphon statue
+ID=0x494e
+RESOURCE=STONE 15 0x966
+SKILL=11 540 1040
+ADDITEM=0x494e
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	        Misc addons      /////
+//////////////////////////////////////
+
+[ITEM 3721]
+{
+NAME=stone anvil (east)
+ID=0x14f0
+RESOURCE=STONE 20 0x966
+SKILL=11 780 1280
+ADDITEM=stoneanvileastdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3722]
+{
+NAME=stone anvil (south)
+ID=0x14f0
+RESOURCE=STONE 20 0x966
+SKILL=11 780 1280
+ADDITEM=stoneanvilsouthdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3723]
+{
+NAME=large gargish bed (east)
+ID=0x14f0
+RESOURCE=STONE 3 0x966
+RESOURCE=CLOTH 100
+SKILL=11 760 1260
+SKILL=34 700 750
+ADDITEM=largegargoylebedeastdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3724]
+{
+NAME=large gargish bed (south)
+ID=0x14f0
+RESOURCE=STONE 3 0x966
+RESOURCE=CLOTH 100
+SKILL=11 760 1260
+SKILL=34 700 750
+ADDITEM=largegargoylebedsouthdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3725]
+{
+NAME=gargish cot (east)
+ID=0x14f0
+RESOURCE=STONE 3 0x966
+RESOURCE=CLOTH 100
+SKILL=11 760 1260
+SKILL=34 700 750
+ADDITEM=gargishcoteasteastdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3726]
+{
+NAME=gargish cot (south)
+ID=0x14f0
+RESOURCE=STONE 3 0x966
+RESOURCE=CLOTH 100
+SKILL=11 760 1260
+SKILL=34 700 750
+ADDITEM=gargishcoteastsouthdeed
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	        stone armor      /////
+//////////////////////////////////////
+
+[ITEM 3727]
+{
+NAME=gargish stone arms
+ID=0x0283
+RESOURCE=STONE 8 0x966
+SKILL=11 560 1060
+ADDITEM=femalegargishstonearms
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3728]
+{
+NAME=gargish stone chest
+ID=0x0285
+RESOURCE=STONE 12 0x966
+SKILL=11 560 1060
+ADDITEM=femalegargishstonechest
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3729]
+{
+NAME=gargish stone leggings
+ID=0x0289
+RESOURCE=STONE 10 0x966
+SKILL=11 560 1060
+ADDITEM=femalegargishstoneleggings
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3730]
+{
+NAME=gargish stone kilt
+ID=0x0287
+RESOURCE=STONE 6 0x966
+SKILL=11 480 980
+ADDITEM=femalegargishstonekilt
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3731]
+{
+NAME=gargish stone arms
+ID=0x0284
+RESOURCE=STONE 8 0x966
+SKILL=11 560 1060
+ADDITEM=gargishstonearms
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3732]
+{
+NAME=gargish stone chest
+ID=0x0286
+RESOURCE=STONE 12 0x966
+SKILL=11 560 1060
+ADDITEM=gargishstonechest
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3733]
+{
+NAME=gargish stone leggings
+ID=0x028a
+RESOURCE=STONE 10 0x966
+SKILL=11 560 1060
+ADDITEM=gargishstoneleggings
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3734]
+{
+NAME=gargish stone kilt
+ID=0x0288
+RESOURCE=STONE 6 0x966
+SKILL=11 480 980
+ADDITEM=gargishstonekilt
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3735]
+{
+NAME=large stone shield
+ID=0x4205
+RESOURCE=STONE 16 0x966
+SKILL=11 550 1060
+ADDITEM=largestoneshield
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3736]
+{
+NAME=gargish stone amulet
+ID=0x4D0a
+RESOURCE=STONE 3 0x966
+SKILL=11 600 1100
+ADDITEM=0x4D0a
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	      stone weapons      /////
+//////////////////////////////////////
+
+[ITEM 3737]
+{
+NAME=stone war sword
+ID=0x4D0a
+RESOURCE=STONE 18 0x966
+SKILL=11 550 1050
+ADDITEM=stonewarsword
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	      stone walls        /////
+//////////////////////////////////////
+
+[ITEM 3738]
+{
+NAME=rough windowless
+ID=0x01D0
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=roughwindowless1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3739]
+{
+NAME=rough window
+ID=0x01D3
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=roughwindow1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3740]
+{
+NAME=rough arch
+ID=0x01D5
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=rougharch1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3741]
+{
+NAME=rough pillar
+ID=0x01Da
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=roughpillar
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3742]
+{
+NAME=rough rounded arch
+ID=0x01DB
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=roughroundedarch1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3743]
+{
+NAME=rough small arch
+ID=0x01E0
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=roughsmallarch1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3744]
+{
+NAME=rough angled pillar
+ID=0x01E6
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=roughangledpillar1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3745]
+{
+NAME=short rough
+ID=0x01E8
+RESOURCE=STONE 10 0x966
+SKILL=11 600 1100
+ADDITEM=shortrough1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//[ITEM 3746]
+//[ITEM 3747]
+//[ITEM 3748]
+//[ITEM 3749]
+
+//////////////////////////////////////
+////	      stone stairs       /////
+//////////////////////////////////////
+
+[ITEM 3750]
+{
+NAME=short rough
+ID=0x0788
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=roughblock
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3751]
+{
+NAME=rough steps
+ID=0x0789
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=roughsteps1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3752]
+{
+NAME=rough corner steps
+ID=0x078d
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=roughcornersteps1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3753]
+{
+NAME=rough rounded corner step
+ID=0x0791
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=roughroundedcornerseps1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3754]
+{
+NAME=rough inset steps
+ID=0x0795
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=roughinsetsteps1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3755]
+{
+NAME=rough rounded inset steps
+ID=0x0799
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=roughroundedisetsteps1
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+//////////////////////////////////////
+////	      stone floors       /////
+//////////////////////////////////////
+
+[ITEM 3756]
+{
+NAME=light paver
+ID=0x0519
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=lightpaver
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3757]
+{
+NAME=medium paver
+ID=0x0519
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=mediumpaver
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}
+
+[ITEM 3758]
+{
+NAME=dark paver
+ID=0x0519
+RESOURCE=STONE 5 0x966
+SKILL=11 600 1100
+ADDITEM=darkpaver
+MINRANK=1
+MAXRANK=10
+SOUND=0x23D
+}

@@ -6,7 +6,7 @@ function AddRecipe( pUser, iUsed, recipeID, recipeSectionID )
 	// Read Recipe
 	var myData = ReadRecipeID( pUser );
 
-	for( let i = 0; i < myData.length; i++ )
+	for( var i = 0; i < myData.length; i++ )
 	{
 		var myRecipeData = myData[i].split(",");
 
@@ -35,7 +35,7 @@ function NeedRecipe( pSock, recipeID )
 
 	if( myData && myData.length > 0 )
 	{
-		for( let i = 0; i < myData.length; i++ )
+		for( var i = 0; i < myData.length; i++ )
 		{
 			var myRecipeData = myData[i].split(",");
 

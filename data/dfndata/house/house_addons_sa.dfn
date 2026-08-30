@@ -1,0 +1,293 @@
+// House Addon - ritual table
+[HOUSE 2000]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=ritualtabledeed
+HOUSE_ITEM=2000
+HOUSE_ITEM=2001
+HOUSE_ITEM=2002
+HOUSE_ITEM=2003
+}
+
+// House Addon - large gargish bed (east)
+[HOUSE 2001]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largegargoylebedeastdeed
+HOUSE_ITEM=2006
+HOUSE_ITEM=2007
+HOUSE_ITEM=2008
+HOUSE_ITEM=2009
+HOUSE_ITEM=2010
+HOUSE_ITEM=2011
+HOUSE_ITEM=2012
+HOUSE_ITEM=2013
+HOUSE_ITEM=2014
+}
+
+// House Addon - large gargish bed (south)
+[HOUSE 2002]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largegargoylebedsouthdeed
+HOUSE_ITEM=2015
+HOUSE_ITEM=2016
+HOUSE_ITEM=2017
+HOUSE_ITEM=2018
+HOUSE_ITEM=2019
+HOUSE_ITEM=2020
+HOUSE_ITEM=2021
+HOUSE_ITEM=2022
+HOUSE_ITEM=2023
+}
+
+// House Addon - gargish cot (east)
+[HOUSE 2003]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=gargishcoteasteastdeed
+HOUSE_ITEM=2024
+HOUSE_ITEM=2025
+}
+
+// House Addon - gargish cot (south)
+[HOUSE 2004]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=gargishcoteastsouthdeed
+HOUSE_ITEM=2026
+HOUSE_ITEM=2027
+}
+
+[HOUSE ITEM 2000]
+{ // ritual table
+ITEM=0x4985
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 2001]
+{ // ritual table
+ITEM=0x4984
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 2002]
+{ // ritual table
+ITEM=0x4983
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 2003]
+{ // ritual table
+ITEM=0x4982
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 2006]
+{ E Left Side Gargoyle Bed
+ITEM=0x4019
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 2007]
+{ E Left Side Gargoyle Bed
+ITEM=0x401c
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 2008]
+{ E Left Side Gargoyle Bed
+ITEM=0x401f
+X=0
+Y=2
+Z=0
+}
+
+HOUSE ITEM 2009]
+{ E Middle Gargoyle Bed
+ITEM=0x401a
+X=1
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2010]
+{ E Middle Gargoyle Bed
+ITEM=0x401d
+X=1
+Y=1
+Z=0
+}
+
+HOUSE ITEM 2011]
+{ E Middle Gargoyle Bed
+ITEM=0x4020
+X=1
+Y=2
+Z=0
+}
+
+HOUSE ITEM 2012]
+{ E Right Side Gargoyle Bed
+ITEM=0x401b
+X=2
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2013]
+{ E Right Side Gargoyle Bed
+ITEM=0x401e
+X=2
+Y=1
+Z=0
+}
+
+HOUSE ITEM 2014]
+{ E Right Side Gargoyle Bed
+ITEM=0x4021
+X=2
+Y=2
+Z=0
+}
+
+HOUSE ITEM 2015]
+{ S Left Side Gargoyle Bed
+ITEM=0x4010
+X=0
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2016]
+{ S Left Side Gargoyle Bed
+ITEM=0x4013
+X=0
+Y=1
+Z=0
+}
+
+HOUSE ITEM 2017]
+{ S Left Side Gargoyle Bed
+ITEM=0x4016
+X=0
+Y=2
+Z=0
+}
+
+HOUSE ITEM 2018]
+{ S Middle Gargoyle Bed
+ITEM=0x4011
+X=1
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2019]
+{ S Middle Gargoyle Bed
+ITEM=0x4014
+X=1
+Y=1
+Z=0
+}
+
+HOUSE ITEM 2020]
+{ S Middle Gargoyle Bed
+ITEM=0x4017
+X=1
+Y=2
+Z=0
+}
+
+HOUSE ITEM 2021]
+{ S left Side Gargoyle Bed
+ITEM=0x4012
+X=2
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2022]
+{ S left Side Gargoyle Bed
+ITEM=0x4015
+X=2
+Y=1
+Z=0
+}
+
+HOUSE ITEM 2023]
+{ S left Side Gargoyle Bed
+ITEM=0x4018
+X=2
+Y=2
+Z=0
+}
+
+HOUSE ITEM 2024]
+{ E Gargoyle Cot
+ITEM=0x400e
+X=0
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2025]
+{ E Gargoyle Cot
+ITEM=0x400f
+X=1
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2026]
+{ S Gargoyle Cot
+ITEM=0x400d
+X=0
+Y=0
+Z=0
+}
+
+HOUSE ITEM 2027]
+{ S Gargoyle Cot
+ITEM=0x400c
+X=0
+Y=-1
+Z=0
+}

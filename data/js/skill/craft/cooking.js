@@ -1,73 +1,30 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-const LabelHue = 0x480;				// Color of the text.
-const LabelColor = 0x7FFF;			// Second Color of text.
-const scriptID = 4034;				// Use this to tell the gump what script to close.
-const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
-const itemDetailsScriptID = 4026;
-const craftGumpID = 4027;
-const manualMillTarget = true;		// If true, player must manually target mills when grinding wheat
+const textHue               = 0x480;                 // Color of the text.
+const cookingID             = 4034;                  // Script ID for this cooking gump
+const gumpDelay             = 2000;                  // Delay (ms) before gump reappears after crafting
+const itemDetailsScriptID   = 4026;                  // Generic item details gump
+const craftGumpID           = 4027;                  // Shared crafting menu frame
+const itemsPerPage          = 10;                    // Items per subpage
+const displayUnlearnedRecipes = true;                // For future recipe use
+const coreShardEra          = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+const cookingSkillID        = 13;                    // Index for "cooking" in ItemDetailGump skillNames[]
+const manualMillTarget      = true;                  // If true, player must target mills when grinding wheat
 
-//////////////////////////////////////////////////////////////////////////////////////////
-//  The section below is the tables for each page.
-//  All you have to do is add the item to your dictionary 
-//  and then list the dictionary number in the right page and it will
-//  add it to the crafting gump.
-///////////////////////////////////////////////////////////////////////////////////////////
-
-const myPage = [
-	// Page 1 - Ingredients
-	[ 11606, 11607, 11608, 11609, 11610 ],
-
-	// Page 2 - Preparations
-	[ 11611, 11612, 11613, 11614, 11615, 11616, 11617, 11618 ],
-
-	// Page 3 - Baking
-	[11619, 11620, 11621, 11657, 11622, 11623, 11624, 11625, 11626, 11627, 11628, 11629 ],
-
-	// Page 4 - Barbecue
-	[ 11630, 11631, 11632, 11633, 11634, 11635 ]
-
-];
-
-function PageX( socket, pUser, pageNum )
-{
-	// Pages 1 - 4
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
-	for ( var i = 0; i < myPage[pageNum - 1].length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, ( 100 * pageNum ) + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), LabelHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ));
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2000 + ( 100 * pageNum ) + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
+// Mills / ovens / heat sources for AreaItemFunction + StaticInRange checks
 const mills = [
-		0x188b, 0x1893, 0x1920, 0x1922, 0x192c, 0x192e
+	0x188b, 0x1893, 0x1920, 0x1922, 0x192c, 0x192e
 ];
+
+const ovens = [
+	0x0461, 0x046f, 0x092b, 0x093f
+];
+
+const heatSources = [
+	0x0461, 0x0480, 0x092B, 0x0933, 0x0937, 0x0942, 0x0945, 0x0950, 0x0953,
+	0x095e, 0x0961, 0x096c, 0x0de3, 0x0de8, 0x0fac
+];
+
 function FindNearbyMills( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
@@ -76,9 +33,6 @@ function FindNearbyMills( pUser, trgItem, pSock )
 	return ( mills.indexOf( trgItem.id ) != -1 );
 }
 
-const ovens = [
-		0x461, 0x46F, 0x92B, 0x93F
-];
 function FindNearbyOvens( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
@@ -87,10 +41,6 @@ function FindNearbyOvens( pUser, trgItem, pSock )
 	return ( ovens.indexOf( trgItem.id ) != -1 );
 }
 
-const heatSources = [
-		0x0461, 0x0480, 0x092B, 0x0933, 0x0937, 0x0942, 0x0945, 0x0950, 0x0953,
-		0x095e, 0x0961, 0x096c, 0x0de3, 0x0de8, 0x0fac
-];
 function FindNearbyHeatSources( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
@@ -99,291 +49,400 @@ function FindNearbyHeatSources( pUser, trgItem, pSock )
 	return ( heatSources.indexOf( trgItem.id ) != -1 );
 }
 
-/** @type { ( tObject: BaseObject, timerId: number ) => void } */
+const craftMapRegistryID = 4038;
+var CookingMap = {};
+
+/** @type { () => boolean } */
+function LoadCookingMap()
+{
+	CookingMap = {};
+
+	var cookingEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "cooking" );
+
+	if( !cookingEntries || !IsCookingArrayValue( cookingEntries ) )
+	{
+		Console.Warning( "Cooking: Unable to load cooking craft map data." );
+		return false;
+	}
+
+	for( var i = 0; i < cookingEntries.length; i++ )
+	{
+		var entry = cookingEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
+
+		if( entry.skill === undefined )
+			entry.skill = cookingSkillID;
+
+		CookingMap[entry.makeID] = entry;
+	}
+
+	Console.Print( "Cooking: Loaded " + cookingEntries.length + " craft map entries.\n" );
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsCookingArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
+
+/** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
+function PageX( socket, pUser, pageNum )
+{
+	if( !socket || !ValidateObject( pUser ))
+		return;
+
+	if( !CookingMap || Object.keys( CookingMap ).length == 0 )
+	{
+		if( !LoadCookingMap() )
+		{
+			socket.SysMessage( "Cooking craft map failed to load." );
+			return;
+		}
+	}
+
+	var pageItems;
+
+	// No "Last Ten" page here (but we keep the infrastructure if you want it later)
+	if( pageNum == 999 )
+	{
+		var lastTenRaw = pUser.GetTempTag( "LastTenCooking" ) || "";
+		var split = lastTenRaw.split( "," );
+		pageItems = [];
+
+		for( var i = 0; i < split.length; i++ )
+		{
+			var val = parseInt( split[i] );
+			if( !isNaN( val ))
+				pageItems.push( val );
+		}
+	}
+	else
+	{
+		// Collect all makeIDs for this page
+		var makeIDs = [];
+		for( var key in CookingMap )
+		{
+			if( !CookingMap.hasOwnProperty( key ))
+				continue;
+
+			var makeID = parseInt( key );
+			var data = CookingMap[makeID];
+			if( !data || data.page != pageNum )
+				continue;
+
+			makeIDs.push( makeID );
+		}
+
+		// Sort by dictID so order matches dictionary sequence
+		makeIDs.sort( function( a, b )
+		{
+			var ea = CookingMap[a];
+			var eb = CookingMap[b];
+			if( ea && eb )
+				return ( ea.dictID || 0 ) - ( eb.dictID || 0 );
+			return a - b;
+		});
+
+		// Era / recipe filtering (hooks for future use)
+		pageItems = [];
+		for( var k = 0; k < makeIDs.length; k++ )
+		{
+			var id = makeIDs[k];
+			var data2 = CookingMap[id];
+			if( !data2 )
+				continue;
+
+			var needsRecipe = data2.recipeID;
+			var showAll = displayUnlearnedRecipes;
+
+			if( eraOK( data2 ) && ( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe )) )
+				pageItems.push( id );
+		}
+
+		// Fallback: if no items on this page and it's not page 1, go to page 1
+		if( pageItems.length == 0 && pageNum != 1 )
+		{
+			pageNum = 1;
+
+			makeIDs = [];
+			for( var key2 in CookingMap )
+			{
+				if( !CookingMap.hasOwnProperty( key2 ))
+					continue;
+
+				var mid2 = parseInt( key2 );
+				var d3 = CookingMap[mid2];
+				if( !d3 || d3.page != 1 )
+					continue;
+
+				makeIDs.push( mid2 );
+			}
+
+			makeIDs.sort( function( a, b )
+			{
+				var ea2 = CookingMap[a];
+				var eb2 = CookingMap[b];
+				if( ea2 && eb2 )
+					return ( ea2.dictID || 0 ) - ( eb2.dictID || 0 );
+				return a - b;
+			});
+
+			pageItems = [];
+			for( var m = 0; m < makeIDs.length; m++ )
+			{
+				var id2 = makeIDs[m];
+				var data4 = CookingMap[id2];
+				if( !data4 )
+					continue;
+
+				var needsRecipe2 = data4.recipeID;
+				var showAll2 = displayUnlearnedRecipes;
+
+				if( eraOK( data4 ) && ( !needsRecipe2 || showAll2 || HasLearnedRecipe( pUser, needsRecipe2 )) )
+					pageItems.push( id2 );
+			}
+		}
+	}
+
+	// Subpage handling (future-proof; currently only 1 subpage per page)
+	var subPage = pUser.GetTempTag( "subPage" );
+	var totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
+
+	if( totalSubPages < 1 )
+		totalSubPages = 1;
+	if( subPage < 1 )
+		subPage = 1;
+	if( subPage > totalSubPages )
+		subPage = totalSubPages;
+
+	pUser.SetTempTag( "page", pageNum );
+	pUser.SetTempTag( "subPage", subPage );
+
+	var startIndex = ( subPage - 1 ) * itemsPerPage;
+	var endIndex   = Math.min( startIndex + itemsPerPage, pageItems.length );
+
+	if( startIndex >= pageItems.length )
+	{
+		subPage    = 1;
+		startIndex = 0;
+		endIndex   = Math.min( itemsPerPage, pageItems.length );
+		pUser.SetTempTag( "subPage", subPage );
+	}
+
+	var cookGump = new Gump;
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", cookGump, socket );
+	cookGump.AddPage( 1 );
+
+	for( var j = startIndex; j < endIndex; j++ )
+	{
+		var index  = j - startIndex;
+		var makeID = pageItems[j];
+		var entryText;
+		var buttonID = makeID; // use makeID directly as buttonID
+
+		var data5 = CookingMap[makeID];
+
+		if( !data5 )
+		{
+			entryText = "[Missing MakeID: " + makeID + "]";
+		}
+		else
+		{
+			if( data5.customName )
+			{
+				entryText = data5.customName;
+			}
+			else if( data5.dictID )
+			{
+				entryText = GetDictionaryEntry( data5.dictID, socket.language );
+				if( !entryText || entryText === "" )
+					entryText = "[Missing EntryID: " + data5.dictID + "]";
+			}
+			else
+			{
+				entryText = "[Unnamed Item: " + makeID + "]";
+			}
+		}
+
+		// Craft button uses makeID
+		cookGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, buttonID );
+		cookGump.AddText(   255, 60 + ( index * 20 ), textHue, entryText );
+
+		// Detail button: 20000 + makeID
+		cookGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 20000 + buttonID );
+	}
+
+	// Prev subpage
+	if( subPage > 1 )
+	{
+		cookGump.AddButton( 220, 260, 4014, 4015, 1, 0, 8000 + ( subPage - 1 ));
+		cookGump.AddHTMLGump( 255, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" ); // PREV PAGE
+	}
+
+	// Next subpage
+	if( subPage < totalSubPages )
+	{
+		cookGump.AddButton( 370, 260, 4005, 4007, 1, 0, 9000 + ( subPage + 1 ));
+		cookGump.AddHTMLGump( 405, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" ); // NEXT PAGE
+	}
+
+	cookGump.Send( socket );
+	cookGump.Free();
+}
+
+/** @type { ( pUser: Character, timerID: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return;
 
-	switch ( timerID )
+	if( timerID >= 1 && timerID <= 4 )
 	{
-		case 1: // Page 1 - Ingredients
-		case 2: // Page 2 - Preparation
-		case 3: // Page 3 - Baking
-		case 4: // Page 4 - Barbecue
-			PageX( socket, pUser, timerID );
-			break;
+		PageX( pSocket, pUser, timerID );
+	}
+	else if( timerID == 999 )
+	{
+		PageX( pSocket, pUser, 999 );
 	}
 }
 
-/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
-function onGumpPress( pSock, pButton, gumpData )
+/** @type { ( socket: Socket, pButton: number, gumpData: GumpData ) => void } */
+function onGumpPress( socket, pButton, gumpData )
 {
-	var pUser = pSock.currentChar;
+	if( socket == null )
+		return;
 
-	// Don't continue if character is invalid, or worse... dead!
+	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
-	// Don't continue if player no longer has access to the crafting tool
-	var bItem = pSock.tempObj;
-	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	// Don't continue if player no longer has access to the cooking tool
+	var tool = socket.tempObj;
+	if( !ValidateObject( tool ) || !pUser.InRange( tool, 3 ))
 	{
-		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		socket.SysMessage( GetDictionaryEntry( 461, socket.language )); // You are too far away.
 		return;
 	}
 
-	if( bItem.movable == 3 )
+	if( tool.movable == 3 )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
+		socket.SysMessage( GetDictionaryEntry( 6031, socket.language )); // Locked down resources cannot be used!
 		return;
 	}
 
-	var iPackOwner = GetPackOwner( bItem, 0 );
-	if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+	var packOwner = GetPackOwner( tool, 0 );
+	if( ValidateObject( packOwner ))
 	{
-		if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
+		if( packOwner.serial != pUser.serial )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+			socket.SysMessage( GetDictionaryEntry( 6032, socket.language )); // That is in someone else's backpack!
 			return;
 		}
 	}
 	else
 	{
-		pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+		socket.SysMessage( GetDictionaryEntry( 6022, socket.language )); // This must be in your pack to use.
 		return;
 	}
 
-	var gumpID = scriptID + 0xffff;
-	var makeID = 0;
-	var itemDetailsID = 0;
-	var timerID = 0;
+	var gumpID = cookingID + 0xffff;
 
-	// Check for nearby heatsource
-	var nearbyHeatSource = 0;
-	var nearbyMill = 0;
-	var nearbyOven = 0;
+	// Subpage back / forward
+	if( pButton >= 8001 && pButton < 9000 )
+	{
+		var subPage = pButton - 8000;
+		var pageNum = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage );
+		PageX( socket, pUser, pageNum );
+		return;
+	}
 
-	// Make Last Button
+	if( pButton >= 9001 && pButton < 10000 )
+	{
+		var subPage2 = pButton - 9000;
+		var pageNum2 = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage2 );
+		PageX( socket, pUser, pageNum2 );
+		return;
+	}
+
+	// Page tabs (1–4: Ingredients, Preparation, Baking, Barbecue)
+	if( pButton >= 1 && pButton <= 4 )
+	{
+		pUser.SetTempTag( "page", pButton );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, pButton );
+		return;
+	}
+
+	// Last Ten (if you ever wire it into the main craft gump)
+	if( pButton == 11000 )
+	{
+		pUser.SetTempTag( "page", 999 );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, 999 );
+		return;
+	}
+
+	// Close gump
+	if( pButton == 0 )
+	{
+		pUser.SetTempTag( "MakeLast_Cooking", null );
+		pUser.SetTempTag( "CRAFT", null );
+		socket.CloseGump( gumpID, 0 );
+		return;
+	}
+
+	// Make Last
 	if( pButton == 5000 )
 	{
-		pButton = pUser.GetTempTag( "MAKELAST" );
-	}
-
-	if( pButton >= 300 && pButton <= 311 )
-	{
-		// Baking - Requires Oven
-		nearbyOven = AreaItemFunction( "FindNearbyOvens", pUser, 2, pSock );
-		if( nearbyOven > 0 )
-		{
-			pUser.SetTempTag( "MAKELAST", pButton );
-		}
+		var last = pUser.GetTempTag( "MakeLast_Cooking" );
+		if( last )
+			pButton = last;
 		else
-		{
-			// No dynamic oven found nearby! Look for a static one?
-			var staticFound = false;
-			for( var i = 0; i < ovens.length; i++ )
-			{
-				if( StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 2, ovens[i] ))
-				{
-					staticFound = true;
-					break;
-				}
-			}
-			if( !staticFound )
-			{
-				pUser.SetTempTag( "prevActionResult", "NOOVEN" );
-			}
-		}
-	}
-	else if( pButton >= 400 && pButton <= 405 )
-	{
-		// Barbecue - Requires Fire/Generic Heat Source
-		nearbyHeatSource = AreaItemFunction( "FindNearbyHeatSources", pUser, 2, pSock );
-		if( nearbyHeatSource > 0 )
-		{
-			pUser.SetTempTag( "MAKELAST", pButton );
-		}
-		else
-		{
-			// No dynamic heat source found nearby! Look for a static one?
-			var staticFound = false;
-			for( var i = 0; i < heatSources.length; i++ )
-			{
-				if( StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 2, heatSources[i] ))
-				{
-					staticFound = true;
-					break;
-				}
-			}
-			if( !staticFound )
-			{
-				pUser.SetTempTag( "prevActionResult", "NOHEATSOURCE" );
-			}
-		}
-	}
-	else if( pButton >= 101 && pButton <= 207 )
-	{
-		// Ingredients and Preparation - no heatsource required
-		pUser.SetTempTag( "MAKELAST", pButton );
+			return;
 	}
 
-	switch ( pButton )
-	{
-		case 0: // Abort and do nothing
-			pUser.SetTempTag( "MAKELAST", null );
-			pUser.SetTempTag( "CRAFT", null )
-			pSock.CloseGump( gumpID, 0 );
-			break;
-		case 1: // Page 1 - Ingredients
-		case 2: // Page 2 - Preparation
-		case 3: // Page 3 - Baking
-		case 4: // Page 4 - Barbecue
-			pSock.CloseGump( gumpID, 0 );
-			PageX( pSock, pUser, pButton );
-			break;
-		// Make Items
-		// Page 1 - Ingredients
-		case 100: // Sack of Flour
-			makeID = 1500; timerID = 1; break;
-		case 101: // Dough
-			makeID = 1501; timerID = 1; break;
-		case 102: // Sweet Dough
-			makeID = 1502; timerID = 1; break;
-		case 103: // Cake Mix
-			makeID = 1503; timerID = 1; break;
-		case 104: // Cookie Mix
-			makeID = 1504; timerID = 1; break;
-		// Page 2 - Preparation
-		case 200: // Unbaked Quiche
-			makeID = 1550; timerID = 2; break;
-		case 201: // Unbaked Meat Pie
-			makeID = 1551; timerID = 2; break;
-		case 202: // Uncooked Sausage Pizza
-			makeID = 1552; timerID = 2; break;
-		case 203: // Uncooked Cheese Pizza
-			makeID = 1553; timerID = 2; break;
-		case 204: // Unbaked Fruit Pie
-			makeID = 1554; timerID = 2; break;
-		case 205: // Unbaked Peach Cobbler
-			makeID = 1555; timerID = 2; break;
-		case 206: // Unbaked Applie Pie
-			makeID = 1556; timerID = 2; break;
-		case 207: // Unbaked Pumpkin Pie
-			makeID = 1557; timerID = 2; break;
-		// Page 3 - Baking
-		case 300: // Bread Loaf
-			makeID = 1600; timerID = 3; break;
-		case 301: // Pan of Cookies
-			makeID = 1601; timerID = 3; break;
-		case 302: // Cake
-			makeID = 1602; timerID = 3; break;
-		case 303: // Muffins
-			makeID = 1603; timerID = 3; break;
-		case 304: // Baked Quiche
-			makeID = 1604; timerID = 3; break;
-		case 305: // Baked Meat Pie
-			makeID = 1605; timerID = 3; break;
-		case 306: // Sausage Pizza
-			makeID = 1606; timerID = 3; break;
-		case 307: // Cheese Pizza
-			makeID = 1607; timerID = 3; break;
-		case 308: // Baked Fruit Pie
-			makeID = 1608; timerID = 3; break;
-		case 309: // Baked Peach Cobbler
-			makeID = 1609; timerID = 3; break;
-		case 310: // Baked Applie Pie
-			makeID = 1610; timerID = 3; break;
-		case 311: // Baked Pumpkin Pie
-			makeID = 1611; timerID = 3; break;
-		// Page 4 - Barbecue
-		case 400: // Cooked Bird
-			makeID = 1650; timerID = 4; break;
-		case 401: // Chicken Leg
-			makeID = 1651; timerID = 4; break;
-		case 402: // Fish Steak
-			makeID = 1652; timerID = 4; break;
-		case 403: // Fried Eggs
-			makeID = 1653; timerID = 4; break;
-		case 404: // Leg of Lamb
-			makeID = 1654; timerID = 4; break;
-		case 405: // Cut of Ribs
-			makeID = 1655; timerID = 4; break;
-		// Show Item Details
-		case 2100: // Sack of Flour
-			itemDetailsID = 1500; break;
-		case 2101: // Dough
-			itemDetailsID = 1501; break;
-		case 2102: // Sweet Dough
-			itemDetailsID = 1502; break;
-		case 2103: // Cake Mix
-			itemDetailsID = 1503; break;
-		case 2104: // Cookie Mix
-			itemDetailsID = 1504; break;
-		case 2200: // Unbaked Quiche
-			itemDetailsID = 1550; break;
-		case 2201: // Unbaked Meat Pie
-			itemDetailsID = 1551; break;
-		case 2202: // Uncooked Sausage Pizza
-			itemDetailsID = 1552; break;
-		case 2203: // Uncooked Cheese Pizza
-			itemDetailsID = 1553; break;
-		case 2204: // Unbaked Fruit Pie
-			itemDetailsID = 1554; break;
-		case 2205: // Unbaked Peach Cobbler
-			itemDetailsID = 1555; break;
-		case 2206: // Unbaked Apple Pie
-			itemDetailsID = 1556; break;
-		case 2207: // Unbaked Pumpkin Pie
-			itemDetailsID = 1557; break;
-		case 2300: // Bread Loaf
-			itemDetailsID = 1600; break;
-		case 2301: // Pan of Cookies
-			itemDetailsID = 1601; break;
-		case 2302: // Cake
-			itemDetailsID = 1602; break;
-		case 2303: // Muffins
-			itemDetailsID = 1603; break;
-		case 2304: // Baked Quiche
-			itemDetailsID = 1604; break;
-		case 2305: // Baked Meat Pie
-			itemDetailsID = 1605; break;
-		case 2306: // Sausage Pizza
-			itemDetailsID = 1606; break;
-		case 2307: // Cheese Pizza
-			itemDetailsID = 1607; break;
-		case 2308: // Baked Fruit Pie
-			itemDetailsID = 1608; break;
-		case 2309: // Baked Peach Cobbler
-			itemDetailsID = 1609; break;
-		case 2310: // Baked Apple Pie
-			itemDetailsID = 1610; break;
-		case 2311: // Baked Pumpkin Pie
-			itemDetailsID = 1611; break;
-		case 2400: // Cooked Bird
-			itemDetailsID = 1650; break;
-		case 2401: // Chicken Leg
-			itemDetailsID = 1651; break;
-		case 2402: // Fish Steak
-			itemDetailsID = 1652; break;
-		case 2403: // Fried Eggs
-			itemDetailsID = 1653; break;
-		case 2404: // Leg of Lamb
-			itemDetailsID = 1654; break;
-		case 2405: // Cut of Ribs
-			itemDetailsID = 1655; break;
-		default:
-			break;
-	}
+	var makeID  = 0;
+	var timerID = 0;
 
-	if( makeID != 0 )
+	// Craft buttons use makeID directly
+	if( CookingMap[pButton] != undefined )
 	{
+		makeID = pButton;
+		var data = CookingMap[makeID];
+		timerID = data.timerID || 1;
+
+		// Era / recipe checks
+		if( !eraOK( data ))
+		{
+			socket.SysMessage( "That item is not available in this era." );
+			return;
+		}
+
+		if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+		{
+			socket.SysMessage( "You must learn that recipe from a scroll." );
+			return;
+		}
+
+		pUser.SetTempTag( "MakeLast_Cooking", makeID );
+
+		// Environment checks
 		var makeItem = false;
+
 		if( makeID == 1500 )
 		{
-			// Grind wheat to flour
+			// Sack of Flour – wheat grinding
 			if( manualMillTarget )
 			{
 				// Require player to manually target mill
@@ -393,34 +452,38 @@ function onGumpPress( pSock, pButton, gumpData )
 				{
 					if( ValidateObject( packItem ) && packItem.id == 0x1ebd )
 					{
-						// Found wheat item in inventory, ask user where to grind it
+						// Found wheat; call its onUseChecked
 						TriggerEvent( 101, "onUseChecked", pUser, packItem ); // 101 = wheat.js
 						return;
 					}
 				}
+
+				// No wheat found – just fail silently and let DFN/msg handle it
+				return;
 			}
 			else
 			{
-				// Look for nearby dynamic mill
-				var nearbyMill = AreaItemFunction( "FindNearbyMills", pUser, 2, pSock );
+				// Auto mill lookup (dynamic first, then static)
+				var nearbyMill = AreaItemFunction( "FindNearbyMills", pUser, 2, socket );
 				if( nearbyMill == 0 )
 				{
-					// No dynamic oven found nearby! Look for a static one?
 					var staticFound = false;
-					for( var i = 0; i < ovens.length; i++ )
+					for( var i = 0; i < mills.length; i++ )
 					{
-						if( StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 2, ovens[i] ))
+						if( StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 2, mills[i] ))
 						{
-							nearbyMill = 1;
+							staticFound = true;
 							break;
 						}
 					}
+
+					if( staticFound )
+						nearbyMill = 1;
 				}
 
 				if( nearbyMill > 0 )
 				{
 					makeItem = true;
-					pUser.SetTempTag( "MAKELAST", pButton );
 				}
 				else
 				{
@@ -428,41 +491,191 @@ function onGumpPress( pSock, pButton, gumpData )
 				}
 			}
 		}
-		else if( makeID >= 1650 && makeID <= 1655 && nearbyHeatSource > 0 )
+		else if( makeID >= 1600 && makeID <= 1611 )
 		{
-			// Barbecue
-			makeItem = true;
+			// Baking – requires oven
+			var nearbyOven = AreaItemFunction( "FindNearbyOvens", pUser, 2, socket );
+			if( nearbyOven > 0 )
+			{
+				makeItem = true;
+			}
+			else
+			{
+				var staticFoundOven = false;
+				for( var o = 0; o < ovens.length; o++ )
+				{
+					if( StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 2, ovens[o] ))
+					{
+						staticFoundOven = true;
+						break;
+					}
+				}
+				if( !staticFoundOven )
+					pUser.SetTempTag( "prevActionResult", "NOOVEN" );
+				else
+					makeItem = true;
+			}
 		}
-		else if( makeID >= 1600 && makeID <= 1611 && nearbyOven > 0 )
+		else if( makeID >= 1650 && makeID <= 1655 )
 		{
-			// Baking
-			makeItem = true;
+			// Barbecue – requires generic heat source
+			var nearbyHeat = AreaItemFunction( "FindNearbyHeatSources", pUser, 2, socket );
+			if( nearbyHeat > 0 )
+			{
+				makeItem = true;
+			}
+			else
+			{
+				var staticFoundHeat = false;
+				for( var h = 0; h < heatSources.length; h++ )
+				{
+					if( StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 2, heatSources[h] ))
+					{
+						staticFoundHeat = true;
+						break;
+					}
+				}
+				if( !staticFoundHeat )
+					pUser.SetTempTag( "prevActionResult", "NOHEATSOURCE" );
+				else
+					makeItem = true;
+			}
 		}
-		else if( makeID >= 1501 && makeID <= 1557 )
+		else if( ( makeID >= 1501 && makeID <= 1557 ) )
 		{
-			// Ingredients/Baking - no heatsource or mill required
+			// Ingredients & preparations – no heat source or mill required
 			makeItem = true;
 		}
 
 		if( makeItem )
 		{
-			MakeItem( pSock, pUser, makeID );
+			MakeItem( socket, pUser, makeID );
+			AddToLastTen( pUser, makeID );
+
 			if( GetServerSetting( "ToolUseLimit" ))
 			{
-				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+				tool.usesLeft -= 1;
+				if( tool.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 				{
-					bItem.Delete();
-					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-					// Play sound effect of tool breaking
+					tool.Delete();
+					socket.SysMessage( GetDictionaryEntry( 10202, socket.language )); // You have worn out your tool!
 				}
 			}
 		}
-		pUser.StartTimer( gumpDelay, timerID, true );
+
+		pUser.StartTimer( gumpDelay, timerID, cookingID );
+		return;
 	}
-	else if( itemDetailsID != 0 )
+
+	// Detail buttons: 20000 + makeID
+	if( pButton >= 20000 && pButton < 30000 )
 	{
-		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
-		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		var detailMakeID = pButton - 20000;
+		var entry = CookingMap[detailMakeID];
+
+		if( entry )
+		{
+			// Which item details to show
+			pUser.SetTempTag( "ITEMDETAILS", detailMakeID );
+
+			// Skill used
+			pUser.SetTempTag( "Skill", entry.skill || cookingSkillID );
+
+			// Clear old harvest tags
+			pUser.SetTempTag( "Harvest",  null );
+			pUser.SetTempTag( "Harvest2", null );
+			pUser.SetTempTag( "Harvest3", null );
+			pUser.SetTempTag( "Harvest4", null );
+
+			// Clear old custom harvest names
+			pUser.SetTempTag( "HarvestName",  null );
+			pUser.SetTempTag( "Harvest2Name", null );
+			pUser.SetTempTag( "Harvest3Name", null );
+			pUser.SetTempTag( "Harvest4Name", null );
+
+			// Optional harvest dictIDs
+			if( entry.harvest && entry.harvest.length > 0 )
+			{
+				if( entry.harvest.length >= 1 )
+					pUser.SetTempTag( "Harvest",  entry.harvest[0] );
+				if( entry.harvest.length >= 2 )
+					pUser.SetTempTag( "Harvest2", entry.harvest[1] );
+				if( entry.harvest.length >= 3 )
+					pUser.SetTempTag( "Harvest3", entry.harvest[2] );
+				if( entry.harvest.length >= 4 )
+					pUser.SetTempTag( "Harvest4", entry.harvest[3] );
+			}
+
+			// Optional custom names – plug into your new ItemDetail custom text logic
+			if( entry.harvestNames && entry.harvestNames.length > 0 )
+			{
+				if( entry.harvestNames.length >= 1 )
+					pUser.SetTempTag( "HarvestName",  entry.harvestNames[0] );
+				if( entry.harvestNames.length >= 2 )
+					pUser.SetTempTag( "Harvest2Name", entry.harvestNames[1] );
+				if( entry.harvestNames.length >= 3 )
+					pUser.SetTempTag( "Harvest3Name", entry.harvestNames[2] );
+				if( entry.harvestNames.length >= 4 )
+					pUser.SetTempTag( "Harvest4Name", entry.harvestNames[3] );
+			}
+
+			if( entry.recipeID && entry.recipeID > 0 )
+				pUser.SetTempTag( "needRecipeID", entry.recipeID );
+			else
+				pUser.SetTempTag( "needRecipeID", 0 );
+
+			TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		}
+		return;
 	}
+}
+
+// Last Ten handling
+function AddToLastTen( pUser, makeID )
+{
+	var raw  = pUser.GetTempTag( "LastTenCooking" ) || "";
+	var list = raw.split( "," );
+
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( parseInt( list[i] ) == makeID )
+		{
+			list.splice( i, 1 );
+			break;
+		}
+	}
+
+	var newList = [ makeID ];
+	for( var j = 0; j < list.length && newList.length < 10; j++ )
+	{
+		var entry = parseInt( list[j] );
+		if( !isNaN( entry ) && entry > 0 )
+			newList.push( entry );
+	}
+
+	pUser.SetTempTag( "LastTenCooking", newList.join( "," ) );
+}
+
+function HasLearnedRecipe( pUser, recipeID )
+{
+	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	if( !myData || myData.length == 0 )
+		return false;
+
+	for( var i = 0; i < myData.length; i++ )
+	{
+		var data = myData[i].split( "," );
+		if( data[0] == recipeID )
+			return true;
+	}
+	return false;
+}
+
+function eraOK( entry )
+{
+	if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
+		return false;
+	if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
+		return false;
+	return true;
 }

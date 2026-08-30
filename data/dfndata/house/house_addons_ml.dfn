@@ -346,6 +346,32 @@ HOUSE_ITEM=1058
 HOUSE_ITEM=1059
 }
 
+// House Addon - stone anvil (east)
+[HOUSE 324]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=stoneanvileastdeed
+HOUSE_ITEM=1060
+}
+
+// House Addon - stone anvil (south)
+[HOUSE 325]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=stoneanvilsouthdeed
+HOUSE_ITEM=1061
+}
+
 [HOUSE ITEM 1000]
 { alchemist table part 1 (east)
 ITEM=0x3077
@@ -824,5 +850,21 @@ Z=0
 ITEM=0x3056
 X=0
 Y=1
+Z=0
+}
+
+[HOUSE ITEM 1060]
+{ stone anvil east
+ITEM=0x2dd6
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1061]
+{ stone anvil south
+ITEM=0x2dd5
+X=0
+Y=0
 Z=0
 }
