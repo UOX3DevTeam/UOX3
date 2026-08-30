@@ -1067,7 +1067,8 @@
           { "name": "checkWater", "type": "boolean", "required": true },
           { "name": "waterWalk", "type": "boolean", "required": true },
           { "name": "checkOnlyMultis", "type": "boolean", "required": true },
-          { "name": "checkOnlyNonMultis", "type": "boolean", "required": true }
+          { "name": "checkOnlyNonMultis", "type": "boolean", "required": true },
+          { "name": "checkMultiPlacement", "type": "boolean", "required": false }
         ]
       },
       "returns": "boolean"
@@ -2155,97 +2156,6 @@
           "type": "number"
         },
         {
-          "name": "ginseng",
-          "cppName": "CSP_GINSENG",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "moss",
-          "cppName": "CSP_MOSS",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "drake",
-          "cppName": "CSP_DRAKE",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "pearl",
-          "cppName": "CSP_PEARL",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "silk",
-          "cppName": "CSP_SILK",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "ash",
-          "cppName": "CSP_ASH",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "shade",
-          "cppName": "CSP_SHADE",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "garlic",
-          "cppName": "CSP_GARLIC",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "batwing",
-          "cppName": "CSP_BATWING",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "daemonBlood",
-          "cppName": "CSP_DAEMONBLOOD",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "graveDust",
-          "cppName": "CSP_GRAVEDUST",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "noxCrystal",
-          "cppName": "CSP_NOXCRYSTAL",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
-          "name": "pigIron",
-          "cppName": "CSP_PIGIRON",
-          "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true,
-          "type": "number"
-        },
-        {
           "name": "requireTarget",
           "cppName": "CSP_REQUIRETARGET",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -2335,6 +2245,14 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "readOnly": true,
           "type": "number"
+        },
+        {
+          "name": "reagents",
+          "cppName": "CSP_REAGENTS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "any[][]",
+          "comments": "Reagent entries formatted as [sectionID, amount, optionalColour], where sectionID is the reagent identity assigned through the SECTIONID item DFN tag."
         }
       ],
       "methods": [],
@@ -9229,6 +9147,30 @@
         ]
       },
       "returns": "boolean"
+    },
+    {
+      "name": "onTempEffectExpire",
+      "cppName": "OnTempEffectExpire",
+      "params": {
+        "list": [
+          { "name": "source", "type": "BaseOrNull", "required": true },
+          { "name": "target", "type": "BaseObject", "required": true },
+          { "name": "effectId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onTempEffectRemove",
+      "cppName": "OnTempEffectRemove",
+      "params": {
+        "list": [
+          { "name": "source", "type": "BaseOrNull", "required": true },
+          { "name": "target", "type": "BaseObject", "required": true },
+          { "name": "effectId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "onTimer",

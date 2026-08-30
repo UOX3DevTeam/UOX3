@@ -13,13 +13,16 @@ function onAttack( pAttacker, pDefender )
 
 function ApplyEffects(pDefender, target, pSock)
 {
-	if( !target.dead )
+	if( ValidateObject( target ) && !target.dead && !target.isGM && !target.isCounselor && target.visible != 3 )
 	{
+		DoMovingEffect( pDefender, target, 0x36BD, 10, false, false, 0xA6 );
 		target.Damage( RandomNumber( 20, 25 ), pDefender );
 
-		DoMovingEffect( pDefender, target, 0x36BD, 10, false, false, 0xA6 );
-
-		target.poison = 5;
+		// Validate target again in case they died from the applied damage
+		if( ValidateObject( target ))
+		{
+			target.poison = 5;
+		}
 
 		return true;
 	}

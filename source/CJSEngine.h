@@ -1,6 +1,10 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
 
+#include <js/RootingAPI.h>
+
+class JSAutoRealm;
+
 enum IUEEntries
 {
 	IUE_RACE = 0,
@@ -17,7 +21,8 @@ enum IUEEntries
 
 enum JSPrototypes
 {
-	JSP_ITEM	= 0,
+	JSP_BASE  = 0,
+	JSP_ITEM,
 	JSP_CHAR,
 	JSP_SOCK,
 	JSP_GUMP,
@@ -46,28 +51,23 @@ enum JSPrototypes
 class CJSRuntime
 {
 private:
-	typedef std::map<void *, JSObject *>					JSOBJECTMAP;
-	typedef std::map<void *, JSObject *>::iterator			JSOBJECTMAP_ITERATOR;
-	typedef std::map<void *, JSObject *>::const_iterator	JSOBJECTMAP_CITERATOR;
+	using JSOBJECTMAP           = std::map<void *, std::unique_ptr<JS::PersistentRootedObject>>;
+	using JSOBJECTMAP_ITERATOR  = JSOBJECTMAP::iterator;
+	using JSOBJECTMAP_CITERATOR = JSOBJECTMAP::const_iterator;
 
-	std::vector<JSOBJECTMAP>								objectList;
-	std::vector<JSObject *>									protoList;
+	std::array<JSOBJECTMAP, IUE_COUNT>					objectList;
+	JS::PersistentRootedObjectVector *protoList;
 
-	JSObject * spellsObj;
-	JSObject * skillsObj;
-	JSObject * accountsObj;
-	JSObject * consoleObj;
-	JSObject * createEntriesObj;
-	JSObject * timerObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
-	JSObject * jsGlobal;
+	JS::PersistentRootedObject jsGlobal;
+	JSAutoRealm * realmGuard;
 
 	JSObject *	FindAssociatedObject( IUEEntries iType, void *index );
 	JSObject *	MakeNewObject( IUEEntries iType );
 
 	void		Cleanup( void );
-	void		InitializePrototypes( void );
+	bool		InitializePrototypes( void );
 public:
 	CJSRuntime();
 	CJSRuntime( UI32 engineSize );
@@ -84,7 +84,6 @@ public:
 
 	JSObject *	AcquireObject( IUEEntries iType, void *index );
 	void		ReleaseObject( IUEEntries IType, void *index );
-
 };
 
 class CJSEngine
@@ -95,6 +94,7 @@ private:
 	typedef std::vector<CJSRuntime *>::const_iterator	RUNTIMELIST_CITERATOR;
 
 	RUNTIMELIST											runtimeList;
+	bool											jsInitialized = false;
 
 public:
 
@@ -102,6 +102,7 @@ public:
 	~CJSEngine();
 
 	auto Startup() -> void;
+	void		Shutdown( void );
 	
 	JSRuntime *	GetRuntime( UI08 runTime ) const;
 	JSContext * GetContext( UI08 runTime ) const;

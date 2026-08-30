@@ -39,12 +39,26 @@ private:
 	UI08		worldNumber;		// which world are we spawning in?
 	UI16		instanceId;			// Which instance are we spawning in?
 
+	struct CachedSpawnPoint
+	{
+		SI16 x;
+		SI16 y;
+		SI08 baseZ;   // Cached Base Elevation
+		SI08 staticZ; // Cached Static Elevation
+
+		CachedSpawnPoint( SI16 X, SI16 Y, SI08 BaseZ, SI08 StaticZ ) : x( X ), y( Y ), baseZ( BaseZ ), staticZ( StaticZ ) {}
+	};
+
 	GenericList<CChar *>	spawnedChars;
 	GenericList<CItem *>	spawnedItems;
-	std::unordered_map<UI32, SI08>	validLandPosCheck;
-	std::unordered_map<UI32, SI08>	validWaterPosCheck;
-	std::vector<Point3_st>	validLandPos;
-	std::vector<Point3_st>	validWaterPos;
+	std::unordered_map<UI32, CachedSpawnPoint> validLandPosCheck;
+	std::unordered_map<UI32, CachedSpawnPoint> validWaterPosCheck;
+	std::vector<CachedSpawnPoint>	validLandPos;
+	std::vector<CachedSpawnPoint>	validWaterPos;
+
+	// Pre-parsed weighted entity lists for fast zero-allocation spawning
+	std::vector<std::pair<std::string, UI16>> parsedNpcList;
+	std::vector<std::pair<std::string, UI16>> parsedItemList;
 
 	// Exclusion areas for Spawn Regions
 	struct SpawnRegionExclusionAreas_st
@@ -131,6 +145,11 @@ public:
 private:
 	auto		RegionSpawnChar() -> CChar *;
 	auto		RegionSpawnItem() -> CItem *;
+
+	void		BuildParsedLists();
+
+	bool		IsInExclusionArea( SI16 x, SI16 y );
+	bool		TryRandomStoredLocation( const std::vector<CachedSpawnPoint>& positions, SI16& x, SI16& y, SI08& z, SI08& z2 );
 
 	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, std::string idToSpawn );
 	bool		FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature );

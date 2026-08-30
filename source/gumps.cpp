@@ -62,7 +62,7 @@ void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlengt
 //o------------------------------------------------------------------------------------------------o
 void BuildGumpFromScripts( CSocket *s, UI16 m )
 {
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( s );
 	toSend.UserId( INVALIDSERIAL );
 
 	std::string sect = std::string( "GUMPMENU " ) + oldstrutil::number( m );
@@ -92,8 +92,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 		toSend.addText( oldstrutil::format( "%s %s", tag.c_str(), gump->GrabData().c_str() ));
 	}
 	toSend.GumpId( targType );
-	toSend.Finalize();
-	s->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -335,7 +334,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		s->SysMessage( 555 ); // An account by that name already exists!
 		return;
 	}
-	Console.Print( oldstrutil::format( "Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str() ));
+	Console.Print( oldstrutil::format( "Attempting to add username %s at emailaddy %s", username.c_str(), emailAddy.c_str() ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -364,7 +363,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	Console << "Menu: " << m << myendl;
 #endif
 
-	CPSendGumpMenu toSend;
+	CGumpPacket toSend( s );
 	toSend.UserId( INVALIDSERIAL );
 	toSend.GumpId( 9 );
 
@@ -905,8 +904,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	Console << "==============================" << myendl;
 #endif
 	// Finish up and send the gump to the client socket.
-	toSend.Finalize();
-	s->Send( &toSend );
+	toSend.Send();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2289,6 +2287,53 @@ void SendVecsAsGump( CSocket *sock, std::vector<std::string>& one, std::vector<s
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SendVecsAsCompressedGump()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends the new 0xDD Compressed Gump packet
+//o------------------------------------------------------------------------------------------------o
+void SendVecsAsCompressedGump( CSocket *sock, std::vector<std::string>& layout, std::vector<std::string>& text, UI32 type, SERIAL serial )
+{
+	if( sock == nullptr )
+		return;
+
+	// Compressed gumps verified to work >= 4.0.11c
+	// Compressed gumps Verified to NOT work < 4.0.6a
+	if( sock->ClientVerShort() < CVS_4011c ) 
+	{
+		SendVecsAsGump( sock, layout, text, type, serial ); // Fallback to uncompressed gumps
+		return;
+	}
+
+	CPSendCompressedGumpMenu toSend;
+
+	toSend.GumpId( type );
+	toSend.UserId( serial );
+
+	// Layout commands
+	for( const auto &cmd : layout )
+	{
+		toSend.addCommand( cmd );
+	}
+
+	// Text lines
+	for( const auto &line : text )
+	{
+		toSend.addText( line );
+	}
+
+	// Finalize and send
+	if( toSend.Finalize() )
+	{
+		sock->Send( &toSend );
+	}
+	else
+	{
+		sock->SysMessage( "Error: Gump (ID: 0x%X) too large to send to client. Compressed gump length cannot exceed 65355 bytes!", type );
+		Console.Error( oldstrutil::format( "SendCompressedGump attempted to send a packet (0xDD) that exceeds 65355 bytes length, for gump with ID %X!", type ));
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGumpDisplay::Send()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends gump data to the socket
@@ -2303,7 +2348,7 @@ void CGumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 
 	if( !one.empty() && !two.empty() )
 	{
-		SendVecsAsGump( toSendTo, one, two, gumpNum, serial );
+		SendVecsAsCompressedGump( toSendTo, one, two, gumpNum, serial );
 		return;
 	}
 	UI08 ser1, ser2, ser3, ser4;
@@ -2508,5 +2553,5 @@ void CGumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 		}
 		++pagenum;
 	}
-	SendVecsAsGump( toSendTo, one, two, gumpNum, serial );
+	SendVecsAsCompressedGump( toSendTo, one, two, gumpNum, serial );
 }
