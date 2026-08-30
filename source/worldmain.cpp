@@ -457,20 +457,20 @@ void CWorldMain::DoWorldLight( void )
 {
 	UI08 worlddarklevel		= ServerData()->WorldLightDarkLevel();
 	UI08 worldbrightlevel	= ServerData()->WorldLightBrightLevel();
-	bool ampm				= ServerData()->ServerTimeAMPM();
 	UI08 currentHour		= ServerData()->ServerTimeHours();
 	UI08 currentMinute		= ServerData()->ServerTimeMinutes();
+	bool isAfterNoon		= ( currentHour >= 12 ); // After noon and before midnight?
 
-	R32 currentTime			= R32( currentHour + ( currentMinute / 60.0f ));
+	R32 currentTime			= R32(( currentHour % 12 ) + ( currentMinute / 60.0f ));
 	R32 hourIncrement		= R32( fabs(( worlddarklevel - worldbrightlevel ) / 12.0f )); // we want the amount to subtract from LightMax in the morning / add to LightMin in evening
 
-	if( ampm )
+	if( isAfterNoon )
 	{
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( std::round( worldbrightlevel + ( hourIncrement * currentTime ))));
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( std::min<R32>( 255.0f, std::round( worldbrightlevel + ( hourIncrement * currentTime )))));
 	}
 	else
 	{
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( std::round( worlddarklevel - ( hourIncrement * currentTime ))));
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( std::max<R32>( 0.0f, std::round( worlddarklevel - ( hourIncrement * currentTime )))));
 	}
 }
 

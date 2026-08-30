@@ -156,17 +156,16 @@ public:
 	auto MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8_t oldZ, bool checkVisible = true ) -> std::uint16_t;
 	
 	auto DoesStaticBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, bool checkWater = false ) -> bool;
-	auto DoesDynamicBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis ) -> bool;
+	auto DoesDynamicBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis, bool checkMultiPlacement = false ) -> bool;
 	auto DoesCharacterBlock( UI16 x, UI16 y, SI08 z, UI08 worldNumber, UI16 instanceId ) -> bool;
-	auto DynTile( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkOnlyMultis, bool checkOnlyNonMultis ) -> CItem *;
 	auto DoesMapBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad ) -> bool;
 	auto CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, TileFlags toCheck, UI16 &foundTileId, bool checkSpawnSurface = false ) -> bool;
 	auto CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, TileFlags toCheck, UI16 &foundTileId ) -> bool;
 	auto CheckTileFlag( std::uint16_t itemId, TileFlags flagToCheck) -> bool;
 	
 	// height functions
-	auto StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ ) -> std::int8_t;
-	auto DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, std::int8_t maxZ ) -> std::int8_t;
+	auto StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ, bool requireSurface = false, bool requireWater = false ) -> std::int8_t;
+	auto DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, std::int8_t maxZ, bool requireSurface = false, bool requireWater = false ) -> std::int8_t;
 	auto MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, bool ignoreVoid = false ) -> std::int8_t;
 	auto TileHeight( std::uint16_t tileNum ) -> std::int8_t;
 	auto Height( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId ) -> std::int8_t;
@@ -196,7 +195,7 @@ public:
 	auto SeekMap( std::int16_t x, std::int16_t y, std::uint8_t worldNumber ) const -> const Tile_st&;
 
 	// misc functions
-	auto ValidSpawnLocation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater = true ) -> bool;
+	auto ValidSpawnLocation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater = true, bool skipStaticChecks = false ) -> bool;
 	auto ValidMultiLocation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater,
 							 bool checkOnlyOtherMultis, bool checkOnlyNonMultis, bool checkForRoads ) -> std::uint8_t;
 	auto MapExists( std::uint8_t worldNumber ) const -> bool;

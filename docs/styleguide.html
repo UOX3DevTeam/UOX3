@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 5. July, 2025</small></p>
-	<p style="margin:0"><small>UOX3 Version: v0.99.7b</small></p>
+	<p style="margin:0"><small>Last Updated: 25. August, 2026</small></p>
+	<p style="margin:0"><small>UOX3 Version: v0.99.7e</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -37,6 +37,8 @@
 		<li><a class="cd-faq__category cd-faq__category-selected truncate" href="#about">About</a></li>
 		<li><a class="cd-faq__category truncate" href="#basic">Basic Style Guide</a></li>
 		<li><a class="cd-faq__category truncate" href="#advanced">Advanced Style Guide</a></li>
+		<li><a class="cd-faq__category truncate" href="#javascript">JavaScript Style Guide</a></li>
+		<li><a class="cd-faq__category truncate" href="#prchangelog">PR & Changelog Guide</a></li>
 	</ul> <!-- cd-faq__categories -->
 
 	<div class="cd-faq__items">
@@ -51,6 +53,17 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>August 25th, 2026</h4>
+						<ul>
+							<li>Updated core language target to C++17 across all platforms</li>
+							<li>Updated supported compiler and build toolchain versions (VS2022, GCC 11+, Clang 15+, CMake 3.18+)</li>
+							<li>Added Memory Safety &amp; Entity Lifecycle section covering <code>ValidateObject()</code> and <code>Delete()</code></li>
+							<li>Added C++ Language Features &amp; Conventions section (structured bindings, attributes, container iteration)</li>
+							<li>Added String Handling &amp; String Utilities section with <code>oldstrutil</code> examples</li>
+							<li>Added Console Logging guidelines</li>
+							<li>Added JavaScript (JSE) Scripting Style Guide</li>
+							<li>Added Pull Request &amp; Changelog Guidelines section</li>
+						</ul>
 						<h4>November 24th, 2022</h4>
 						<ul>
 							<li>Initial version of document completed</li>
@@ -93,10 +106,10 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#cplusplusversion" id="cplusplusversion"><span>C++ Target Versions</span></a>
+				<a class="cd-faq__trigger" href="#cplusplusversion" id="cplusplusversion"><span>C++ Target Version &amp; Compilers</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>Currently, any new code written for UOX3 should target <span class="hl">C++11 to C++17</span>, and aim to be cross-platform conforming across Windows, Linux and macOS platforms, when compiled using <strong>VS2017-2022</strong>, <strong>GCC/G++ v8-9</strong> and/or <strong>CMake v?</strong>. Avoid using features specific to C++20 or newer, to not introduce additional compiler dependencies and requirements.</p>
+					<p>All new code written for UOX3 targets <span class="hl">C++17</span> (compiled with <code>/std:c++17</code> on MSVC or <code>-std=c++17</code> on GCC/Clang), and aims to be cross-platform conforming across 64-bit Windows, Linux, and macOS platforms when built using <strong>Visual Studio 2022 (MSVC / ClangCL)</strong>, <strong>GCC 11+</strong>, <strong>Clang 15+</strong>, and/or <strong>CMake 3.18+</strong>.</p>
 					<ul>
 						<li><a href="https://github.com/AnthonyCalandra/modern-cpp-features#c17-language-features" rel="noopener" target="_blank" title="Cheatsheet for C++17 Language Features">C++17 Cheatsheet</a></li>
 						<li><a href="https://github.com/AnthonyCalandra/modern-cpp-features#c14-language-features" rel="noopener" target="_blank" title="Cheatsheet for C++14 Language Features">C++14 Cheatsheet</a></li>
@@ -135,6 +148,81 @@
 
 		<ul id="advanced" class="cd-faq__group">
 			<li class="cd-faq__title title-codedoc"><h1>Advanced Style Guide</h1></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#auto" id="auto"><span>Auto keyword</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<ul>
+						<li>Use the <span class="hl">auto</span> <strong>keyword</strong> when declaring variables to automatically deduct the variable type based on the initializer. Same can be done with return types for functions. Examples:</li>
+<pre><code class="language-c++">// Using auto with a variable
+auto myChar = "Hello"; // type is const char* pointer to const char[5] array
+auto myString = "Hello, World!"s; // type is std::string (note the 's' at the end)
+auto myVar = GetMyVarValue(); // type depends on what GetMyVarValue() returns
+
+// Using auto with functions
+auto CItem::SetRegion( UI16 newValue ) -> void
+{
+	regionNum = newValue;
+	UpdateRegion();
+}
+auto CItem::GetRegionNum( void ) const -> UI16
+{
+	return regionNum;
+}</code></pre>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#cppfeatures" id="cppfeatures"><span>C++ Language Features &amp; Conventions</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h3>Core Language Conventions (C++11 to C++17)</h3>
+					<ul>
+						<li><strong>nullptr:</strong> Always use <span class="hl">nullptr</span> instead of <code>0</code> or <code>NULL</code> for pointer initialization and comparisons.</li>
+						<li><strong>constexpr:</strong> Prefer <span class="hl">constexpr</span> for compile-time constants and array bounds instead of <code>#define</code> macros:</li>
+						<pre><code class="language-c++">constexpr UI16 CREATE_MENU_OFFSET = 5000;
+constexpr SI08 MAX_Z_STEP = 15;</code></pre>
+						<li><strong>Scoped Enums:</strong> Use <span class="hl">enum class</span> or strongly-typed enums for state flags, object types, and paperdoll layers (e.g. <code>ItemLayers</code>, <code>TileFlags</code>, <code>ObjectType</code>).</li>
+						<li><strong>Structured Bindings:</strong> Use structured bindings to unpack pairs, tuples, or coordinate structs cleanly:</li>
+						<pre><code class="language-c++">// Unpacking pairs returned from functions
+auto [mapWidth, mapHeight] = Map->SizeOfMap( worldNum );
+
+// Clean iteration over std::map / std::unordered_map
+for( const auto &[serial, obj] : ObjectFactory::get().allObjects )
+{
+	if( ValidateObject( obj ))
+	{
+		...
+	}
+}</code></pre>
+					</ul>
+
+					<h3>Standard Attributes</h3>
+					<ul>
+						<li><span class="hl">[[maybe_unused]]:</span> Cleanly suppresses compiler warnings on intentionally unused parameters or variables:</li>
+						<pre><code class="language-c++">[[maybe_unused]] UI16 ignoreMe = 0;</code></pre>
+						<li><span class="hl">[[nodiscard]]:</span> Warns the caller at compile-time if the return value of a function is discarded (essential for state queries, validation checks, and resource allocations):</li>
+						<pre><code class="language-c++">[[nodiscard]] auto IsShopStockLoaded( void ) const -> bool;
+[[nodiscard]] auto ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 world, UI16 instance ) -> bool;</code></pre>
+					</ul>
+
+					<h3>Container &amp; DFN Iteration</h3>
+					<p>Prefer range-based for loops over collections rather than legacy indexing or manual pointer stepping:</p>
+					<pre><code class="language-c++">// DFN section iteration
+for( const auto *entry : npcSection->collection2() )
+{
+	if( entry->tag == DFNTAG_ID )
+	{
+		npcId = oldstrutil::value&lt;UI16&gt;( entry->cdata );
+		break;
+	}
+}</code></pre>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
 
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#commentBlocks" id="commentBlocks"><span>Comments and Comment Blocks</span></a>
@@ -178,13 +266,33 @@ auto CSocket::TargetOK( bool newValue ) -> void
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#logging" id="logging"><span>Console Logging</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>Avoid direct calls to raw <code>std::cout</code> or <code>std::cerr</code>. Use UOX3's dedicated thread-safe console facility to format output, warnings, and errors with appropriate coloring and logging:</p>
+					<pre><code class="language-c++">Console.Log( "Starting spawner warmup..." );
+Console.Warning( oldstrutil::format( "Invalid tile access: %u", tileNum ));
+Console.Error( "Failed to allocate network worker buffer" );</code></pre>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#const" id="const"><span>Const</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<ul>
-						<li><span class="hl">Make liberal use of const</span>. Any member function <strong>that does not modify its object</strong> should be const. Any function parameter <strong>that references an object, but doesn't actually change it</strong>, should be passed as a const reference.</li>
-						<li>For function parameters passed by value, const has no effect on the caller, and is not needed</li>
-						<li>When declaring something as const, follow this pattern: <strong>const int *foo</strong> (const comes first)</li>
+						<li><span class="hl">Make liberal use of const</span>. Any member function <strong>that does not modify its object</strong> should be marked <code>const</code>:</li>
+						<pre><code class="language-c++">auto CChar::GetHealth( void ) const -> SI16
+{
+	return health;
+}</code></pre>
+						<li>Any function parameter <strong>that references an object or string, but doesn't modify it</strong>, should be passed as a const reference:</li>
+						<pre><code class="language-c++">auto AddMember( const std::string &name, const CItem *item ) -> bool;</code></pre>
+						<li>For function parameters passed by value (like primitive integers or small enums), <code>const</code> has no effect on the caller and is not needed.</li>
+						<li>When declaring local read-only constants or pointers, follow these patterns:</li>
+						<pre><code class="language-c++">const SI32 maxSearchRadius = 18;
+const SI32 *ptrToConstInt = &maxSearchRadius; // pointer to const integer (const comes first)</code></pre>
 					</ul>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -223,6 +331,61 @@ auto CItem::SetType( ItemTypes newValue ) -> void
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#memorysafety" id="memorysafety"><span>Memory Safety &amp; Entity Lifecycle</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h3>Always Validate Entity Pointers</h3>
+					<p>In UOX3, dynamic world entities (<code>CChar*</code>, <code>CItem*</code>, <code>CMultiObj*</code>) are managed by <code>ObjectFactory</code> and can be deleted, recycled, or decay at any point during gameplay. <strong>Never</strong> dereference raw entity pointers without checking their validity first:</p>
+					<ul>
+						<li>Use <span class="hl">ValidateObject( ptr )</span> on character, item, and multi pointers:</li>
+						<pre><code class="language-c++">CChar *targChar = c->GetTarg();
+if( !ValidateObject( targChar ))
+	return;
+
+targChar->SetMana( targChar->GetMana() - decrease );</code></pre>
+						<li>Use <span class="hl">VALIDATESOCKET( s )</span> or <code>s != nullptr</code> on client socket sessions:</li>
+						<pre><code class="language-c++">void CSkills::Persecute( CSocket *s )
+{
+	VALIDATESOCKET( s );
+	CChar *c = s->CurrcharObj();
+	...
+}</code></pre>
+					</ul>
+					<h3>Safe Entity Deletion</h3>
+					<ul>
+						<li><span class="hl">Never use raw C++ <code>delete</code></span> on <code>CChar*</code> or <code>CItem*</code> pointers.</li>
+						<li>Always invoke <span class="hl">thing->Delete()</span> so <code>ObjectFactory</code> safely removes the serial from the global registry, spatial world cells, script timers, and container references.</li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#stringhandling" id="stringhandling"><span>String Handling &amp; String Utilities</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>UOX3 provides a rich set of type-safe string manipulation helpers in <code>StringUtility.hpp</code> (namespace <code>oldstrutil</code>). Avoid legacy, unsafe C string functions (like <code>sprintf</code>, <code>strcpy</code>, <code>strcat</code>, or <code>strtok</code>) in favor of these utilities:</p>
+					<ul>
+						<li><span class="hl">oldstrutil::format():</span> Safe string formatting similar to printf, returning a <code>std::string</code>:</li>
+						<pre><code class="language-c++">std::string msg = oldstrutil::format( "Loaded %u items in region %i (World: %u)", itemCount, regionId, worldNum );</code></pre>
+						<li><span class="hl">oldstrutil::sections():</span> Tokenizes and splits a string by a delimiter into a <code>std::vector&lt;std::string&gt;</code> (ideal for comma-separated or space-separated definitions):</li>
+						<pre><code class="language-c++">auto coords = oldstrutil::sections( cdata, "," );
+auto cmdTokens = oldstrutil::sections( speechText, " " );</code></pre>
+						<li><span class="hl">oldstrutil::value&lt;T&gt;():</span> Converts strings to numeric types, with automatic support for decimal numbers and hexadecimal values (e.g. <code>"0x1A4"</code>):</li>
+						<pre><code class="language-c++">UI16 itemId = oldstrutil::value&lt;UI16&gt;( entry->cdata );
+SI32 amount = oldstrutil::value&lt;SI32&gt;( paramStr );</code></pre>
+						<li><span class="hl">oldstrutil::trim():</span> Strips leading and trailing whitespace from a string:</li>
+						<pre><code class="language-c++">std::string cleanName = oldstrutil::trim( rawName );</code></pre>
+						<li><span class="hl">oldstrutil::upper() / oldstrutil::lower():</span> Returns uppercase or lowercase copies of a string:</li>
+						<pre><code class="language-c++">if( oldstrutil::upper( commandName ) == "BANK" )</code></pre>
+						<li><span class="hl">Standard String Literals:</span> Use the <code>s</code> suffix (with <code>using namespace std::string_literals;</code>) to construct <code>std::string</code> literals directly:</li>
+						<pre><code class="language-c++">auto greeting = "Welcome to UOX3!"s;</code></pre>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#variableScope" id="variableScope"><span>Variable Scope</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -243,32 +406,6 @@ auto myString = "Hello"s; // note the 's' at the end
 						<ul>
 							<li><em>Exception: If the variable is an object, and it's used in a for-loop, <span class="hl">declare it outside</span> the for-loop so the constructor and destructor of the object doesn't get invoked multiple times as it loops.</em></li>
 						</ul>
-					</ul>
-				  </div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#auto" id="auto"><span>Auto keyword</span></a>
-				<div class="cd-faq__content">
-				  <div class="text-component">
-					<ul>
-						<li>Use the <span class="hl">auto</span> <strong>keyword</strong> when declaring variables to automatically deduct the variable type based on the initializer. Same can be done with return types for functions. Examples:</li>
-<pre><code class="language-c++">// Using auto with a variable
-auto myChar = "Hello"; // type is const char* pointer to const char[5] array
-auto myString = "Hello, World!"s; // type is std::string (note the 's' at the end)
-auto myVar = GetMyVarValue(); // type depends on what GetMyVarValue() returns
-
-// Using auto with functions
-auto CItem::SetRegion( UI16 newValue ) -> void
-{
-	regionNum = newValue;
-	UpdateRegion();
-}
-auto CItem::GetRegionNum( void ) const -> UI16
-{
-	return regionNum;
-}</code></pre>
 					</ul>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -303,7 +440,7 @@ static_cast&#x3C;R32&#x3E;( double_value )
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#const" id="const"><span>Whitespace, Indentation and Braces</span></a>
+				<a class="cd-faq__trigger" href="#whitespace" id="whitespace"><span>Whitespace, Indentation and Braces</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
 				  	<h3>Tabs vs Spaces</h3>
@@ -330,19 +467,19 @@ pStream.WriteByte(   20, 0 );</code></pre>
 				  		<li>Spaces inside parentheses</li>
 				  			<pre><code class="language-c++">( x, y, z )</code></pre>
 				  		<li>Spaces after commas in list/function/method parameters</li>
-								<pre><code class="language-c++">void MyFunction( std::string myString, int myInt )</code></pre>
+								<pre><code class="language-c++">void MyFunction( std::string myString, SI32 myInt )</code></pre>
 				  		<li>Spaces around operators</li>
-								<pre><code class="language-c++">var foo = x - 1;
-var bar = x <= 10;</code></pre>
+								<pre><code class="language-c++">SI32 foo = x - 1;
+bool bar = ( x <= 10 );</code></pre>
 				  		<li>No spaces before parentheses in function or method declarations</li>
 								<pre><code class="language-c++">bool myClass::MyMethod()</code></pre>
 				  		<li>No spaces before parentheses in control statements</li>
 								<pre><code class="language-c++">if( x == 1 )
-for( int i = 0; i < 10; ++i )</code></pre>
-							<li>No spaces between multiple parentheses in control statements</li>
+for( SI32 i = 0; i < 10; ++i )</code></pre>
+				  		<li>No spaces between multiple parentheses in control statements</li>
 								<pre><code class="language-c++">if( foo || ( !bar ))
 if(( x == y ) && ( z != x ))</code></pre>
-							<li>No spaces inside angled or square brackets, except after comma, or between operators</li>
+				  		<li>No spaces inside angled or square brackets, except after comma, or between operators</li>
 								<pre><code class="language-c++">[x, y, z]
 static_cast&#x3C;SI16&#x3E;</code></pre>
 						</ul>
@@ -386,6 +523,296 @@ void myFunction( std::string myString )
 			</li>
 
 		</ul> <!-- cd-faq__group -->
+
+		<ul id="javascript" class="cd-faq__group">
+			<li class="cd-faq__title title-codedoc"><h1>JavaScript (JSE) Style Guide</h1></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#jsSyntax" id="jsSyntax"><span>ES6+ Language Syntax (SpiderMonkey 115)</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>UOX3 embeds a SpiderMonkey 115 JavaScript engine. All scripts support and should utilize standard ES6+ language features:</p>
+					<ul>
+						<li><span class="hl">Prefer <code>const</code> and <code>let</code> over <code>var</code></span>. Use <code>const</code> for immutable values and references, and <code>let</code> for variables that change or loop iterators:</li>
+						<pre><code class="language-javascript">// Preferred
+const targetLocation = pUser.targetLoc;
+let totalGold = 0;
+
+// Avoid
+var myGold = 0;</code></pre>
+						<li><span class="hl">Template Literals:</span> While in-game player messages should rely on <code>GetDictionaryEntry()</code> for localization, backtick string interpolation (<code>${value}</code>) is supported in SpiderMonkey 115 and can be used for constructing internal debug messages and logs:</li>
+						<pre><code class="language-javascript">Console.Log( `Spawned ${spawnCount} creatures for region ${regionName}` );</code></pre>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#jsFormatting" id="jsFormatting"><span>General Script Formatting</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>JavaScript scripts in UOX3 follow the same fundamental formatting and casing principles as C++ code (see <a href="#basic">Basic Style Guide</a> and <a href="#whitespace">Whitespace &amp; Braces</a>):</p>
+					<ul>
+						<li>Indent using <span class="hl">tabs</span> (tab size: 4), not spaces.</li>
+						<li>Place braces on their own lines (<a href="https://en.wikipedia.org/wiki/Indentation_style#Allman_style" target="_blank" rel="noopener">Allman style</a>).</li>
+						<li>Leave spaces inside parentheses: <code>if( pUser.isChar )</code>, <code>function onUse( pUser, iUsed )</code>.</li>
+						<li>Spaces around arithmetic, comparison, and assignment operators: <code>pUser.mana -= 10;</code></li>
+						<li><span class="hl">Function &amp; Variable Casing:</span>
+							<ul>
+								<li>Script functions and methods must use <strong>PascalCase</strong>: <code>function CalculateReward( pUser, tier )</code>, <code>function GiveBonusGold( pUser )</code></li>
+								<li>Engine Event triggers must use <strong>camelCase</strong>: <code>function onUse( pUser, iUsed )</code>, <code>function onAttack( pAttacker, pDefender )</code>, <code>function onSpeech( pSpeech, pSpeaker, text )</code>, <code>function onCollide( pUser, iTile )</code>, <code>function onDeath( pVictim, pKiller )</code></li>
+								<li>Variables, properties, and parameters must use <strong>camelCase</strong>: <code>const goldBonus = 500;</code></li>
+							</ul>
+						</li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#jsNamingGuards" id="jsNamingGuards"><span>Object Prefixes &amp; Safety Guards</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h3>Standard Script Object Prefixes</h3>
+					<p>To keep scripts intuitive and self-documenting, use standard prefixes for objects passed to event triggers:</p>
+					<ul>
+						<li><code>pUser</code>, <code>pTarget</code>, <code>pAttacker</code>, <code>pDefender</code>, <code>pSpeaker</code> (Characters / Mobiles)</li>
+						<li><code>iUsed</code>, <code>iWorn</code>, <code>iCrafted</code>, <code>iTarget</code> (Items)</li>
+						<li><code>iSocket</code>, <code>tSock</code> (Client Sockets)</li>
+						<li><code>tGump</code> (Gump dialogs)</li>
+					</ul>
+
+					<h3>Safe Guard Checks</h3>
+					<p>Always guard event triggers with early returns to ensure objects exist before accessing properties or calling methods:</p>
+					<pre><code class="language-javascript">function onUse( pUser, iUsed )
+{
+	if( !pUser || !iUsed || !pUser.isChar )
+		return false;
+
+	if( !pUser.InRange( iUsed, 3 ))
+	{
+		pUser.SysMessage( "You are too far away." );
+		return false;
+	}
+
+	return true;
+}</code></pre>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#jsTypeScript" id="jsTypeScript"><span>TypeScript Definitions &amp; Type Checking</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h3>File Header Directives</h3>
+					<p>To enable autocompletion, hover tooltips, and static type validation in code editors (like VSCode), JavaScript files in UOX3 should begin with a relative reference path directive to <code>definitions.d.ts</code> and the <code>// @ts-check</code> pragma:</p>
+					<pre><code class="language-javascript">/// &lt;reference path="../definitions.d.ts" /&gt;
+// @ts-check</code></pre>
+					<p>Ensure the relative path to <code>definitions.d.ts</code> matches the folder depth of the script (e.g. <code>../definitions.d.ts</code> for scripts in subdirectories or <code>../../definitions.d.ts</code> for nested subdirectories).</p>
+
+					<h3>Function Type Annotations (JSDoc)</h3>
+					<p>Functions in scripts should include JSDoc <code>@type</code> annotations specifying parameter types and return values. This provides instant type-checking, property autocompletion, and catches invalid method calls:</p>
+					<pre><code class="language-javascript">/** @type { ( user: Character, iUsing: Item ) =&gt; boolean } */
+function onUseChecked( pUser, iUsed )
+{
+	...
+}
+
+/** @type { ( socket: Socket, cmdString: string ) =&gt; void } */
+function command_SKIN( socket, cmdString )
+{
+	...
+}
+
+/** @type { ( attacker: Character, defender: Character ) =&gt; number } */
+function CalculateCombatDamage( pAttacker, pDefender )
+{
+	...
+}</code></pre>
+					<p>Common types defined in <code>definitions.d.ts</code> include <code>Character</code>, <code>Item</code>, <code>Socket</code>, <code>BaseObject</code>, <code>GumpData</code>, <code>string</code>, <code>number</code>, <code>boolean</code>, and union types like <code>Character | Item | null</code>.</p>
+					<p>Refer to <span class="hl">data/js/definitions.d.ts</span> for the full list of engine object classes, type definitions, and event signatures, or consult the <a href="jsdocs.html" title="UOX3 JavaScript Engine Documentation">UOX3 JavaScript Engine Documentation (jsdocs.html)</a> for detailed method and property documentation.</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+		</ul> <!-- cd-faq__group -->
+
+		<ul id="prchangelog" class="cd-faq__group">
+			<li class="cd-faq__title title-codedoc"><h1>PR &amp; Changelog Guidelines</h1></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#prWorkflow" id="prWorkflow"><span>Automated Changelog Workflow</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>This guide outlines how to format changelog entries in Pull Request (PR) descriptions on GitHub so that they are automatically parsed, formatted, and prepended to <span class="hl">source/Changelog.txt</span> when a PR is merged.</p>
+					<ul>
+						<li>The automated workflow <strong>only</strong> extracts lines starting with a dash (<code>- </code>).</li>
+						<li>Any other lines (Markdown headers, discussions, testing notes, screenshots) are automatically ignored.</li>
+						<li>Top-level entries (<code>- [TAG]</code>) are formatted with 4 leading spaces in Changelog.txt.</li>
+						<li>Indented sub-points (<code>  - </code>) are formatted with 8 leading spaces in Changelog.txt.</li>
+					</ul>
+					<pre><code class="language-markdown">PR Description Format:
+- [TAG] Main entry description...
+  - Sub-item, syntax line, or usage example
+  - Another sub-item line
+
+Resulting Changelog.txt Output:
+DD/MM/YYYY - Author (#PR_NUMBER)
+    [TAG] Main entry description...
+        Sub-item, syntax line, or usage example
+        Another sub-item line</code></pre>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#prTags" id="prTags"><span>Category Tags Reference</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>Every top-level changelog entry must begin with one of the primary tags:</p>
+					<ul>
+						<li><span class="hl">- [ADD]</span> - <strong>New Additions:</strong> New features, gameplay systems, JS methods/properties/events, global functions, DFN tags, INI settings, GM commands, item/NPC definitions, or CI workflows.</li>
+						<li><span class="hl">- [UPD]</span> - <strong>Updates &amp; Enhancements:</strong> Behavioral changes, expansions to existing function signatures, balance adjustments, migrations, refactoring, dependency upgrades, or documentation.</li>
+						<li><span class="hl">- [FIX]</span> - <strong>Bug Fixes &amp; Crash Resolutions:</strong> Bug fixes, crash resolutions, logic corrections, packet errors, movement desyncs, missing null/socket checks, or typos.</li>
+						<li><span class="hl">- [MISC]</span> - <strong>Optional Catch-All:</strong> Fallback tag for general housekeeping, minor cleanups, or miscellaneous adjustments that do not fit the primary categories.</li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#prStyleRules" id="prStyleRules"><span>Formatting &amp; Content Rules</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h3>Avoid Vague One-Liners &amp; Internal Code Churn</h3>
+					<p>A good changelog entry provides high-value functional specifics (what changed, why it changed, and how to use it) rather than vague one-liners or raw diff churn.</p>
+					<ul>
+						<li><span style="color:#d9534f;font-weight:bold">BAD:</span> <code>- [FIX] Fixed combat bug</code></li>
+						<li><span style="color:#5cb85c;font-weight:bold">GOOD:</span> <code>- [FIX] Fixed an issue in combat where defender's poison resistance was ignored when calculating poison strike damage</code></li>
+						<li><span style="color:#d9534f;font-weight:bold">BAD:</span> <code>- [UPD] Updated spells.js</code></li>
+						<li><span style="color:#5cb85c;font-weight:bold">GOOD:</span> <code>- [UPD] Updated Earthquake and Chain Lightning spells (js/magic/spells.js) to check for safe zone regions before applying area damage</code></li>
+						<li><span style="color:#d9534f;font-weight:bold">BAD:</span> <code>- [ADD] Added new properties</code></li>
+						<li><span style="color:#5cb85c;font-weight:bold">GOOD:</span> <code>- [ADD] Added new Character JS property .damageIncrease to track item-based damage bonuses</code></li>
+						<li><span style="color:#d9534f;font-weight:bold">BAD:</span> <code>- [UPD] Changed variable x on line 42 from UI16 to UI32 in combat.cpp</code></li>
+						<li><span style="color:#5cb85c;font-weight:bold">GOOD:</span> <code>- [UPD] Expanded combat damage calculations to 32-bit integers to prevent numerical overflow when weapon damage exceeds 65,535</code></li>
+					</ul>
+
+					<h3>Clear Action &amp; Behavior</h3>
+					<ul>
+						<li>Entries typically start with an action word (<em>"Added..."</em>, <em>"Fixed..."</em>, <em>"Updated..."</em>) or directly name the affected system/entity (<em>"In-game time is now tracked..."</em>, <em>"Dead bonded pets are now flagged..."</em>).</li>
+						<li>Describe how the feature works in the game now: <em>"...allowing players to walk through them"</em>, <em>"...triggers when..."</em>, <em>"...is now tracked in 24h format"</em>.</li>
+					</ul>
+
+					<h3>Common Sentence Patterns</h3>
+					<ul>
+						<li><strong>Fixes:</strong> <code>Fixed an issue where [what went wrong] (path/to/script.js)</code></li>
+						<li><strong>Additions:</strong> <code>Added new [feature/system/command] that [does what]</code></li>
+						<li><strong>Updates:</strong> <code>Updated [system/function] to [do what]</code></li>
+					</ul>
+
+					<h3>Concise Phrasing &amp; Single-Line Preference</h3>
+					<ul>
+						<li>Aim for concise, single-line entries per logical change where the main point suffices.</li>
+						<li>Avoid storytelling, hyperbole, technical deep-dives, and overly verbose sentences; stick to simple facts with neutral language.</li>
+						<li>Drop redundant helper words when context is already clear (prefer <em>"Gets percentage assigned to damageType"</em> over <em>"Returns the percentage assigned to the specified damageType"</em>). Remove words that are not needed!</li>
+						<li>Avoid full stop punctuation at the end of each entry</li>
+						<li>Avoid enclosing class/function/method/property/ini-settings/etc in quotes, backticks. Stick to plain text.</li>
+					</ul>
+
+					<h3>Sub-Points &amp; Multi-Line Entries</h3>
+					<ul>
+						<li>Use sub-points (<code>  - </code>) when providing function/method syntax overloads, multi-line INI settings, DFN tags, grouped property lists, examples, or distinct configuration options that need a line of their own.</li>
+						<li>Avoid breaking general narrative explanations or technical background into unnecessary sub-points when a single top-level entry is sufficient.</li>
+					</ul>
+
+					<h3>Standard Naming &amp; Identifiers</h3>
+					<ul>
+						<li>JS properties and methods start with a dot: <code>.vendorGoldHeld</code>, <code>.AddMember()</code> (specify object type like Character/Item/Socket, and note if read-only).</li>
+						<li>In-game commands start with an apostrophe: <code>'showspawnregions</code>, <code>'settime</code>, <code>'storm</code>.</li>
+						<li>Script and definition paths go in parentheses: <code>(js/skill/healing.js)</code>.</li>
+						<li>C++ class and function names may be mentioned when relevant (e.g. <code>CSkills::UpdateSkillLevel</code>), but only mention C++ source filenames when relevant (files added, removed, moved, or renamed).</li>
+						<li>Multi-line DFN tags, INI settings, and full function signatures go on indented sub-bullets with <code>//</code> comments explaining parameters or defaults.</li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#prTemplateExamples" id="prTemplateExamples"><span>Template &amp; Examples</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h3>PR Description Template</h3>
+					<pre><code class="language-markdown">- [ADD] Description of new feature, system, command, or JS API
+  - Optional syntax, parameter description, code example, or configuration option
+- [UPD] Description of updated gameplay mechanics, modified function signatures, or refactoring
+  - Optional parameter list, overload syntax, or configuration details
+- [FIX] Description of fixed bug/crash, specifying root cause, symptoms, and affected files (path/to/file.ext)
+- [MISC] Optional catch-all for minor housekeeping or general adjustments</code></pre>
+
+					<h3>Concrete Examples</h3>
+					<pre><code class="language-markdown">- [ADD] Added 'storm GM command (js/commands/custom/storm.js) to temporarily override weather in current region and force a storm on next weather update
+
+- [ADD] Added new Item DFN tag to allow definition of custom container gumps:
+  - gumptype=gumpid,xMin,xMax,yMin,yMax,z // Custom bounds for random placement (optional)
+
+- [ADD] Added new Multi JS Methods for managing player vendors in player houses:
+  - .AddVendor( playerVendor ) // Register player vendor with multi
+  - .RemoveVendor( playerVendor ) // Unregister player vendor from multi
+
+- [ADD] Introduction of speedhack anti-cheat system governed by new settings in [anticheat] section of uox.ini:
+  - SPEEDHACKDETECTION=1 // Enables/disables speedhack detection system
+  - SPEEDHACKTHROTTLEPENALTY=2000 // Movement throttle penalty (in ms) applied when speedhack is detected
+  - SPEEDHACKMAXDEBT=350 // Max movement debt (in ms) player can accumulate before throttling occurs
+  - SPEEDHACKMAXDEBTAVG=0.5 // Max average debt as factor of SPEEDHACKMAXDEBT before triggering warning log
+  - SPEEDHACKMAXCREDIT=-75 // Movement credit buffer (in ms) for regular players against jitter/lag
+  - SPEEDHACKGRACETHRESHOLD=2000 // Grace threshold to handle large server/network lag spikes
+
+- [ADD] Added new Socket JS properties for movement tracking:
+  - .moveDebt // Accumulated time debt in ms (early arrival = potential speeding, late = lag)
+  - .moveDebtAvg // Accumulated time debt in ms, averaged over at least 100 samples
+  - .moveBurstAllowance // Number of upcoming movement steps processed without incurring penalty
+  - .nextMoveTime // Timestamp in ms for when next valid movement packet is expected to arrive
+
+- [UPD] Extended JS Function DoMovingEffect to support optional stationary effect flag. Updated syntax:
+  - DoMovingEffect( srcObject, trgObject, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] )
+  - DoMovingEffect( srcObject, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] )
+  - DoMovingEffect( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode], [stationaryFX] )
+
+- [UPD] Updated spellbook lookup (via IsSpellBook() item function), casting, display, scroll insertion and spell packet generation to rely on the range defined by SPELLBOOKDATA, while preserving support for traditional type 9 spellbooks
+
+- [FIX] Fixed house decay timers not getting reset properly upon door usage (js/item/doors.js) and when grandfathered state is enabled for house (js/server/house/house.js)
+
+- [FIX] Fixed an issue in js/skill/healing.js where healing slip timers could become permanently locked if a resurrect attempt returned early
+
+- [FIX] Fixed server crash in CGump::AddXMFHTMLTok caused by empty cliloc argument arrays sent from newer clients
+
+- [FIX] Fixed a 20+ year old movement desynchronization bug that would cause players to start rubberbanding after taking ~255 steps
+
+- [MISC] Minor cosmetic cleanup and comment standardization in combat.cpp and magic.cpp</code></pre>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#prChecklist" id="prChecklist"><span>Quick TLDR; Checklist</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>Before submitting your Pull Request description, check that:</p>
+					<ul>
+						<li>Every changelog line starts with a dash and valid tag: <code>- [TAG]</code></li>
+						<li>Sub-points and syntax lines are indented with two spaces: <code>  - </code></li>
+						<li>Clearly states what changed, was added, fixed, or updated</li>
+						<li>Fixes explain what went wrong and what was fixed (<em>"Fixed an issue where X would Y"</em>)</li>
+						<li>JS properties name the object type (Character, Item, Socket) and note if read-only</li>
+						<li>New DFN tags, INI settings, and functions include syntax and <code>//</code> comments on sub-bullets</li>
+						<li>Script and definition fixes mention the file path in parentheses: <code>(js/path/to/file.js)</code></li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+		</ul> <!-- cd-faq__group -->
 	</div> <!-- cd-faq__items -->
 
 
@@ -394,7 +821,7 @@ void myFunction( std::string myString )
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 Style Guide for Code by Xuri @ Copyright 2022-2025</small></p>
+	<p><small>UOX3 Style Guide for Code by Xuri @ Copyright 2022-2026</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script src="assets/js/util.js"></script> <!-- util functions included in the CodyHouse framework -->

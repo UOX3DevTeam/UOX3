@@ -6,6 +6,7 @@ id=0x0efa
 weight=100
 value=22 11
 type=9
+spellbookdata=1,64,0x1f2d
 restock=15
 decay=1
 good=28
@@ -155,13 +156,17 @@ script=2203// charges_left_tooltip.js
 [0x2252]
 {
 get=base_item
-name=paladin spellbook
+name=book of chivalry
 id=0x2252
 weight=100
 value=22 11
+type=9
+spellbookdata=201,10,0
+spells=0x3ff 0x0 0x0
 decay=1
 good=28
 origin=aos
+layer=1
 sectionid=0x2252
 }
 
@@ -170,16 +175,24 @@ sectionid=0x2252
 get=0x2252
 }
 
+[bookofchivalry]
+{
+get=0x2252
+}
+
 [0x2253]
 {
 get=base_item
-name=necromancer book
+name=necromancer spellbook
 id=0x2253
 weight=100
 value=22 11
+type=9
+spellbookdata=101,17,0x2260
 decay=1
 good=28
 origin=aos
+layer=1
 sectionid=0x2253
 }
 
@@ -188,22 +201,129 @@ sectionid=0x2253
 get=0x2253
 }
 
+[necromancerspellbook]
+{
+get=0x2253
+}
+
+[completenecromancerspellbook]
+{
+get=0x2253
+spells=0x1ffff 0x0 0x0
+}
+
+[0x238c]
+{
+get=base_item
+name=book of bushido
+id=0x238c
+weight=100
+value=22 11
+type=9
+spellbookdata=401,6,0
+spells=0x3f 0x0 0x0
+decay=1
+good=28
+origin=se
+layer=1
+sectionid=0x238c
+}
+
+[bookofbushido]
+{
+get=0x238c
+}
+
+[0x23a0]
+{
+get=base_item
+name=book of ninjitsu
+id=0x23a0
+weight=100
+value=22 11
+type=9
+spellbookdata=501,8,0
+spells=0xff 0x0 0x0
+decay=1
+good=28
+origin=se
+layer=1
+sectionid=0x23a0
+}
+
+[bookofninjitsu]
+{
+get=0x23a0
+}
+
+[0x2d50]
+{
+get=base_item
+name=spellweaving spellbook
+id=0x2d50
+color=0x08a2
+weight=100
+value=22 11
+type=9
+spellbookdata=601,16,0x2d51
+decay=1
+good=28
+origin=ml
+layer=1
+sectionid=0x2d50
+}
+
+[spellweavingbook]
+{
+get=0x2d50
+}
+
 [0x2d9d]
 {
 get=base_item
-name=mystic book
-id=0x02d9d
+name=mystic spellbook
+id=0x2d9d
 weight=100
 value=22 11
+type=9
+spellbookdata=678,16,0x2d9e
 decay=1
 good=28
 origin=sa
+layer=1
 sectionid=0x2d9d
 }
 
 [mysticbook]
 {
 get=0x2d9d
+}
+
+[mysticspellbook]
+{
+get=0x2d9d
+}
+
+[0x225a]
+{
+get=base_item
+name=book of masteries
+id=0x225a
+weight=100
+value=22 11
+type=9
+spellbookdata=701,45,0
+spells=0xffffffff 0x1fff 0x0
+decay=1
+good=28
+origin=tol
+layer=1
+sectionid=0x225a
+}
+
+[bookofmasteries]
+{
+get=0x225a
 }
 
 [moonstone]

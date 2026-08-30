@@ -22,9 +22,15 @@ function EarthQuake( rikktor, target, sock )
 
 	target.Damage( dmg, 1, rikktor, true ); // 1 = physical
 
-	// Play recoil animation if humanoid and unmounted
-	if(( target.BodyID == 0x0190 || target.BodyID == 0x0191) && !target.isonhorse )
-		target.DoAction(20); // Recoil anim
+	// Revalidate target in case they died from the applied damage
+	if( ValidateObject( target ))
+	{
+		// Play recoil animation if humanoid and unmounted
+		if(( target.BodyID == 0x0190 || target.BodyID == 0x0191) && !target.isonhorse )
+		{
+			target.DoAction(20); // Recoil anim
+		}
+	}
 
 	return true;
 }

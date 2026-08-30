@@ -39,7 +39,17 @@ CJSMapping::CJSMapping()
  */
 CJSMapping::~CJSMapping()
 {
-	//Cleanup();
+	Shutdown();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CJSMapping::Shutdown()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Releases all script mappings and their persistent JavaScript roots
+//o------------------------------------------------------------------------------------------------o
+void CJSMapping::Shutdown( void )
+{
+	Cleanup();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -71,7 +81,7 @@ void CJSMapping::Cleanup( void )
 {
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		if( mapSection[1] != nullptr )
+		if( mapSection[i] != nullptr )
 		{
 			delete mapSection[i];
 			mapSection[i] = nullptr;
@@ -220,15 +230,8 @@ CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 //o------------------------------------------------------------------------------------------------o
 UI16 CJSMapping::GetScriptId( JSObject *toFind )
 {
-	UI16 retVal	= 0xFFFF;
-
-	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
-	{
-		retVal = mapSection[i]->GetScriptId( toFind );
-		if( retVal != 0xFFFF )
-			break;
-	}
-	return retVal;
+	cScript *script = GetScript( toFind );
+	return script != nullptr ? script->GetScriptID() : 0xFFFF;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -239,19 +242,29 @@ UI16 CJSMapping::GetScriptId( JSObject *toFind )
 //o------------------------------------------------------------------------------------------------o
 cScript * CJSMapping::GetScript( JSObject *toFind )
 {
-	cScript *retVal		= nullptr;
-	cScript *toCheck	= nullptr;
+	if( toFind == nullptr )
+		return nullptr;
 
-	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
+	const JSClass* objClass = JS::GetClass( toFind );
+	if( objClass != nullptr )
 	{
-		toCheck = mapSection[i]->GetScript( toFind );
-		if( toCheck != nullptr )
+		std::string className = objClass->name;
+		if( className == "uoxscript" )
 		{
-			retVal = toCheck;
-			break;
+			JS::Value slotVal = JS::GetReservedSlot( toFind, 0 );
+			if( !slotVal.isUndefined() )
+			{
+				return static_cast<cScript*>( slotVal.toPrivate() );
+			}
+		}
+		else
+		{
+			// The engine is passing something else! Let's find out what it is:
+			Console.Print( oldstrutil::format( "WARNING: GetScript expected 'uoxscript' but received: '%s'\n", className.c_str() ) );
 		}
 	}
-	return retVal;
+
+	return nullptr; 
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -309,7 +322,6 @@ CJSMappingSection::CJSMappingSection( SCRIPTTYPE sT )
 	scriptType = sT;
 
 	scriptIdMap.clear();
-	scriptJSMap.clear();
 
 	scriptIdIter = scriptIdMap.end();
 }
@@ -326,7 +338,6 @@ CJSMappingSection::~CJSMappingSection()
 	}
 
 	scriptIdMap.clear();
-	scriptJSMap.clear();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -371,7 +382,6 @@ auto CJSMappingSection::Parse( Script *fileAssocData ) -> void
 					if( toAdd )
 					{
 						scriptIdMap[scriptId]			= toAdd;
-						scriptJSMap[toAdd->Object()]	= scriptId;
 						++i;
 					}
 				}
@@ -447,13 +457,6 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 							{
 								if( scriptIdMap[toLoad] )
 								{
-									JSObject *jsObj = scriptIdMap[toLoad]->Object();
-									std::map<JSObject *, UI16>::iterator jFind = scriptJSMap.find( jsObj );
-									if( jFind != scriptJSMap.end() )
-									{
-										scriptJSMap.erase( jFind );
-									}
-
 									delete scriptIdMap[toLoad];
 									scriptIdMap[toLoad] = nullptr;
 								}
@@ -462,7 +465,6 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 							if( toAdd )
 							{
 								scriptIdMap[scriptId]			= toAdd;
-								scriptJSMap[toAdd->Object()]	= scriptId;
 								Console.Print( oldstrutil::format( "Reload of JavaScript (ScriptId %u) Successful\n", toLoad ));
 								toAdd->OnScriptLoad();
 							}
@@ -511,15 +513,8 @@ bool CJSMappingSection::IsInMap( UI16 scriptId )
 //o------------------------------------------------------------------------------------------------o
 UI16 CJSMappingSection::GetScriptId( JSObject *toFind )
 {
-	UI16 retVal = 0xFFFF;
-
-	std::map<JSObject *, UI16>::const_iterator sIter = scriptJSMap.find( toFind );
-	if( sIter != scriptJSMap.end() )
-	{
-		retVal = sIter->second;
-	}
-
-	return retVal;
+	// Defer to the global mapping manager's O(1) slot extraction
+	return JSMapping->GetScriptId( toFind );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -549,8 +544,8 @@ cScript * CJSMappingSection::GetScript( UI16 toFind )
 //o------------------------------------------------------------------------------------------------o
 cScript * CJSMappingSection::GetScript( JSObject *toFind )
 {
-	UI16 scriptId = GetScriptId( toFind );
-	return GetScript( scriptId );
+	// Defer to the global mapping manager's O(1) slot extraction
+	return JSMapping->GetScript( toFind );
 }
 
 //o------------------------------------------------------------------------------------------------o

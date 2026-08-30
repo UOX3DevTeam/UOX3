@@ -59,6 +59,8 @@
 #include "cEffects.h"
 #include <algorithm>
 
+void RestockNPC( CChar &i, bool stockAll );
+
 #define DEBUGMOVEMULTIPLIER 1.75
 
 // Bitmask bits
@@ -229,6 +231,8 @@ mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ), mountedFleeingSpeed( DEFNPC_MOVEMEN
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
 	foodList.reserve( MAX_NAME );
+	pendingShopLists.clear();
+	shopStockLoaded = false;
 
 	// Mark all characters as "non-awake" my default. This is used by UOX3 to see which
 	// NPCs are permanently awake and need updating outside of region-based checks
@@ -258,7 +262,7 @@ const UI16			DEFCHAR_ADVOBJ 				= 0;
 const SERIAL		DEFCHAR_GUILDFEALTY			= INVALIDSERIAL;
 const SI16			DEFCHAR_GUILDNUMBER			= -1;
 const UI08			DEFCHAR_FLAG 				= 0x04;
-const SI08			DEFCHAR_SPELLCAST 			= -1;
+const SI32			DEFCHAR_SPELLCAST 			= -1;
 const UI08			DEFCHAR_NEXTACTION 			= 0;
 const SI08			DEFCHAR_STEALTH				= -1;
 const UI08			DEFCHAR_RUNNING				= 0;
@@ -1081,6 +1085,74 @@ void CChar::SetShop( bool newVal )
 {
 	bools.set( BIT_SHOP, newVal );
 	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::IsShopStockLoaded()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if the vendor's shop inventory has already been loaded
+//o------------------------------------------------------------------------------------------------o
+bool CChar::IsShopStockLoaded( void ) const
+{
+	return ( mNPC != nullptr && mNPC->shopStockLoaded );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::HasPendingShopLists()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if the vendor has pending shop lists queued to be loaded
+//o------------------------------------------------------------------------------------------------o
+bool CChar::HasPendingShopLists( void ) const
+{
+	return ( mNPC != nullptr && !mNPC->pendingShopLists.empty() );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::SetShopStockLoaded()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets whether the vendor's shop inventory has been loaded
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetShopStockLoaded( bool value )
+{
+	if( mNPC != nullptr )
+	{
+		mNPC->shopStockLoaded = value;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::AddPendingShopList()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a shop list name to the vendor's pending load queue
+//o------------------------------------------------------------------------------------------------o
+void CChar::AddPendingShopList( const std::string &listName )
+{
+	if( mNPC != nullptr )
+	{
+		mNPC->pendingShopLists.push_back( listName );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::PopulateShopStock()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Populates the vendor's buy/sell containers with items on-demand
+//o------------------------------------------------------------------------------------------------o
+void CChar::PopulateShopStock( void )
+{
+	if( mNPC == nullptr || mNPC->shopStockLoaded || !IsShop() )
+		return;
+
+	mNPC->shopStockLoaded = true;
+
+	for( const auto &listName : mNPC->pendingShopLists )
+	{
+		Npcs->LoadShopList( listName, this );
+	}
+	mNPC->pendingShopLists.clear();
+
+	// Ensure the NPC is fully restocked with maximum inventory and trade system values initialized
+	RestockNPC( ( *this ), true );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2074,11 +2146,11 @@ void CChar::SetRaceGate( RACEID newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the spell ID of the next spell an NPC will be casting
 //o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetSpellCast( void ) const
+SI32 CChar::GetSpellCast( void ) const
 {
 	return spellCast;
 }
-void CChar::SetSpellCast( SI08 newValue )
+void CChar::SetSpellCast( SI32 newValue )
 {
 	spellCast = newValue;
 }
@@ -3066,6 +3138,11 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf, bool t
 //o------------------------------------------------------------------------------------------------o
 CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 {
+	if(( Layer == IL_SELLCONTAINER || Layer == IL_BUYCONTAINER || Layer == IL_BOUGHTCONTAINER ) && IsShop() && !IsShopStockLoaded() && HasPendingShopLists() )
+	{
+		PopulateShopStock();
+	}
+
 	CItem *rVal = nullptr;
 	LAYERLIST_ITERATOR lIter = itemLayers.find( Layer );
 	if( lIter != itemLayers.end() )
@@ -3086,8 +3163,7 @@ void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 bool CChar::WearItem( CItem *toWear )
 {
 	// Run event prior to equipping item, allowing script to prevent equip
-	std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
-	for( auto i : scriptTriggers )
+	for( auto i : toWear->GetScriptTriggers() )
 	{
 		cScript *tScript = JSMapping->GetScript( i );
 		if( tScript != nullptr )
@@ -3105,10 +3181,7 @@ bool CChar::WearItem( CItem *toWear )
 		}
 	}
 
-	scriptTriggers.clear();
-	scriptTriggers.shrink_to_fit();
-	scriptTriggers = this->GetScriptTriggers();
-	for( auto i : scriptTriggers )
+	for( auto i : this->GetScriptTriggers() )
 	{
 		cScript *tScript = JSMapping->GetScript( i );
 		if( tScript != nullptr )
@@ -3180,8 +3253,7 @@ bool CChar::WearItem( CItem *toWear )
 					SetPoisonStrength( GetPoisonStrength() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
 				}
 
-				std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
-				for( auto i : scriptTriggers )
+				for( auto i : toWear->GetScriptTriggers() )
 				{
 					cScript *tScript = JSMapping->GetScript( i );
 					if( tScript != nullptr )
@@ -5501,6 +5573,15 @@ void CChar::PostLoadProcessing( void )
 	if( !IsNpc() && GetCreatedOn() == 0 )
 	{
 		SetCreatedOn( GetMinutesSinceEpoch() );
+	}
+
+	if( IsShop() )
+	{
+		CItem *sellLayer = GetItemAtLayer( IL_SELLCONTAINER );
+		if( ValidateObject( sellLayer ) && sellLayer->GetContainsList()->Num() > 0 )
+		{
+			SetShopStockLoaded( true );
+		}
 	}
 
 	// We need to add things to petlists, so we can cleanup after ourselves properly -

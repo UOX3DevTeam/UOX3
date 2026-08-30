@@ -65,6 +65,7 @@ function CommandRegistration()
 	RegisterCommand( "resetskillusage", 10, true ); // Fix stuck skill usage for all players
 	RegisterCommand( "rain", 10, true ); // Make it rain in the current region
 	RegisterCommand( "snow", 10, true ); // Make it snow in the current region
+	RegisterCommand( "storm", 10, true ); // Make it stormy in the current region
 	RegisterCommand( "clearweather", 10, true ); // Clear up weather effect
 	RegisterCommand( "respet", 8, true ); //used to resurrect a pet that has been killed
 }
@@ -1572,6 +1573,15 @@ function command_SNOW( pSock, execString )
 	var mRegion = pSock.currentChar.region;
 	mRegion.weather = 10;
 	pSock.SysMessage( "Weather override (SNOW) enabled for current region (" + mRegion.name + ")" );
+}
+
+// Override weather for current region and turn on STORMY weather
+/** @type { ( socket: Socket, cmdString: string ) => void } */
+function command_STORM( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 11;
+	pSock.SysMessage( "Weather override (STORM) enabled for current region (" + mRegion.name + ")" );
 }
 
 // Clear up any override weather-effects in current region

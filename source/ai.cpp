@@ -37,6 +37,12 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 {
 	if( ValidateObject( cTarget ) && &mChar != cTarget )
 	{
+		// Offline players are not valid targets
+		if( !cTarget->IsNpc() && !IsOnline(( *cTarget )))
+		{
+			return false;
+		}
+
 		if( mChar.IsNpc() && cTarget->IsNpc() )
 		{
 			//We don't want NPCs to attack one another if either of them are water-walking creatures
@@ -128,10 +134,7 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 					return false;
 				}
 
-				if( IsOnline(( *cTarget )) || cTarget->IsNpc() )
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 	}

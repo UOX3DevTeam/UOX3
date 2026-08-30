@@ -181,6 +181,9 @@ function MassGreaterHealEffect( savageShaman )
 	{
 		var nearbyChar = savageShaman.nearbyChars[i];
 
+		if( !ValidateObject( nearbyChar ) || nearbyChar.dead )
+			continue;
+
 		// Make other nearby Shamans assist in casting the spell
 		if(( nearbyChar.race && nearbyChar.race.id == savageShaman.race.id ) && ( nearbyChar.HasScriptTrigger( savageShamanScriptID )))
 		{
@@ -236,6 +239,9 @@ function ChainLightningEffect( savageShaman )
 	for( var i = 0; i < savageShaman.nearbyChars.length; i++ )
 	{
 		var nearbyChar = savageShaman.nearbyChars[i];
+
+		if( !ValidateObject( nearbyChar ) || nearbyChar.dead )
+			continue;
 
 		// Make other nearby Shamans assist in casting the spell
 		if(( nearbyChar.race && nearbyChar.race.id == savageShaman.race.id ) && ( nearbyChar.HasScriptTrigger( savageShamanScriptID )))
@@ -315,6 +321,9 @@ function MassPoisonEffect( savageShaman )
 	for( var i = 0; i < savageShaman.nearbyChars.length; i++ )
 	{
 		var nearbyChar = savageShaman.nearbyChars[i];
+
+		if( !ValidateObject( nearbyChar ) || nearbyChar.dead )
+			continue;
 
 		// Make other nearby Shamans assist in casting the spell
 		if(( nearbyChar.race && nearbyChar.race.id == savageShaman.race.id ) && ( nearbyChar.HasScriptTrigger( savageShamanScriptID )))

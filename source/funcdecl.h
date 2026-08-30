@@ -74,13 +74,15 @@ CChar *		CalcCharObjFromSer( SERIAL targSerial );
 CMultiObj *	CalcMultiFromSer( SERIAL targSerial );
 inline UI32 CalcSerial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 )
 {
-	return (( a1 << 24 ) + ( a2 << 16 ) + ( a3 << 8 ) + a4 );
+	return (( static_cast<UI32>( a1 ) << 24 ) + ( static_cast<UI32>( a2 ) << 16 )
+		+ ( static_cast<UI32>( a3 ) << 8 ) + static_cast<UI32>( a4 ));
 }
 
 //o------------------------------------------------------------------------------------------------o
 // Socket stuff
 //o------------------------------------------------------------------------------------------------o
 auto 	SendVecsAsGump( CSocket *sock, std::vector<std::string>& one, std::vector<std::string>& two, UI32 type, SERIAL serial ) -> void;
+auto 	SendVecsAsCompressedGump( CSocket *sock, std::vector<std::string>& one, std::vector<std::string>& two, UI32 type, SERIAL serial ) -> void;
 void	SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin = false );
 bool	IsOnline( CChar& mChar );
 

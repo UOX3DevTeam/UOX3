@@ -16,6 +16,9 @@ function onCombatStart( pKappa, pDefender )
 /** @type { ( attacker: Character, defender: Character, hitStatus: boolean, hitLoc: number, damageDealt: number ) => void } */
 function onAttack( pKappa, pDefender )
 {
+	if( !ValidateObject( pDefender ))
+		return;
+
 	// If Kappa is near water, drain life and heal Kappa
 	if( pKappa.GetTag( "NearWater" ) == true )
 	{
@@ -26,14 +29,14 @@ function onAttack( pKappa, pDefender )
 		pKappa.Heal( drainAmount );
 		pKappa.TextMessage( "The Kappa drains life from its foe, drawing strength from the water!" );
 
-		if( pDefender.socket != null ) 
+		if( ValidateObject( pDefender ) && !pDefender.npc && pDefender.socket != null )
 		{
 			pDefender.SysMessage( "You feel your life being drained!" );
 		}
 	}
 
 	// Simulate the Kappa bowing, causing it to release its corrosive liquid
-	if( IsForcedToBow( pKappa ))
+	if( IsForcedToBow( pKappa ) && ValidateObject( pDefender ))
 	{
 		pKappa.TextMessage( "The Kappa bows, releasing its corrosive liquid!" );
 
@@ -53,8 +56,11 @@ function onAttack( pKappa, pDefender )
 		var strengthLoss = pKappa.strength * ( RandomNumber( 20, 30 ) / 100 ); // Reduce strength by a random percentage between 20% and 30%
 		pKappa.strength -= strengthLoss;
 
-		if( pDefender.socket != null )
+		// Validate pDefender again in case they died from applied damage
+		if( ValidateObject( pDefender ) && pDefender.socket != null )
+		{
 			pDefender.SysMessage("The Kappa looks visibly weakened after losing its liquid.");
+		}
 	}
 }
 

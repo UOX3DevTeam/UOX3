@@ -83,23 +83,15 @@ public:
 	}
 };
 
-struct Reag_st
+struct SpellReagent
 {
-	UI08 ginseng;
-	UI08 moss;
-	UI08 drake;
-	UI08 pearl;
-	UI08 silk;
-	UI08 ash;
-	UI08 shade;
-	UI08 garlic;
-	UI08 batwing;
-	UI08 daemonblood;
-	UI08 gravedust;
-	UI08 noxcrystal;
-	UI08 pigiron;
-	Reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 ), batwing( 0 ), daemonblood( 0 ), gravedust( 0 ),
-	noxcrystal( 0 ), pigiron( 0 )
+	UI16 amount;
+	UI16 colour;
+	bool colourCheck;
+	std::string sectionId;
+
+	SpellReagent( const std::string& newSectionId, UI16 newAmount, UI16 newColour = 0, bool newColourCheck = false ) :
+	amount( newAmount ), colour( newColour ), colourCheck( newColourCheck ), sectionId( newSectionId )
 	{
 	}
 };
@@ -114,7 +106,6 @@ private:
 	R64			damageDelay;	// Minimum delay between targeting of a damage spell and the application of damage
 	R64			recoveryDelay;	// Minimum delay between the end of one spellcast and the start of another
 	UI16		action;
-	Reag_st		reags;
 	std::string mantra;
 	std::string strToSay;	// string visualized with targ. system
 	bool		enabled;
@@ -130,6 +121,7 @@ private:
 	SI32		tithing;
 	UI16		jsScript;
 	SI16		baseDmg;
+	std::vector<SpellReagent> reagents;
 public:
 	CSpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
 	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), tithing( 0 ), jsScript( 0 ), baseDmg( 0 )
@@ -197,13 +189,13 @@ public:
 	{
 		return baseDmg;
 	}
-	Reag_st	Reagants( void ) const
+	const std::vector<SpellReagent>& Reagents( void ) const
 	{
-		return reags;
+		return reagents;
 	}
-	Reag_st *ReagantsPtr( void )
+	void AddReagent( const SpellReagent& reagent )
 	{
-		return &reags;
+		reagents.push_back( reagent );
 	}
 	const std::string Mantra( void ) const
 	{

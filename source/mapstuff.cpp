@@ -608,90 +608,38 @@ auto CMulHandler::MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMulHandler::DynTile()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns which dynamic tile is present at (x,y) or -1 if no tile exists
-//o------------------------------------------------------------------------------------------------o
-auto CMulHandler::DynTile( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkOnlyMultis, bool checkOnlyNonMultis ) -> CItem *
-{
-	auto rValue = static_cast<CItem*>( nullptr );
-	for( auto &cellResponse : MapRegion->PopulateList( x, y, worldNumber ))
-	{
-		if( cellResponse == nullptr )
-			continue;
-
-		auto regItems = cellResponse->GetItemList();
-		for( const auto &item : regItems->collection() )
-		{
-			if( !ValidateObject( item ) || ( item->GetInstanceId() != instanceId ))
-				continue;
-
-			if( !checkOnlyNonMultis )
-			{
-				if( item->GetId( 1 ) >= 0x40 && ( item->GetObjType() == OT_MULTI || item->CanBeObjType( OT_MULTI )))
-				{
-					auto multiTileId = MultiTile( item, x, y, z, false );
-					if( multiTileId > 0 )
-					{
-						rValue = item;
-						break;
-					}
-				}
-				else if( item->GetMulti() != INVALIDSERIAL || ValidateObject( CalcMultiFromSer( item->GetOwner() )))
-				{
-					if(( item->GetX() == x ) && ( item->GetY() == y ))
-					{
-						rValue = item;
-						break;
-					}
-				}
-			}
-			else if( !checkOnlyMultis && ( item->GetX() == x ) && ( item->GetY() == y ))
-			{
-				rValue = item;
-				break;
-			}
-		}
-
-		if( rValue )
-		{
-			break;
-		}
-		
-	}
-	return rValue;
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMulHandler::DoesStaticBlock()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DoesStaticBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, bool checkWater ) -> bool
 {
+	// Find all static tiles at x, y, worldnumber
 	auto &artTiles = Map->ArtAt( x, y, worldNumber );
-	auto rValue = false;
-	for( auto &tile : artTiles )
+
+	// Iterate through all those static tiles
+	for( const auto &tile : artTiles )
 	{
-		auto elev = static_cast<SI08>( tile.altitude + tile.artInfo->ClimbHeight() );
-		if( checkWater )
+		// Check tile flags first, to see if tile would even block, before doing height checks
+		bool couldTileBlock = checkWater 
+			? (tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET ) || tile.CheckFlag( TF_ROOF ))
+			: ((tile.CheckFlag( TF_BLOCKING ) && !tile.CheckFlag( TF_WET )) || tile.CheckFlag( TF_ROOF ));
+
+		if( couldTileBlock )
 		{
-			if( elev >= z && tile.altitude <= z && ( tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET ) || tile.CheckFlag( TF_ROOF )))
+			// Fetch highest point of the static tile
+			auto elev = static_cast<SI08>( tile.altitude + tile.artInfo->ClimbHeight() );
+
+			// Check if highest point of static tile is above or equal to z
+			// AND if base position of tile is below z + 16 (character height)
+			// NOTE: What if player is mounted?
+			if( elev >= z && tile.altitude <= z + 16 )
 			{
-				rValue = true;
-				break;
-			}
-		}
-		else
-		{
-			if( elev >= z && tile.altitude <= z && ( tile.CheckFlag( TF_BLOCKING ) && !tile.CheckFlag( TF_WET ) || tile.CheckFlag( TF_ROOF )))
-			{
-				rValue = true;
-				break;
+				return true;
 			}
 		}
 	}
-	return rValue;
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -699,45 +647,86 @@ auto CMulHandler::DoesStaticBlock( std::int16_t x, std::int16_t y, std::int8_t z
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if there are any dynamic tiles at given coordinates that block movement
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::DoesDynamicBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis ) -> bool
+auto CMulHandler::DoesDynamicBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis, bool checkMultiPlacement ) -> bool
 {
-	auto rValue = false;
-	// get the tile id of any dynamic tiles at this spot
-	auto dtItem = DynTile( x, y, z, worldNumber, instanceId, checkOnlyMultis, checkOnlyNonMultis );
-	if( ValidateObject( dtItem ))
+	// Fetch all regions to look in
+	for( const auto &cellResponse : MapRegion->PopulateList( x, y, worldNumber ))
 	{
-		// Don't allow placing houses on top of immovable, visible dynamic items
-		if( dtItem->GetMovable() == 2 && dtItem->GetVisible() == 0 )
-			return true;
-		
-		// Ignore items that are permanently invisible or visible to GMs only
-		if( dtItem->GetVisible() == 1 || dtItem->GetVisible() == 3 )
-			return false;
+		if( cellResponse == nullptr )
+			continue;
 
-		auto dtItemZ = dtItem->GetZ();
-		rValue = false;
-		const UI16 dt = dtItem->GetId();
-		if( IsValidTile( dt ) && dt != 0 )
+		// Fetch item list for given region
+		auto regItems = cellResponse->GetItemList();
+		for( const auto &item : regItems->collection() )
 		{
-			auto tile = SeekTile( dt );
-			if( waterWalk )
+			if( !ValidateObject( item ) || item->GetInstanceId() != instanceId )
+				continue;
+
+			bool isAtExactXY = ( item->GetX() == x && item->GetY() == y );
+			bool isMulti = false;
+
+			// Determine if item is a multi-item or normal item
+			if( item->GetId( 1 ) >= 0x40 && ( item->GetObjType() == OT_MULTI || item->CanBeObjType( OT_MULTI )))
 			{
-				if( !tile.CheckFlag( TF_WET ))
+				if( MultiTile( item, x, y, z, false ) > 0 )
 				{
-					rValue = true;
+					isMulti = true;
 				}
 			}
-			else
+			else if( isAtExactXY )
 			{
-				auto elev = static_cast<SI08>( dtItemZ + tile.ClimbHeight() );
-				if( elev >= z && dtItemZ <= z && ( tile.CheckFlag( TF_ROOF ) || tile.CheckFlag( TF_BLOCKING ) || ( checkWater && tile.CheckFlag( TF_WET ))) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
+				if( item->GetMulti() != INVALIDSERIAL || ValidateObject( CalcMultiFromSer( item->GetOwner() )))
 				{
-					rValue = true;
+					isMulti = true;
+				}
+			}
+
+			// Filter out items not matching the coordinates or the multi flags
+			if( !isMulti && !isAtExactXY)
+				continue;
+			if( checkOnlyMultis && !isMulti )
+				continue;
+			if( checkOnlyNonMultis && isMulti )
+				continue;
+
+			// Ignore items that are permanently invisible or visible to GMs only
+			if( item->GetVisible() == 1 || item->GetVisible() == 3 )
+				continue;
+
+			// Corpses do not block movement or spawning
+			if( item->IsCorpse() )
+				continue;
+
+			if( IsValidTile( item->GetId() ))
+			{
+				// Fetch tile data for item
+				auto tile = SeekTile( item->GetId() );
+				
+				// Fetch the highest point of the dynamic tile
+				auto elev = static_cast<SI08>( item->GetZ() + tile.ClimbHeight() );
+
+				// Check tile flags first, to see if tile would even block, before doing height checks
+				bool couldTileBlock = waterWalk 
+					? ( !tile.CheckFlag( TF_WET ) || tile.CheckFlag( TF_BLOCKING ))
+					: ( tile.CheckFlag( TF_ROOF ) || tile.CheckFlag( TF_BLOCKING ) || ( checkWater && tile.CheckFlag( TF_WET )));
+
+				// Immovable, standard visible items block house placement
+				bool isImmovableBlocker = ( checkMultiPlacement && item->GetMovable() == 2 && item->GetVisible() == 0 );
+
+				if( couldTileBlock || isImmovableBlocker )
+				{
+					// Check if highest point of static tile is above or equal to z
+					// AND if base position of tile is below z + 16 (character height)
+					if( elev >= z && item->GetZ() <= z + 16 )
+					{
+						return true;
+					}
 				}
 			}
 		}
 	}
-	return rValue;
+
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -918,11 +907,13 @@ auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t 
 				else
 				{
 					// item is not a multi
-					if(( item->GetX() == x ) && ( item->GetY() == y ) && ( item->GetZ() == z ))
+					if( item->GetX() == x && item->GetY() == y )
 					{
 						auto itemZ = item->GetZ();
 						const SI08 tileHeight = static_cast<SI08>( TileHeight( item->GetId() ));
-						if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z ))
+
+						// If item's base is within/below z+16 and item's top is z or above
+						if(( itemZ <= ( z + 16 )) && (( itemZ + tileHeight ) >= z ))
 						{
 							if( SeekTile( item->GetId() ).CheckFlag( toCheck ))
 							{
@@ -957,13 +948,18 @@ auto CMulHandler::CheckTileFlag( std::uint16_t itemId, TileFlags flagToCheck ) -
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Top of statics at/above given coordinates
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ ) -> std::int8_t
+auto CMulHandler::StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ, bool requireSurface, bool requireWater ) -> std::int8_t
 {
 	auto top = ILLEGAL_Z;
 
 	const auto &artTiles = Map->ArtAt( x, y, worldNumber );
 	for( const auto &tile : artTiles )
 	{
+		if(( requireSurface && !CheckTileFlag( tile.tileId, TF_SURFACE )) || ( requireWater && !CheckTileFlag( tile.tileId, TF_WET )))
+		{
+			continue;
+		}
+
 		auto tempTop = static_cast<std::int8_t>( tile.altitude + tile.artInfo->ClimbHeight() );
 		if(( tempTop <= z + maxZ ) && ( tempTop > top ))
 		{
@@ -978,7 +974,7 @@ auto CMulHandler::StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std:
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, std::int8_t maxZ ) -> std::int8_t
+auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, std::int8_t maxZ, bool requireSurface, bool requireWater ) -> std::int8_t
 {
 	auto dynZ = ILLEGAL_Z;
 
@@ -991,6 +987,11 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 		// Also check dynamic items inside the multi
 		for( const auto &tempMultiItem : tempMulti->GetItemsInMultiList()->collection() )
 		{
+			if(( requireSurface && !CheckTileFlag( tempMultiItem->GetId(), TF_SURFACE )) || ( requireWater && !CheckTileFlag( tempMultiItem->GetId(), TF_WET )))
+			{
+				continue;
+			}
+				
 			if( tempMultiItem->GetX() == x && tempMultiItem->GetY() == y )
 			{
 				SI08 zTemp = static_cast<SI08>( tempMultiItem->GetZ() + TileHeight( tempMultiItem->GetId() ));
@@ -1017,6 +1018,11 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 					}
 					else if( tempItem->GetX() == x && tempItem->GetY() == y )
 					{
+						if(( requireSurface && !CheckTileFlag( tempItem->GetId(), TF_SURFACE )) || ( requireWater && !CheckTileFlag( tempItem->GetId(), TF_WET )))
+						{
+							continue;
+						}
+
 						SI08 zTemp = static_cast<SI08>( tempItem->GetZ() + TileHeight( tempItem->GetId() ));
 						if(( zTemp <= z + maxZ ) && zTemp > dynZ )
 						{
@@ -1265,7 +1271,7 @@ auto CMulHandler::SeekMap( std::int16_t x, std::int16_t y, std::uint8_t worldNum
 //|	Purpose		-	Checks if location at given coordinates is considered valid for spawning objects
 //|					Also used to verify teleport location for NPCs teleporting back to bounding box
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::ValidSpawnLocation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater ) -> bool
+auto CMulHandler::ValidSpawnLocation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater, bool skipStaticChecks ) -> bool
 {
 	if( !InsideValidWorld( x, y, worldNumber ))
 		return false;
@@ -1274,17 +1280,22 @@ auto CMulHandler::ValidSpawnLocation( std::int16_t x, std::int16_t y, std::int8_
 	if( DoesDynamicBlock( x, y, z, worldNumber, instanceId, checkWater, !checkWater, false, false ))
 		return false;
 
-	// if there's a static block here in our way, return false
-	if( DoesStaticBlock( x, y, z, worldNumber, checkWater ))
-		return false;
+	// Optionally skip checks for statics/map (defaults to checking)
+	if( !skipStaticChecks )
+	{
+		// if there's a static block here in our way, return false
+		if( DoesStaticBlock( x, y, z, worldNumber, checkWater ))
+			return false;
 
-	// if the static isn't a surface return false
-	[[maybe_unused]] UI16 ignoreMe = 0;
-	if( !CheckStaticFlag( x, y, z, worldNumber, ( checkWater ? TF_SURFACE : TF_WET ), ignoreMe, true ))
-		return false;
+		// if the static isn't a surface return false
+		[[maybe_unused]] UI16 ignoreMe = 0;
+		if( !CheckStaticFlag( x, y, z, worldNumber, ( checkWater ? TF_SURFACE : TF_WET ), ignoreMe, true ))
+			return false;
 
-	if( DoesMapBlock( x, y, z, worldNumber, checkWater, !checkWater, false, false ))
-		return false;
+		// check if map terrain blocks
+		if( DoesMapBlock( x, y, z, worldNumber, checkWater, !checkWater, false, false ))
+			return false;
+	}
 
 	return true;
 }
@@ -1318,7 +1329,7 @@ auto CMulHandler::ValidMultiLocation( std::int16_t x, std::int16_t y, std::int8_
 	}
 
 	// get the tile id of any dynamic tiles at this spot
-	if( !checkOnlyNonMultis && DoesDynamicBlock( x, y, elev, worldNumber, instanceId, checkWater, false, checkOnlyOtherMultis, checkOnlyNonMultis ))
+	if( !checkOnlyNonMultis && DoesDynamicBlock( x, y, elev, worldNumber, instanceId, checkWater, false, checkOnlyOtherMultis, checkOnlyNonMultis, true ))
 	{
 		return 2;
 	}

@@ -143,6 +143,9 @@ public:
 	UI16					ImportAccounts( void );
 	void					WriteAccountSection( CAccountBlock_st& actbTemp, std::fstream& fsOut );
 	UI16					AddAccount( std::string sUsername, std::string sPassword, const std::string &sContact = "NONE", UI16 wAttributes = 0x0000 );
+	bool					VerifyPassword( CAccountBlock_st& account, const std::string &password );
+	bool					SetPassword( CAccountBlock_st& account, const std::string &password );
+	bool					ResetPassword( const std::string &username, std::string &temporaryPassword );
 	bool					DelAccount( std::string sUsername );
 	bool					DelAccount( UI16 wAccountId );
 	bool					SetPath( const std::string &sPath );
