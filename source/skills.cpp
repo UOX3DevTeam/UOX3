@@ -1550,6 +1550,26 @@ auto CSkills::LoadCreateMenus() -> void
 	skillMenus.clear();
 	itemsForMenus.clear();
 
+	auto ParseResourceId = []( const std::string &value, UI16 itemEntry, UI16 &resourceId ) -> bool
+	{
+		try
+		{
+			size_t parsedLength = 0;
+			const auto parsedId = std::stoul( value, &parsedLength, 0 );
+			if( parsedLength != value.length() || parsedId > std::numeric_limits<UI16>::max() )
+			{
+				throw std::out_of_range( "resource ID is outside the valid range" );
+			}
+			resourceId = static_cast<UI16>( parsedId );
+			return true;
+		}
+		catch( const std::exception &e )
+		{
+			Console.Warning( oldstrutil::format( "Create menu ITEM %u has invalid RESOURCE ID '%s' (%s); the item will not be loaded.", itemEntry, value.c_str(), e.what() ));
+			return false;
+		}
+	};
+
 	UI16 ourEntry; // our actual entry number
 	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ))
 	{
@@ -1588,6 +1608,7 @@ auto CSkills::LoadCreateMenus() -> void
 				
 				ourEntry = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
 				CreateEntry_st tmpEntry;
+				bool validEntry		= true;
 				tmpEntry.minRank		= 0;
 				tmpEntry.maxRank		= 10;
 				tmpEntry.colour			= 0;
@@ -1657,15 +1678,41 @@ auto CSkills::LoadCreateMenus() -> void
 						{
 							for( const auto &sec : resList->collection() )
 							{
-								tmpResource.idList.push_back( static_cast<UI16>( std::stoul( sec->data, nullptr, 0 )));
+								auto resourceData = oldstrutil::trim( oldstrutil::removeTrailing( sec->data, "//" ));
+								UI16 resourceId = 0;
+								if( ParseResourceId( resourceData, ourEntry, resourceId ))
+								{
+									tmpResource.idList.push_back( resourceId );
+								}
+								else
+								{
+									validEntry = false;
+								}
 							}
 						}
 						else
 						{
-							tmpResource.idList.push_back( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+							auto resourceData = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
+							UI16 resourceId = 0;
+							if( ParseResourceId( resourceData, ourEntry, resourceId ))
+							{
+								tmpResource.idList.push_back( resourceId );
+							}
+							else
+							{
+								validEntry = false;
+							}
 						}
 
-						tmpEntry.resourceNeeded.push_back( tmpResource );
+						if( !tmpResource.idList.empty() )
+						{
+							tmpEntry.resourceNeeded.push_back( tmpResource );
+						}
+						else if( validEntry )
+						{
+							Console.Warning( oldstrutil::format( "Create menu ITEM %u has a RESOURCE with no valid IDs; the item will not be loaded.", ourEntry ));
+							validEntry = false;
+						}
 					}
 					else if( UTag == "SKILL" )
 					{
@@ -1698,7 +1745,10 @@ auto CSkills::LoadCreateMenus() -> void
 						tmpEntry.spell = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 					}
 				}
-				itemsForMenus[ourEntry] = tmpEntry;
+				if( validEntry )
+				{
+					itemsForMenus[ourEntry] = tmpEntry;
+				}
 			}
 			else if( "MENUENTRY" == eName.substr( 0, 9 ))
 			{
