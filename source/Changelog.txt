@@ -1,3 +1,7 @@
+04/09/2026 - DragonSlayer62 (#598)
+    [FIX] Prevented players from starting the bonding process by feeding another player's pet (js/npc/pets/petbonding.js)
+    [FIX] Prevented invalid create-menu resource IDs from crashing the server during startup. Invalid IDs now generate a console warning, and the affected crafting entry is skipped
+
 26/08/2026 - Xoduz (#593)
     [ADD] Added on-demand loading (and full restocking + application of Advanced Trade System rules) of shopkeeper buy/sell packs, deferring item creation until a vendor is first interacted with to significantly speed up world spawns and restock cycles
     [UPD] Optimized spawn region performance by pre-parsing NPC and item spawn lists at load time and streamlining entity registration
