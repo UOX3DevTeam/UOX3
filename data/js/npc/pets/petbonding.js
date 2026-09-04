@@ -272,6 +272,11 @@ function StartBonding( pUser, pPet )
 	{
 		return;
 	}
+	else if( !ValidateObject( pPet.owner ) || pPet.owner != pUser )
+	{
+		// Feeding another player's pet must never start its bonding timer.
+		return;
+	}
 	else
 	{
 		var tameSkillRequired = pPet.skillToTame;
