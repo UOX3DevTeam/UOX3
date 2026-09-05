@@ -2709,10 +2709,14 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 void CBaseObject::PostLoadProcessing( void )
 {
 	SERIAL tmpSerial = INVALIDSERIAL;
-	if( multis != nullptr )
+	// HandleLine stores a serialized MULTIID in tempMulti and deliberately
+	// leaves multis null until every world object has been loaded. Checking the
+	// pointer here made the deferred relationship impossible to restore.
+	if( tempMulti != INVALIDSERIAL )
 	{
 		multis		= nullptr;
 		SetMulti( tempMulti, false );
+		tempMulti	= INVALIDSERIAL;
 	}
 	if( spawnSerial != INVALIDSERIAL )
 	{

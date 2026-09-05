@@ -491,7 +491,16 @@ FDCLG( CItem, scriptTriggers )
 	return true;
 }
 
-FDCLS( CItem, multi ) { return true; }
+FDCLS( CItem, multi )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	if( args.get( 0 ).isNullOrUndefined() ) { item->SetMulti( INVALIDSERIAL ); return true; }
+	if( !args.get( 0 ).isObject() ) return true;
+	auto multi = JS::GetMaybePtrFromReservedSlot<CBaseObject>( &args.get( 0 ).toObject(), 0 );
+	if( ValidateObject( multi ) && multi->CanBeObjType( OT_MULTI )) item->SetMulti( static_cast<CMultiObj *>( multi ));
+	return true;
+}
 FDCLS( CItem, scripttrigger )
 {
 	FNARGS
@@ -1048,6 +1057,17 @@ ITEM_GENERAL_GET( maxRange, setInt32, GetMaxRange() )
 ITEM_GENERAL_GET( baseRange, setInt32, GetBaseRange() )
 ITEM_GENERAL_GET( origin, setInt32, GetOrigin() )
 ITEM_GENERAL_GET( stealable, setInt32, GetStealable() )
+ITEM_GENERAL_GET( cannonPower, setInt32, GetCannonPower() )
+ITEM_GENERAL_GET( cannonStage, setInt32, GetCannonStage() )
+ITEM_GENERAL_GET( cannonLinkSerial, setDouble, GetCannonLinkSerial() )
+ITEM_GENERAL_GET( cannonRange, setInt32, GetCannonRange() )
+ITEM_GENERAL_GET( cannonActionTime, setInt32, GetCannonActionTime() )
+ITEM_GENERAL_GET( isShipCannon, setBoolean, GetCannonRole() == CannonRole::Cannon )
+ITEM_GENERAL_GET( isWeaponPad, setBoolean, GetCannonRole() == CannonRole::WeaponPad )
+ITEM_GENERAL_GET( cannonArtNorth, setInt32, GetCannonDirectionArt( 0 ))
+ITEM_GENERAL_GET( cannonArtEast, setInt32, GetCannonDirectionArt( 1 ))
+ITEM_GENERAL_GET( cannonArtSouth, setInt32, GetCannonDirectionArt( 2 ))
+ITEM_GENERAL_GET( cannonArtWest, setInt32, GetCannonDirectionArt( 3 ))
 FDCLG( CItem, moveType )
 {
 	FNARGS
@@ -1062,6 +1082,14 @@ FDCLG( CItem, moveType )
 }
 ITEM_GENERAL_GET( tithing, setInt32, GetTithing() )
 #undef ITEM_GENERAL_GET
+
+FDCLG( CItem, cannonRole )
+{
+	FNARGS
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );
+	args.rval().setInt32( static_cast<UI08>( item->GetCannonRole() ));
+	return true;
+}
 
 #define ITEM_GENERAL_INT_SET( attr, valueType, accessor )                  \
 FDCLS( CItem, attr )                                                       \
@@ -1087,8 +1115,30 @@ ITEM_GENERAL_INT_SET( intelligence, SI16, SetIntelligence )
 ITEM_GENERAL_INT_SET( maxRange, UI08, SetMaxRange )
 ITEM_GENERAL_INT_SET( baseRange, UI08, SetBaseRange )
 ITEM_GENERAL_INT_SET( stealable, UI08, SetStealable )
+ITEM_GENERAL_INT_SET( cannonRole, CannonRole, SetCannonRole )
+ITEM_GENERAL_INT_SET( cannonPower, UI08, SetCannonPower )
+ITEM_GENERAL_INT_SET( cannonStage, UI08, SetCannonStage )
+ITEM_GENERAL_INT_SET( cannonLinkSerial, SERIAL, SetCannonLinkSerial )
+ITEM_GENERAL_INT_SET( cannonRange, UI08, SetCannonRange )
+ITEM_GENERAL_INT_SET( cannonActionTime, UI16, SetCannonActionTime )
 ITEM_GENERAL_INT_SET( tithing, SI32, SetTithing )
 #undef ITEM_GENERAL_INT_SET
+
+#define ITEM_CANNON_ART_SET( attr, direction )                           \
+FDCLS( CItem, attr )                                                     \
+{                                                                        \
+	FNARGS                                                                  \
+	auto item = JS::GetMaybePtrFromReservedSlot<CItem>( thisObj, 0 );       \
+	int32_t value = 0;                                                       \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value )) return false;             \
+	item->SetCannonDirectionArt( direction, static_cast<UI16>( value ));      \
+	return true;                                                             \
+}
+ITEM_CANNON_ART_SET( cannonArtNorth, 0 )
+ITEM_CANNON_ART_SET( cannonArtEast, 1 )
+ITEM_CANNON_ART_SET( cannonArtSouth, 2 )
+ITEM_CANNON_ART_SET( cannonArtWest, 3 )
+#undef ITEM_CANNON_ART_SET
 
 FDCLS( CItem, att ) { return true; }
 FDCLS( CItem, itemsinside ) { return true; }
@@ -1721,7 +1771,16 @@ FDCLS( CCharacter, socket ) { return true; }
 FDCLS( CCharacter, skillLock ) { return true; }
 FDCLS( CCharacter, skillCaps ) { return true; }
 FDCLS( CCharacter, party ) { return true; }
-FDCLS( CCharacter, multi ) { return true; }
+FDCLS( CCharacter, multi )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	if( args.get( 0 ).isNullOrUndefined() ) { character->SetMulti( INVALIDSERIAL ); return true; }
+	if( !args.get( 0 ).isObject() ) return true;
+	auto multi = JS::GetMaybePtrFromReservedSlot<CBaseObject>( &args.get( 0 ).toObject(), 0 );
+	if( ValidateObject( multi ) && multi->CanBeObjType( OT_MULTI )) character->SetMulti( static_cast<CMultiObj *>( multi ));
+	return true;
+}
 FDCLS( CCharacter, account ) { return true; }
 
 static bool CreateCharacterSkillProxy( JSContext *cx, CChar *character, const JSClass *proxyClass, JS::MutableHandleValue result )

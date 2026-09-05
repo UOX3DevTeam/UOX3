@@ -10,6 +10,7 @@
 #include "regions.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
+#include "CGump.h"
 
 
 #include "ObjectFactory.h"
@@ -17,6 +18,139 @@
 using namespace std::string_literals;
 
 bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
+
+static bool IsDirectionalBoatMulti( UI16 houseId )
+{
+	if( houseId < 0x4000 )
+		return false;
+	const UI16 multiId = houseId - 0x4000;
+	return multiId == 0x18 || multiId == 0x24 || multiId == 0x30 || multiId == 0x3C || multiId == 0x40 || multiId == 0x50;
+}
+
+static bool IsHighSeasBoatMulti( UI16 houseId )
+{
+	if( houseId < 0x4000 )
+		return false;
+	const UI16 multiId = static_cast<UI16>( houseId - 0x4000 );
+	return multiId == 0x18 || multiId == 0x24 || multiId == 0x30 || multiId == 0x40;
+}
+
+static CItem *CreateHighSeasShipRune( CChar *owner, CBoatObj *boat )
+{
+	if( !ValidateObject( owner ) || !ValidateObject( boat ))
+		return nullptr;
+	auto *rune = Items->CreateScriptItem( nullptr, owner, "usedrecallrune", 1, OT_ITEM, false );
+	if( !ValidateObject( rune ))
+		return nullptr;
+
+	rune->SetType( IT_RECALLRUNE );
+	rune->SetId( 0x1F14 );
+	SI16 runeX = boat->GetX();
+	SI16 runeY = boat->GetY();
+	SI08 runeZ = HighSeasBoatDeckZ( boat );
+	if( !GetHighSeasBoatRecallLocation( boat, runeX, runeY, runeZ ) && runeZ == ILLEGAL_Z )
+		runeZ = boat->GetZ();
+	rune->SetTempVar( CITV_MOREX, runeX );
+	rune->SetTempVar( CITV_MOREY, runeY );
+	rune->SetTempVar( CITV_MOREZ, runeZ );
+	rune->SetTempVar( CITV_MORE, boat->WorldNumber() );
+	rune->SetTempVar( CITV_MORE0, boat->GetInstanceId() );
+	TAGMAPOBJECT serialTag;
+	serialTag.m_Destroy = false;
+	serialTag.m_StringValue = std::to_string( boat->GetSerial() );
+	serialTag.m_IntValue = static_cast<SI32>( serialTag.m_StringValue.size() );
+	serialTag.m_ObjectType = TAGMAP_TYPE_STRING;
+	rune->SetTag( "multiSerial", serialTag );
+	TAGMAPOBJECT numericSerialTag;
+	numericSerialTag.m_Destroy = false;
+	numericSerialTag.m_StringValue = "";
+	numericSerialTag.m_IntValue = static_cast<SI32>( boat->GetSerial() );
+	numericSerialTag.m_ObjectType = TAGMAP_TYPE_INT;
+	rune->SetTag( "shipSerial", numericSerialTag );
+	TAGMAPOBJECT shipRuneTag;
+	shipRuneTag.m_Destroy = false;
+	shipRuneTag.m_StringValue = "";
+	shipRuneTag.m_IntValue = 1;
+	shipRuneTag.m_ObjectType = TAGMAP_TYPE_INT;
+	rune->SetTag( "highSeasShipRune", shipRuneTag );
+	const std::string boatName = boat->GetNameRequest( owner, NRS_SYSTEM );
+	rune->SetName( oldstrutil::format( Dictionary->GetEntry( 684 ), boatName.c_str() ));
+	return rune;
+}
+
+static bool PlaceRuneInContainer( CItem *rune, CItem *container )
+{
+	if( !ValidateObject( rune ) || !ValidateObject( container ) ||
+		container->GetContainsList()->Num() >= container->GetMaxItems() )
+		return false;
+	if( !rune->SetCont( container ))
+		return false;
+	rune->PlaceInPack();
+	return true;
+}
+
+static void CreateHighSeasShipRunes( CSocket *socket, CChar *owner, CBoatObj *boat )
+{
+	if( !ValidateObject( owner ) || !ValidateObject( boat ))
+		return;
+	auto *hold = CalcItemObjFromSer( boat->GetHold() );
+	auto *packRune = CreateHighSeasShipRune( owner, boat );
+	if( ValidateObject( packRune ))
+	{
+		if( PlaceRuneInContainer( packRune, owner->GetPackItem() ))
+		{
+			if( socket != nullptr ) socket->SysMessage( "A recall rune for your new ship has been placed in your backpack." );
+		}
+		else if( PlaceRuneInContainer( packRune, hold ))
+		{
+			if( socket != nullptr ) socket->SysMessage( "A recall rune for your new ship could not be placed in your backpack. It has been placed in the ship's cargo hold instead." );
+		}
+		else
+			packRune->Delete();
+	}
+
+	auto *bankRune = CreateHighSeasShipRune( owner, boat );
+	if( ValidateObject( bankRune ))
+	{
+		auto *bankBox = owner->GetItemAtLayer( IL_BANKBOX );
+		if( PlaceRuneInContainer( bankRune, bankBox ))
+		{
+			if( socket != nullptr ) socket->SysMessage( "A recall rune for your new ship has been placed in your bank box." );
+		}
+		else if( PlaceRuneInContainer( bankRune, hold ))
+		{
+			if( socket != nullptr ) socket->SysMessage( "A recall rune for your new ship could not be placed in your bank box. It has been placed in the ship's cargo hold instead." );
+		}
+		else
+			bankRune->Delete();
+	}
+}
+
+void SendBoatPlacementTarget( CSocket *socket, UI16 houseEntry, UI08 direction )
+{
+	if( socket == nullptr || ( direction & 0x01 ) != 0 || direction > WEST )
+		return;
+	auto *character = socket->CurrcharObj();
+	if( !ValidateObject( character ) || !ValidateObject( character->GetSpeechItem() ))
+		return;
+	auto section = FileLookup->FindEntry( "HOUSE "s + oldstrutil::number( houseEntry ), house_def );
+	if( section == nullptr )
+		return;
+	UI16 houseId = 0;
+	for( const auto &entry : section->collection() )
+	{
+		if( oldstrutil::upper( entry->tag ) == "ID" )
+		{
+			houseId = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( entry->data, "//" )), nullptr, 0 ));
+			break;
+		}
+	}
+	if( !IsDirectionalBoatMulti( houseId ))
+		return;
+	character->GetSpeechItem()->SetTempVar( CITV_MOREY, direction );
+	socket->AddId( houseEntry );
+	socket->mtarget( static_cast<UI16>(( houseId - 0x4000 ) + direction / 2 ), 576 );
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	DoHouseTarget()
@@ -50,6 +184,25 @@ auto DoHouseTarget( CSocket *mSock, UI16 houseEntry ) -> void
 		}
 		else
 		{
+			if( IsDirectionalBoatMulti( houseId ))
+			{
+				CGump placementGump( false, false );
+				placementGump.SetSerial( 0x48530000u | houseEntry );
+				placementGump.StartPage();
+				placementGump.AddBackground( 0, 0, 0x13BE, 220, 170 );
+				placementGump.AddBackground( 10, 10, 0x0BB8, 200, 150 );
+				placementGump.AddText( 20, 20, 0x0481, "Select the ship direction for placement." );
+				placementGump.AddButton( 20, 100, 0x0FA5, 0x0FA7, 1, 0, 1 );
+				placementGump.AddText( 55, 100, 0x0481, "WEST" );
+				placementGump.AddButton( 115, 100, 0x0FA5, 0x0FA7, 1, 0, 2 );
+				placementGump.AddText( 150, 100, 0x0481, "NORTH" );
+				placementGump.AddButton( 20, 125, 0x0FA5, 0x0FA7, 1, 0, 3 );
+				placementGump.AddText( 55, 125, 0x0481, "SOUTH" );
+				placementGump.AddButton( 115, 125, 0x0FA5, 0x0FA7, 1, 0, 4 );
+				placementGump.AddText( 150, 125, 0x0481, "EAST" );
+				placementGump.Send( mSock );
+				return;
+			}
 			mSock->AddId( houseEntry );
 			if( houseId >= 0x4000 )
 			{
@@ -77,7 +230,7 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 		{
 			scriptName = "tent_key";
 		}
-		else if(( houseId % 256 ) <= 0x18 ) // It's a boat
+		else if(( houseId % 256 ) <= 0x18 || IsDirectionalBoatMulti( houseId )) // It's a boat
 		{
 			scriptName = "boat_key";
 		}
@@ -795,15 +948,79 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		Console.Error( oldstrutil::format( "Bad house script # %u!", houseEntry ));
 		return nullptr;
 	}
+	const UI16 baseHouseId = houseId;
+	UI08 placementDirection = NORTH;
+	if( isBoat && IsDirectionalBoatMulti( baseHouseId ) && ValidateObject( mChar ) && ValidateObject( mChar->GetSpeechItem() ))
+	{
+		placementDirection = static_cast<UI08>( mChar->GetSpeechItem()->GetTempVar( CITV_MOREY )) & 0x06;
+		houseId = static_cast<UI16>( baseHouseId + placementDirection / 2 );
+	}
 
 	const bool isMulti = ( houseId >= 0x4000 );
+	CBoatObj *shipAddonBoat = nullptr;
 	if( !isMulti )
 	{
 		// Trying to place a house addon, let's subtract the tileHeight of the targeted tile so it doesn't mess with placement rules
 		z -= tileHeight;
+		auto *targetBoat = FindHighSeasBoatAtXY( x, y, worldNumber, instanceId );
+		if( ValidateObject( targetBoat ) && targetBoat->GetTempVar( CITV_MOREZ, 1 ) == 0x40 )
+		{
+			static const std::unordered_set<UI16> addonPadIds = {
+				23556, 23557, 23610, 23611, 23664, 23665, 23718, 23719
+			};
+			bool validPad = false;
+			for( auto *item : FindNearbyItems( x, y, worldNumber, instanceId, 0 ))
+			{
+				if( ValidateObject( item ) && item->GetX() == x && item->GetY() == y &&
+					targetBoat->IsFixture( item->GetSerial() ) && addonPadIds.find( item->GetId() ) != addonPadIds.end() )
+				{
+					validPad = true;
+					break;
+				}
+			}
+			UI08 addonCount = 0;
+			bool padOccupied = false;
+			for( auto *item : targetBoat->GetItemsInMultiList()->collection() )
+			{
+				if( !ValidateObject( item ) || item->GetTag( "shipAddon" ).m_IntValue != 1 )
+				{
+					continue;
+				}
+				++addonCount;
+				if( item->GetX() == x && item->GetY() == y )
+				{
+					padOccupied = true;
+				}
+			}
+			if( !ValidateObject( mChar ) || targetBoat->GetSecurityLevel( mChar ) != BoatSecurityLevel::Captain )
+			{
+				if( mSock )
+				{
+					mSock->SysMessage( "You must own the ship to place an addon." );
+				}
+				return nullptr;
+			}
+			if( houseItems.size() != 1 || sx != 1 || sy != 1 )
+			{
+				mSock->SysMessage( "Only single-tile addons can be placed on this ship." );
+				return nullptr;
+			}
+			if( addonCount >= 2 )
+			{
+				mSock->SysMessage( "This ship already has two addons." );
+				return nullptr;
+			}
+			if( !validPad || padOccupied )
+			{
+				mSock->SysMessage( "That is not an available ship addon location." );
+				return nullptr;
+			}
+			shipAddonBoat = targetBoat;
+		}
 	}
 
-	if( checkLocation && !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, worldNumber, instanceId, isBoat, isMulti ))
+	if( checkLocation && !ValidateObject( shipAddonBoat ) &&
+		!CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, worldNumber, instanceId, isBoat, isMulti ))
 	{
 		return nullptr;
 	}
@@ -846,6 +1063,8 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		}
 
 		house->SetLocation( x, y, z );
+		if( isBoat )
+			house->SetDir( placementDirection );
 		house->SetDecayable( itemsWillDecay );
 		house->SetDeed( houseDeed ); // crackerjack 8/9/99 - for converting back *into* deeds
 		if( ValidateObject( mChar ))
@@ -876,6 +1095,10 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		{
 			house->SetTag( key, value );
 		}
+		// Transfer the deed's native dry-docked cannon payload before CreateBoat
+		// reconstructs the vessel's fixtures and weapons.
+		if( ValidateObject( mChar ) && ValidateObject( mChar->GetSpeechItem() ))
+			house->SetDockedCannons( mChar->GetSpeechItem()->GetDockedCannons() );
 
 		// Find corners of new house
 		SI16 multiX1 = 0;
@@ -944,8 +1167,18 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		}
 		fakeHouse->SetLocation( x, y, z );
 
-		CMultiObj *mMulti = FindMulti( fakeHouse );
-		if( checkLocation && ValidateObject( mMulti ))
+		CMultiObj *mMulti = ValidateObject( shipAddonBoat ) ? shipAddonBoat : FindMulti( fakeHouse );
+		if( ValidateObject( shipAddonBoat ))
+		{
+			fakeHouse->SetMulti( shipAddonBoat );
+			TAGMAPOBJECT shipAddonTag;
+			shipAddonTag.m_Destroy = false;
+			shipAddonTag.m_IntValue = 1;
+			shipAddonTag.m_ObjectType = TAGMAP_TYPE_INT;
+			shipAddonTag.m_StringValue = "";
+			fakeHouse->SetTag( "shipAddon", shipAddonTag );
+		}
+		else if( checkLocation && ValidateObject( mMulti ))
 		{
 			if( mMulti->GetLockdownCount() < mMulti->GetMaxLockdowns() )
 			{
@@ -994,7 +1227,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	if( isBoat ) // Boats
 	{
 		CBoatObj *bObj = static_cast<CBoatObj *>( house );
-		if( bObj == nullptr || !CreateBoat( mSock, bObj, ( houseId % 256 ), houseEntry ))
+		if( bObj == nullptr || !CreateBoat( mSock, bObj, ( baseHouseId % 256 ), houseEntry ))
 		{
 			house->Delete();
 			return nullptr;
@@ -1005,11 +1238,15 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		bObj->SetDamageable( isDamageable );
 	}
 
+	const bool isHighSeasBoat = isBoat && IsHighSeasBoatMulti( baseHouseId );
 	if( ValidateObject( mChar ))
 	{
 		mChar->GetSpeechItem()->Delete();
 		mChar->SetSpeechItem( nullptr );
-		CreateHouseKey( mSock, mChar, house, houseId );
+		if( isHighSeasBoat )
+			CreateHighSeasShipRunes( mSock, mChar, static_cast<CBoatObj *>( house ));
+		else
+			CreateHouseKey( mSock, mChar, house, baseHouseId );
 	}
 
 	if( !houseItems.empty() )
@@ -1021,9 +1258,25 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		CreateHouseItems( mChar, houseItems, fakeHouse, houseId, x, y, z, worldNumber );
 	}
 
-	if( ValidateObject( mChar ) && ( isMulti || isBoat ))
+	if( ValidateObject( mChar ) && isMulti && ( !isBoat || isHighSeasBoat ))
 	{
-		mChar->SetLocation( x + cx, y + cy, z + cz );
+		SI08 characterZ = static_cast<SI08>( z + cz );
+		if( isHighSeasBoat )
+		{
+			auto *placedBoat = static_cast<CBoatObj *>( house );
+			const SI08 deckZ = HighSeasBoatDeckZ( placedBoat );
+			if( deckZ != ILLEGAL_Z )
+				characterZ = deckZ;
+		}
+		SI16 characterX = x + cx;
+		SI16 characterY = y + cy;
+		if( isHighSeasBoat )
+		{
+			if( placementDirection == EAST ) { characterX = x - cy; characterY = y + cx; }
+			else if( placementDirection == SOUTH ) { characterX = x - cx; characterY = y - cy; }
+			else if( placementDirection == WEST ) { characterX = x + cy; characterY = y - cx; }
+		}
+		mChar->SetLocation( characterX, characterY, characterZ );
 
 		// Teleport followers as well
 		auto myFollowers = mChar->GetFollowerList();

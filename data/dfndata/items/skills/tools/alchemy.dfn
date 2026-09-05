@@ -790,3 +790,12 @@ value=10637 5318
 origin=lbr
 script=5054
 }
+
+[highseas_fuse_cord]
+{
+NAME=fuse cord
+ID=0x1420
+COLOR=1164
+PILEABLE=1
+ORIGIN=hs
+}

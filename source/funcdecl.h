@@ -58,6 +58,25 @@ auto	FindNearbyPlayers( CChar *mChar ) -> std::vector<CSocket *>;
 //o------------------------------------------------------------------------------------------------o
 CMultiObj *	FindMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId );
 CMultiObj *	FindMulti( CBaseObject *i );
+void		SendBoatPlacementTarget( CSocket *socket, UI16 houseEntry, UI08 direction );
+void		DamageBoatHull( CBoatObj *boat, SI32 amount );
+SI32		RepairBoatHull( CBoatObj *boat, SI32 amount );
+bool		IsBoatNearLandOrDocks( CBoatObj *boat );
+bool		RestoreHighSeasBoatFixtures( CBoatObj *boat );
+bool		RestoreRowboatFixtures( CBoatObj *boat );
+bool		RestorePumpkinBoatFixtures( CBoatObj *boat );
+SI08		HighSeasBoatDeckZ( const CBoatObj *boat );
+bool		HighSeasBoatContainsXY( const CBoatObj *boat, SI16 x, SI16 y );
+bool		GetHighSeasBoatDeckLocation( const CBoatObj *boat, SI16 preferredX, SI16 preferredY, SI16& x, SI16& y, SI08& z );
+bool		GetHighSeasBoatRecallLocation( const CBoatObj *boat, SI16& x, SI16& y, SI08& z );
+bool		RelocateHighSeasTillerman( CBoatObj *boat, SI16 x, SI16 y, SI08 z );
+CBoatObj *	FindHighSeasBoatAtXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId );
+void		ReleaseBoatPilot( CChar *pilot );
+UI08		CheckHighSeasDryDock( CBoatObj *boat );
+bool		DeleteHighSeasBoatForDryDock( CBoatObj *boat, CItem *deed );
+SI08		PaintHighSeasBoat( CBoatObj *boat, UI16 paintHue, bool permanent );
+bool		RemoveHighSeasBoatPaint( CBoatObj *boat );
+bool		ProcessBoatDecay( CBoatObj *boat );
 
 //o------------------------------------------------------------------------------------------------o
 // Item functions

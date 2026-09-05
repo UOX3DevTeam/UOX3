@@ -61,3 +61,68 @@ RESTOCK=5
 GOOD=9
 }
 
+// High Seas ship deeds
+[orcishgalleondeed]
+{
+NAME=orcish galleon deed
+ID=0x14F0
+MOREX=210
+SCRIPT=5098
+VALUE=150000
+GOOD=9
+ORIGIN=hs
+}
+
+[gargishgalleondeed]
+{
+NAME=gargish galleon deed
+ID=0x14F0
+MOREX=211
+SCRIPT=5098
+VALUE=150000
+GOOD=9
+ORIGIN=hs
+}
+
+[tokunogalleondeed]
+{
+NAME=tokuno galleon deed
+ID=0x14F0
+MOREX=212
+SCRIPT=5098
+VALUE=150000
+GOOD=9
+ORIGIN=hs
+}
+
+[rowboatdeed]
+{
+NAME=rowboat deed
+ID=0x14F0
+MOREX=213
+VALUE=5000
+GOOD=9
+ORIGIN=hs
+}
+
+[britannianshipdeed]
+{
+NAME=britannian ship deed
+ID=0x14F0
+MOREX=214
+SCRIPT=5098
+VALUE=200000
+GOOD=9
+ORIGIN=hs
+}
+
+// Forsaken Foes seasonal collection rewards
+[pumpkinrowboatdeed]
+{
+NAME=pumpkin rowboat deed
+ID=0x14F0
+MOREX=215
+VALUE=250000
+GOOD=9
+ORIGIN=hs
+}

@@ -69,6 +69,16 @@
 						<ul>
 							<li>Updated <a href="#compilingUOX3">Compiling UOX3 Source</a> instructions for 64-bit FreeBSD support, including SpiderMonkey 115 source compilation steps.</li>
 						</ul>
+						<h4>July 19th, 2026</h4>
+						<ul>
+							<li>Expanded <a href="#highSeasShipsCannons">High Seas Ships and Cannons</a> with broadside speech commands, cannon wear and repair, optional character targeting, Harbor Master services and region-spawned pirate encounters.</li>
+							<li>Added <span class="hl">CANNONCHARACTERTARGETING</span> to the <a href="#uoxINISettings">UOX.INI Settings</a> reference.</li>
+						</ul>
+						<h4>July 18th, 2026</h4>
+						<ul>
+							<li>Added <a href="#highSeasShipsCannons">High Seas Ships and Cannons</a> feature documentation covering piloting, ship lifecycle, security, naval combat, cannon DFN setup, ammunition profiles and persistence.</li>
+							<li>Added <span class="hl">CANNONINFO</span> and <span class="hl">CANNONDIRECTION</span> to the Item DFN Tag reference.</li>
+						</ul>
 						<h4>December 12th, 2025</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on new [anticheat] section with additional settings: SPEEDHACKDETECTION, SPEEDHACKTHROTTLEPENALTY, SPEEDHACKMAXDEBT, SPEEDHACKMAXCREDIT, SPEEDHACKGRACETHRESHOLD</li>
@@ -2008,10 +2018,6 @@ packitem=0x0f8d,30
 							How often (in seconds) items are checked for decay and other things.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">CHECKBOATS</span><strong>=0.65</strong><br>
-							How often (in seconds) boats are checked for motion and so forth.</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">CHECKNPCAI</span><strong>=1</strong><br>
 							How often (in seconds) NPCs can execute an AI routine.</p>
 						</div>
@@ -2684,6 +2690,63 @@ packitem=0x0f8d,30
 							 <p><span class="hl">DECAYSTAGEDANGERHRS</span><strong>=18</strong><br>
 							 Hours a house stays <em>In Danger of Collapsing</em> (IDOC) before it collapses.
 							 </p>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_boats">
+					<label for="spoiler_ini_boats">[boats] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="hl">BOATDECAY</span><strong>=1</strong><br>
+							Master vessel-decay toggle. <em>1</em> enables unattended ship decay and sinking; <em>0</em> disables it and cancels decay-driven sinking.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BOATDECAYSECS</span><strong>=1123200</strong><br>
+							Seconds of inactivity before an unattended vessel begins sinking. The default is 13 days.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BOATPAINTDECAYSECS</span><strong>=1209600</strong><br>
+							Seconds between losses of temporary ship-paint coats. The default is 14 days per coat.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">CHECKBOATS</span><strong>=0.65</strong><br>
+							Classic and speech-command boat movement interval, in seconds. It also controls how often vessels are checked for movement.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BOATFASTMOVEINTERVAL</span><strong>=250</strong><br>
+							Milliseconds between full-speed High Seas mouse-piloting movement steps.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BOATSLOWMOVEINTERVAL</span><strong>=1000</strong><br>
+							Milliseconds between slow or heavily damaged High Seas movement steps.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BOATNPCMOVEINTERVAL</span><strong>=500</strong><br>
+							Milliseconds between pirate and other scripted NPC-vessel movement decisions.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">CLASSICBOATMOUSECONTROL</span><strong>=0</strong><br>
+							Enables High Seas-style mouse steering from classic boat tillermen when set to <em>1</em>. Classic speech commands and anchor requirements remain available. The default value of <em>0</em> preserves classic behavior.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HIGHSEASSHIPANCHORS</span><strong>=1</strong><br>
+							Adds an anchor control to the High Seas ship security menu. Newly placed galleons begin anchored.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HIGHSEASSHIPSPEECHCONTROL</span><strong>=1</strong><br>
+							Selects the High Seas galleon control mode. Set to <em>1</em> for traditional boat speech commands, which disables mouse steering. Set to <em>0</em> for mouse steering, which ignores speech movement commands. Rowboats remain mouse-controlled.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BOATDRIFT</span><strong>=1</strong><br>
+							Makes unattended, unanchored, player-owned classic boats and High Seas galleons drift forward. Anchored ships, rowboats, and NPC vessels do not drift.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BOATDRIFTINTERVAL</span><strong>=10000</strong><br>
+							Milliseconds between unattended forward drift steps.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">CANNONCHARACTERTARGETING</span><strong>=0</strong><br>
+							Allows player-operated ship cannons to target vulnerable NPCs and players on land or swimming when set to <em>1</em>. Direct character hits are limited to 35 damage. Dead, invulnerable, party, allied-guild and guarded-region targets are excluded. The default value of <em>0</em> restricts cannon targeting to ships.</p>
 						</div>
 					</div>
 
@@ -6404,6 +6467,152 @@ function TestWeekly( args )
 						<li><span class="highlight">'em enable &lt;index&gt;</span> - Re-enables a disabled event. If the event missed its scheduled time while disabled, it will be rescheduled for the next valid window. If it was already running when disabled, will pick back up where it left off.</li>
 						<li><span class="highlight">'em remove &lt;index&gt;</span> - Halts and removes specified event. If running, callback function for event end is called before removal.</li>
 						<li><span class="highlight">'em reset</span> - Forces a complete re-initialization of the Event Manager. Useful if you have manually edited the <em>events/event_list.json</em> file and want to reload changes without restarting the server.</li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#highSeasShipsCannons" id="highSeasShipsCannons"><span>High Seas Ships and Cannons</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>UOX3's High Seas system extends classic boats with large galleons, mouse-driven piloting, ship security, damage and repair, dry docking, ship painting, naval travel, pirate encounters and configurable ship cannons. The implementation combines native boat movement and persistence with JavaScript-driven menus, cannon operation and encounter behavior.</p>
+
+					<h3>Ships and Piloting</h3>
+					<ul>
+						<li>Double-click a steering wheel, tiller or rowboat control while aboard and authorized to begin piloting. Rowboats always use mouse steering. High Seas galleons use mouse steering when <span class="hl">HIGHSEASSHIPSPEECHCONTROL=0</span>, or traditional boat speech commands when it is <em>1</em>.</li>
+						<li>Classic boats retain their normal tillerman controls unless <span class="hl">CLASSICBOATMOUSECONTROL=1</span>, which adds the High Seas mouse-piloting interface without removing classic speech commands.</li>
+						<li>Double-click the control again to release it. Piloting is also released automatically when the vessel is too damaged to move.</li>
+						<li>Characters, NPCs and loose deck items move and refresh with the vessel at the calculated deck height. Recall, Gate and ship-created runes use the same deck-height placement rules.</li>
+						<li>The wheel/tillerman context menu provides vessel actions such as security, repair, renaming, moving the control and dry docking when the vessel type and player position permit it.</li>
+						<li>Large ships support membership and access settings, decay/refresh, hull damage, emergency and permanent repairs, painting and dry-dock restoration.</li>
+						<li>When anchors and drift are enabled, unattended player-owned classic boats and High Seas galleons drift forward while unanchored. Rowboats and NPC vessels do not drift.</li>
+						<li>Pirate galleons pursue targets, maneuver for a broadside and fire through the same cannon and hull-damage systems used by players.</li>
+					</ul>
+
+					<h3>Ship Cannon Operation</h3>
+					<p>Cannon deeds are deployed onto weapon pads belonging to the player's ship. A cannon is operated through the compact cannon gump or its context menu. The normal firing sequence is:</p>
+					<ol>
+						<li><strong>Prepare</strong> the cannon with a ramrod.</li>
+						<li><strong>Charge</strong> it using a powder charge from its three-item magazine.</li>
+						<li><strong>Load</strong> a standard, grapeshot, flame or frost cannonball.</li>
+						<li><strong>Prime</strong> it with fuse cord.</li>
+						<li><strong>Fire</strong> at a valid target inside the cannon's range and broadside arc.</li>
+					</ol>
+					<p>Ready cannons may be fired individually from the cannon gump. When <span class="hl">HIGHSEASSHIPSPEECHCONTROL=1</span>, a captain or authorized officer may also speak <span class="hl">fire port broadside</span> or <span class="hl">fire starboard broadside</span> to light every ready cannon on that side. Broadside commands use the native boat-speech path and do not require the global item-speech setting.</p>
+					<p>Every player-fired shot causes 0–4 points of cannon wear. Authorized officers may unload, repair or dismantle a cannon from its context menu. A cannon must be unloaded before dismantling or dry docking. Its condition uses the item's normal <span class="hl">HP</span> and <span class="hl">MAXHP</span> properties. A slightly damaged cannon has a base repair requirement of approximately 36 iron ingots, reduced by the repairer's Blacksmithing skill; more severe damage increases the base requirement by condition tier.</p>
+
+					<h3>Character Targets and Crew Damage</h3>
+					<p>By default, player cannons target ships. Grapeshot can injure vulnerable characters standing on an enemy vessel's impact tile. Set <span class="hl">CANNONCHARACTERTARGETING=1</span> to also permit manual and automatic targeting of vulnerable NPCs and players on land or swimming. Direct character hits inflict no more than 35 damage, even when the loaded ammunition uses ship-scale hull damage. Characters aboard a vessel continue to use the ship and crew-impact rules rather than direct targeting.</p>
+					<p>Direct targeting rejects the shooter, dead or invulnerable characters, party members, friendly or allied guild members and characters inside guarded regions. All targets must remain within the selected cannon's range and firing arc.</p>
+
+					<h3>Cannon DFN Properties</h3>
+					<p>Cannon identity and behavior are declared with two grouped item-DFN properties. Cannon deeds need only <span class="hl">CANNONINFO</span>; the deployed cannon definition also supplies <span class="hl">CANNONDIRECTION</span>.</p>
+					<pre><code class="language-ini"># role,power,initialStage,range,actionTimeMilliseconds
+CANNONINFO=2,1,0,10,1500
+
+# north,east,south,west item art
+CANNONDIRECTION=0x4218,0x4219,0x4216,0x4217</code></pre>
+					<div class="settingsDiv">
+						<p><span class="hl">CANNONINFO</span>=<strong>[role,power,stage,range,actionTime]</strong><br>
+						Role values: 0 = ordinary item, 1 = cannon deed, 2 = deployed cannon, 3 = weapon pad. Standard power values are 1 = light, 2 = heavy, 3 = blundercannon and 4 = pumpkin. Stage values are 0 = empty, 1 = prepared, 2 = charged, 3 = loaded and 4 = primed/ready. Range is measured in tiles and action time in milliseconds. The supplied blundercannon uses range 12 and a 2000 millisecond action time.</p>
+					</div>
+					<div class="settingsDiv">
+						<p><span class="hl">CANNONDIRECTION</span>=<strong>[north,east,south,west]</strong><br>
+						Sets the four directional item-art IDs used when placing and turning a deployed cannon. Values accept decimal or hexadecimal notation.</p>
+					</div>
+
+					<h4>Example Deed and Cannon</h4>
+					<pre><code class="language-ini">[example_cannon_deed]
+{
+NAME=example cannon deed
+ID=0x14F0
+SCRIPT=5099
+CANNONINFO=1,1,0,10,1500
+}
+
+[example_cannon]
+{
+NAME=example ship cannon
+ID=0x4216
+TYPE=1
+MAXITEMS=3
+WEIGHTMAX=30000
+MOVABLE=2
+DECAY=0
+SCRIPT=5099
+CANNONINFO=2,1,0,10,1500
+CANNONDIRECTION=0x4218,0x4219,0x4216,0x4217
+HP=100
+MAXHP=100
+}</code></pre>
+
+					<h3>Cannon Ammunition Definitions</h3>
+					<p>Cannon ammunition deliberately uses existing item properties instead of additional DFN or world-file fields:</p>
+					<pre><code class="language-ini">[example_grapeshot]
+{
+NAME=grapeshot
+ID=0xA2BF
+PILEABLE=1
+TYPE=227
+MOREX=2
+DAMAGE=100 150
+MOREY=15
+MOREZ=3
+}</code></pre>
+					<ul>
+						<li><span class="hl">TYPE=227</span> identifies cannonball ammunition.</li>
+						<li><span class="hl">MOREX</span> is the ammunition type: 1 = standard, 2 = grapeshot, 3 = flame and 4 = frost.</li>
+						<li><span class="hl">DAMAGE</span> supplies minimum and maximum damage.</li>
+						<li><span class="hl">MOREY</span> is the pellet count; ordinary cannonballs normally use 1.</li>
+						<li><span class="hl">MOREZ</span> is the impact spread radius in tiles. Grapeshot with a value of 3 may scatter three tiles from the central impact point.</li>
+					</ul>
+					<p>When ammunition is loaded, its type, damage, pellet count and spread are copied to the cannon's existing generic item fields. They are cleared when the cannon fires or is unloaded. Powder and fuse cord are identified by their configured item IDs and do not need a separate supply-type property.</p>
+
+					<h3>Harbor Master Services</h3>
+					<p>Staff may place the Harbor Master with <span class="hl">add harbormaster</span>. The NPC is created as either a Harbor Master or Harbor Mistress and offers two context-menu services for non-rowboat ships owned by the player:</p>
+					<ul>
+						<li><strong>Replacement ship token:</strong> Withdraws 100 gold from the player's bank and places a ship-linked recall rune in the backpack for a High Seas galleon, or a replacement ship key for a classic boat.</li>
+						<li><strong>Abandon ship:</strong> Displays a destructive-action confirmation gump. Accepting schedules the owned ship for deletion after five minutes. The ship, fixtures, deck items and cargo-hold contents are removed when the timer expires; characters are not deleted.</li>
+					</ul>
+					<p>Rowboats are deliberately excluded from both services. The abandonment timer is attached to the vessel, allowing different players to use the same Harbor Master without sharing timer state.</p>
+
+					<h3>Pirate Encounters</h3>
+					<p>Staff can place one encounter directly with <span class="hl">addpirateship</span> and target open water. A complete encounter consists of an Orcish galleon, pirate captain, four crew members, heavy cannons and stocked cargo-hold loot.</p>
+					<p>Region spawn DFNs can create the same encounter with the special <span class="hl">highseas_pirate_region_captain</span> NPC section. The temporary spawn body is water-compatible so the region system selects open-water tiles. Its <span class="hl">onSpawn</span> event then constructs the ship and moves the captain aboard. The region system counts the captain, so one spawned NPC represents one complete galleon.</p>
+					<pre><code class="language-ini">[REGIONSPAWN 6190]
+{
+NAME=Pirate Galleons
+NPC=highseas_pirate_region_captain
+MAXNPCS=2
+X1=1749
+Y1=1626
+X2=2517
+Y2=1918
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=1
+}</code></pre>
+					<p>Use a unique region-spawn number and coordinates covering open water. <span class="hl">WORLD=0</span> selects Felucca and <span class="hl">WORLD=1</span> selects Trammel. Keep <span class="hl">MAXNPCS</span> and <span class="hl">CALL</span> low because each entry creates an entire ship. If the complete galleon footprint cannot be placed at a selected tile, that attempt is removed and the region may try again later. Region-owned pirate encounters are transient so a restart does not leave orphaned hulls, fixtures or crew.</p>
+
+					<h3>Persistence and Script Properties</h3>
+					<p>The cannon system does not add dedicated <em>CannonRole=</em>, <em>CannonPower=</em> or similar records to world files. Clean JavaScript properties such as <span class="hl">cannonRole</span>, <span class="hl">cannonPower</span>, <span class="hl">cannonStage</span>, <span class="hl">cannonRange</span>, <span class="hl">cannonActionTime</span>, <span class="hl">cannonLinkSerial</span> and the four <span class="hl">cannonArt...</span> properties wrap the item's existing saved fields.</p>
+					<p>High Seas fixture ownership uses the boat's native serialized fixture registry and Multi relationship rather than custom item tags. Temporary ship paint is stored as one compact <span class="hl">PaintInfo=baseHue,paintHue,coats,decayAt</span> boat record only while coats are active. A moved steering wheel similarly uses one <span class="hl">TillermanOffset=x,y</span> boat record; its art altitude is derived from the current directional multi at runtime.</p>
+					<p><strong>Developer note:</strong> Cannon deeds, deployed cannons and weapon pads reserve <span class="hl">MORE</span>, <span class="hl">MORE0</span>, <span class="hl">MORE1</span>, <span class="hl">MORE2</span>, <span class="hl">MAXRANGE</span> and <span class="hl">MAXUSES</span> for cannon metadata. A loaded cannon additionally reserves <span class="hl">MOREX</span>, <span class="hl">MOREY</span>, <span class="hl">MOREZ</span>, <span class="hl">LODAMAGE</span> and <span class="hl">HIDAMAGE</span> for its ammunition profile.</p>
+
+					<h3>Implementation Files</h3>
+					<ul>
+						<li><span class="hl">data/dfndata/items/deeds/boat_deeds.dfn</span> - classic and High Seas ship deed definitions.</li>
+						<li><span class="hl">data/dfndata/items/deeds/misc_deeds.dfn</span>, <span class="hl">data/dfndata/items/gear/weapons/missile_weapons.dfn</span> and <span class="hl">data/dfndata/items/gear/weapons/projectiles.dfn</span> - cannon deeds, deployed cannons and ammunition.</li>
+						<li><span class="hl">data/dfndata/npc/malehuman.dfn</span>, <span class="hl">femalehuman.dfn</span> and <span class="hl">vendors.dfn</span> - pirate encounter and Harbor Master NPC sections.</li>
+						<li><span class="hl">data/js/item/highseas_cannon.js</span> - cannon gump, loading, firing, repair and deployment behavior.</li>
+						<li><span class="hl">data/js/item/highseas_ship_security.js</span> - ship access and security menus.</li>
+						<li><span class="hl">data/js/item/highseas_drydock.js</span> - wheel and tiller dry-docking behavior.</li>
+						<li><span class="hl">data/js/npc/ai/harbor_master.js</span> - replacement ship tokens and delayed ship abandonment.</li>
+						<li><span class="hl">data/js/npc/ai/pirate_galleon.js</span> and <span class="hl">data/js/commands/addpirateship.js</span> - pirate encounter AI, region-spawn integration and administrative spawn command.</li>
+						<li><span class="hl">source/boats.cpp</span> - native vessel movement, fixtures, deck handling, turning, damage and persistence integration.</li>
+						<li><span class="hl">source/cServerData.cpp</span> and <span class="hl">source/SEFunctions.cpp</span> - boat settings and their JavaScript <span class="hl">GetServerSetting</span> exposure.</li>
 					</ul>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -10553,6 +10762,14 @@ script=5021
 						<div class="settingsDiv">
 							<p><span class="hl">baseweight</span>=<strong>[weight]</strong><br>
 							Set base-weight of item (100 = 1 stone). Primarily used to keep a reference to the weight of empty containers, before they contain any items</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">cannondirection</span>=<strong>[northArt,eastArt,southArt,westArt]</strong><br>
+							Sets the directional item-art IDs for a deployed High Seas cannon. Values accept decimal or hexadecimal notation. See <a href="#highSeasShipsCannons">High Seas Ships and Cannons</a>.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">cannoninfo</span>=<strong>[role,power,stage,range,actionTime]</strong><br>
+							Defines grouped High Seas cannon metadata. Action time is specified in milliseconds. See <a href="#highSeasShipsCannons">High Seas Ships and Cannons</a> for value tables and examples.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">cold</span>=<strong>[0/1]</strong><br>

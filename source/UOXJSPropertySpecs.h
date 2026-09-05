@@ -683,6 +683,18 @@ DECL_GET_SET( CItem, speed )
 DECL_GET_SET( CItem, staminaBonus )
 DECL_GET_SET( CItem, staminaLeech )
 DECL_GET_SET( CItem, stealable )
+DECL_GET_SET( CItem, cannonRole )
+DECL_GET_SET( CItem, cannonPower )
+DECL_GET_SET( CItem, cannonStage )
+DECL_GET_SET( CItem, cannonLinkSerial )
+DECL_GET_SET( CItem, cannonRange )
+DECL_GET_SET( CItem, cannonActionTime )
+DECL_GET( CItem, isShipCannon )
+DECL_GET( CItem, isWeaponPad )
+DECL_GET_SET( CItem, cannonArtNorth )
+DECL_GET_SET( CItem, cannonArtEast )
+DECL_GET_SET( CItem, cannonArtSouth )
+DECL_GET_SET( CItem, cannonArtWest )
 DECL_GET_SET( CItem, strength )
 DECL_GET_SET( CItem, swingSpeedIncrease )
 DECL_GET_SET( CItem, tempLastTraded )
@@ -1447,6 +1459,18 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, origin,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isItemHeld,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, stealable,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonRole,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonPower,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonStage,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonLinkSerial,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonRange,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonActionTime,    JSPROP_ENUMANDPERM ),
+  UX_PSG(  CItem, isShipCannon,        JSPROP_ENUMPERMRO ),
+  UX_PSG(  CItem, isWeaponPad,         JSPROP_ENUMPERMRO ),
+  UX_PSGS( CItem, cannonArtNorth,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonArtEast,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonArtSouth,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, cannonArtWest,       JSPROP_ENUMANDPERM ),
   // The Following vars are specific to CSpawnItem objects
   UX_PSGS( CItem, spawnsection,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, sectionalist,        JSPROP_ENUMANDPERM ),

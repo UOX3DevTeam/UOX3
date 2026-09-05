@@ -108,12 +108,43 @@ const MagicTable_st magic_table[] = {
 //o------------------------------------------------------------------------------------------------o
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId )
 {
+	CMultiObj *sourceGateMulti = nullptr;
+	CMultiObj *targetGateMulti = nullptr;
+	if( auto *sourceBoat = FindHighSeasBoatAtXY( srcX, srcY, srcWorld, caster->GetInstanceId() );
+		ValidateObject( sourceBoat ))
+	{
+		SI16 deckX = srcX, deckY = srcY;
+		SI08 deckZ = srcZ;
+		if( GetHighSeasBoatDeckLocation( sourceBoat, srcX, srcY, deckX, deckY, deckZ ))
+		{
+			srcX = deckX;
+			srcY = deckY;
+			srcZ = deckZ;
+			sourceGateMulti = sourceBoat;
+		}
+	}
+	if( auto *targetBoat = FindHighSeasBoatAtXY( trgX, trgY, trgWorld, trgInstanceId );
+		ValidateObject( targetBoat ))
+	{
+		SI16 deckX = trgX, deckY = trgY;
+		SI08 deckZ = trgZ;
+		if( GetHighSeasBoatDeckLocation( targetBoat, trgX, trgY, deckX, deckY, deckZ ))
+		{
+			trgX = deckX;
+			trgY = deckY;
+			trgZ = deckZ;
+			targetGateMulti = targetBoat;
+		}
+	}
+
 	CItem *g1 = Items->CreateItem( nullptr, caster, 0x0F6C, 1, 0, OT_ITEM );
 	if( ValidateObject( g1 ))
 	{
 		g1->SetDecayable( true );
 		g1->SetType( IT_GATE );
 		g1->SetLocation( srcX, srcY, srcZ, srcWorld, g1->GetInstanceId() );
+		if( ValidateObject( sourceGateMulti ))
+			g1->SetMulti( sourceGateMulti );
 		g1->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ));
 		g1->SetDir( 1 );
 
@@ -123,6 +154,8 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 			g2->SetDecayable( true );
 			g2->SetType( IT_GATE );
 			g2->SetLocation( trgX, trgY, trgZ, trgWorld, trgInstanceId );
+			if( ValidateObject( targetGateMulti ))
+				g2->SetMulti( targetGateMulti );
 			g2->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ));
 			g2->SetDir( 1 );
 
@@ -1006,6 +1039,104 @@ bool splManaDrain( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[
 	return true;
 }
 
+static bool ResolveBoatTravelLocation( CMultiObj *multi, SI16& x, SI16& y, SI08& z )
+{
+	if( !ValidateObject( multi ) || !multi->CanBeObjType( OT_BOAT ))
+		return false;
+	auto *boat = static_cast<CBoatObj *>( multi );
+	if( GetHighSeasBoatRecallLocation( boat, x, y, z ))
+		return true;
+	const SI08 deckZ = HighSeasBoatDeckZ( boat );
+	if( deckZ != ILLEGAL_Z )
+	{
+		// The nominal ship-rune offset can be near a densely fitted bow/stern.
+		// Search again from amidships before falling back, and never apply the
+		// classic boat +3 Z rule to a High Seas hull.
+		if( GetHighSeasBoatDeckLocation( boat, boat->GetX(), boat->GetY(), x, y, z ))
+			return true;
+		x = static_cast<SI16>( boat->GetX() + 1 );
+		y = boat->GetY();
+		z = deckZ;
+		return true;
+	}
+	x = static_cast<SI16>( multi->GetX() + 1 );
+	y = multi->GetY();
+	z = static_cast<SI08>( multi->GetZ() + 3 );
+	return true;
+}
+
+static CBoatObj *ResolveShipRuneBoat( CItem *rune )
+{
+	if( !ValidateObject( rune ))
+		return nullptr;
+	SERIAL shipSerial = INVALIDSERIAL;
+	const TAGMAPOBJECT serialTag = rune->GetTag( "multiSerial" );
+	if( !serialTag.m_StringValue.empty() )
+		shipSerial = oldstrutil::value<SERIAL>( serialTag.m_StringValue );
+	if( shipSerial == INVALIDSERIAL || shipSerial == 0 )
+	{
+		const TAGMAPOBJECT numericTag = rune->GetTag( "shipSerial" );
+		if( numericTag.m_ObjectType == TAGMAP_TYPE_INT && numericTag.m_IntValue > 0 )
+			shipSerial = static_cast<SERIAL>( numericTag.m_IntValue );
+	}
+	if( shipSerial != INVALIDSERIAL && shipSerial != 0 )
+	{
+		auto *multi = CalcMultiFromSer( shipSerial );
+		if( ValidateObject( multi ) && multi->CanBeObjType( OT_BOAT ))
+			return static_cast<CBoatObj *>( multi );
+	}
+
+	// Upgrade older generated ship runes which only retained the original ship
+	// coordinates. This remains useful until the ship moves for the first time.
+	const UI08 world = static_cast<UI08>( rune->GetTempVar( CITV_MORE ));
+	const UI16 instanceId = static_cast<UI16>( rune->GetTempVar( CITV_MORE0 ));
+	return FindHighSeasBoatAtXY( static_cast<SI16>( rune->GetTempVar( CITV_MOREX )),
+		static_cast<SI16>( rune->GetTempVar( CITV_MOREY )), world, instanceId );
+}
+
+static bool RecallToBoat( CSocket *socket, CChar *caster, CMultiObj *shipMulti )
+{
+	SI16 destinationX = 0, destinationY = 0;
+	SI08 destinationZ = 0;
+	if( !ResolveBoatTravelLocation( shipMulti, destinationX, destinationY, destinationZ ))
+		return false;
+	if( shipMulti->CanBeObjType( OT_BOAT ))
+	{
+		const SI08 deckZ = HighSeasBoatDeckZ( static_cast<CBoatObj *>( shipMulti ));
+		if( deckZ != ILLEGAL_Z )
+			destinationZ = deckZ;
+	}
+	const UI08 oldWorld = caster->WorldNumber();
+	auto myFollowers = caster->GetFollowerList();
+	for( const auto &myFollower : myFollowers->collection() )
+	{
+		if( ValidateObject( myFollower ) && !myFollower->GetMounted() && myFollower->GetOwnerObj() == caster &&
+			myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
+		{
+			myFollower->SetLocation( destinationX, destinationY, destinationZ, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
+			myFollower->SetMulti( shipMulti, false );
+			myFollower->Update();
+		}
+	}
+	caster->SetLocation( destinationX, destinationY, destinationZ, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
+	caster->SetMulti( shipMulti, false );
+	if( oldWorld != shipMulti->WorldNumber() )
+		SendMapChange( caster->WorldNumber(), socket, false );
+	// Rebuild the destination view after both location and multi membership are
+	// authoritative. Without this, the client can draw the hull over the mobile
+	// even though the server-side Z is already the High Seas deck height.
+	caster->Teleport();
+	// Teleport rebuilds the destination view by sending the controlled mobile
+	// before nearby multis/items. ClassicUO can consequently layer a newly sent
+	// ship hull over that mobile until another character packet arrives (gate
+	// travel happens to get one from its arrival effect). Reassert the exact
+	// deck location/multi and send the controlled-mobile packet last for recall.
+	caster->SetLocation( destinationX, destinationY, destinationZ, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
+	caster->SetMulti( shipMulti, false );
+	caster->SendToSocket( socket, true );
+	return true;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	splRecall()
 //o------------------------------------------------------------------------------------------------o
@@ -1034,26 +1165,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 					return false;
 				}
 
-				// Teleport player's followers too
-				auto myFollowers = caster->GetFollowerList();
-				for( const auto &myFollower : myFollowers->collection() )
-				{
-					if( ValidateObject( myFollower ))
-					{
-						if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == caster )
-						{
-							// Only teleport followers if they are set to actually following owner & are within range
-							if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
-							{
-								myFollower->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
-							}
-						}
-					}
-				}
-
-				// Teleport player
-				caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
-				return true;
+				return RecallToBoat( sock, caster, shipMulti );
 			}
 			else
 			{
@@ -1071,46 +1183,34 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 	{
 		// Check if rune was marked in a multi - if so, try to take user directly there
 		TAGMAPOBJECT runeMore = i->GetTag( "multiSerial" );
-		if( runeMore.m_StringValue != "" )
+		const bool generatedShipRune = i->GetTag( "highSeasShipRune" ).m_IntValue == 1;
+		if( runeMore.m_StringValue != "" || generatedShipRune )
 		{
-			SERIAL mSerial = oldstrutil::value<SERIAL>( runeMore.m_StringValue );
-			if( mSerial != 0 && mSerial != INVALIDSERIAL )
+			CBoatObj *shipMulti = ResolveShipRuneBoat( i );
+			if( ValidateObject( shipMulti ))
 			{
-				CMultiObj *shipMulti = CalcMultiFromSer( mSerial );
-				if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ))
+				if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
 				{
-					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
+					if( shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() && caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
 					{
-						if( shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() && caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
-						{
-							sock->SysMessage( 18733 ); //  You decide against traveling to Felucca while you are still young.
-							return false;
-						}
-
-						// Teleport player's followers too
-						auto myFollowers = caster->GetFollowerList();
-						for( const auto &myFollower : myFollowers->collection() )
-						{
-							if( ValidateObject( myFollower ))
-							{
-								if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == caster )
-								{
-									if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
-									{
-										myFollower->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
-									}
-								}
-							}
-						}
-
-						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
-						return true;
-					}
-					else
-					{
-						sock->SysMessage( 2063 ); // You are unable to recall to your ship - it might be in another world!
+						sock->SysMessage( 18733 ); //  You decide against traveling to Felucca while you are still young.
 						return false;
 					}
+
+					SI16 runeX = 0, runeY = 0;
+					SI08 runeZ = 0;
+					if( ResolveBoatTravelLocation( shipMulti, runeX, runeY, runeZ ))
+					{
+						i->SetTempVar( CITV_MOREX, runeX );
+						i->SetTempVar( CITV_MOREY, runeY );
+						i->SetTempVar( CITV_MOREZ, runeZ );
+					}
+					return RecallToBoat( sock, caster, shipMulti );
+				}
+				else
+				{
+					sock->SysMessage( 2063 ); // You are unable to recall to your ship - it might be in another world!
+					return false;
 				}
 			}
 
@@ -1134,6 +1234,23 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 			SI16 targLocY = static_cast<SI16>( i->GetTempVar( CITV_MOREY ));
 			SI08 targLocZ = static_cast<SI08>( i->GetTempVar( CITV_MOREZ ));
 			UI16 instanceId = static_cast<UI16>( i->GetTempVar( CITV_MORE0 ));
+			// Runebook and legacy rune data may only retain coordinates. If those
+			// coordinates are currently aboard a High Seas vessel, use the same
+			// authoritative deck/multi recall path as a ship-linked rune.
+			if( worldNum == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
+			{
+				auto *destinationBoat = FindHighSeasBoatAtXY( targLocX, targLocY, worldNum, instanceId );
+				if( ValidateObject( destinationBoat ))
+				{
+					if( worldNum == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() &&
+						caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+					{
+						sock->SysMessage( 18733 );
+						return false;
+					}
+					return RecallToBoat( sock, caster, destinationBoat );
+				}
+			}
 			if( worldNum != caster->WorldNumber() )
 			{
 				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
@@ -1631,6 +1748,14 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curS
 			tagObject.m_ObjectType = TAGMAP_TYPE_STRING;
 			i->SetTag( "multiSerial", tagObject );
 			markedInMulti = true;
+			// Multi-linked runes must still carry normal marked-rune state so
+			// double-click, renaming, tooltips, and spell targeting recognize them.
+			i->SetId( 0x1F14 );
+			i->SetTempVar( CITV_MOREX, multi->GetX() );
+			i->SetTempVar( CITV_MOREY, multi->GetY() );
+			i->SetTempVar( CITV_MOREZ, multi->GetZ() );
+			i->SetTempVar( CITV_MORE, multi->WorldNumber() );
+			i->SetTempVar( CITV_MORE0, multi->GetInstanceId() );
 
 			std::string tempRuneName = oldstrutil::format( Dictionary->GetEntry( 684 ), multi->GetNameRequest( caster, NRS_SYSTEM ).c_str() ); // A recall rune for %s.
 			if( tempRuneName.length() > 0 )
@@ -1960,8 +2085,12 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI0
 							return false;
 						}
 
-						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3 );
-						SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
+						SI16 destinationX = 0, destinationY = 0;
+						SI08 destinationZ = 0;
+						if( !ResolveBoatTravelLocation( shipMulti, destinationX, destinationY, destinationZ ))
+							return false;
+						SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(),
+							destinationX, destinationY, destinationZ, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
 						return true;
 					}
 					else
@@ -3052,31 +3181,50 @@ auto CMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 				{
 					dirOffset = -1;
 				}
+				auto *destinationMulti = otherGate->GetMultiObj();
+				if( !ValidateObject( destinationMulti ))
+					destinationMulti = FindMulti( otherGate );
+				CBoatObj *destinationBoat = ( ValidateObject( destinationMulti ) && destinationMulti->CanBeObjType( OT_BOAT )) ?
+					static_cast<CBoatObj *>( destinationMulti ) : nullptr;
+				SI16 destinationX = static_cast<SI16>( otherGate->GetX() + ( ValidateObject( destinationBoat ) ? 0 : dirOffset ));
+				SI16 destinationY = otherGate->GetY();
+				SI08 destinationZ = otherGate->GetZ();
+				if( ValidateObject( destinationBoat ))
+				{
+					const SI08 deckZ = HighSeasBoatDeckZ( destinationBoat );
+					if( deckZ != ILLEGAL_Z && destinationZ < deckZ )
+						destinationZ = deckZ;
+				}
+
+				// Capture eligible followers before moving their owner out of range.
+				std::vector<CChar *> followersToMove;
+				auto myFollowers = mChar->GetFollowerList();
+				for( const auto &myFollower : myFollowers->collection() )
+				{
+					if( ValidateObject( myFollower ) && !myFollower->GetMounted() && myFollower->GetOwnerObj() == mChar &&
+						myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( mChar, myFollower, DIST_CMDRANGE ))
+						followersToMove.push_back( myFollower );
+				}
+
 				if( otherGate->WorldNumber() != mChar->WorldNumber() )
 				{
-					mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceId() );
+					mChar->SetLocation( destinationX, destinationY, destinationZ, otherGate->WorldNumber(), otherGate->GetInstanceId() );
 					SendMapChange( mChar->WorldNumber(), mSock, false );
 				}
 				else
 				{
-					mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceId() );
+					mChar->SetLocation( destinationX, destinationY, destinationZ, otherGate->WorldNumber(), otherGate->GetInstanceId() );
 				}
-				
-				// Teleport player's followers too
-				auto myFollowers = mChar->GetFollowerList();
-				for( const auto &myFollower : myFollowers->collection() )
+				if( ValidateObject( destinationBoat ))
+					mChar->SetMulti( destinationBoat, false );
+
+				for( auto *myFollower : followersToMove )
 				{
-					if( ValidateObject( myFollower ))
-					{
-						if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == mChar )
-						{
-							if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( mChar, myFollower, DIST_CMDRANGE ))
-							{
-								myFollower->SetLocation( mChar );
-							}
-						}
-					}
+					myFollower->SetLocation( destinationX, destinationY, destinationZ, otherGate->WorldNumber(), otherGate->GetInstanceId() );
+					if( ValidateObject( destinationBoat )) myFollower->SetMulti( destinationBoat, false );
+					myFollower->Update();
 				}
+				if( ValidateObject( destinationBoat )) mChar->Teleport();
 				Effects->PlaySound( mSock, 0x01FE, true );
 				Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 			}

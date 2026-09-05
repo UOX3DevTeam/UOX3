@@ -26,6 +26,11 @@
 // ONLYOUTSIDE=#		// Set this to 1 if items and chars should only spawn outside of buildings.
 // VALIDLANDPOS=#,#,#	// Can be used to hard-define valid spawn-locations on land
 // VALIDWATERPOS=#,#,#	// Can be used to hard-define valid spawn-locations on water
+//
+// Pirate ship region spawns use NPC=highseas_pirate_region_captain. The
+// temporary water-creature body lets the region system select open-water
+// tiles; the pirate AI replaces it with a fully crewed galleon after spawning.
+// Keep MAXNPCS low because it represents complete pirate ships, not individuals.
 // }				// Of course this is the closing }
 //================================================
 // Felucca Town Spawns
