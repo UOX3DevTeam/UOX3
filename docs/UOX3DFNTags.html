@@ -191,9 +191,29 @@
 			<TD STYLE="border-left: 1px solid #000000" ALIGN=LEFT SDNUM="1033;0;@">Set default direction (0-8)</TD>
 		</TR>
 		<TR>
+			<TD STYLE="border-right: 1px solid #000000" HEIGHT=17 ALIGN=LEFT>DAMAGEPHYSICAL / DAMAGEFIRE / DAMAGECOLD / DAMAGEPOISON / DAMAGEENERGY / DAMAGECHAOS / DAMAGELIGHT / DAMAGERAIN / DAMAGESNOW / DAMAGESTORM / DAMAGESTORMBREW / DAMAGEACID / DAMAGENECROTIC</TD>
+			<TD ALIGN=CENTER><I>&lt;percentage&gt; or &lt;low high&gt;</I></TD>
+			<TD STYLE="border-left: 1px solid #000000" ALIGN=LEFT>Set NPC attack damage percentage for one standard or custom elemental channel (0-100). Physical damage is the unassigned remainder.</TD>
+		</TR>
+		<TR>
+			<TD STYLE="border-right: 1px solid #000000" HEIGHT=17 ALIGN=LEFT>ELEMENTDAMAGE / AOSDAMAGE</TD>
+			<TD ALIGN=CENTER><I>&lt;physical,fire,cold,poison,energy,chaos[,light,rain,snow,storm,stormbrew,acid,necrotic]&gt;</I></TD>
+			<TD STYLE="border-left: 1px solid #000000" ALIGN=LEFT>Set the complete NPC elemental attack damage distribution. Values are percentages totaling no more than 100.</TD>
+		</TR>
+		<TR>
+			<TD STYLE="border-right: 1px solid #000000" HEIGHT=17 ALIGN=LEFT>RESISTFIRE / RESISTCOLD / RESISTPOISON / RESISTLIGHTNING / RESISTLIGHT / RESISTRAIN / RESISTSNOW / RESISTSTORM / RESISTSTORMBREW / RESISTACID / RESISTNECROTIC</TD>
+			<TD ALIGN=CENTER><I>&lt;percentage&gt; or &lt;low high&gt;</I></TD>
+			<TD STYLE="border-left: 1px solid #000000" ALIGN=LEFT>Set an NPC standard or custom elemental resistance (0-100).</TD>
+		</TR>
+		<TR>
 			<TD STYLE="border-right: 1px solid #000000" HEIGHT=17 ALIGN=LEFT SDNUM="1033;0;@">ELEMENTRESIST</TD>
-			<TD ALIGN=CENTER SDNUM="1033;0;@"><I>&lt;fire cold energy poison&gt;</I></TD>
-			<TD STYLE="border-left: 1px solid #000000" ALIGN=LEFT SDNUM="1033;0;@">Set Element-resist stats (0 - 1000?)</TD>
+			<TD ALIGN=CENTER SDNUM="1033;0;@"><I>&lt;fire cold energy poison [light rain snow storm stormbrew acid necrotic]&gt;</I></TD>
+			<TD STYLE="border-left: 1px solid #000000" ALIGN=LEFT SDNUM="1033;0;@">Set standard and optional custom elemental resistances (0-100)</TD>
+		</TR>
+		<TR>
+			<TD STYLE="border-right: 1px solid #000000" HEIGHT=17 ALIGN=LEFT>ERBONUS</TD>
+			<TD ALIGN=CENTER><I>&lt;fire cold energy poison [light rain snow storm stormbrew acid necrotic]&gt;</I></TD>
+			<TD STYLE="border-left: 1px solid #000000" ALIGN=LEFT>Add standard and optional custom elemental resistance bonuses. Existing four-value definitions remain valid.</TD>
 		</TR>
 		<TR>
 			<TD STYLE="border-right: 1px solid #000000" HEIGHT=17 ALIGN=LEFT SDNUM="1033;0;@">EMOTECOLOUR</TD>
@@ -886,9 +906,33 @@
 			<TD ALIGN=LEFT><BR></TD>
 		</TR>
 		<TR>
+			<TD HEIGHT=17 ALIGN=LEFT>DAMAGEPHYSICAL / DAMAGEFIRE / DAMAGECOLD / DAMAGEPOISON / DAMAGEENERGY / DAMAGECHAOS / DAMAGELIGHT / DAMAGERAIN / DAMAGESNOW / DAMAGESTORM / DAMAGESTORMBREW / DAMAGEACID / DAMAGENECROTIC</TD>
+			<TD STYLE="border-left: 1px solid #000000; border-right: 1px solid #000000" ALIGN=CENTER><I>&lt;percentage&gt; or &lt;low high&gt;</I></TD>
+			<TD ALIGN=LEFT>Set weapon damage percentage for one standard or custom elemental channel (0-100). Physical damage is the unassigned remainder.</TD>
+			<TD ALIGN=LEFT><BR></TD>
+		</TR>
+		<TR>
+			<TD HEIGHT=17 ALIGN=LEFT>ELEMENTDAMAGE / AOSDAMAGE</TD>
+			<TD STYLE="border-left: 1px solid #000000; border-right: 1px solid #000000" ALIGN=CENTER><I>&lt;physical,fire,cold,poison,energy,chaos[,light,rain,snow,storm,stormbrew,acid,necrotic]&gt;</I></TD>
+			<TD ALIGN=LEFT>Set the complete weapon elemental damage distribution. Values are percentages totaling no more than 100.</TD>
+			<TD ALIGN=LEFT><BR></TD>
+		</TR>
+		<TR>
+			<TD HEIGHT=17 ALIGN=LEFT>RESISTFIRE / RESISTCOLD / RESISTPOISON / RESISTLIGHTNING / RESISTLIGHT / RESISTRAIN / RESISTSNOW / RESISTSTORM / RESISTSTORMBREW / RESISTACID / RESISTNECROTIC</TD>
+			<TD STYLE="border-left: 1px solid #000000; border-right: 1px solid #000000" ALIGN=CENTER><I>&lt;percentage&gt; or &lt;low high&gt;</I></TD>
+			<TD ALIGN=LEFT>Set an item standard or custom elemental resistance (0-100).</TD>
+			<TD ALIGN=LEFT><BR></TD>
+		</TR>
+		<TR>
 			<TD HEIGHT=17 ALIGN=LEFT>ELEMENTRESIST</TD>
-			<TD STYLE="border-left: 1px solid #000000; border-right: 1px solid #000000" ALIGN=CENTER><I>&lt;fire cold energy poison&gt;</I></TD>
-			<TD ALIGN=LEFT>Set fire, cold, energy and poison resistance values (0 - 1000, where 1000 = 100.0)</TD>
+			<TD STYLE="border-left: 1px solid #000000; border-right: 1px solid #000000" ALIGN=CENTER><I>&lt;fire cold energy poison [light rain snow storm stormbrew acid necrotic]&gt;</I></TD>
+			<TD ALIGN=LEFT>Set standard and optional custom elemental resistance values (0-100)</TD>
+			<TD ALIGN=LEFT><BR></TD>
+		</TR>
+		<TR>
+			<TD HEIGHT=17 ALIGN=LEFT>ERBONUS</TD>
+			<TD STYLE="border-left: 1px solid #000000; border-right: 1px solid #000000" ALIGN=CENTER><I>&lt;fire cold energy poison [light rain snow storm stormbrew acid necrotic]&gt;</I></TD>
+			<TD ALIGN=LEFT>Add standard and optional custom elemental resistance bonuses. Existing four-value definitions remain valid.</TD>
 			<TD ALIGN=LEFT><BR></TD>
 		</TR>
 		<TR>

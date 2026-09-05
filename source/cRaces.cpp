@@ -1872,7 +1872,22 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 			case 'a':
 			case 'A':
 			{
-				if( UTag == "ALLSKILLSG" )
+				if( UTag == "ACIDAFFECT" )
+				{
+					AffectedBy( true, ACID );
+					continue;
+				}
+				else if( UTag == "ACIDDAMAGE" )
+				{
+					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), ACID );
+					continue;
+				}
+				else if( UTag == "ACIDSECS" )
+				{
+					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), ACID );
+					continue;
+				}
+				else if( UTag == "ALLSKILLSG" )
 				{
 					allSkillsG = true;
 					break;
@@ -2182,7 +2197,22 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 			case 'n':
 			case 'N':
-				if( UTag == "NAME" )
+				if( UTag == "NECROTICAFFECT" )
+				{
+					AffectedBy( true, NECROTIC );
+					continue;
+				}
+				else if( UTag == "NECROTICDAMAGE" )
+				{
+					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), NECROTIC );
+					continue;
+				}
+				else if( UTag == "NECROTICSECS" )
+				{
+					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), NECROTIC );
+					continue;
+				}
+				else if( UTag == "NAME" )
 				{
 					Name( data );
 					continue;
