@@ -1,0 +1,22 @@
+{
+	"itemExample": {
+		"tier": 1,
+		"itemID": 7774,
+		"name": "collection display item",
+		"hue": 0,
+		"x": 2,
+		"y": -1,
+		"z": 0,
+		"movable": 2
+	},
+	"npcExample": {
+		"tier": 2,
+		"type": "npc",
+		"npcID": "a_bird",
+		"name": "a donated bird",
+		"x": 3,
+		"y": 1,
+		"z": 0,
+		"dir": 4
+	}
+}

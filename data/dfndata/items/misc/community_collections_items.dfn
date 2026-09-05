@@ -1,0 +1,41 @@
+[collection_moonglow_zoo_box]
+{
+GET=base_item
+NAME=Moonglow Zoo Donation Box
+ID=0x09AA
+COLOR=0x048D
+TYPE=0
+WEIGHT=100
+DECAY=0
+MOVABLE=2
+SCRIPT=7700
+CUSTOMSTRINGTAG=collectionId moonglow_zoo
+}
+
+[collection_vesper_museum_box]
+{
+GET=base_item
+NAME=Vesper Museum Donation Box
+ID=0x09AA
+COLOR=0x0481
+TYPE=0
+WEIGHT=100
+DECAY=0
+MOVABLE=2
+SCRIPT=7700
+CUSTOMSTRINGTAG=collectionId vesper_museum
+}
+
+[collection_library_box]
+{
+GET=base_item
+NAME=Britain Public Library Donation Box
+ID=0x09AA
+COLOR=0x047E
+TYPE=0
+WEIGHT=100
+DECAY=0
+MOVABLE=2
+SCRIPT=7700
+CUSTOMSTRINGTAG=collectionId library
+}

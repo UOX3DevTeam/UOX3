@@ -116,6 +116,11 @@ weight=10
 value=2 1
 }
 
+[raw_fish_steak]
+{
+get=0x097a
+}
+
 [0x09b9]
 {
 get=base_raw_food
@@ -134,20 +139,24 @@ weight=100
 value=2 1
 }
 
+[raw_bird]
+{
+get=0x09b9 0x097a
+}
+
 [0x09cc]
 {
 get=base_raw_food
-name=fish
+name=a fish
 id=0x09cc
 weight=100
 value=2 1
 }
 
-
 [0x09cd]
 {
 get=base_raw_food
-name=fish
+name=a fish
 id=0x09cd
 weight=100
 value=2 1
@@ -156,7 +165,7 @@ value=2 1
 [0x09ce]
 {
 get=base_raw_food
-name=fish
+name=a fish
 id=0x09ce
 weight=100
 value=2 1
@@ -165,10 +174,15 @@ value=2 1
 [0x09cf]
 {
 get=base_raw_food
-name=fish
+name=a fish
 id=0x09cf
 weight=100
 value=2 1
+}
+
+[fish]
+{
+get=0x09cc 0x09cd 0x09ce 0x09cf
 }
 
 [0x0dd6]
@@ -205,6 +219,11 @@ name=small fish
 id=0x0dd9
 weight=500
 value=6 3
+}
+
+[small_fish]
+{
+get=0x0dd6 0x0dd7 0x0dd8 0x0dd9
 }
 
 [0x1083]

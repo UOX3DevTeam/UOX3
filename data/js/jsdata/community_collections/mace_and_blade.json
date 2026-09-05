@@ -1,0 +1,390 @@
+{
+	"id": "mace_and_blade",
+	"name": "Mace and Blade",
+	"holderName": "Talbart the warrior",
+	"startTier": 10000000,
+	"nextTier": 10000000,
+	"maxTier": 1,
+	"dailyDecay": 100000,
+	"donationLabel": "Mace and Blade Section Donation Representative",
+	"donations": [
+		{
+			"key": "gold",
+			"name": "Gold",
+			"itemId": 3823,
+			"hue": 0,
+			"points": 0.06666,
+			"tooltipCliloc": 1073116
+		},
+		{
+			"key": "brownbook",
+			"name": "Brown Book",
+			"itemId": 4079,
+			"hue": 0,
+			"points": 3.0,
+			"tooltipCliloc": 1074906
+		},
+		{
+			"key": "tanbook",
+			"name": "Tan Book",
+			"itemId": 4080,
+			"hue": 0,
+			"points": 3.0,
+			"tooltipCliloc": 1074906
+		},
+		{
+			"key": "buckler",
+			"name": "Buckler",
+			"itemId": 7027,
+			"hue": 0,
+			"points": 9.0,
+			"tooltipCliloc": 1074907
+		},
+		{
+			"key": "battleaxe",
+			"name": "Battle Axe",
+			"itemId": 3911,
+			"hue": 0,
+			"points": 9.0,
+			"tooltipCliloc": 1074908
+		}
+	],
+	"rewards": [
+		{
+			"key": "specialprintingofvirtue",
+			"name": "Special Printing of Virtue",
+			"itemId": 4080,
+			"hue": 1150,
+			"cost": 5000,
+			"tooltipCliloc": 1075793
+		},
+		{
+			"key": "libraryfriendbodysash",
+			"name": "Library Friend Body Sash",
+			"itemId": 5441,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073346
+		},
+		{
+			"key": "libraryfriendfeatheredhat",
+			"name": "Library Friend Feathered Hat",
+			"itemId": 5914,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073347
+		},
+		{
+			"key": "libraryfriendsurcoat",
+			"name": "Library Friend Surcoat",
+			"itemId": 8189,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			]
+		},
+		{
+			"key": "libraryfriendpants",
+			"name": "Library Friend Pants",
+			"itemId": 5433,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073349
+		},
+		{
+			"key": "libraryfriendcloak",
+			"name": "Library Friend Cloak",
+			"itemId": 5397,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073350
+		},
+		{
+			"key": "libraryfrienddoublet",
+			"name": "Library Friend Doublet",
+			"itemId": 8059,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073351
+		},
+		{
+			"key": "libraryfriendskirt",
+			"name": "Library Friend Skirt",
+			"itemId": 5431,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073352
+		},
+		{
+			"key": "britain_public_library_contributor",
+			"name": "Britain Public Library Contributor",
+			"title": "Britain Public Library Contributor",
+			"cost": 100000
+		},
+		{
+			"key": "libraryfriendlantern",
+			"name": "Library Friend Lantern",
+			"itemId": 2597,
+			"hue": 450,
+			"cost": 200000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			],
+			"tooltipCliloc": 1073339
+		},
+		{
+			"key": "libraryfriendreadingchair",
+			"name": "Library Friend Reading Chair",
+			"itemId": 11755,
+			"hue": 450,
+			"cost": 200000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			],
+			"tooltipCliloc": 1073340
+		},
+		{
+			"key": "distinguished_library_contributor",
+			"name": "Distinguished Library Contributor",
+			"title": "Distinguished Library Contributor",
+			"cost": 200000
+		},
+		{
+			"key": "sherrythemousequotes",
+			"name": "Sherry The Mouse Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "wyrdbeastmasterquotes",
+			"name": "Wyrd Beastmaster Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "mercenaryjustinquotes",
+			"name": "Mercenary Justin Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "heigelofmoonglowquotes",
+			"name": "Heigel of Moonglow Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "traderhoracequotes",
+			"name": "Trader Horace Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "honored_library_contributor",
+			"name": "Honored Library Contributor",
+			"title": "Honored Library Contributor",
+			"cost": 350000
+		},
+		{
+			"key": "treatiseonalchemytalisman",
+			"name": "Treatiseon Alchemy Talisman",
+			"itemId": 12120,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073353
+		},
+		{
+			"key": "primeronarmstalisman",
+			"name": "Primer On Arms Talisman",
+			"itemId": 12121,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073354
+		},
+		{
+			"key": "mybooktalisman",
+			"name": "My Book Talisman",
+			"itemId": 12122,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073355
+		},
+		{
+			"key": "talkingtowispstalisman",
+			"name": "Talkingto Wisps Talisman",
+			"itemId": 12123,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073356
+		},
+		{
+			"key": "grammaroforchishtalisman",
+			"name": "Grammar of Orchish Talisman",
+			"itemId": 12121,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073354
+		},
+		{
+			"key": "birdsofbritanniatalisman",
+			"name": "Birdsof Britannia Talisman",
+			"itemId": 12122,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073355
+		},
+		{
+			"key": "thelifeoftravelingminstreltalisman",
+			"name": "The Life of Traveling Minstrel Talisman",
+			"itemId": 12122,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073355
+		},
+		{
+			"key": "prominent_library_contributor",
+			"name": "Prominent Library Contributor",
+			"title": "Prominent Library Contributor",
+			"cost": 550000
+		},
+		{
+			"key": "eminent_library_contributor",
+			"name": "Eminent Library Contributor",
+			"title": "Eminent Library Contributor",
+			"cost": 800000
+		},
+		{
+			"key": "maceandshieldglasses",
+			"name": "Mace and Shield Glasses",
+			"itemId": 12216,
+			"hue": 477,
+			"cost": 800000,
+			"tooltipCliloc": 1073380
+		}
+	],
+	"displayObjects": [
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1409,
+			"y": 1610,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5384,
+			"name": "decorative armor"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1409,
+			"y": 1610,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3732,
+			"name": "cannon"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1410,
+			"y": 1610,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3733
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1411,
+			"y": 1610,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3734
+		}
+	]
+}

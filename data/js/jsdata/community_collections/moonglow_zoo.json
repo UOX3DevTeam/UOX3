@@ -1,0 +1,468 @@
+{
+	"id": "moonglow_zoo",
+	"name": "Britannia Royal Zoo",
+	"holderName": "Moonglow Zoo Donation Box",
+	"startTier": 1000000,
+	"nextTier": 500000,
+	"maxTier": 10,
+	"dailyDecay": 100000,
+	"donations": [
+		{
+			"key": "gold",
+			"name": "gold",
+			"itemId": 3821,
+			"hue": -1,
+			"points": 0.06666,
+			"type": "item"
+		},
+		{
+			"key": "live_wolf_pet",
+			"type": "pet",
+			"name": "live tamed wolf",
+			"bodyIds": [
+				225,
+				226
+			],
+			"hue": -1,
+			"points": 30
+		},
+		{
+			"key": "live_polar_bear_pet",
+			"type": "pet",
+			"name": "live tamed polar bear",
+			"bodyIds": [
+				213
+			],
+			"hue": -1,
+			"points": 45
+		},
+		{
+			"key": "live_fire_beetle_pet",
+			"type": "pet",
+			"name": "live tamed fire beetle",
+			"bodyIds": [
+				169
+			],
+			"hue": -1,
+			"points": 300
+		},
+		{
+			"key": "live_drake_pet",
+			"type": "pet",
+			"name": "live tamed drake",
+			"bodyIds": [
+				60,
+				61
+			],
+			"hue": -1,
+			"points": 400
+		},
+		{
+			"key": "wolf",
+			"name": "wolf or dire wolf statue",
+			"itemId": 9680,
+			"hue": -1,
+			"points": 30,
+			"type": "item",
+			"tooltipCliloc": 1073118
+		},
+		{
+			"key": "slime",
+			"name": "slime statue",
+			"itemId": 8424,
+			"hue": -1,
+			"points": 45,
+			"type": "item",
+			"tooltipCliloc": 1073117
+		},
+		{
+			"key": "polar_bear",
+			"name": "polar bear statue",
+			"itemId": 8417,
+			"hue": -1,
+			"points": 45,
+			"type": "item",
+			"tooltipCliloc": 1073120
+		},
+		{
+			"key": "kirin",
+			"name": "kirin statue",
+			"itemId": 9632,
+			"hue": -1,
+			"points": 250,
+			"type": "item",
+			"tooltipCliloc": 1074821
+		},
+		{
+			"key": "fire_beetle",
+			"name": "fire beetle statue",
+			"itemId": 9743,
+			"hue": 1161,
+			"points": 300,
+			"type": "item"
+		},
+		{
+			"key": "drake",
+			"name": "drake statue",
+			"itemId": 8406,
+			"hue": -1,
+			"points": 400,
+			"type": "item",
+			"tooltipCliloc": 1073119
+		},
+		{
+			"key": "reptalon",
+			"name": "reptalon statue",
+			"itemId": 11669,
+			"hue": -1,
+			"points": 550,
+			"type": "item",
+			"tooltipCliloc": 1073121
+		}
+	],
+	"rewards": [
+		{
+			"key": "life_britannia_sash",
+			"name": "For The Life Of Britannia sash",
+			"itemId": 5441,
+			"hue": 183,
+			"cost": 5000,
+			"tooltipCliloc": 1075792
+		},
+		{
+			"key": "zoo_member_cloak",
+			"name": "Zoo Member cloak",
+			"itemId": 5397,
+			"hue": 1365,
+			"cost": 100000,
+			"hues": [
+				1365,
+				174,
+				148,
+				632,
+				50,
+				40,
+				807,
+				1050
+			],
+			"tooltipCliloc": 1073221
+		},
+		{
+			"key": "zoo_member_robe",
+			"name": "Zoo Member robe",
+			"itemId": 7939,
+			"hue": 1365,
+			"cost": 100000,
+			"hues": [
+				1365,
+				174,
+				148,
+				632,
+				50,
+				40,
+				807,
+				1050
+			],
+			"tooltipCliloc": 1073221
+		},
+		{
+			"key": "zoo_member_sash",
+			"name": "Zoo Member body sash",
+			"itemId": 5441,
+			"hue": 1365,
+			"cost": 100000,
+			"hues": [
+				1365,
+				174,
+				148,
+				632,
+				50,
+				40,
+				807,
+				1050
+			],
+			"tooltipCliloc": 1073253
+		},
+		{
+			"key": "title_zoo_contributor",
+			"name": "Britannia Zoo Contributor",
+			"title": "Britannia Zoo Contributor",
+			"itemId": 5360,
+			"hue": 0,
+			"cost": 100000
+		},
+		{
+			"key": "quagmire_statue",
+			"name": "Quagmire statue",
+			"itemId": 9748,
+			"hue": 0,
+			"cost": 200000,
+			"tooltipCliloc": 1073195
+		},
+		{
+			"key": "wolf_statue",
+			"name": "Wolf statue",
+			"itemId": 9683,
+			"hue": 0,
+			"cost": 200000,
+			"tooltipCliloc": 1073190
+		},
+		{
+			"key": "silver_steed",
+			"name": "Silver steed statuette",
+			"itemId": 9629,
+			"hue": 0,
+			"cost": 350000
+		},
+		{
+			"key": "royal_zoo_leather",
+			"name": "Royal Zoo leather chest",
+			"itemId": 5068,
+			"hue": 265,
+			"cost": 550000,
+			"tooltipCliloc": 1073222
+		},
+		{
+			"key": "royal_zoo_plate",
+			"name": "Royal Zoo plate helm",
+			"itemId": 5138,
+			"hue": 265,
+			"cost": 550000,
+			"tooltipCliloc": 1073224
+		},
+		{
+			"key": "special_zoo_statuette",
+			"name": "Special achievement zoo statuette",
+			"itemId": 12278,
+			"hue": 265,
+			"cost": 800000,
+			"tooltipCliloc": 1073226
+		},
+		{
+			"key": "title_royal_subject",
+			"name": "Royal Subject of the Britannia Zoo",
+			"title": "Royal Subject of the Britannia Zoo",
+			"itemId": 5360,
+			"hue": 0,
+			"cost": 800000
+		}
+	],
+	"displayObjects": [
+		{
+			"tier": 1,
+			"type": "npc",
+			"npcID": "collection_display_crane",
+			"absolute": true,
+			"x": 4500,
+			"y": 1382,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 2,
+			"type": "npc",
+			"npcID": "collection_display_dire_wolf",
+			"absolute": true,
+			"x": 4494,
+			"y": 1370,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 2,
+			"type": "npc",
+			"npcID": "collection_display_dire_wolf",
+			"absolute": true,
+			"x": 4494,
+			"y": 1360,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 2,
+			"type": "npc",
+			"npcID": "collection_display_white_wolf",
+			"absolute": true,
+			"x": 4491,
+			"y": 1366,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 2,
+			"type": "npc",
+			"npcID": "collection_display_white_wolf",
+			"absolute": true,
+			"x": 4497,
+			"y": 1366,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 2,
+			"type": "npc",
+			"npcID": "collection_display_grey_wolf",
+			"absolute": true,
+			"x": 4497,
+			"y": 1366,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 3,
+			"type": "npc",
+			"npcID": "collection_display_quagmire",
+			"absolute": true,
+			"x": 4483,
+			"y": 1392,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 3,
+			"type": "npc",
+			"npcID": "collection_display_bog_thing",
+			"absolute": true,
+			"x": 4486,
+			"y": 1385,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 3,
+			"type": "npc",
+			"npcID": "collection_display_plague_beast",
+			"absolute": true,
+			"x": 4486,
+			"y": 1379,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 4,
+			"type": "npc",
+			"npcID": "collection_display_polar_bear",
+			"absolute": true,
+			"x": 4513,
+			"y": 1395,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 4,
+			"type": "npc",
+			"npcID": "collection_display_polar_bear",
+			"absolute": true,
+			"x": 4508,
+			"y": 1393,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 5,
+			"type": "npc",
+			"npcID": "collection_display_yamandon",
+			"absolute": true,
+			"x": 4498,
+			"y": 1393,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 6,
+			"type": "npc",
+			"npcID": "collection_display_changeling",
+			"absolute": true,
+			"x": 4518,
+			"y": 1358,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 7,
+			"type": "npc",
+			"npcID": "collection_display_wyvern",
+			"absolute": true,
+			"x": 4512,
+			"y": 1381,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 8,
+			"type": "npc",
+			"npcID": "collection_display_dragon",
+			"absolute": true,
+			"x": 4511,
+			"y": 1372,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 8,
+			"type": "npc",
+			"npcID": "collection_display_drake",
+			"absolute": true,
+			"x": 4516,
+			"y": 1371,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 9,
+			"type": "npc",
+			"npcID": "collection_display_reptalon",
+			"absolute": true,
+			"x": 4530,
+			"y": 1387,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		},
+		{
+			"tier": 10,
+			"type": "npc",
+			"npcID": "collection_display_silver_steed",
+			"absolute": true,
+			"x": 4506,
+			"y": 1358,
+			"z": 23,
+			"visible": 0,
+			"dir": 4,
+			"tamable": 0
+		}
+	]
+}
