@@ -484,6 +484,12 @@ private:
 	UI32		numSecsAsMayor;				//	Time (in seconds) that a PC would be a mayor
 	UI32		taxPeriod;					//	Time (in seconds) between periods of taxes for PCs
 	UI32		guardPayment;				//	Time (in seconds) between payments for guards
+	UI32		factionTownTaxInterval;		//	Time (in minutes) between faction town tax cycles
+	SI32		factionTownDefaultTaxRate;	//	Default percentage offset from faction town base income
+	SI32		factionTownTreasuryGrant;	//	Default silver grant amount for faction towns
+	SI16		factionTownGuardLimit;		//	Default managed faction guard limit per town
+	SI16		factionTownVendorLimit;		//	Default managed faction vendor limit per town
+	std::array<SI32, 24> factionSettings;		// Shard-tunable faction gameplay settings (INI IDs 429-452)
 
 	void	PostLoadDefaults();
 	static const std::map<std::string, SI32> uox3IniCaseValue;
@@ -1304,6 +1310,24 @@ public:
 
 	auto		TownGuardPayment( UI32 value ) -> void;
 	UI32		TownGuardPayment() const;
+
+	auto		FactionTownTaxInterval( UI32 value ) -> void;
+	UI32		FactionTownTaxInterval() const;
+
+	auto		FactionTownDefaultTaxRate( SI32 value ) -> void;
+	SI32		FactionTownDefaultTaxRate() const;
+
+	auto		FactionTownTreasuryGrant( SI32 value ) -> void;
+	SI32		FactionTownTreasuryGrant() const;
+
+	auto		FactionTownGuardLimit( SI16 value ) -> void;
+	SI16		FactionTownGuardLimit() const;
+
+	auto		FactionTownVendorLimit( SI16 value ) -> void;
+	SI16		FactionTownVendorLimit() const;
+
+	auto		FactionSetting( UI16 settingIndex, SI32 value ) -> void;
+	SI32		FactionSetting( UI16 settingIndex ) const;
 
 	auto		RepMaxKills( UI16 value ) -> void;
 	auto		RepMaxKills() const -> UI16;

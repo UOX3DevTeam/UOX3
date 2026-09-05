@@ -345,6 +345,7 @@ bool CRegion_AddScriptTrigger( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CRegion_RemoveScriptTrigger( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CRegion_GetOrePref( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CRegion_GetOreChance( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CRegion_TownstoneAction( JSContext *cx, unsigned argc, JS::Value *vp );
 
 inline JSFunctionSpec CGump_Methods[] =
 {
@@ -623,6 +624,7 @@ inline JSFunctionSpec CRegion_Methods[] =
 	JS_FN( "RemoveScriptTrigger",	CRegion_RemoveScriptTrigger,	1, 0 ),
 	JS_FN( "GetOrePref",				CRegion_GetOrePref,				1, 0 ),
 	JS_FN( "GetOreChance",			CRegion_GetOreChance,			0, 0 ),
+	JS_FN( "TownstoneAction",		CRegion_TownstoneAction,		3, 0 ),
 	JS_FS_END
 };
 

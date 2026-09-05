@@ -2565,6 +2565,15 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			}
 		}
 	}
+
+	if( !pdoll->IsNpc() && !pdoll->IsIncognito() && !pdoll->IsDisguised() )
+	{
+		const std::string factionKey = FactionKeyForChar( pdoll );
+		if( !factionKey.empty() )
+		{
+			tempstr += oldstrutil::format( " [%s]", factionKey.c_str() );
+		}
+	}
 	pd.Text( tempstr );
 
 	CChar *mChar = s->CurrcharObj();
@@ -2920,16 +2929,19 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
 					return true;
 
-				Items->CreateScriptItem( nullptr, mChar, "townstone", 1, OT_ITEM );
-				iUsed->Delete();
-			}
-			else	// Display Townstone gump
-			{
-				CTownRegion *useRegion = iUsed->GetRegion();
-				if( useRegion != nullptr )
+				CItem *townstone = Items->CreateScriptItem( nullptr, mChar, "townstone", 1, OT_ITEM );
+				if( ValidateObject( townstone ))
 				{
-					useRegion->DisplayTownMenu( iUsed, mSock );
+					iUsed->Delete();
 				}
+				else
+				{
+					mSock->SysMessage( "Unable to create townstone. Check the [townstone] item definition." );
+				}
+			}
+			else
+			{
+				mSock->SysMessage( "This townstone does not have a townstone script assigned." );
 			}
 			return true;
 		case IT_RECALLRUNE: // Recall Rune

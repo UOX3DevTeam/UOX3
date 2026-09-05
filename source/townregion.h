@@ -81,11 +81,6 @@ private:
 	[[maybe_unused]] UI16				jsScript;
 	std::vector<UI16>	scriptTriggers;
 
-	void				SendEnemyGump( CSocket *sock );
-	void				SendBasicInfo( CSocket *sock );
-	void				SendPotentialMember( CSocket *sock );
-	void				SendMayorGump( CSocket *sock );
-	void				SendDefaultGump( CSocket *sock );
 	SERIAL				FindPositionOf( CChar& toAdd );
 
 	bool				RemoveCharacter( size_t position );
@@ -95,11 +90,9 @@ public:
 	CTownRegion( UI16 region );
 	~CTownRegion();
 
-	bool				DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag = -1 );
 	bool				VoteForMayor( CSocket *sock );
 	bool				DonateResource( CSocket *s, SI32 amount );
 	bool				PurchaseGuard( CSocket *sock, UI08 number );
-	bool				ViewBudget( CSocket *sock );
 	bool				PeriodicCheck( void );
 	bool				Load( Script *ss );		// entry is the region #, fp is the file to load from
 	bool				Save( std::ostream &outStream );		// entry is the region #, fp is the file to save in
@@ -133,17 +126,14 @@ public:
 	void				IsDisabled( bool value );
 	void				IsSubRegion( bool value );
 	void				SetName( std::string toSet );
+	void				SetOwner( std::string toSet );
 	void				SetRace( RACEID newRace );
 	void				TellMembers( SI32 dictEntry, ... );
-	void				SendAlliedTowns( CSocket *sock );
-	void				SendEnemyTowns( CSocket *sock );
 	void				ForceEarlyElection( void );
 	void				Possess( CTownRegion *possessorTown );
 	void				SetTaxesLeft( UI32 newValue );
 	void				SetReserves( UI32 newValue );
 	void				CalcNewMayor( void );				// calculates the new mayor
-	void				DisplayTownMembers( CSocket *sock );
-	void				ViewTaxes( CSocket *s );
 	void				DoDamage( SI16 reduction );
 	void				TaxedAmount( UI16 amount );
 	void				SetResourceId( UI16 resId );
@@ -158,6 +148,9 @@ public:
 	SI32				GetGoodRnd2( UI08 index ) const;
 	SI32				GetGoodSell( UI08 index ) const;
 	SI16				GetHealth( void ) const;
+	SI16				GetGuardsPurchased( void ) const;
+	std::string			GetAlliedTownIds( void ) const;
+	std::string			GetEnemyTownIds( void ) const;
 	CChar *				GetMayor( void );						// returns the mayor character
 	SERIAL				GetMayorSerial( void ) const;			// returns the mayor's serial
 	void				SetMayorSerial( SERIAL newvValue );			// sets the mayor's serial
@@ -202,6 +195,8 @@ public:
 	std::string			GetTownMemberSerials( void ) const;
 	std::vector<TownPers_st>	GetTownMembers( void ) const;
 };
+
+void HandleTownstoneAction( CSocket *sock, SERIAL button, SERIAL itemSerial );
 
 #endif
 

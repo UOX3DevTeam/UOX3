@@ -6,7 +6,6 @@
 #include "skills.h"
 #include "speech.h"
 #include "ssection.h"
-#include "CGump.h"
 #include "mapstuff.h"
 #include "scriptc.h"
 #include "CPacketSend.h"
@@ -947,6 +946,10 @@ std::string CTownRegion::GetOwner( void ) const
 {
 	return guardowner;
 }
+void CTownRegion::SetOwner( std::string toSet )
+{
+	guardowner = toSet.substr( 0, 49 );
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetWeather()
@@ -1108,64 +1111,6 @@ CChar * CTownRegion::GetRandomGuard( void )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::DisplayTownMenu()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Displays town menu for townstone used by the player
-//o------------------------------------------------------------------------------------------------o
-bool CTownRegion::DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag )
-{
-	if( flag == MAYOR )
-	{
-		SendMayorGump( sock );
-		return true;
-	}
-	CChar *tChar = sock->CurrcharObj();
-	if( !IsMemberOfTown( tChar ))
-	{
-		if( Races->CompareByRace( tChar->GetRace(), race ) <= RACE_ENEMY )	// if we're racial enemies
-		{
-			if( tChar->GetTown() != 255 )
-			{
-				SendEnemyGump( sock );
-			}
-			else
-			{
-				sock->SysMessage( 1125 ); // ou can not join this town!
-			}
-		}
-		else if( tChar->GetTown() != 255 ) // another town person
-		{
-			if( tChar->GetTown() == regionNum || tChar->GetTown() == 0 )	// they think we're in this region!!!
-			{
-				if( !AddAsTownMember(( *tChar )))
-				{
-					sock->SysMessage( 1126 ); // An error occurred joining you to your rightful town, please call a GM!
-					return false;
-				}
-				else
-				{
-					DisplayTownMenu( used, sock, flag );
-				}
-			}
-			else
-			{
-				SendBasicInfo( sock );
-			}
-		}
-		else
-		{
-			SendPotentialMember( sock );
-		}
-	}
-	else
-	{
-		SendDefaultGump( sock );
-	}
-
-	return true;
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::IsMemberOfTown()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether a specific player is member of the townregion
@@ -1184,206 +1129,6 @@ bool CTownRegion::IsMemberOfTown( CChar *player ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::SendEnemyGump()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends Gump menu to client with a list of the townregion's enemies
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::SendEnemyGump( CSocket *sock )
-{
-	CGumpPacket toSend( sock );
-	toSend.UserId( INVALIDSERIAL );
-	toSend.GumpId( 3 );
-
-	toSend.addCommand( "page 0" );
-	toSend.addCommand( oldstrutil::format( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
-	toSend.addCommand( oldstrutil::format( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 )); //OKAY
-	toSend.addCommand( oldstrutil::format( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( "page 1" );
-
-	toSend.addText( "Enemy" );
-	toSend.addCommand( "gumppic 25 50 1141" );	// town name
-	toSend.addCommand( oldstrutil::format( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() ));	// town name
-	toSend.addCommand( oldstrutil::format( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() ));	// population
-	toSend.addCommand( oldstrutil::format( "text 55 111 %u 3", cwmWorldState->ServerData()->RightTextColour() ));	// Seize townstone
-	toSend.addCommand( oldstrutil::format( "text 55 131 %u 4", cwmWorldState->ServerData()->RightTextColour() ));	// Destroy townstone
-
-	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 61", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// seize townstone
-	toSend.addCommand( oldstrutil::format( "button 25 131 %u %i 1 0 62", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// destroy townstone
-	toSend.addText( oldstrutil::format( "%s (%s)", name.c_str(), Races->Name( race ).c_str() ));
-	toSend.addText( oldstrutil::format( "Population %i", GetPopulation() ));
-	toSend.addText( "Seize Townstone" );
-	toSend.addText( "Attack Townstone" );
-
-	toSend.Send();
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::SendBasicInfo()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends Gump menu to client with basic townstone gump menu
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::SendBasicInfo( CSocket *sock )
-{
-	CGumpDisplay BasicGump( sock );
-	BasicGump.SetTitle( "Basic Townstone gump" );
-	BasicGump.Send( 4, false, INVALIDSERIAL );
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::SendPotentialMember()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends Gump menu to client of a potential townregion member
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::SendPotentialMember( CSocket *sock )
-{
-	UnicodeTypes sLang	= sock->Language();
-	CGumpPacket toSend( sock );
-	toSend.UserId( INVALIDSERIAL );
-	toSend.GumpId( 3 );
-
-	toSend.addCommand( "page 0" );
-	toSend.addCommand( oldstrutil::format( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
-	toSend.addCommand( oldstrutil::format( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 )); //OKAY
-	toSend.addCommand( oldstrutil::format( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( "page 1" );
-
-	toSend.addText( "Outsider" );	// our title
-	toSend.addCommand( "gumppic 25 50 1141" );	// town name
-	toSend.addCommand( oldstrutil::format( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() ));	// town name
-	toSend.addCommand( oldstrutil::format( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() ));	// population
-	toSend.addCommand( oldstrutil::format( "text 55 91 %u 3", cwmWorldState->ServerData()->RightTextColour() ));	// join town
-	toSend.addCommand( oldstrutil::format( "text 55 111 %u 4", cwmWorldState->ServerData()->RightTextColour() ));	// view taxes (to help make decisions about joining?)
-
-	toSend.addCommand( oldstrutil::format( "button 25 91 %u %i 1 0 41", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// leave town
-	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 3", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view taxes
-
-	toSend.addText( oldstrutil::format( "%s (%s)", name.c_str(), Races->Name( race ).c_str() ));
-
-	toSend.addText( oldstrutil::format(Dictionary->GetEntry( 1127, sLang ), GetPopulation() ));
-	toSend.addText( Dictionary->GetEntry( 1128, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1129, sLang ));
-
-	toSend.Send();
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::SendMayorGump()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends Gump menu to client with townregion mayor info and functions
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::SendMayorGump( CSocket *sock )
-{
-	UnicodeTypes sLang	= sock->Language();
-	CGumpPacket toSend( sock );
-	toSend.UserId( INVALIDSERIAL );
-	toSend.GumpId( 3 );
-
-	toSend.addCommand( "page 0" );
-	toSend.addCommand( oldstrutil::format( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
-	toSend.addCommand( oldstrutil::format( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 )); //OKAY
-	toSend.addCommand( oldstrutil::format( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( "page 1" );
-
-	toSend.addText( "Mayor Controls" );	// our title
-
-	toSend.addCommand( "gumppic 25 50 1141" );	// town name
-	toSend.addCommand( "gumppic 25 260 1141" );
-	toSend.addCommand( oldstrutil::format( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() ));	// town name
-	toSend.addCommand( oldstrutil::format( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() ));	// population
-	toSend.addCommand( oldstrutil::format( "text 55 91 %u 3", cwmWorldState->ServerData()->RightTextColour() )); // set taxes
-	toSend.addCommand( oldstrutil::format( "text 55 280 %u 4", cwmWorldState->ServerData()->RightTextColour() )); // return to main menu
-	toSend.addCommand( oldstrutil::format( "text 55 111 %u 5", cwmWorldState->ServerData()->RightTextColour() )); // list town members
-	toSend.addCommand( oldstrutil::format( "text 55 131 %u 6", cwmWorldState->ServerData()->RightTextColour() )); // force early election
-	toSend.addCommand( oldstrutil::format( "text 55 151 %u 7", cwmWorldState->ServerData()->RightTextColour() )); // purchase more guards
-	toSend.addCommand( oldstrutil::format( "text 55 171 %u 8", cwmWorldState->ServerData()->RightTextColour() )); // fire a guard
-	toSend.addCommand( oldstrutil::format( "text 55 261 %u 9", cwmWorldState->ServerData()->RightTextColour() )); // treasury amount
-	toSend.addCommand( oldstrutil::format( "text 55 191 %u 10", cwmWorldState->ServerData()->RightTextColour() ));	// make ally
-
-	toSend.addCommand( oldstrutil::format( "button 25 91 %u %i 1 0 21", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // set taxes
-	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 22", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // list town members
-	toSend.addCommand( oldstrutil::format( "button 25 131 %u %i 1 0 23", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // force early election
-	toSend.addCommand( oldstrutil::format( "button 25 151 %u %i 1 0 24", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // purchase more guards
-	toSend.addCommand( oldstrutil::format( "button 25 171 %u %i 1 0 25", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // fire a guard
-	toSend.addCommand( oldstrutil::format( "button 25 280 %u %i 1 0 40", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // return to main menu
-	toSend.addCommand( oldstrutil::format( "button 25 191 %u %i 1 0 26", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 )); // make ally of other town
-
-	toSend.addText( oldstrutil::format( "%s (%s)", name.c_str(), Races->Name( race ).c_str() ));
-	toSend.addText( oldstrutil::format( Dictionary->GetEntry( 1130, sLang ), GetPopulation() ));
-	toSend.addText( Dictionary->GetEntry( 1131, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1132, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1133, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1134, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1135, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1136, sLang ));
-	toSend.addText( oldstrutil::format( Dictionary->GetEntry( 1137, sLang ), goldReserved ));
-	toSend.addText( Dictionary->GetEntry( 1138, sLang ));
-
-	toSend.Send();
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::SendDefaultGump()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends default townregion gump menu to client
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::SendDefaultGump( CSocket *sock )
-{
-	CGumpPacket toSend( sock );
-	toSend.UserId( INVALIDSERIAL );
-	toSend.GumpId( 3 );
-
-	toSend.addCommand( "page 0" );
-	toSend.addCommand( oldstrutil::format( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
-	toSend.addCommand( oldstrutil::format( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 )); //OKAY
-	toSend.addCommand( oldstrutil::format( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( "page 1" );
-
-	toSend.addText( "Generic View" );	// our title
-	toSend.addCommand( "gumppic 25 50 1141" );	// town name
-	toSend.addCommand( oldstrutil::format( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() ));	// town name
-	toSend.addCommand( oldstrutil::format( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() ));	// population
-	toSend.addCommand( oldstrutil::format( "text 55 91 %u 3", cwmWorldState->ServerData()->RightTextColour() ));	// leave town
-	toSend.addCommand( oldstrutil::format( "text 55 111 %u 4", cwmWorldState->ServerData()->RightTextColour() ));	// view taxes
-	toSend.addCommand( oldstrutil::format( "text 55 131 %u 5", cwmWorldState->ServerData()->RightTextColour() ));	// toggle town title on/off
-	toSend.addCommand( oldstrutil::format( "text 55 151 %u 6", cwmWorldState->ServerData()->RightTextColour() ));	// vote for mayor
-	toSend.addCommand( oldstrutil::format( "text 55 171 %u 7", cwmWorldState->ServerData()->RightTextColour() ));	// donate resource
-	toSend.addCommand( oldstrutil::format( "tilepic 205 171 %u", GetResourceId() ));				// picture of the resource
-	toSend.addCommand( oldstrutil::format( "text 55 191 %u 8", cwmWorldState->ServerData()->RightTextColour() ));	// view budget
-	toSend.addCommand( oldstrutil::format( "text 55 211 %u 9", cwmWorldState->ServerData()->RightTextColour() ));	// view allied towns
-	toSend.addCommand( oldstrutil::format( "text 55 231 %u 10", cwmWorldState->ServerData()->RightTextColour() ));	// view enemy towns
-
-	toSend.addCommand( oldstrutil::format( "button 25 91 %u %i 1 0 2", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// leave town
-	toSend.addCommand( oldstrutil::format( "button 25 111 %u %i 1 0 3", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view taxes
-	toSend.addCommand( oldstrutil::format( "button 25 131 %u %i 1 0 4", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// toggle title
-	toSend.addCommand( oldstrutil::format( "button 25 151 %u %i 1 0 5", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// vote for mayor
-	toSend.addCommand( oldstrutil::format( "button 25 171 %u %i 1 0 6", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// donate gold
-	toSend.addCommand( oldstrutil::format( "button 25 191 %u %i 1 0 7", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view budget
-	toSend.addCommand( oldstrutil::format( "button 25 211 %u %i 1 0 8", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view allied towns
-	toSend.addCommand( oldstrutil::format( "button 25 231 %u %i 1 0 9", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));	// view enemy towns
-
-	CChar *mChar		= sock->CurrcharObj();
-	UnicodeTypes sLang	= sock->Language();
-	toSend.addText( oldstrutil::format( "%s (%s)", name.c_str(), Races->Name( race ).c_str() ));
-	toSend.addText( oldstrutil::format( Dictionary->GetEntry( 1139, sLang ), GetPopulation() ));
-	toSend.addText( Dictionary->GetEntry( 1140, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1141, sLang ));
-	toSend.addText( oldstrutil::format(Dictionary->GetEntry( 1142, sLang ), mChar->GetTownTitle()?"Off":"On" ));
-	toSend.addText( Dictionary->GetEntry( 1143, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1144, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1145, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1146, sLang ));
-	toSend.addText( Dictionary->GetEntry( 1147, sLang ));
-
-	if( mChar->GetTownPriv() == 2 || mChar->IsGM() ) // if we've got a mayor (remove isGM check!)
-	{
-		toSend.addCommand( oldstrutil::format( "button 25 281 %u %i 1 0 20", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ));
-		toSend.addCommand( oldstrutil::format( "text 55 281 %u 11", cwmWorldState->ServerData()->LeftTextColour() ));
-		toSend.addText( Dictionary->GetEntry( 1148, sLang ));
-	}
-	toSend.Send();
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetPopulation()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets population of townregion
@@ -1391,39 +1136,6 @@ void CTownRegion::SendDefaultGump( CSocket *sock )
 size_t CTownRegion::GetPopulation( void ) const
 {
 	return townMember.size();
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::DisplayTownMembers()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets population of townregion
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::DisplayTownMembers( CSocket *sock )
-{
-	CGumpDisplay townListing( sock, 300, 300 );
-	townListing.SetTitle( Dictionary->GetEntry( 1149, sock->Language() ));
-	CChar *sChar = sock->CurrcharObj();
-	for( size_t counter = 0; counter < townMember.size(); ++counter )
-	{
-		CChar *townChar = CalcCharObjFromSer( townMember[counter].townMember );
-		if( ValidateObject( townChar ))
-		{
-			if( sChar->IsGM() )
-			{
-				townListing.AddData( townChar->GetName(), townChar->GetSerial(), 3 );
-			}
-			else
-			{
-				townListing.AddData( townChar->GetName(), " " );	// don't want them to know the serial
-			}
-		}
-		else
-		{
-			RemoveCharacter( counter );
-			--counter;
-		}
-	}
-	townListing.Send( 4, false, INVALIDSERIAL );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1585,24 +1297,6 @@ bool CTownRegion::PurchaseGuard( CSocket *sock, UI08 number )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::ViewBudget()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	View townregion's budget for guards
-//o------------------------------------------------------------------------------------------------o
-bool CTownRegion::ViewBudget( CSocket *sock )
-{
-	UnicodeTypes sLang = sock->Language();
-	CGumpDisplay Budget( sock, 300, 300 );
-	Budget.SetTitle( Dictionary->GetEntry( 1161, sLang ));					// Budget
-	Budget.AddData( Dictionary->GetEntry( 1162, sLang ), guardsPurchased ); // Guards Bought
-	Budget.AddData( Dictionary->GetEntry( 1163, sLang ), numGuards );		// Guards Total
-	Budget.AddData( Dictionary->GetEntry( 1164, sLang ), numGuards * 20 );	// Guard Upkeep
-	Budget.Send( 4, false, INVALIDSERIAL );
-
-	return true;
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::PeriodicCheck()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Perform periodic check of townregion related functions
@@ -1700,39 +1394,8 @@ void CTownRegion::SetAppearance( WorldType worldType )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::ViewTaxes()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Send Gump menu with information about townregion's taxes
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::ViewTaxes( CSocket *sock )
-{
-	CGumpPacket toSend( sock );
-	toSend.UserId( INVALIDSERIAL );
-	toSend.GumpId( 3 );
-
-	toSend.addCommand( "page 0" );
-	toSend.addCommand( oldstrutil::format( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
-	toSend.addCommand( oldstrutil::format( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 )); //OKAY
-	toSend.addCommand( oldstrutil::format( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( "page 1" );
-
-	toSend.addText( "Taxes" );	// our title
-	toSend.addCommand( "gumppic 25 50 1141" );	// town name
-	toSend.addCommand( oldstrutil::format( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() ));	// town name
-	toSend.addCommand( oldstrutil::format( "text 35 71 %u 2", cwmWorldState->ServerData()->RightTextColour() ));	// population
-	toSend.addCommand( oldstrutil::format( "text 35 111 %u 3", cwmWorldState->ServerData()->RightTextColour() )); // # of resources
-	toSend.addCommand( oldstrutil::format( "tilepic 5 111 %u", GetResourceId() ));				// picture of the resource
-
-	toSend.addText( oldstrutil::format( "%s (%s)", name.c_str(), Races->Name( race ).c_str() ));
-	toSend.addText( oldstrutil::format( "Population %i", GetPopulation() ));
-	CTile& tile = Map->SeekTile( GetResourceId() );
-	toSend.addText( oldstrutil::format( "%i %ss", taxedAmount, tile.Name().c_str() ));
-	toSend.Send();
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetHealth()
-//|					vCTownRegion::SetHealth()
+//|					CTownRegion::SetHealth()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the health of townstone in this townregion
 //o------------------------------------------------------------------------------------------------o
@@ -1740,6 +1403,54 @@ SI16 CTownRegion::GetHealth( void ) const
 {
 	return health;
 }
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CTownRegion::GetGuardsPurchased()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the number of guards purchased by the civic town
+//o------------------------------------------------------------------------------------------------o
+SI16 CTownRegion::GetGuardsPurchased( void ) const
+{
+	return guardsPurchased;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CTownRegion::GetAlliedTownIds()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a comma-separated list of allied civic town region IDs
+//o------------------------------------------------------------------------------------------------o
+std::string CTownRegion::GetAlliedTownIds( void ) const
+{
+	std::string townIds;
+	for( const auto townId : alliedTowns )
+	{
+		if( !townIds.empty() )
+			townIds += ',';
+		townIds += std::to_string( townId );
+	}
+	return townIds;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CTownRegion::GetEnemyTownIds()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a comma-separated list of enemy civic town region IDs
+//o------------------------------------------------------------------------------------------------o
+std::string CTownRegion::GetEnemyTownIds( void ) const
+{
+	std::string townIds;
+	for( const auto &[townId, townRegion] : cwmWorldState->townRegions )
+	{
+		if( townId != regionNum && townRegion != nullptr && Races->CompareByRace( race, townRegion->GetRace() ) <= RACE_ENEMY )
+		{
+			if( !townIds.empty() )
+				townIds += ',';
+			townIds += std::to_string( townId );
+		}
+	}
+	return townIds;
+}
+
 void CTownRegion::SetHealth( SI16 newValue )
 {
 	health = newValue;
@@ -1884,25 +1595,6 @@ void CTownRegion::SetRace( RACEID newRace )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::SendAlliedTowns()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends list of townregion's allied townregions to client
-//o------------------------------------------------------------------------------------------------o
-void CTownRegion::SendAlliedTowns( CSocket *sock )
-{
-	CGumpDisplay Ally( sock, 300, 300 );
-
-	auto temp = oldstrutil::format( Dictionary->GetEntry( 1173, sock->Language() ).c_str(), alliedTowns.size() ); // Allied Towns (%i)
-	Ally.SetTitle( temp );
-	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
-	{
-		Ally.AddData( cwmWorldState->townRegions[alliedTowns[counter]]->GetName(), " " );
-	}
-
-	Ally.Send( 4, false, INVALIDSERIAL );
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::ForceEarlyElection()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces early election for townregion
@@ -1922,29 +1614,6 @@ void CTownRegion::ForceEarlyElection( void )
 	{
 		mayor->SetTownpriv( 1 );
 	}
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::SendEnemyTowns()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends list of townregion's enemy townregions to client
-//o------------------------------------------------------------------------------------------------o
-auto CTownRegion::SendEnemyTowns( CSocket *sock ) -> void
-{
-	auto Enemy = CGumpDisplay( sock, 300, 300 );
-
-	UI08 enemyCount = 0;
-	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [this, &enemyCount, &Enemy]( const std::pair<UI16, CTownRegion*> &entry )
-	{
-		if(( entry.first != regionNum ) && ( Races->CompareByRace( race, entry.second->GetRace() ) <= RACE_ENEMY ))
-		{
-			++enemyCount;
-			Enemy.AddData( entry.second->GetName(), Races->Name( entry.second->GetRace() ));					
-		}
-	});
-
-	Enemy.SetTitle( oldstrutil::format( "Enemy Towns (%u)", enemyCount ));
-	Enemy.Send( 4, false, INVALIDSERIAL );
 }
 
 //o------------------------------------------------------------------------------------------------o

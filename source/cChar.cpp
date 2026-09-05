@@ -2795,6 +2795,17 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 	{
 		retVal = FC_NEUTRAL;
 	}
+	else if( AreFactionMembers( this, toCompare ))
+	{
+		if( AreEnemyFactionMembers( this, toCompare ))
+		{
+			retVal = FC_ENEMY;
+		}
+		else
+		{
+			retVal = FC_FRIEND;
+		}
+	}
 	else if( rComp != RACE_NEUTRAL || gComp != GR_UNKNOWN )
 	{
 		if( gComp == GR_ALLY || gComp == GR_SAME || rComp >= RACE_ALLY )
