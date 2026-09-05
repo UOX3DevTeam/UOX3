@@ -47,3 +47,16 @@ decay=1
 good=49
 script=5012
 }
+
+[houseplacementtool]
+{
+get=base_item
+name=a house placement tool
+id=0x14F6
+weight=300
+value=75 37
+restock=20
+decay=1
+script=5090
+origin=aos
+}
