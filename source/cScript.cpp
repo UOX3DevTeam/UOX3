@@ -925,7 +925,7 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 		return RV_NOFUNC;
 
 	JS::RootedValue rval( targContext );
-	JS::RootedValueArray<2> params( targContext );
+	JS::RootedValueArray<3> params( targContext );
 	JS::RootedObject myObj( targContext, JSEngine->AcquireObject( IUE_SOCK, tSock, runTime ) );
 	JS::RootedObject charObj( targContext, JSEngine->AcquireObject( IUE_CHAR, objColliding, runTime ) );
 	JS::RootedObject myObj2( targContext );
