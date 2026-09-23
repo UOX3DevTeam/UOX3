@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 23. August, 2026</small></p>
+	<p style="margin:0"><small>Last Updated: 29. August, 2026</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7e</small></p>
 </div>
 
@@ -60,6 +60,14 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>August 29th, 2026</h4>
+						<ul>
+							<li>Moved all faction player and administrator notifications into the UOX3 dictionaries with parameterized entries for dynamic values.</li>
+							<li>Added an optional Factions System generator to the Felucca add-ons in the administrator welcome gump.</li>
+							<li>Moved the legacy civic townstone interface, including all buttons and secondary views, from C++ to <span class="hl">js/server/townstone.js</span>.</li>
+							<li>Added complete <a href="#uox3Factions">Factions</a> feature documentation and clarified that faction townstones do not replace UOX3's legacy civic townstones.</li>
+							<li>Documented every shard-tunable option in the new <a href="#uoxINISettings">[factions] UOX.INI section</a>.</li>
+						</ul>
 						<h4>August 23rd, 2026</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> with the new [accounts] section, optional password hashing and login-throttle settings.</li>
@@ -68,6 +76,19 @@
 						<h4>August 12th, 2026</h4>
 						<ul>
 							<li>Updated <a href="#compilingUOX3">Compiling UOX3 Source</a> instructions for 64-bit FreeBSD support, including SpiderMonkey 115 source compilation steps.</li>
+						</ul>
+						<h4>June 29th, 2026</h4>
+						<ul>
+							<li>Added data-driven faction setup details, including <span class="hl">js/jsdata/factions/faction_setup.json</span>, setup relocation mode and automatic faction townstone placement.</li>
+							<li>Added faction town INI settings for tax interval, default tax rate, treasury grants and managed guard/vendor limits.</li>
+							<li>Updated <a href="#uox3Factions">Factions</a> documentation with generic faction NPC setup details, DFN tags and staff commands for assigning existing NPCs to factions.</li>
+							<li>Documented faction NPC kill rewards, reward tuning tags and faction NPC health/admin counts.</li>
+							<li>Added faction player-data storage details and migration command for moving faction character state into shared JSON files.</li>
+							<li>Updated elections, sigil capture rewards, faction vendors, townstone role checks and faction stones to use shared faction player data.</li>
+						</ul>
+						<h4>June 28th, 2026</h4>
+						<ul>
+							<li>Added <a href="#uox3Factions">Factions</a> feature info with details on faction setup, town control, sigils, strongholds, faction admin gump and maintenance commands.</li>
 						</ul>
 						<h4>December 12th, 2025</h4>
 						<ul>
@@ -2730,6 +2751,53 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">GUARDSPAID</span><strong>=3600</strong><br>
 							Time (in seconds) between payments for guards.</p>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_factions">
+					<label for="spoiler_ini_factions">[factions] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Controls the script-driven faction system. Time values identify their units in the setting name. Invalid values are clamped to supported limits when the INI file is loaded.</p>
+						<div class="settingsDiv">
+							<p><strong>Town economy and managed NPCs</strong><br>
+							<span class="hl">FACTIONTOWNTAXINTERVAL</span><strong>=1440</strong> - Minutes between automatic town income and upkeep cycles.<br>
+							<span class="hl">FACTIONTOWNDEFAULTTAXRATE</span><strong>=0</strong> - Default town tax offset percentage (-30 to 300).<br>
+							<span class="hl">FACTIONTOWNTREASURYGRANT</span><strong>=1000</strong> - Silver granted by the faction treasury administration command.<br>
+							<span class="hl">FACTIONTOWNGUARDLIMIT</span><strong>=10</strong> - Maximum managed faction guards per town.<br>
+							<span class="hl">FACTIONTOWNVENDORLIMIT</span><strong>=10</strong> - Maximum managed faction vendors per town.<br>
+							<span class="hl">FACTIONTOWNBASEINCOME</span><strong>=10000</strong> - Silver earned by a controlled town before its tax offset and NPC upkeep are applied.<br>
+							<span class="hl">FACTIONTOWNTAXCHANGEHOURS</span><strong>=12</strong> - Minimum delay between finance-minister tax changes.<br>
+							<span class="hl">FACTIONGUARDCOST</span><strong>=5000</strong> - Treasury cost to place a faction guard.<br>
+							<span class="hl">FACTIONVENDORCOST</span><strong>=5000</strong> - Default treasury cost to place a faction vendor. Board and ore vendors use their canonical 3000-silver cost.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><strong>Membership, combat, and rewards</strong><br>
+							<span class="hl">FACTIONLEAVEDELAYHOURS</span><strong>=72</strong> - Delay before a faction resignation completes.<br>
+							<span class="hl">FACTIONMAXSILVER</span><strong>=100000</strong> - Maximum faction silver a player may hold.<br>
+							<span class="hl">FACTIONKILLCOOLDOWNMINUTES</span><strong>=180</strong> - Delay before the same victim can provide another player-kill reward.<br>
+							<span class="hl">FACTIONKILLPOINTDECAYHOURS</span><strong>=24</strong> - Interval used to decay faction kill points.<br>
+							<span class="hl">FACTIONBLOCKSAMEACCOUNTREWARDS</span><strong>=0</strong> - Prevent reward farming between characters on the same account when set to 1.<br>
+							<span class="hl">FACTIONNPCKILLPOINTS</span><strong>=1</strong> - Kill points awarded for an eligible faction NPC kill.<br>
+							<span class="hl">FACTIONNPCSILVERMIN</span><strong>=5</strong> - Minimum silver awarded for an eligible faction NPC kill.<br>
+							<span class="hl">FACTIONNPCSILVERMAX</span><strong>=25</strong> - Maximum silver awarded for an eligible faction NPC kill.<br>
+							<span class="hl">FACTIONNPCSCANRANGE</span><strong>=10</strong> - Tile range used by faction NPCs when scanning for enemies.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><strong>Commander elections</strong><br>
+							<span class="hl">FACTIONELECTIONPENDINGHOURS</span><strong>=120</strong> - Length of the pending election phase.<br>
+							<span class="hl">FACTIONELECTIONCAMPAIGNHOURS</span><strong>=24</strong> - Length of the campaign phase.<br>
+							<span class="hl">FACTIONELECTIONVOTINGHOURS</span><strong>=72</strong> - Length of the voting phase.<br>
+							<span class="hl">FACTIONELECTIONMAXCANDIDATES</span><strong>=10</strong> - Maximum candidates permitted in an election.<br>
+							<span class="hl">FACTIONELECTIONCANDIDATERANK</span><strong>=5</strong> - Minimum displayed faction rank (1 to 10) required to declare candidacy.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><strong>Town sigils</strong><br>
+							<span class="hl">FACTIONSIGILCORRUPTIONMINUTES</span><strong>=600</strong> - Time a sigil must remain at an enemy stronghold to become corrupted.<br>
+							<span class="hl">FACTIONSIGILRETURNMINUTES</span><strong>=60</strong> - Time a dropped sigil remains away from home before automatically returning.<br>
+							<span class="hl">FACTIONSIGILPURIFICATIONHOURS</span><strong>=72</strong> - Time a captured town sigil remains protected while purifying.<br>
+							<span class="hl">FACTIONSIGILSILVERREWARD</span><strong>=250</strong> - Silver awarded to a player who completes a sigil capture.<br>
+							<span class="hl">FACTIONSIGILKILLPOINTREWARD</span><strong>=10</strong> - Kill points awarded for a completed sigil capture.<br>
+							<span class="hl">FACTIONSIGILSCOREREWARD</span><strong>=1</strong> - Faction score awarded for a completed sigil capture.</p>
 						</div>
 					</div>
 
@@ -6014,6 +6082,43 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 
 					</div>
 				</div>
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3Factions" id="uox3Factions"><span>Factions</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>UOX3's script-driven Factions system provides the four classic factions: True Britannians, Council of Mages, Minax and Shadowlords. It includes membership and ranks, enemy combat rewards, commander elections, strongholds, town sigils, town taxation, faction guards and vendors, traps, faction equipment and war horses.</p>
+					<div class="note"><p><strong>Faction and civic townstones are separate systems.</strong> UOX3's original townstones implement its custom civic town system with mayors, residents and civic taxes. Faction townstones are JavaScript control panels layered onto faction-controlled towns and do not replace or remove the legacy civic system.</p></div>
+
+					<h3>Setup and Administration</h3>
+					<p>Static faction locations are stored in <span class="hl">js/jsdata/factions/faction_setup.json</span>. New shards can select <strong>Factions System</strong> under the Felucca add-ons in the administrator welcome gump to generate the configured faction world objects. Run <span class="hl">'factionsetup</span> later to create or repair the configured stones, stronghold objects, sigils and faction townstones. The setup command can also relocate existing setup objects when the JSON coordinates change. Use <span class="hl">'factionhealth</span> or the <span class="hl">'factionadmin</span> gump to inspect setup health, town ownership, NPC counts and player data.</p>
+					<ul>
+						<li><span class="hl">'factionsetup</span> - Creates, repairs or relocates the configured faction world objects.</li>
+						<li><span class="hl">'factionadmin</span> - Opens the staff faction administration gump.</li>
+						<li><span class="hl">'factionhealth</span> - Reports missing, duplicate or inconsistent faction state.</li>
+						<li><span class="hl">'factiondatamigrate</span> - Migrates legacy character tags into shared faction player-data files.</li>
+						<li><span class="hl">'removefactions</span> - Removes faction state and faction-owned world objects after confirmation.</li>
+					</ul>
+
+					<h3>Membership, Ranks, and Combat</h3>
+					<p>Players join through a faction join stone and resign through their faction stone. Resignation completes after the configured delay. Faction kill points determine displayed rank, while faction silver purchases faction equipment and services. Enemy player kills and eligible faction NPC kills award configured points and silver; repeated-player and same-account reward rules protect against farming. Leaving a faction cleans faction-restricted equipment, mounts and related ownership state.</p>
+
+					<h3>Commander Elections</h3>
+					<p>Each faction elects a commander through pending, campaign and voting phases. Candidates must meet the configured rank and candidate limit. Faction members cast one vote during the voting phase, and the winning candidate becomes commander when the election concludes. The commander can broadcast notices and appoint town officers.</p>
+
+					<h3>Town Control and Sigils</h3>
+					<p>A faction steals a town sigil and corrupts it at its stronghold. Once corruption finishes, the corrupted sigil must be returned to its town pedestal and captured through the sigil gump. Capturing transfers town control, awards the configured player and faction rewards, clears officers belonging to the previous owner and begins the purification period. A purifying sigil cannot be picked up. Dropped sigils automatically return home after the configured return delay.</p>
+
+					<h3>Town Officers, Treasury, Guards, and Vendors</h3>
+					<p>A faction commander appoints a sheriff and finance minister for each controlled town. The sheriff places faction guards; the finance minister sets the town tax rate and places faction vendors. The automatic town cycle applies base income and the tax offset, then pays managed NPC upkeep. If the treasury cannot cover upkeep, managed NPCs are removed one at a time until the town can afford the remaining cost.</p>
+					<p>Faction townstones provide the normal player-facing controls. Supported vendors include reagent, board, bottle, equipment, horse and faction-specific iron ore vendors. Guard and vendor definitions are located in <span class="hl">dfndata/npc/faction_npcs.dfn</span>.</p>
+
+					<h3>Traps, Equipment, and Configuration</h3>
+					<p>Faction trap deeds may only be placed within a town controlled by the player's faction and near the player. Placed traps retain faction and placer ownership; only their same-faction placer or staff may remove them. Faction equipment and war horses enforce faction ownership and control-slot requirements.</p>
+					<p>Shard administrators can tune membership, combat rewards, elections, sigil timing and rewards, town economy, taxes, NPC limits, placement costs and scan range in the <a href="#uoxINISettings">[factions] section of UOX.INI</a>. Changes can be reloaded with <span class="hl">'reloadini</span>.</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
@@ -9366,6 +9471,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>UOX3 comes with a system for <span class="hl">Townstones</span> that allows players to setup their own <span class="hl">player-run governments</span> in different regions of the world.</p>
+					<div class="note"><p>This legacy civic system is independent of Factions. Its complete player interface is implemented in <span class="hl">js/server/townstone.js</span>, so shards may customize civic townstone layouts and buttons without modifying or rebuilding the server. C++ retains protected town membership, election, treasury, alliance, stealing and damage operations.</p></div>
 					<h4>Townstone Basics</h4>
 						<ul>
 							<li>Player gets hold of a <strong>Townstone Deed</strong> (from a vendor, or by a GM using <span class="hl">'add item townstonedeed</span>), and uses it while in a given region of the world to found a new Town.</li>

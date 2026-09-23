@@ -30,6 +30,7 @@ const facetIlshenar = 1;
 const facetMalas = 0;
 const facetTokuno = 0;
 const facetTermur = 0;
+const factionSystemCheckboxId = 13;
 
 // Transparency for background gumps
 const enableTransparentGump = true;
@@ -359,6 +360,15 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 			{
 				adminWelcome.AddToolTip( tooltipClilocID, socket, "Adds Solen Hive Entrances around the map" );
 			}
+
+			// Optional Factions system
+			adminWelcome.AddCheckbox( 480, 270, 9722, 2153, 0, factionSystemCheckboxId );
+			adminWelcome.AddHTMLGump( 515, 275, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>" + GetDictionaryEntry( 25000, socket.language ) + "</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 295, 250, 55, true, false, GetDictionaryEntry( 25001, socket.language ) );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, GetDictionaryEntry( 25002, socket.language ) );
+			}
 			break;
 		case 3: // Trammel
 			adminWelcome.AddHTMLGump( 480, 40, 250, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Trammel Decoration Addons</BASEFONT></BIG></CENTER>" );
@@ -547,7 +557,7 @@ function DisplayLoadingWorldTips( socket )
 /** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
 function onGumpPress( pSocket, pButton, gumpData )
 {
-	totalCheckBoxes = 36;
+	totalCheckBoxes = 37;
 	numCheckedBoxes = 0;
 	selectedButtons = [];
 
@@ -612,6 +622,7 @@ function onTimer( timerObj, timerID )
 		if( numCheckedBoxes == totalCheckBoxes )
 		{
 			timerObj.ExecuteCommand( "decorate load" );
+			timerObj.ExecuteCommand( "factionsetup relocate" );
 		}
 		else
 		{
@@ -752,6 +763,9 @@ function onTimer( timerObj, timerID )
 						break;
 					case 12: // Solen Hive Entrances
 						pSocket.currentChar.ExecuteCommand( "decorate load felucca_solenhive|silent multiple" );
+						break;
+					case factionSystemCheckboxId: // Factions system
+						pSocket.currentChar.ExecuteCommand( "factionsetup relocate" );
 						break;
 					// Trammel Addons
 					case 30: // Revamped Castle Blackthorn

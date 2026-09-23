@@ -40,6 +40,10 @@ function onLogin( socket, pChar )
 	var loginTime = Math.round( currentClock / 1000 / 60 );
 	pChar.SetTempTag( "loginTime", loginTime );
 
+	// Handle faction login checks from the global script.
+	TriggerEvent( 8501, "FactionCombatOnLogin", socket, pChar );
+	TriggerEvent( 8500, "FactionCoreOnLogin", socket, pChar );
+
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
 	{
@@ -108,6 +112,9 @@ function onLogout( pSock, pChar )
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
 
+	// Handle faction logout checks from the global script.
+	TriggerEvent( 8501, "FactionCombatOnLogout", pSock, pChar );
+
 	//Used to remove the candy timer in items/candy.js
 	pChar.KillJSTimer( 0, 5601 );
 	pChar.SetTempTag( "toothach", null );
@@ -127,6 +134,9 @@ function onCreatePlayer( pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+
+	// Attach faction combat script so onKill can award faction rewards.
+	TriggerEvent( 8501, "FactionCombatAttachTrigger", pChar );
 
 	// If player character is created on a Young account, give them Young-specific items
 	if( youngPlayerSystem && pChar.account.isYoung )
