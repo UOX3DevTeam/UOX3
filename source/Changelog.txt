@@ -1,3 +1,6 @@
+23/09/2026 - Xoduz (#600)
+    [FIX] Fixed a server crash related to an argument-count mismatch in cScript::OnCollide() that would trigger when walking onto items like moongates and dungeon traps
+
 04/09/2026 - DragonSlayer62 (#598)
     [FIX] Prevented players from starting the bonding process by feeding another player's pet (js/npc/pets/petbonding.js)
     [FIX] Prevented invalid create-menu resource IDs from crashing the server during startup. Invalid IDs now generate a console warning, and the affected crafting entry is skipped
