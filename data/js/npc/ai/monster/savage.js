@@ -103,8 +103,8 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 	// Apply hard-coded defense modifiers based on armor, resistances etc
 	damage = ApplyDefenseModifiers( 1, pAttacker, pDefender, fightSkill, hitLoc, damage, true);
 
-	// If damage after defense modifiers is below 0, do a small random amount of damage still
-	if( damage <= 0 )
+	// If enabled, preserve the legacy random damage fallback.
+	if( damage <= 0 && GetServerSetting( "RANDOMZERODAMAGEFALLBACK" ))
 	{
 		damage = RandomNumber( 0, 4 );
 	}

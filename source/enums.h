@@ -248,6 +248,9 @@ enum WeatherType
 	SNOW,
 	STORM,
 	STORMBREW,
+	CHAOS,		// AoS chaos damage; resolved to a random standard resist type on each hit
+	ACID,
+	NECROTIC,
 	WEATHNUM
 };
 

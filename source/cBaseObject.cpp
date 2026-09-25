@@ -149,6 +149,8 @@ luck( DEFBASE_LUCK ), tithing( DEFBASE_TITHING ), poisonedBy( DEFBASE_POISONEDBY
 	}
 	ShouldSave( true );
 	memset( &resistances[0], DEFBASE_RESIST, sizeof( UI16 ) * WEATHNUM );
+	memset( &damageTypes[0], 0, sizeof( UI08 ) * WEATHNUM );
+	damageTypes[PHYSICAL] = 100;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -481,6 +483,56 @@ void CBaseObject::SetResist( UI16 newValue, WeatherType damage )
 	{
 		( static_cast<CChar *>( this ))->UpdateRegion();
 	}
+}
+
+UI08 CBaseObject::GetDamageType( WeatherType damage ) const
+{
+	return damage < WEATHNUM ? damageTypes[damage] : 0;
+}
+
+void CBaseObject::SetDamageType( UI08 newValue, WeatherType damage )
+{
+	if( damage <= NONE || damage >= WEATHNUM )
+		return;
+
+	newValue = std::min<UI08>( newValue, 100 );
+
+	if( damage == PHYSICAL )
+	{
+		// Physical damage is the remainder of the shared 100% damage pool.
+		// Setting it explicitly reduces existing elemental channels as needed.
+		UI16 elementalBudget = 100 - newValue;
+		UI16 elementalTotal = 0;
+		for( UI08 type = LIGHT; type < WEATHNUM; ++type )
+		{
+			UI08 retained = static_cast<UI08>( std::min<UI16>( damageTypes[type], elementalBudget - elementalTotal ));
+			damageTypes[type] = retained;
+			elementalTotal += retained;
+		}
+		damageTypes[PHYSICAL] = static_cast<UI08>( 100 - elementalTotal );
+	}
+	else
+	{
+		// The most recently assigned elemental channel takes priority. Retain older
+		// channels only while room remains, then return unused damage to physical.
+		damageTypes[damage] = newValue;
+		UI16 remaining = 100 - newValue;
+		for( UI08 type = LIGHT; type < WEATHNUM; ++type )
+		{
+			if( type == damage )
+				continue;
+
+			UI08 retained = static_cast<UI08>( std::min<UI16>( damageTypes[type], remaining ));
+			damageTypes[type] = retained;
+			remaining -= retained;
+		}
+		damageTypes[PHYSICAL] = static_cast<UI08>( remaining );
+	}
+
+	if( CanBeObjType( OT_ITEM ))
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		( static_cast<CChar *>( this ))->UpdateRegion();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -837,15 +889,21 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
 	outStream << "Damage=" + std::to_string( loDamage ) + "," + std::to_string( hiDamage ) + newLine;
+	outStream << "DamageTypes=";
+	for( UI08 damageType = 1; damageType < WEATHNUM; ++damageType )
+	{
+		outStream << static_cast<UI16>( GetDamageType( static_cast<WeatherType>( damageType ))) << ",";
+	}
+	outStream << "[END]" << newLine;
 	outStream << "Poisoned=" + std::to_string( poisoned ) + newLine;
 	outStream << "PoisonedBy=" + std::to_string( poisonedBy ) + newLine;
 	outStream << "Carve=" + std::to_string( GetCarve() ) + newLine;
 	outStream << "Damageable=" << ( IsDamageable() ? "1" : "0" ) << newLine;
 
 	outStream << "Defense=";
-	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
+	for( UI08 resist = PHYSICAL; resist < WEATHNUM; ++resist )
 	{
-		outStream << GetResist( static_cast<WeatherType>( resist )) << ",";
+		outStream << ( resist == CHAOS ? 0 : GetResist( static_cast<WeatherType>( resist ))) << ",";
 	}
 	outStream << "[END]" << newLine;
 
@@ -2289,6 +2347,17 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			{
 				dx2	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 			}
+			else if( UTag == "DAMAGETYPES" )
+			{
+				int count = 1;
+				for( auto &val : csecs )
+				{
+					auto temp = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( val, "//" )));
+					if( temp.empty() || temp == "[END]" || count >= WEATHNUM )
+						break;
+					SetDamageType( static_cast<UI08>( std::clamp( std::stoi( temp, nullptr, 0 ), 0, 100 )), static_cast<WeatherType>( count++ ));
+				}
+			}
 			else if( UTag == "DEFENSE" )
 			{
 				if( data.find( "," ) != std::string::npos )
@@ -2304,7 +2373,8 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 								break;
 							}
 							auto value = static_cast<SI16>( std::stoi( temp, nullptr, 0 ));
-							SetResist( value, static_cast<WeatherType>( count ));
+							if( count != CHAOS && count < WEATHNUM )
+								SetResist( value, static_cast<WeatherType>( count ));
 							count++;
 						}
 					}
@@ -3080,6 +3150,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	for( UI08 resist = 0; resist < WEATHNUM; ++resist )
 	{
 		target->SetResist( GetResist( static_cast<WeatherType>( resist )), static_cast<WeatherType>( resist ));
+		target->SetDamageType( GetDamageType( static_cast<WeatherType>( resist )), static_cast<WeatherType>( resist ));
 	}
 	target->SetStrength2( GetStrength2() );
 	target->SetDexterity2( GetDexterity2() );

@@ -118,6 +118,7 @@ protected:
 	std::bitset<8>	objSettings;
 
 	UI16			resistances[WEATHNUM];
+	UI08			damageTypes[WEATHNUM];	// Percentage of weapon/NPC damage dealt by each element
 
 	SERIAL			tempContainerSerial;
 
@@ -143,6 +144,8 @@ public:
 
 	void					SetResist( UI16 newValue, WeatherType damage );
 	UI16					GetResist( WeatherType damage ) const;
+	void					SetDamageType( UI08 newValue, WeatherType damage );
+	UI08					GetDamageType( WeatherType damage ) const;
 
 	void					SetTitle( std::string newtitle );
 	std::string				GetTitle( void ) const;

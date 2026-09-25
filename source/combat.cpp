@@ -2788,22 +2788,29 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			// No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
 			if( damage > 0 && getDef == 0 )
 			{
-				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
+				UI16 physicalResist = CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false );
+				getDef = serverData->ExpansionArmorCalculation() >= ER_AOS ? physicalResist : HalfRandomNum( physicalResist );
 			}
 			break;
 		}
 		case POISON:		//	POISON Damage
-			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ) / 100 );
+			damageModifier = static_cast<R32>( std::min<UI16>( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ), 100 )) / 100.0f;
 			damage = static_cast<SI16>( std::round(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
 			break;
 		default:			//	Elemental damage
-			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ));
+			{
+				UI16 elementalResist = CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false );
+				getDef = serverData->ExpansionElementalDamage() >= ER_AOS ? elementalResist : HalfRandomNum( elementalResist );
+			}
 			break;
 	}
 
 	if( getDef > 0 )
 	{
-		damage -= static_cast<R32>( getDef );
+		if(( damageType == PHYSICAL ? serverData->ExpansionArmorCalculation() : serverData->ExpansionElementalDamage() ) >= ER_AOS )
+			damage -= damage * ( static_cast<R32>( std::min<UI16>( getDef, 100 )) / 100.0f );
+		else
+			damage -= static_cast<R32>( getDef );
 	}
 
 	return static_cast<SI16>( std::round( damage ));
@@ -2849,9 +2856,66 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	if( damage < 1 )
 		return 0;
 
-	damage = ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true );
+	if( cwmWorldState->ServerData()->ExpansionElementalDamage() >= ER_AOS )
+	{
+		CBaseObject *damageSource = mChar;
+		CItem *weapon = GetWeapon( mChar );
+		if( !mChar->IsNpc() && ValidateObject( weapon ))
+			damageSource = weapon;
 
-	if( damage <= 0 )
+		std::array<UI16, WEATHNUM> percentages{};
+		UI16 assigned = 0;
+		for( UI08 type = PHYSICAL; type < WEATHNUM; ++type )
+		{
+			UI16 value = damageSource->GetDamageType( static_cast<WeatherType>( type ));
+			value = std::min<UI16>( value, static_cast<UI16>( 100 - assigned ));
+			percentages[type] = value;
+			assigned += value;
+			if( assigned == 100 )
+				break;
+		}
+		if( assigned < 100 )
+			percentages[PHYSICAL] += 100 - assigned;
+
+		// Chaos is not a resistance of its own. Resolve it to a random standard
+		// AoS channel for each hit, matching UO damage semantics.
+		if( percentages[CHAOS] > 0 )
+		{
+			const WeatherType chaosTypes[] = { PHYSICAL, HEAT, COLD, POISON, LIGHTNING };
+			WeatherType resolved = chaosTypes[RandomNum( 0, 4 )];
+			percentages[resolved] += percentages[CHAOS];
+			percentages[CHAOS] = 0;
+		}
+
+		SI16 resistedDamage = 0;
+		SI16 distributedDamage = 0;
+		CRace *targetRace = Races->Race( ourTarg->GetRace() );
+		for( UI08 type = PHYSICAL; type < WEATHNUM; ++type )
+		{
+			if( type == CHAOS || percentages[type] == 0 )
+				continue;
+
+			const WeatherType componentType = static_cast<WeatherType>( type );
+			SI16 component = static_cast<SI16>(( static_cast<SI32>( damage ) * percentages[type] ) / 100 );
+			distributedDamage += component;
+
+			// Racial weather weaknesses use the same WeatherType channels as AoS
+			// damage. Apply the weakness to its component before resistance.
+			if( targetRace != nullptr && targetRace->AffectedBy( componentType ))
+				component *= 2;
+
+			resistedDamage += std::max<SI16>( 0, ApplyDefenseModifiers( componentType, mChar, ourTarg, getFightSkill, hitLoc, component, true ));
+		}
+		if( distributedDamage < damage )
+			resistedDamage += std::max<SI16>( 0, ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage - distributedDamage, true ));
+		damage = resistedDamage;
+	}
+	else
+	{
+		damage = ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true );
+	}
+
+	if( damage <= 0 && cwmWorldState->ServerData()->CombatRandomZeroDamageFallback() )
 	{
 		damage = RandomNum( 0, 4 );
 	}

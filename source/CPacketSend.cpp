@@ -7976,67 +7976,100 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			{
 				if( cwmWorldState->ServerData()->ShowWeaponDamageTypes() )
 				{
-					if( cItem.GetWeatherDamage( PHYSICAL ))
+					if( cItem.GetDamageType( PHYSICAL ) > 0 )
 					{
 						tempEntry.stringNum = 1060403; // physical damage ~1_val~%
-						tempEntry.ourText = oldstrutil::number( 100 );
+						tempEntry.ourText = oldstrutil::number( cItem.GetDamageType( PHYSICAL ));
 						tempEntry.sortOrder = 55;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( LIGHT ))
+					if( cItem.GetDamageType( LIGHT ) > 0 || cItem.GetWeatherDamage( LIGHT ))
 					{
 						tempEntry.stringNum = 1042971; // ~1_NOTHING~
-						tempEntry.ourText = oldstrutil::format( "light damage: 100%" );
+						UI08 percent = cItem.GetDamageType( LIGHT ) > 0 ? cItem.GetDamageType( LIGHT ) : 100;
+						tempEntry.ourText = oldstrutil::format( "light damage: %u%%", percent );
 						tempEntry.sortOrder = 60;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( RAIN ))
+					if( cItem.GetDamageType( RAIN ) > 0 || cItem.GetWeatherDamage( RAIN ))
 					{
 						tempEntry.stringNum = 1042971; // ~1_NOTHING~
-						tempEntry.ourText = oldstrutil::format( "rain damage: 100%" );
+						UI08 percent = cItem.GetDamageType( RAIN ) > 0 ? cItem.GetDamageType( RAIN ) : 100;
+						tempEntry.ourText = oldstrutil::format( "rain damage: %u%%", percent );
 						tempEntry.sortOrder = 65;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( COLD ))
+					if( cItem.GetDamageType( COLD ) > 0 )
 					{
-						tempEntry.stringNum = 1060403; // cold damage ~1_val~%
-						tempEntry.ourText = oldstrutil::number( 100 );
+						tempEntry.stringNum = 1060404; // cold damage ~1_val~%
+						tempEntry.ourText = oldstrutil::number( cItem.GetDamageType( COLD ));
 						tempEntry.sortOrder = 70;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( HEAT ))
+					if( cItem.GetDamageType( HEAT ) > 0 )
 					{
-						tempEntry.stringNum = 1042971; // ~1_NOTHING~
-						tempEntry.ourText = oldstrutil::format( "fire damage: 100%" );
+						tempEntry.stringNum = 1060405; // fire damage ~1_val~%
+						tempEntry.ourText = oldstrutil::number( cItem.GetDamageType( HEAT ));
 						tempEntry.sortOrder = 75;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( LIGHTNING ))
+					if( cItem.GetDamageType( LIGHTNING ) > 0 )
 					{
 						tempEntry.stringNum = 1060407; // energy damage ~1_val~%
-						tempEntry.ourText = oldstrutil::number( 100 );
+						tempEntry.ourText = oldstrutil::number( cItem.GetDamageType( LIGHTNING ));
 						tempEntry.sortOrder = 80;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( POISON ))
+					if( cItem.GetDamageType( POISON ) > 0 )
 					{
 						tempEntry.stringNum = 1060406; // poison damage ~1_val~%
-						tempEntry.ourText = oldstrutil::number( 100 );
+						tempEntry.ourText = oldstrutil::number( cItem.GetDamageType( POISON ));
 						tempEntry.sortOrder = 85;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( SNOW ))
+					if( cItem.GetDamageType( CHAOS ) > 0 )
 					{
 						tempEntry.stringNum = 1042971; // ~1_NOTHING~
-						tempEntry.ourText = oldstrutil::format( "snow damage: 100%" );
+						tempEntry.ourText = oldstrutil::format( "chaos damage: %u%%", cItem.GetDamageType( CHAOS ));
 						tempEntry.sortOrder = 90;
 						FinalizeData( tempEntry, totalStringLen );
 					}
-					if( cItem.GetWeatherDamage( STORM ))
+					if( cItem.GetDamageType( SNOW ) > 0 || cItem.GetWeatherDamage( SNOW ))
 					{
 						tempEntry.stringNum = 1042971; // ~1_NOTHING~
-						tempEntry.ourText = oldstrutil::format( "storm damage: 100%" );
+						UI08 percent = cItem.GetDamageType( SNOW ) > 0 ? cItem.GetDamageType( SNOW ) : 100;
+						tempEntry.ourText = oldstrutil::format( "snow damage: %u%%", percent );
+						tempEntry.sortOrder = 90;
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					if( cItem.GetDamageType( STORM ) > 0 || cItem.GetWeatherDamage( STORM ))
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						UI08 percent = cItem.GetDamageType( STORM ) > 0 ? cItem.GetDamageType( STORM ) : 100;
+						tempEntry.ourText = oldstrutil::format( "storm damage: %u%%", percent );
 						tempEntry.sortOrder = 95;
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					if( cItem.GetDamageType( STORMBREW ) > 0 || cItem.GetWeatherDamage( STORMBREW ))
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						UI08 percent = cItem.GetDamageType( STORMBREW ) > 0 ? cItem.GetDamageType( STORMBREW ) : 100;
+						tempEntry.ourText = oldstrutil::format( "storm brew damage: %u%%", percent );
+						tempEntry.sortOrder = 96;
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					if( cItem.GetDamageType( ACID ) > 0 )
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "acid damage: %u%%", cItem.GetDamageType( ACID ));
+						tempEntry.sortOrder = 97;
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					if( cItem.GetDamageType( NECROTIC ) > 0 )
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "necrotic damage: %u%%", cItem.GetDamageType( NECROTIC ));
+						tempEntry.sortOrder = 98;
 						FinalizeData( tempEntry, totalStringLen );
 					}
 				}
@@ -8173,6 +8206,19 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 					tempEntry.ourText = oldstrutil::number( cItem.GetResist( LIGHTNING ));
 					tempEntry.sortOrder = 140;
 					FinalizeData( tempEntry, totalStringLen );
+				}
+
+				const WeatherType customResistTypes[] = { LIGHT, RAIN, SNOW, STORM, STORMBREW, ACID, NECROTIC };
+				const char *customResistNames[] = { "light", "rain", "snow", "storm", "storm brew", "acid", "necrotic" };
+				for( size_t i = 0; i < ( sizeof( customResistTypes ) / sizeof( customResistTypes[0] )); ++i )
+				{
+					if( cItem.GetResist( customResistTypes[i] ) > 0 )
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "%s resist: %u%%", customResistNames[i], cItem.GetResist( customResistTypes[i] ));
+						tempEntry.sortOrder = static_cast<UI16>( 141 + i );
+						FinalizeData( tempEntry, totalStringLen );
+					}
 				}
 			}
 			else

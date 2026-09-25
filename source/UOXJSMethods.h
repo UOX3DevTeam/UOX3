@@ -184,6 +184,7 @@ bool CBase_DistanceTo( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_GetSerial( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_UpdateStats( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBase_DamageType( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_IsBoat( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_CanSee( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CBase_ResourceCount( JSContext *cx, unsigned argc, JS::Value *vp );
@@ -493,6 +494,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	JS_FN( "ClearPermaGreyFlags",	CChar_ClearPermaGreyFlags,				0, 0 ),
 	JS_FN( "Heal",				CChar_Heal,				1, 0 ),
 	JS_FN( "Resist",				CBase_Resist,			1, 0 ),
+	JS_FN( "DamageType",			CBase_DamageType,		1, 0 ),
 	JS_FN( "Defense",			CChar_Defense,			3, 0 ),
 	JS_FN( "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0 ),
 	JS_FN( "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0 ),
@@ -581,6 +583,7 @@ inline JSFunctionSpec CItem_Methods[] =
 	JS_FN( "GetMoreVar",			CItem_GetMoreVar,			2, 0 ),
 	JS_FN( "SetMoreVar",			CItem_SetMoreVar,			3, 0 ),
 	JS_FN( "Resist",				CBase_Resist,				1, 0 ),
+	JS_FN( "DamageType",			CBase_DamageType,			1, 0 ),
 	JS_FN( "ResourceCount",		CBase_ResourceCount,		2, 0 ),
 	JS_FN( "UseResource",		CBase_UseResource,			3, 0 ),
 	JS_FN( "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0 ),

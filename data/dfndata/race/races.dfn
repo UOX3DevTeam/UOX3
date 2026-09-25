@@ -9,6 +9,9 @@
 //*                                                               *
 //* Available settings                                            *
 //*                                                               *
+//* ACIDAFFECT - Race is affected by active acid weather          *
+//* ACIDDAMAGE=# - Maximum acid weather damage at 100% intensity  *
+//* ACIDSECS=# - How often acid weather damages in seconds        *
 //* ALLSKILLSG=# - Bonus for skill-checks against all skills      *
 //* ALLSKILLSL=# - Penalty for skill-checks against all skills    *
 //* ARMORREST= # - Sets the armor class restriction of the race   *
@@ -44,6 +47,9 @@
 //* MANAREGENBONUS=# - Mana Regen Bonus over 10 seconds of regen  *
 //* MAXWEIGHTBONUS=# - Bonus to max weight capacity               *
 //*	NAME=abc - Name of the race                                   *
+//* NECROTICAFFECT - Race is affected by active necrotic weather  *
+//* NECROTICDAMAGE=# - Maximum necrotic damage at 100% intensity  *
+//* NECROTICSECS=# - How often necrotic weather damages in seconds*
 //*	NOBEARD                                                       *
 //*	NIGHTVIS=# - Default night vision level                       *
 //*	PLAYERRACE=# - Can player join this race via race gates?      *

@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<126>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<127>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -298,6 +298,7 @@ private:
 	// 0 = core, 1 = UO, 2 = T2A, 3 = UOR, 4 = TD, 5 = LBR (Pub15), 6 = AoS, 7 = SE, 8 = ML, 9 = SA, 10 = HS, 11 = ToL
 	UI08		coreShardEra;					// Determines core era ruleset for shard (determines which items/npcs are loaded, and which rules are applied in combat)
 	UI08		expansionArmorCalculation;		// Determines which era ruleset to use for calculating armor and defense
+	UI08		expansionElementalDamage;		// Determines which era ruleset enables elemental damage and percentage-based resistance
 	UI08		expansionStrengthDamageBonus;	// Determines which era ruleset to use for calculating strength damage bonus
 	UI08		expansionTacticsDamageBonus;	// Determines which era ruleset to use for calculating tactics damage bonus
 	UI08		expansionAnatomyDamageBonus;	// Determines which era ruleset to use for calculating anatomy damage bonus
@@ -810,6 +811,9 @@ public:
 	auto		CombatArmorClassDamageBonus( bool value ) -> void;
 	auto		CombatArmorClassDamageBonus() const -> bool;
 
+	auto		CombatRandomZeroDamageFallback( bool value ) -> void;
+	auto		CombatRandomZeroDamageFallback() const -> bool;
+
 	auto		CombatDisplayHitMessage( bool value ) -> void;
 	auto		CombatDisplayHitMessage() const -> bool;
 
@@ -1181,6 +1185,9 @@ public:
 
 	void		ExpansionArmorCalculation( UI08 value );
 	UI08		ExpansionArmorCalculation() const;
+
+	void		ExpansionElementalDamage( UI08 value );
+	UI08		ExpansionElementalDamage() const;
 
 	void		ExpansionStrengthDamageBonus( UI08 value );
 	UI08		ExpansionStrengthDamageBonus() const;

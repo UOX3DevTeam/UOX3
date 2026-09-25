@@ -328,6 +328,15 @@ function DeductMana(  pUser, abilityID )
 function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
 	var abilityID = pAttacker.GetTempTag( "abilityID" );
+
+	// Do not replace the core calculation for an ordinary attack. The core
+	// combat path distributes weapon/NPC damage across all configured AoS and
+	// custom WeatherType channels, applies racial weaknesses, and checks each
+	// matching resistance. This script only needs to override damage while an
+	// actual special move is active.
+	if( !abilityID )
+		return -1;
+
 	var baseDamage = pAttacker.attack;
 
 	if( baseDamage == -1 )  // No damage if weapon breaks
@@ -385,8 +394,8 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 		damage = ApplyDefenseModifiers( 1, pAttacker, pDefender, fightSkill, hitLoc, damage, true );
 	}
 
-	// If damage after defense modifiers is below 0, do a small random amount of damage still
-	if( damage <= 0 )
+	// If enabled, preserve the legacy random damage fallback for special moves.
+	if( damage <= 0 && GetServerSetting( "RANDOMZERODAMAGEFALLBACK" ))
 		damage = RandomNumber( 0, 4 );
 
 	// If defender is a player, damage is divided by this modifier from uox.ini

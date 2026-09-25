@@ -114,6 +114,43 @@ function onCallback0( socket, ourObj )
 		ourObj.Resist( 7, nVal );
 		okMsg( socket );
 		break;
+	case "RESISTRAIN":
+		ourObj.Resist( 3, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTSNOW":
+		ourObj.Resist( 8, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTSTORM":
+		ourObj.Resist( 9, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTSTORMBREW":
+		ourObj.Resist( 10, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTACID":
+		ourObj.Resist( 12, nVal );
+		okMsg( socket );
+		break;
+	case "RESISTNECROTIC":
+		ourObj.Resist( 13, nVal );
+		okMsg( socket );
+		break;
+	case "DAMAGEPHYSICAL": ourObj.DamageType( 1, nVal ); okMsg( socket ); break;
+	case "DAMAGELIGHT": ourObj.DamageType( 2, nVal ); okMsg( socket ); break;
+	case "DAMAGERAIN": ourObj.DamageType( 3, nVal ); okMsg( socket ); break;
+	case "DAMAGECOLD": ourObj.DamageType( 4, nVal ); okMsg( socket ); break;
+	case "DAMAGEFIRE": ourObj.DamageType( 5, nVal ); okMsg( socket ); break;
+	case "DAMAGEENERGY": ourObj.DamageType( 6, nVal ); okMsg( socket ); break;
+	case "DAMAGEPOISON": ourObj.DamageType( 7, nVal ); okMsg( socket ); break;
+	case "DAMAGESNOW": ourObj.DamageType( 8, nVal ); okMsg( socket ); break;
+	case "DAMAGESTORM": ourObj.DamageType( 9, nVal ); okMsg( socket ); break;
+	case "DAMAGESTORMBREW": ourObj.DamageType( 10, nVal ); okMsg( socket ); break;
+	case "DAMAGECHAOS": ourObj.DamageType( 11, nVal ); okMsg( socket ); break;
+	case "DAMAGEACID": ourObj.DamageType( 12, nVal ); okMsg( socket ); break;
+	case "DAMAGENECROTIC": ourObj.DamageType( 13, nVal ); okMsg( socket ); break;
 	case "HEALTHREGENBONUS":
 		ourObj.healthRegenBonus = nVal;
 		okMsg( socket );
