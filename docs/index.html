@@ -69,6 +69,10 @@
 						<ul>
 							<li>Updated <a href="#compilingUOX3">Compiling UOX3 Source</a> instructions for 64-bit FreeBSD support, including SpiderMonkey 115 source compilation steps.</li>
 						</ul>
+						<h4>July 5th, 2026</h4>
+						<ul>
+							<li>Added <a href="#communityCollections">Community Collections</a> feature info with details on JSON-driven collection setup, donations, rewards, save files and tier display objects.</li>
+						</ul>
 						<h4>December 12th, 2025</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on new [anticheat] section with additional settings: SPEEDHACKDETECTION, SPEEDHACKTHROTTLEPENALTY, SPEEDHACKMAXDEBT, SPEEDHACKMAXCREDIT, SPEEDHACKGRACETHRESHOLD</li>
@@ -6014,6 +6018,213 @@ export UOX3_MOZJS_LIBRARY="$PWD/spidermonkey/uox3-mozjs-bridge/target/release/li
 
 					</div>
 				</div>
+			</li>
+
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#communityCollections" id="communityCollections"><span>Community Collections</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<h4>About Community Collections</h4>
+					<p>
+						The <span class="hl">Community Collections</span> system lets shard admins create donation-driven collection projects for players.
+						Players donate configured items or pets to a collection box or NPC, earn personal collection points, and spend those points on rewards or titles.
+						At the same time, the collection itself gains global points and advances through tiers that can unlock decorative displays in the world.
+					</p>
+
+					<p>
+						The system is data-driven. The main JavaScript handles the gump, donations, rewards, save files, tier progression and display spawning,
+						while each collection is configured through JSON files in <span class="hl">js/jsdata/community_collections/</span>.
+						This means new collection boxes or NPCs can be added without changing the script.
+					</p>
+
+					<h4>How it Works</h4>
+					<ul>
+						<li>A collection box or NPC has <span class="hl">SCRIPT=7700</span> and a <span class="hl">collectionId</span> tag.</li>
+						<li>The script uses the collectionId to load the matching JSON collection definition.</li>
+						<li>Players open the collection gump by double-clicking the box/NPC, or by saying collection related keywords near a collection NPC.</li>
+						<li>Players select a donation entry, target the matching item or pet, and receive personal reward points.</li>
+						<li>The collection gains global points. When enough points are reached, the collection tier increases.</li>
+						<li>Rewards and titles are purchased with the player's personal points.</li>
+						<li>Tier decorations are spawned from JSON-defined display objects.</li>
+					</ul>
+
+					<h4>Save Files</h4>
+					<p>
+						Player and world progress are saved to JSON files in the shared folder, instead of relying only on tags attached to the collection object.
+						This protects the collection data if a box or NPC is deleted or replaced.
+					</p>
+					<ul>
+						<li><span class="hl">CommunityCollectionPlayers_#.json</span> - player points, unlocked titles and selected title, saved per account file and character serial</li>
+						<li><span class="hl">CommunityCollectionWorld.json</span> - global points, current tier and decay timer for each collection ID</li>
+						<li>Collection holder tags such as <span class="hl">collectionPoints</span> and <span class="hl">collectionTier</span> are mirrored for compatibility, but are not the main save source.</li>
+					</ul>
+
+					<input type="checkbox" id="spoiler_community_collections_files">
+					<label for="spoiler_community_collections_files">File layout <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+<pre><code class="language-javascript">js/
+    item/community_collections/community_collections.js
+
+js/jsdata/community_collections/
+    collection_index.json
+    museum.json
+    zoo.json
+    library_art.json
+    my_custom_collection.json
+
+shared/
+    CommunityCollections/
+        CommunityCollectionWorld.json
+        CommunityCollectionPlayers_#.json</code></pre>
+					</div>
+
+					<input type="checkbox" id="spoiler_community_collections_json">
+					<label for="spoiler_community_collections_json">Collection JSON example <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+<pre><code class="language-javascript">{
+    "id": "my_custom_collection",
+    "name": "My Custom Collection",
+    "startTier": 1000,
+    "nextTier": 1000,
+    "maxTier": 5,
+    "dailyDecay": 0,
+    "donations": [
+        {
+            "name": "Fish",
+            "type": "item",
+            "itemId": 2508,
+            "hue": -1,
+            "points": 1,
+            "tooltipCliloc": 1015094,
+            "artOffsetX": 8,
+            "artOffsetY": 5,
+            "width": 50,
+            "height": 40
+        },
+        {
+            "name": "A Tamed Wolf",
+            "type": "pet",
+            "npcIDs": [ "wolf" ],
+            "points": 50
+        }
+    ],
+    "rewards": [
+        {
+            "key": "custom_reward_sash",
+            "name": "Custom Reward Sash",
+            "itemId": 5441,
+            "hue": 1153,
+            "cost": 100
+        },
+        {
+            "key": "custom_title",
+            "name": "Title: Collector",
+            "title": "Collector",
+            "cost": 250
+        }
+    ],
+    "displayObjects": [
+        {
+            "tier": 1,
+            "type": "static",
+            "itemID": 7774,
+            "x": 2,
+            "y": 0,
+            "z": 0,
+            "hue": 0,
+            "movable": 2
+        }
+    ]
+}</code></pre>
+					</div>
+
+					<h4>Creating a Collection Box</h4>
+					<p>
+						A box only needs the Community Collections script and a collectionId tag that matches a JSON file registered in
+						<span class="hl">collection_index.json</span>.
+					</p>
+<pre><code class="language-javascript">[my_custom_collection_box]
+{
+GET=base_item
+NAME=my custom collection box
+ID=0x09A8
+TYPE=1
+SCRIPT=7700
+CUSTOMSTRINGTAG=collectionId my_custom_collection
+}</code></pre>
+
+					<h4>Creating a Collection NPC</h4>
+					<p>
+						An NPC works the same way as a box, but uses an NPC definition. The collectionId controls which collection data the NPC opens.
+					</p>
+<pre><code class="language-javascript">[my_custom_collector]
+{
+GET=basehuman
+NAME=a custom collector
+ID=0x0190
+SCRIPT=7700
+CUSTOMSTRINGTAG=collectionId my_custom_collection
+NPCWANDER=3
+}</code></pre>
+
+					<h4>Donation Types</h4>
+					<ul>
+						<li><span class="hl">item</span> donations match normal item art IDs, optional hue, and stack amount.</li>
+						<li><span class="hl">pet</span> donations match owned and tamed pets by NPC section ID or body ID.</li>
+						<li>Pet donations use the same safety checks as the stablemaster: the pet must be owned, tamed, nearby, not dead, not summoned, not busy and not loaded as a pack animal.</li>
+						<li>When a pet is donated, it is removed from the player's follower list and control slot count before it is consumed or moved to the holding area.</li>
+					</ul>
+
+					<h4>Gump Art, Tooltips and Offsets</h4>
+					<p>
+						Donation and reward rows can show item artwork in the collection gump. Some UO art tiles are larger or oddly anchored, so the JSON supports
+						<span class="hl">artOffsetX</span>, <span class="hl">artOffsetY</span>, <span class="hl">width</span> and <span class="hl">height</span> fields to line artwork up cleanly.
+						If <span class="hl">tooltipCliloc</span> is set, the script adds a tooltip to the picture with <span class="hl">AddToolTip</span>.
+					</p>
+
+					<h4>Tier Decorations</h4>
+					<p>
+						The <span class="hl">displayObjects</span> list controls objects spawned when a collection reaches a tier.
+						Coordinates are normally relative to the collection holder, though absolute coordinates can also be used if configured.
+					</p>
+
+					<input type="checkbox" id="spoiler_community_collections_displays">
+					<label for="spoiler_community_collections_displays">Display object fields <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<ul>
+							<li><span class="hl">tier</span> - collection tier required before this object appears</li>
+							<li><span class="hl">type</span> - static, item or npc</li>
+							<li><span class="hl">itemID</span> - static art ID used with CreateBlankItem</li>
+							<li><span class="hl">sectionID</span> - DFN item or NPC section used with CreateDFNItem or SpawnNPC</li>
+							<li><span class="hl">x, y, z</span> - position offset from the collection holder, unless absolute coordinates are used</li>
+							<li><span class="hl">world</span> and <span class="hl">instance</span> - optional override for spawned object location</li>
+							<li><span class="hl">hue</span> or <span class="hl">color</span> - item or NPC color</li>
+							<li><span class="hl">amount</span> - amount for stackable items</li>
+							<li><span class="hl">movable</span> - movement state for spawned static/item displays</li>
+							<li><span class="hl">dir</span> - direction for spawned NPCs or directional items</li>
+							<li><span class="hl">visible</span> - visibility state</li>
+						</ul>
+						<p>
+							Use <span class="hl">type: "static"</span> with <span class="hl">itemID</span> for static artwork from the art files. The script creates these with
+							<span class="hl">CreateBlankItem</span>, not <span class="hl">CreateDFNItem</span>, because they are art IDs and not DFN sections.
+						</p>
+					</div>
+
+					<h4>Adding a New Collection</h4>
+					<ol>
+						<li>Create a new JSON file in <span class="hl">js/jsdata/community_collections/</span>.</li>
+						<li>Add the JSON filename to <span class="hl">collection_index.json</span>.</li>
+						<li>Create a box or NPC DFN with <span class="hl">SCRIPT=7700</span>.</li>
+						<li>Add <span class="hl">CUSTOMSTRINGTAG=collectionId your_collection_id</span> to the DFN.</li>
+						<li>Reload scripts and DFNs, then add the box or NPC in-game.</li>
+					</ol>
+
+					<p>
+						Once this is done, the new collection uses the same gump, save system, donation handling, reward handling and tier display system as every other collection.
+					</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">

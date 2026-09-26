@@ -1,0 +1,938 @@
+{
+	"id": "vesper_museum",
+	"name": "Vesper Museum",
+	"holderName": "Vesper Museum Donation Box",
+	"startTier": 1000000,
+	"nextTier": 500000,
+	"maxTier": 6,
+	"dailyDecay": 100000,
+	"donations": [
+		{
+			"key": "gold",
+			"name": "gold",
+			"itemId": 3821,
+			"hue": -1,
+			"points": 0.06666
+		},
+		{
+			"key": "board",
+			"name": "boards",
+			"itemId": 7127,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015101
+		},
+		{
+			"key": "oak_board",
+			"name": "oak boards",
+			"itemId": 7127,
+			"hue": 2010,
+			"points": 3,
+			"tooltipCliloc": 1075052
+		},
+		{
+			"key": "ash_board",
+			"name": "ash boards",
+			"itemId": 7127,
+			"hue": 1191,
+			"points": 6,
+			"tooltipCliloc": 1075053
+		},
+		{
+			"key": "yew_board",
+			"name": "yew boards",
+			"itemId": 7127,
+			"hue": 1192,
+			"points": 9,
+			"tooltipCliloc": 1075054
+		},
+		{
+			"key": "heartwood_board",
+			"name": "heartwood boards",
+			"itemId": 7127,
+			"hue": 1193,
+			"points": 12,
+			"tooltipCliloc": 1075062
+		},
+		{
+			"key": "bloodwood_board",
+			"name": "bloodwood boards",
+			"itemId": 7127,
+			"hue": 1194,
+			"points": 24,
+			"tooltipCliloc": 1075055
+		},
+		{
+			"key": "frostwood_board",
+			"name": "frostwood boards",
+			"itemId": 7127,
+			"hue": 1151,
+			"points": 48,
+			"tooltipCliloc": 1075056
+		},
+		{
+			"key": "hinge",
+			"name": "hinges",
+			"itemId": 4181,
+			"hue": -1,
+			"points": 2,
+			"tooltipCliloc": 1044172
+		},
+		{
+			"key": "scorp",
+			"name": "scorp",
+			"itemId": 4327,
+			"hue": -1,
+			"points": 2,
+			"tooltipCliloc": 1075057
+		},
+		{
+			"key": "draw_knife",
+			"name": "draw knife",
+			"itemId": 4324,
+			"hue": -1,
+			"points": 2,
+			"tooltipCliloc": 1075058
+		},
+		{
+			"key": "plane",
+			"name": "carpentry plane",
+			"itemId": 4144,
+			"hue": -1,
+			"points": 4,
+			"tooltipCliloc": 1075059
+		}
+	],
+	"rewards": [
+		{
+			"key": "humility_crook",
+			"name": "Shepherds Crook of Humility",
+			"itemId": 3713,
+			"hue": 902,
+			"cost": 5000,
+			"tooltipCliloc": 1075791
+		},
+		{
+			"key": "odrics_robe",
+			"name": "Odrics robe",
+			"itemId": 7939,
+			"hue": 1409,
+			"cost": 100000,
+			"hues": [
+				1409,
+				675,
+				1107,
+				1365
+			],
+			"tooltipCliloc": 1073250
+		},
+		{
+			"key": "malabelles_dress",
+			"name": "Malabelles dress",
+			"itemId": 5398,
+			"hue": 553,
+			"cost": 100000,
+			"hues": [
+				1409,
+				675,
+				1107,
+				1365
+			],
+			"tooltipCliloc": 1073251
+		},
+		{
+			"key": "title_vesper",
+			"name": "Vesper Museum Contributor",
+			"title": "Vesper Museum Contributor",
+			"itemId": 5360,
+			"hue": 0,
+			"cost": 100000
+		},
+		{
+			"key": "vesper_ring",
+			"name": "Vesper collection ring",
+			"itemId": 4234,
+			"hue": 42,
+			"cost": 200000,
+			"hues": [
+				42,
+				637,
+				247,
+				566
+			],
+			"tooltipCliloc": 1073234
+		},
+		{
+			"key": "lord_british_throne",
+			"name": "Lord British throne deed",
+			"itemId": 7971,
+			"hue": 0,
+			"cost": 350000,
+			"tooltipCliloc": 1073243
+		},
+		{
+			"key": "troll_statuette",
+			"name": "Troll statuette",
+			"itemId": 8425,
+			"hue": 0,
+			"cost": 350000,
+			"tooltipCliloc": 1073242
+		},
+		{
+			"key": "minaxs_armor",
+			"name": "Minaxs armor",
+			"itemId": 7170,
+			"hue": 641,
+			"cost": 550000,
+			"tooltipCliloc": 1073257
+		},
+		{
+			"key": "clainins_spellbook",
+			"name": "Clainins spellbook",
+			"itemId": 3834,
+			"hue": 2125,
+			"cost": 800000,
+			"tooltipCliloc": 1073262
+		},
+		{
+			"key": "sword_justice",
+			"name": "Sword of Justice",
+			"itemId": 5049,
+			"hue": 1150,
+			"cost": 800000,
+			"tooltipCliloc": 1073261
+		}
+	],
+	"displayObjects": [
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 2924,
+			"y": 979,
+			"z": -18,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8786,
+			"name": "Book Of Chivalry"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 2923,
+			"y": 980,
+			"z": -18,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9935,
+			"name": "Longsword"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 2924,
+			"y": 978,
+			"z": -18,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9826,
+			"name": "Crisp White Shirt"
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2921,
+			"y": 972,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3983,
+			"name": "Grave Dust"
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2921,
+			"y": 972,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3982,
+			"name": "Nox Crystal"
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2921,
+			"y": 972,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3985
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2922,
+			"y": 972,
+			"z": -18,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8787,
+			"name": "Necromancer Spellbook"
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2923,
+			"y": 972,
+			"z": -18,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8800,
+			"name": "Animate Dead Scroll"
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2923,
+			"y": 972,
+			"z": -18,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8805,
+			"name": "Horrific Beast Scroll"
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2923,
+			"y": 971,
+			"z": -20,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8812,
+			"name": "Vampiric Embrace Scroll"
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2922,
+			"y": 971,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 4061
+		},
+		{
+			"tier": 2,
+			"absolute": true,
+			"x": 2923,
+			"y": 971,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 4062
+		},
+		{
+			"tier": 3,
+			"absolute": true,
+			"x": 2919,
+			"y": 985,
+			"z": -16,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8095,
+			"name": "Jester Suit"
+		},
+		{
+			"tier": 3,
+			"absolute": true,
+			"x": 2919,
+			"y": 984,
+			"z": -11,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3700,
+			"tooltipCliloc": 1073424,
+			"hue": 275
+		},
+		{
+			"tier": 3,
+			"absolute": true,
+			"x": 2919,
+			"y": 983,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5916,
+			"hue": 275,
+			"name": "Jester Hat"
+		},
+		{
+			"tier": 4,
+			"absolute": true,
+			"x": 2916,
+			"y": 984,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3365
+		},
+		{
+			"tier": 4,
+			"absolute": true,
+			"x": 2916,
+			"y": 982,
+			"z": -12,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8409,
+			"name": "Gargoyle"
+		},
+		{
+			"tier": 4,
+			"absolute": true,
+			"x": 2914,
+			"y": 982,
+			"z": -9,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8498
+		},
+		{
+			"tier": 4,
+			"absolute": true,
+			"x": 2913,
+			"y": 982,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9654
+		},
+		{
+			"tier": 4,
+			"absolute": true,
+			"x": 2913,
+			"y": 982,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9654
+		},
+		{
+			"tier": 4,
+			"absolute": true,
+			"x": 2915,
+			"y": 983,
+			"z": -14,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8750
+		},
+		{
+			"tier": 4,
+			"absolute": true,
+			"x": 2914,
+			"y": 984,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8721
+		},
+		{
+			"tier": 5,
+			"absolute": true,
+			"x": 2911,
+			"y": 983,
+			"z": -12,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3632,
+			"tooltipCliloc": 1073421
+		},
+		{
+			"tier": 5,
+			"absolute": true,
+			"x": 2911,
+			"y": 984,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 10551,
+			"tooltipCliloc": 1073422
+		},
+		{
+			"tier": 5,
+			"absolute": true,
+			"x": 2911,
+			"y": 985,
+			"z": -14,
+			"movable": 2,
+			"type": "static",
+			"itemID": 4778,
+			"tooltipCliloc": 1073423
+		},
+		{
+			"tier": 5,
+			"absolute": true,
+			"x": 2910,
+			"y": 985,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3759
+		},
+		{
+			"tier": 5,
+			"absolute": true,
+			"x": 2910,
+			"y": 986,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3758
+		},
+		{
+			"tier": 6,
+			"absolute": true,
+			"x": 2910,
+			"y": 966,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 10147,
+			"name": "Tessen"
+		},
+		{
+			"tier": 6,
+			"absolute": true,
+			"x": 2910,
+			"y": 965,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 10156,
+			"name": "Shuriken"
+		},
+		{
+			"tier": 6,
+			"absolute": true,
+			"x": 2910,
+			"y": 964,
+			"z": -16,
+			"movable": 2,
+			"type": "static",
+			"itemID": 10325
+		},
+		{
+			"tier": 6,
+			"absolute": true,
+			"x": 2910,
+			"y": 963,
+			"z": -20,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9245
+		},
+		{
+			"tier": 6,
+			"absolute": true,
+			"x": 2910,
+			"y": 963,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9225
+		},
+		{
+			"tier": 6,
+			"absolute": true,
+			"x": 2909,
+			"y": 965,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9238
+		},
+		{
+			"tier": 7,
+			"absolute": true,
+			"x": 2914,
+			"y": 964,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 12393
+		},
+		{
+			"tier": 7,
+			"absolute": true,
+			"x": 2913,
+			"y": 964,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 12394
+		},
+		{
+			"tier": 7,
+			"absolute": true,
+			"x": 2912,
+			"y": 964,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 12395
+		},
+		{
+			"tier": 7,
+			"absolute": true,
+			"x": 2913,
+			"y": 966,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 11516,
+			"name": "Elven Loveseat East Addon"
+		},
+		{
+			"tier": 7,
+			"absolute": true,
+			"x": 2912,
+			"y": 963,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 11516
+		},
+		{
+			"tier": 7,
+			"absolute": true,
+			"x": 2914,
+			"y": 963,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 11636,
+			"tooltipCliloc": 1073425
+		},
+		{
+			"tier": 8,
+			"absolute": true,
+			"x": 2905,
+			"y": 970,
+			"z": -15,
+			"movable": 2,
+			"type": "static",
+			"itemID": 2
+		},
+		{
+			"tier": 8,
+			"absolute": true,
+			"x": 2905,
+			"y": 969,
+			"z": -15,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3
+		},
+		{
+			"tier": 8,
+			"absolute": true,
+			"x": 2905,
+			"y": 971,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 7108,
+			"name": "Order Shield"
+		},
+		{
+			"tier": 8,
+			"absolute": true,
+			"x": 2904,
+			"y": 971,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5497
+		},
+		{
+			"tier": 8,
+			"absolute": true,
+			"x": 2908,
+			"y": 969,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5651
+		},
+		{
+			"tier": 8,
+			"absolute": true,
+			"x": 2908,
+			"y": 968,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5652
+		},
+		{
+			"tier": 9,
+			"absolute": true,
+			"x": 2905,
+			"y": 976,
+			"z": -15,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5414
+		},
+		{
+			"tier": 9,
+			"absolute": true,
+			"x": 2905,
+			"y": 975,
+			"z": -15,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5415
+		},
+		{
+			"tier": 9,
+			"absolute": true,
+			"x": 2905,
+			"y": 972,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5402
+		},
+		{
+			"tier": 9,
+			"absolute": true,
+			"x": 2905,
+			"y": 977,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5402
+		},
+		{
+			"tier": 9,
+			"absolute": true,
+			"x": 2908,
+			"y": 972,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5402
+		},
+		{
+			"tier": 9,
+			"absolute": true,
+			"x": 2908,
+			"y": 977,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5402
+		},
+		{
+			"tier": 9,
+			"absolute": true,
+			"x": 2904,
+			"y": 975,
+			"z": -17,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5396
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2904,
+			"y": 982,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5573
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2904,
+			"y": 979,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5573
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2904,
+			"y": 981,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5499
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2905,
+			"y": 980,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5347
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2905,
+			"y": 981,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5348
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2906,
+			"y": 981,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5349
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2906,
+			"y": 980,
+			"z": -21,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5350
+		},
+		{
+			"tier": 10,
+			"absolute": true,
+			"x": 2905,
+			"y": 978,
+			"z": -19,
+			"movable": 2,
+			"type": "static",
+			"itemID": 7107,
+			"name": "Chaos Shield"
+		},
+		{
+			"tier": 11,
+			"absolute": true,
+			"x": 2912,
+			"y": 976,
+			"z": -16,
+			"movable": 2,
+			"type": "static",
+			"itemID": 7180,
+			"hue": 1175,
+			"name": "Female Studded Chest"
+		},
+		{
+			"tier": 11,
+			"absolute": true,
+			"x": 2913,
+			"y": 973,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 7848,
+			"hue": 1175
+		},
+		{
+			"tier": 11,
+			"absolute": true,
+			"x": 2913,
+			"y": 975,
+			"z": -11,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8440,
+			"hue": 275
+		},
+		{
+			"tier": 11,
+			"absolute": true,
+			"x": 2912,
+			"y": 974,
+			"z": -11,
+			"movable": 2,
+			"type": "static",
+			"itemID": 8425,
+			"name": "Troll"
+		},
+		{
+			"tier": 11,
+			"absolute": true,
+			"x": 2913,
+			"y": 974,
+			"z": -11,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9735
+		},
+		{
+			"tier": 11,
+			"absolute": true,
+			"x": 2912,
+			"y": 975,
+			"z": -11,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9721
+		},
+		{
+			"tier": 12,
+			"absolute": true,
+			"x": 2915,
+			"y": 976,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 7562
+		},
+		{
+			"tier": 12,
+			"absolute": true,
+			"x": 2916,
+			"y": 976,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 7563
+		},
+		{
+			"tier": 12,
+			"absolute": true,
+			"x": 2915,
+			"y": 975,
+			"z": -10,
+			"movable": 2,
+			"type": "static",
+			"itemID": 9037
+		},
+		{
+			"tier": 12,
+			"absolute": true,
+			"x": 2915,
+			"y": 974,
+			"z": -13,
+			"movable": 2,
+			"type": "static",
+			"itemID": 5912,
+			"name": "Wizards Hat"
+		}
+	]
+}

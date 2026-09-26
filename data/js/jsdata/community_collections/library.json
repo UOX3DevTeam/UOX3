@@ -1,0 +1,224 @@
+{
+	"id": "library",
+	"name": "Britain Public Library",
+	"holderName": "Public Library Collection",
+	"startTier": 1000000,
+	"nextTier": 500000,
+	"maxTier": 1,
+	"dailyDecay": 100000,
+	"donations": [
+		{
+			"key": "gold",
+			"name": "gold",
+			"itemId": 3821,
+			"hue": -1,
+			"points": 0.06666
+		},
+		{
+			"key": "blank_scroll",
+			"name": "blank scrolls",
+			"itemId": 3827,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1044377
+		},
+		{
+			"key": "brown_book",
+			"name": "brown books",
+			"itemId": 4079,
+			"hue": -1,
+			"points": 3,
+			"tooltipCliloc": 1074906
+		},
+		{
+			"key": "tan_book",
+			"name": "tan books",
+			"itemId": 4080,
+			"hue": -1,
+			"points": 3,
+			"tooltipCliloc": 1074906
+		},
+		{
+			"key": "black_pearl",
+			"name": "black pearl",
+			"itemId": 3962,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015001
+		},
+		{
+			"key": "bloodmoss",
+			"name": "bloodmoss",
+			"itemId": 3963,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015004
+		},
+		{
+			"key": "garlic",
+			"name": "garlic",
+			"itemId": 3972,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015021
+		},
+		{
+			"key": "ginseng",
+			"name": "ginseng",
+			"itemId": 3973,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015009
+		},
+		{
+			"key": "mandrake",
+			"name": "mandrake root",
+			"itemId": 3974,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015013
+		},
+		{
+			"key": "nightshade",
+			"name": "nightshade",
+			"itemId": 3976,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015016
+		},
+		{
+			"key": "sulfurous_ash",
+			"name": "sulfurous ash",
+			"itemId": 3980,
+			"hue": -1,
+			"points": 1,
+			"tooltipCliloc": 1015025
+		},
+		{
+			"key": "spiders_silk",
+			"name": "spiders silk",
+			"itemId": 3981,
+			"hue": -1,
+			"points": 1
+		},
+		{
+			"key": "book_chivalry",
+			"name": "book of chivalry",
+			"itemId": 8786,
+			"hue": -1,
+			"points": 12,
+			"tooltipCliloc": 1061666
+		},
+		{
+			"key": "book_bushido",
+			"name": "book of bushido",
+			"itemId": 9100,
+			"hue": -1,
+			"points": 30,
+			"tooltipCliloc": 1070814
+		}
+	],
+	"rewards": [
+		{
+			"key": "virtue_printing",
+			"name": "Special Printing of Virtue",
+			"itemId": 4080,
+			"hue": 1150,
+			"cost": 5000,
+			"tooltipCliloc": 1075793
+		},
+		{
+			"key": "library_sash",
+			"name": "Library Friend body sash",
+			"itemId": 5441,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			],
+			"tooltipCliloc": 1073346
+		},
+		{
+			"key": "library_hat",
+			"name": "Library Friend feathered hat",
+			"itemId": 5914,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			],
+			"tooltipCliloc": 1073347
+		},
+		{
+			"key": "title_library",
+			"name": "Britain Public Library Contributor",
+			"title": "Britain Public Library Contributor",
+			"itemId": 5360,
+			"hue": 0,
+			"cost": 100000
+		},
+		{
+			"key": "library_lantern",
+			"name": "Library Friend lantern",
+			"itemId": 2597,
+			"hue": 450,
+			"cost": 200000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			],
+			"tooltipCliloc": 1073339
+		},
+		{
+			"key": "sherry_quotes",
+			"name": "Sherry the Mouse quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000
+		},
+		{
+			"key": "alchemy_talisman",
+			"name": "Treatise on Alchemy talisman",
+			"itemId": 12120,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073353
+		},
+		{
+			"key": "arms_talisman",
+			"name": "Primer on Arms talisman",
+			"itemId": 12121,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073354
+		},
+		{
+			"key": "eminent_library",
+			"name": "Eminent Library Contributor",
+			"title": "Eminent Library Contributor",
+			"itemId": 5360,
+			"hue": 0,
+			"cost": 800000
+		},
+		{
+			"key": "library_glasses",
+			"name": "Library collection glasses",
+			"itemId": 12216,
+			"hue": 1150,
+			"cost": 800000,
+			"tooltipCliloc": 1073380
+		}
+	],
+	"displayObjects": []
+}
