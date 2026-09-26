@@ -1,6 +1,26 @@
 #ifndef __CMULTIOBJ_H__
 #define __CMULTIOBJ_H__
 
+// UO High Seas vessel security levels.  The numeric order is
+// significant: the highest applicable grant wins, while an explicit Denied
+// manifest entry always takes precedence.
+enum class BoatSecurityLevel : UI08
+{
+	NA = 0,
+	Denied,
+	Passenger,
+	Crewman,
+	Officer,
+	Captain
+};
+
+enum class BoatPartyAccess : UI08
+{
+	Never = 0,
+	LeaderOnly,
+	MemberOnly
+};
+
 
 class CMultiObj : public CItem
 {
@@ -173,7 +193,35 @@ protected:
 	SERIAL				tiller;
 	SERIAL				planks[2];
 	SERIAL				hold;
+	SERIAL				pilot;
+	SERIAL				pilotMount;
+	UI08				pilotSpeed;
+	SI32				hullHits;
+	SI32				hullMaxHits;
+	UI64				emergencyRepairUntil;
+	UI64				boatDecayAt;
+	UI64				nextSinkAt;
+	UI08				sinkStep;
 	SI08				moveType;
+	// Temporary High Seas paint is persistent vessel state. Store one compact
+	// native record instead of several world-file tag-map entries.
+	UI16				paintBaseBoatHue;
+	UI16				paintHue;
+	UI08				paintCoats;
+	UI64				paintDecayAt;
+	bool				tillermanMoved;
+	SI16				tillermanLocalX;
+	SI16				tillermanLocalY;
+	SI08				tillermanArtZ;
+	// High Seas galleons are assembled from dynamic fixture items.  Keep their
+	// identities on the boat, just as UO Galleon owns its Fixtures
+	// collection, rather than rediscovering them from overlapping world tiles.
+	std::vector<SERIAL>	fixtures;
+	std::map<SERIAL, BoatSecurityLevel> securityManifest;
+	BoatSecurityLevel	defaultPublicAccess;
+	BoatSecurityLevel	defaultPartyAccess;
+	BoatSecurityLevel	defaultGuildAccess;
+	BoatPartyAccess		partyAccess;
 
 	TIMERVAL			nextMoveTime;
 
@@ -186,16 +234,70 @@ private:
 public:
 	CBoatObj();
 	virtual				~CBoatObj();
+	virtual void		PostLoadProcessing( void ) override;
 
 	SERIAL				GetTiller( void ) const;
 	SERIAL				GetPlank( UI08 plankNum ) const;
 	SERIAL				GetHold( void ) const;
+	SERIAL				GetPilot( void ) const;
+	SERIAL				GetPilotMount( void ) const;
+	UI08				GetPilotSpeed( void ) const;
+	SI32				GetHullHits( void ) const;
+	SI32				GetHullMaxHits( void ) const;
+	UI08				GetHullDamageLevel( void ) const;
+	bool				IsScuttled( void ) const;
+	bool				IsUnderEmergencyRepairs( void ) const;
+	UI64				GetBoatDecayAt( void ) const;
+	UI64				GetNextSinkAt( void ) const;
+	UI08				GetSinkStep( void ) const;
+	bool				IsSinking( void ) const;
 	SI08				GetMoveType( void ) const;
+	UI16				GetPaintBaseBoatHue( void ) const;
+	UI16				GetPaintHue( void ) const;
+	UI08				GetPaintCoats( void ) const;
+	UI64				GetPaintDecayAt( void ) const;
+	bool				IsTillermanMoved( void ) const;
+	SI16				GetTillermanLocalX( void ) const;
+	SI16				GetTillermanLocalY( void ) const;
+	SI08				GetTillermanArtZ( void ) const;
 
 	void				SetPlank( UI08 plankNum, SERIAL newVal );
 	void				SetTiller( SERIAL newVal );
 	void				SetHold( SERIAL newVal );
+	void				SetPilot( SERIAL newVal );
+	void				SetPilotMount( SERIAL newVal );
+	void				SetPilotSpeed( UI08 newVal );
+	void				SetHullHits( SI32 newVal );
+	void				SetHullMaxHits( SI32 newVal );
+	void				StartEmergencyRepairs( UI32 durationSeconds );
+	void				RefreshBoatDecay( void );
+	void				SetBoatDecayAt( UI64 newVal );
+	void				SetNextSinkAt( UI64 newVal );
+	void				SetSinkStep( UI08 newVal );
 	void				SetMoveType( SI08 newVal );
+	void				SetPaintState( UI16 baseBoatHue, UI16 basePaintHue, UI08 coats, UI64 decayAt );
+	void				ClearPaintState( void );
+	void				SetTillermanOffset( SI16 localX, SI16 localY );
+	void				SetTillermanArtZ( SI08 artZ );
+	void				RegisterFixture( SERIAL serial );
+	void				UnregisterFixture( SERIAL serial );
+	void				ClearFixtures( void );
+	bool				IsFixture( SERIAL serial ) const;
+	const std::vector<SERIAL>& GetFixtures( void ) const;
+
+	BoatSecurityLevel	GetSecurityLevel( CChar *toCheck ) const;
+	bool				HasAccess( CChar *toCheck ) const;
+	bool				CanCommand( CChar *toCheck ) const;
+	void				SetSecurityLevel( CChar *toSet, BoatSecurityLevel level );
+	BoatSecurityLevel	GetDefaultPublicAccess( void ) const;
+	BoatSecurityLevel	GetDefaultPartyAccess( void ) const;
+	BoatSecurityLevel	GetDefaultGuildAccess( void ) const;
+	BoatPartyAccess		GetPartyAccess( void ) const;
+	void				SetDefaultPublicAccess( BoatSecurityLevel level );
+	void				SetDefaultPartyAccess( BoatSecurityLevel level );
+	void				SetDefaultGuildAccess( BoatSecurityLevel level );
+	void				SetPartyAccess( BoatPartyAccess access );
+	void				ResetSecurity( void );
 
 	TIMERVAL			GetMoveTime( void ) const;
 	void				SetMoveTime( TIMERVAL newVal );

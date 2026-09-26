@@ -185,6 +185,7 @@
 3232=npc/ai/monster/silvani.js
 3233=npc/ai/monster/rikktor.js
 3234=npc/ai/monster/semidar.js
+3235=npc/ai/harbor_master.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -329,6 +330,13 @@
 5064=item/runicatlas.js
 5065=item/jacobspickaxe.js
 5070=item/dawns_music_box.js
+5098=item/highseas_drydock.js
+5099=item/highseas_cannon.js
+5100=npc/ai/pirate_galleon.js
+5101=item/highseas_ship_security.js
+5102=item/highseas_boat_paint.js
+
+18001=server/misc/context_menu.js
 
 5300=item/etherealstatuettes.js
 5301=npc/pets/dismountetherealmount.js
@@ -511,7 +519,8 @@
 1068=commands/spawnregionadmin.js
 1069=commands/em.js
 1070=commands/champion_spawn_cmd.js
-1071=commands/testjsbindings.js
+1071=commands/addpirateship.js
+1072=commands/testjsbindings.js
 }
 
 //-------------------------------------------

@@ -55,6 +55,12 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>July 18th, 2026</h4>
+						<ul>
+							<li>Added High Seas boat methods for hull damage, repairs, dry-docking, painting, security, fixture access and tillerman relocation</li>
+							<li>Added cannon and weapon-pad Item properties, including cannon role, state, range, timing, linked serial and directional art</li>
+							<li>Updated the JavaScript and TypeScript API metadata to match the native boat and cannon interface</li>
+						</ul>
 						<h4>February 7th, 2026</h4>
 						<ul>
 							<li>Added details for new JS Events: onScriptLoad, onStart</li>
@@ -14307,6 +14313,469 @@ function onUseChecked( pUser, iUsed )
 							</div>
 						</div>
 
+						<h3>High Seas Boat Methods</h3>
+						<p>The following methods are valid on Boat objects. They use the native High Seas movement, durability, dry-dock, painting and security systems.</p>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_CanCommandShip"/>
+							<label for="spoiler_method_multi_CanCommandShip">CanCommandShip <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool CanCommandShip( character );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true when the character has Crewman-or-higher authority and may command the boat.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( myBoat.CanCommandShip( pUser ))
+{
+	// Allow steering or movement controls.
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_CheckDryDock"/>
+							<label for="spoiler_method_multi_CheckDryDock">CheckDryDock <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int CheckDryDock();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks whether a High Seas boat can be safely dry-docked and returns a status code.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>0 = ready; 1 = damaged hull; 2 = missing/non-empty hold; 3 = characters aboard; 4 = loose item aboard; 5 = prepared or loaded cannon; 7 = invalid boat. Code 6 is currently unused.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var dryDockStatus = myBoat.CheckDryDock();
+if( dryDockStatus == 0 )
+{
+	myBoat.DeleteForDryDock( dryDockDeed );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_DamageHull"/>
+							<label for="spoiler_method_multi_DamageHull">DamageHull <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool DamageHull( amount );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Applies positive damage through the native High Seas hull-durability path. Returns false for an invalid boat or amount.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myBoat.DamageHull( 100 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_DeleteForDryDock"/>
+							<label for="spoiler_method_multi_DeleteForDryDock">DeleteForDryDock <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool DeleteForDryDock( item deed );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Stores the boat's deployed cannon layout and condition in the supplied deed, then deletes the boat through the native dry-dock cleanup path after all checks pass.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Call CheckDryDock() first and pass the newly created dry-dock deed. Cannon records use native optional item storage and are restored automatically when the deed places a new vessel.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( myBoat.CheckDryDock() == 0 &amp;&amp; myBoat.DeleteForDryDock( dryDockDeed ) )
+{
+	// The deed now contains the vessel's packed cannon records.
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_GetHold"/>
+							<label for="spoiler_method_multi_GetHold">GetHold <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>item GetHold();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the boat's hold container, or null if the boat has no valid hold.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var shipHold = myBoat.GetHold();
+if( ValidateObject( shipHold ))
+{
+	shipHold.OpenContainer( pSock );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_GetHullHits"/>
+							<label for="spoiler_method_multi_GetHullHits">GetHullHits <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetHullHits();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the boat's current hull hit points.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var currentHull = myBoat.GetHullHits();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_GetHullMaxHits"/>
+							<label for="spoiler_method_multi_GetHullMaxHits">GetHullMaxHits <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetHullMaxHits();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the boat's maximum hull hit points.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var maximumHull = myBoat.GetHullMaxHits();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_GetSecurityLevel"/>
+							<label for="spoiler_method_multi_GetSecurityLevel">GetSecurityLevel <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetSecurityLevel( character );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the effective High Seas security level for the character.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Security levels are 0 = N/A, 1 = Denied, 2 = Passenger, 3 = Crewman, 4 = Officer and 5 = Captain. An explicit Denied manifest entry takes precedence.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( myBoat.GetSecurityLevel( pUser ) &gt;= 4 )
+{
+	// Officer or Captain.
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_GetShipAccessSetting"/>
+							<label for="spoiler_method_multi_GetShipAccessSetting">GetShipAccessSetting <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetShipAccessSetting( setting );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns one of the boat's default access settings.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>setting 0 = public default, 1 = party default, 2 = guild default and 3 = party membership mode. Settings 0-2 return a security level (0-5); setting 3 returns 0 = Never, 1 = Leader Only or 2 = Member Only.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var publicAccess = myBoat.GetShipAccessSetting( 0 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_HasShipAccess"/>
+							<label for="spoiler_method_multi_HasShipAccess">HasShipAccess <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool HasShipAccess( character );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true when the character is not denied and has at least Passenger access to the boat.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( !myBoat.HasShipAccess( pUser ))
+{
+	pUser.SysMessage( "You do not have access to this ship." );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_IsNearLandOrDocks"/>
+							<label for="spoiler_method_multi_IsNearLandOrDocks">IsNearLandOrDocks <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool IsNearLandOrDocks();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true when the boat is close enough to land or docks for shore-dependent High Seas actions.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( myBoat.IsNearLandOrDocks() )
+{
+	// Permit repairs or docking behavior.
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_IsUnderEmergencyRepairs"/>
+							<label for="spoiler_method_multi_IsUnderEmergencyRepairs">IsUnderEmergencyRepairs <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool IsUnderEmergencyRepairs();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true while the boat's emergency-repair timer is active.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( myBoat.IsUnderEmergencyRepairs() )
+{
+	pUser.SysMessage( "Emergency repairs are already underway." );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_PaintShip"/>
+							<label for="spoiler_method_multi_PaintShip">PaintShip <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int PaintShip( hue, permanent );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Applies a hue to the High Seas boat and its registered fixtures. Returns the number of items painted.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>hue must be between 1 and 0xFFFF. Set permanent to false for removable paint or true to make the new hue the permanent appearance.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var paintedCount = myBoat.PaintShip( 0x0481, false );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_RelocateTillerman"/>
+							<label for="spoiler_method_multi_RelocateTillerman">RelocateTillerman <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RelocateTillerman( x, y, z );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Moves the tillerman or steering wheel to a validated location on the boat, using the native deck-height placement checks.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( !myBoat.RelocateTillerman( targetX, targetY, targetZ ))
+{
+	pUser.SysMessage( "The wheel cannot be placed there." );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_RemoveShipPaint"/>
+							<label for="spoiler_method_multi_RemoveShipPaint">RemoveShipPaint <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool RemoveShipPaint();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes temporary High Seas ship paint and restores the boat and registered fixtures to their saved hues.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myBoat.RemoveShipPaint();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_RepairHull"/>
+							<label for="spoiler_method_multi_RepairHull">RepairHull <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int RepairHull( amount );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Repairs up to the requested number of hull hit points and returns the number of points actually restored.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var restored = myBoat.RepairHull( 100 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_ResetShipSecurity"/>
+							<label for="spoiler_method_multi_ResetShipSecurity">ResetShipSecurity <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool ResetShipSecurity();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Clears custom manifest entries and restores the boat's default High Seas access settings.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myBoat.ResetShipSecurity();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_SailBoat"/>
+							<label for="spoiler_method_multi_SailBoat">SailBoat <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void SailBoat( direction );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Moves the boat one tile through the normal native movement and collision path.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>direction is a world direction from 0 through 7. The method does not bypass sailing, collision or hull-state checks.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myBoat.SailBoat( myBoat.dir );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_SetSecurityLevel"/>
+							<label for="spoiler_method_multi_SetSecurityLevel">SetSecurityLevel <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool SetSecurityLevel( character, level );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Sets an explicit manifest security level for a character.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>level must be 0 through 5: N/A, Denied, Passenger, Crewman, Officer or Captain.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myBoat.SetSecurityLevel( pUser, 3 ); // Crewman</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_SetShipAccessSetting"/>
+							<label for="spoiler_method_multi_SetShipAccessSetting">SetShipAccessSetting <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool SetShipAccessSetting( setting, value );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Changes one of the boat's default High Seas access settings.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>setting 0, 1 or 2 accepts a security level from 0-5 for public, party or guild defaults. setting 3 accepts 0-2 for Never, Leader Only or Member Only party access.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myBoat.SetShipAccessSetting( 0, 1 ); // Deny public access</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_StartEmergencyRepairs"/>
+							<label for="spoiler_method_multi_StartEmergencyRepairs">StartEmergencyRepairs <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool StartEmergencyRepairs( seconds );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Starts the boat's emergency-repair timer for a positive number of seconds.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myBoat.StartEmergencyRepairs( 30 );</code></pre>
+								</div>
+							</div>
+						</div>
+
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_multi_GetMultiCorner"/>
 							<label for="spoiler_method_multi_GetMultiCorner">GetMultiCorner <i class="fas fa-angle-down"></i></label>
@@ -17231,6 +17700,14 @@ myObject.propertyName = newValue;
 							Get/Set whether item is being "held" on a player's cursor</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.isShipCannon</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Returns true when the item's cannon role is Cannon (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.isWeaponPad</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Returns true when the item's cannon role is Weapon Pad (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.isLeatherType</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Returns true if item ID is between 0x13C6 and 0x13E2 (leather/studded leather armor), or between 0x144E and 0x1457 (bone armor) (Read-Only)</p>
 						</div>
@@ -17293,6 +17770,10 @@ myObject.propertyName = newValue;
 							Get/Set colour of item</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.cannonArtNorth/.cannonArtEast/.cannonArtSouth/.cannonArtWest</span> <strong>(hex, <em>0x0 - 0xffff</em>)</strong><br>
+							Get/Set the item art used for each cardinal cannon direction. These values are populated by the CANNONDIRECTION DFN entry.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.dir</span> <strong>(hex, <em>0x0 - 0xff</em>)</strong><br>
 							Get/Set direction in which this item is facing. For lightsources, this determines the light radius instead.</p>
 						</div>
@@ -17345,6 +17826,30 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.buyvalue</span> <strong>(int)</strong><br>
 							Get/Set the amount of money it costs to buy this item from a vendor</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.cannonRole</span> <strong>(int, <em>0 - 2</em>)</strong><br>
+							Get/Set the item's cannon role: 0 = None, 1 = Weapon Pad, 2 = Cannon.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.cannonPower</span> <strong>(int)</strong><br>
+							Get/Set the cannon power value loaded from CANNONINFO.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.cannonStage</span> <strong>(int)</strong><br>
+							Get/Set the cannon preparation stage used by cannon scripts.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.cannonLinkSerial</span> <strong>(int)</strong><br>
+							Get/Set the serial of the cannon or weapon pad linked to this item.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.cannonRange</span> <strong>(int)</strong><br>
+							Get/Set the cannon's firing range in tiles.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.cannonActionTime</span> <strong>(int)</strong><br>
+							Get/Set the cannon action delay in milliseconds.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.carveSection</span> <strong>(int)</strong><br>
@@ -19028,7 +19533,7 @@ SCRIPT=20000
 {
 	var diceResult1 = RandomNumber( 1, 6 );
 	var diceResult2 = RandomNumber( 1, 6 );
- 
+
 	return false;
 }</code></pre>
 							<p>Above, we removed the dummy TextMessage line, and replaced it with some new lines that generate two random numbers between 1 and 6, simulating the throw of two regular six-sided dice, and store the results in a couple of variables we call diceResult1 and diceResult2, which we will make use of soon!</p>

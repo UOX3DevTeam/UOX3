@@ -93,6 +93,11 @@ GET=m_gypsyanimaltrainer f_gypsyanimaltrainer
 GET=m_gypsybanker f_gypsybanker
 }
 
+[harbormaster]
+{
+GET=m_harbormaster f_harbormaster
+}
+
 [hairstylist]
 {
 GET=m_hairstylist f_hairstylist

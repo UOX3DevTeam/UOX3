@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<126>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<127>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -478,6 +478,14 @@ private:
 	UI32		numHrsDecayStageLow;			//	Time (in HRS)
 	UI32		numHrsDecayStageHi;				//	Time (in HRS)
 	UI32		numHrsDecayStageDanger;			//	Time (in HRS)
+
+	// Boats
+	UI32		boatDecaySeconds;				// Seconds before an unattended vessel begins sinking
+	UI32		boatPaintDecaySeconds;			// Seconds between temporary paint coat losses
+	UI16		boatFastMoveInterval;			// Milliseconds between fast mouse-pilot movement steps
+	UI16		boatSlowMoveInterval;			// Milliseconds between slow mouse-pilot movement steps
+	UI16		boatNpcMoveInterval;			// Milliseconds between pirate/NPC vessel movement steps
+	UI16		boatDriftInterval;			// Milliseconds between unattended forward drift steps
 
 	// Townstone stuff
 	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
@@ -974,6 +982,37 @@ public:
 
 	auto		HouseGrandFatheredSystem( bool value ) -> void;
 	auto		HouseGrandFatheredSystem() const -> bool;
+
+	auto		BoatDecay( bool value ) -> void;
+	auto		BoatDecay() const -> bool;
+
+	auto		ClassicBoatMouseControl( bool value ) -> void;
+	auto		ClassicBoatMouseControl() const -> bool;
+	auto		BoatDrift( bool value ) -> void;
+	auto		BoatDrift() const -> bool;
+	auto		HighSeasShipAnchors( bool value ) -> void;
+	auto		HighSeasShipAnchors() const -> bool;
+	auto		HighSeasShipSpeechControl( bool value ) -> void;
+	auto		HighSeasShipSpeechControl() const -> bool;
+	auto		CannonCharacterTargeting( bool value ) -> void;
+	auto		CannonCharacterTargeting() const -> bool;
+
+	auto		BoatDecaySeconds( UI32 value ) -> void;
+	UI32		BoatDecaySeconds() const;
+
+	auto		BoatPaintDecaySeconds( UI32 value ) -> void;
+	UI32		BoatPaintDecaySeconds() const;
+
+	auto		BoatFastMoveInterval( UI16 value ) -> void;
+	UI16		BoatFastMoveInterval() const;
+
+	auto		BoatSlowMoveInterval( UI16 value ) -> void;
+	UI16		BoatSlowMoveInterval() const;
+
+	auto		BoatNpcMoveInterval( UI16 value ) -> void;
+	UI16		BoatNpcMoveInterval() const;
+	auto		BoatDriftInterval( UI16 value ) -> void;
+	UI16		BoatDriftInterval() const;
 
 	auto		DecayStageLikeNewMins( UI32 value ) -> void;
 	UI32		DecayStageLikeNewMins() const;

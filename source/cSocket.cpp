@@ -2733,6 +2733,10 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 	{
 		contSend.Model( 0x4C );
 	}
+	else if( i->GetCannonRole() == CannonRole::Cannon )
+	{
+		contSend.Model( 0x9CE7 );
+	}
 	else
 	{
 		switch( Items->GetPackType( i ))

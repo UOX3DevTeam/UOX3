@@ -105,3 +105,55 @@ amount=20
 get=0x27ac
 amount=50
 }
+
+[highseas_cannonball]
+{
+NAME=cannonball
+ID=0x4224
+PILEABLE=1
+TYPE=227
+MOREX=1
+DAMAGE=5000 5000
+MOREY=1
+MOREZ=0
+ORIGIN=hs
+}
+
+[highseas_grapeshot]
+{
+NAME=grapeshot
+ID=0xA2BF
+PILEABLE=1
+TYPE=227
+MOREX=2
+DAMAGE=100 150
+MOREY=15
+MOREZ=3
+ORIGIN=hs
+}
+
+[highseas_flame_cannonball]
+{
+NAME=flame cannonball
+ID=0x44C1
+PILEABLE=1
+TYPE=227
+MOREX=3
+DAMAGE=5000 5000
+MOREY=1
+MOREZ=0
+ORIGIN=hs
+}
+
+[highseas_frost_cannonball]
+{
+NAME=frost cannonball
+ID=0x422B
+PILEABLE=1
+TYPE=227
+MOREX=4
+DAMAGE=30 50
+MOREY=1
+MOREZ=0
+ORIGIN=hs
+}

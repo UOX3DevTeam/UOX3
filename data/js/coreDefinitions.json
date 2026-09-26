@@ -5060,6 +5060,80 @@
           "cppName": "CIP_STEALABLE",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
+        },
+        {
+          "name": "cannonRole",
+          "cppName": "CIP_CANNONROLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonPower",
+          "cppName": "CIP_CANNONPOWER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonStage",
+          "cppName": "CIP_CANNONSTAGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonLinkSerial",
+          "cppName": "CIP_CANNONLINKSERIAL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonRange",
+          "cppName": "CIP_CANNONRANGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonActionTime",
+          "cppName": "CIP_CANNONACTIONTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "isShipCannon",
+          "cppName": "CIP_ISSHIPCANNON",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "boolean",
+          "readOnly": true
+        },
+        {
+          "name": "isWeaponPad",
+          "cppName": "CIP_ISWEAPONPAD",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "boolean",
+          "readOnly": true
+        },
+        {
+          "name": "cannonArtNorth",
+          "cppName": "CIP_CANNONARTNORTH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonArtEast",
+          "cppName": "CIP_CANNONARTEAST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonArtSouth",
+          "cppName": "CIP_CANNONARTSOUTH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cannonArtWest",
+          "cppName": "CIP_CANNONARTWEST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
         }
       ],
       "methods": [
@@ -6802,12 +6876,32 @@
         { "name": "FirstChar",            "cppName": "CMulti_FirstChar",            "params": { "num": 0, "max": 1, "list": [ { "name": "listType", "type": "string", "required": false } ] }, "returns": "CharOrNull" },
         { "name": "GetMultiCorner",       "cppName": "CMulti_GetMultiCorner",       "params": { "num": 1, "list": [ { "name": "corner", "type": "number", "required": true } ] }, "returns": "string" },
         { "name": "GetTiller",            "cppName": "CMulti_GetTiller",            "params": { "num": 0, "list": [] }, "returns": "ItemOrNull" },
+        { "name": "GetHold",              "cppName": "CMulti_GetHold",              "params": { "num": 0, "list": [] }, "returns": "ItemOrNull" },
+        { "name": "DamageHull",           "cppName": "CBoat_DamageHull",            "params": { "num": 1, "list": [ { "name": "amount", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "RepairHull",           "cppName": "CBoat_RepairHull",            "params": { "num": 1, "list": [ { "name": "amount", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "IsNearLandOrDocks",    "cppName": "CBoat_IsNearLandOrDocks",     "params": { "num": 0, "list": [] }, "returns": "boolean" },
+        { "name": "GetHullHits",          "cppName": "CBoat_GetHullHits",           "params": { "num": 0, "list": [] }, "returns": "number" },
+        { "name": "GetHullMaxHits",       "cppName": "CBoat_GetHullMaxHits",        "params": { "num": 0, "list": [] }, "returns": "number" },
+        { "name": "StartEmergencyRepairs", "cppName": "CBoat_StartEmergencyRepairs", "params": { "num": 1, "list": [ { "name": "seconds", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsUnderEmergencyRepairs", "cppName": "CBoat_IsUnderEmergencyRepairs", "params": { "num": 0, "list": [] }, "returns": "boolean" },
+        { "name": "CheckDryDock",         "cppName": "CBoat_CheckDryDock",          "params": { "num": 0, "list": [] }, "returns": "number" },
+        { "name": "DeleteForDryDock",     "cppName": "CBoat_DeleteForDryDock",      "params": { "num": 1, "list": [{ "name": "deed", "type": "Item", "required": true }] }, "returns": "boolean" },
         { "name": "IsInMulti",            "cppName": "CMulti_IsInMulti",            "params": { "num": 1, "list": [ { "name": "toCheck", "type": "BaseObject", "required": true } ] }, "returns": "boolean" },
         { "name": "IsOnBanList",          "cppName": "CMulti_IsOnBanList",          "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "IsOnFriendList",       "cppName": "CMulti_IsOnFriendList",       "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "IsOnGuestList",        "cppName": "CMulti_IsOnGuestList",        "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "IsOnOwnerList",        "cppName": "CMulti_IsOnOwnerList",        "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "IsOwner",              "cppName": "CMulti_IsOwner",              "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "GetSecurityLevel",     "cppName": "CBoat_GetSecurityLevel",      "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "number" },
+        { "name": "PaintShip",            "cppName": "CBoat_PaintShip",             "params": { "num": 2, "list": [ { "name": "hue", "type": "number", "required": true }, { "name": "permanent", "type": "boolean", "required": true } ] }, "returns": "number" },
+        { "name": "RemoveShipPaint",      "cppName": "CBoat_RemoveShipPaint",       "params": { "num": 0, "list": [] }, "returns": "boolean" },
+        { "name": "HasShipAccess",        "cppName": "CBoat_HasAccess",             "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "CanCommandShip",       "cppName": "CBoat_CanCommand",            "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "SetSecurityLevel",     "cppName": "CBoat_SetSecurityLevel",      "params": { "num": 2, "list": [ { "name": "character", "type": "Character", "required": true }, { "name": "level", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "GetShipAccessSetting", "cppName": "CBoat_GetAccessSetting",      "params": { "num": 1, "list": [ { "name": "setting", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "SetShipAccessSetting", "cppName": "CBoat_SetAccessSetting",      "params": { "num": 2, "list": [ { "name": "setting", "type": "number", "required": true }, { "name": "value", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "ResetShipSecurity",    "cppName": "CBoat_ResetSecurity",         "params": { "num": 0, "list": [] }, "returns": "boolean" },
+        { "name": "RelocateTillerman",    "cppName": "CBoat_RelocateTillerman",     "params": { "num": 3, "list": [ { "name": "x", "type": "number", "required": true }, { "name": "y", "type": "number", "required": true }, { "name": "z", "type": "number", "required": true } ] }, "returns": "boolean" },
         { "name": "IsSecureContainer",    "cppName": "CMulti_IsSecureContainer",    "params": { "num": 1, "list": [ { "name": "toChcek", "type": "Item", "required": true } ] }, "returns": "boolean" },
         { "name": "KillKeys",             "cppName": "CMulti_KillKeys",             "params": { "num": 0, "max": 1, "list": [ { "name": "specific", "type": "Character", "required": false } ] }, "returns": "void" },
         { "name": "LockDownItem",         "cppName": "CMulti_LockDownItem",         "params": { "num": 1, "list": [ { "name": "toLock", "type": "Item", "required": true } ] }, "returns": "boolean" },
@@ -6821,6 +6915,7 @@
         { "name": "RemoveVendor",         "cppName": "CMulti_RemoveVendor",         "params": { "num": 1, "list": [ { "name": "vendorToRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "SecureContainer",      "cppName": "CMulti_SecureContainer",      "params": { "num": 1, "list": [ { "name": "toSecure", "type": "Item", "required": true } ] }, "returns": "boolean" },
         { "name": "TurnBoat",             "cppName": "CMulti_TurnBoat",             "params": { "num": 1, "list": [ { "name": "direction", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "SailBoat",             "cppName": "CMulti_SailBoat",             "params": { "num": 1, "list": [ { "name": "direction", "type": "number", "required": true } ] }, "returns": "void" },
         { "name": "UnsecureContainer",    "cppName": "CMulti_UnsecureContainer",    "params": { "num": 1, "list": [ { "name": "toUnsecure", "type": "Item", "required": true } ] }, "returns": "boolean" }
       ]
     },

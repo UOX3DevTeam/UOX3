@@ -1375,6 +1375,20 @@ void StartChar( CSocket *mSock, bool onCreate )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ))
 		{
+			// UO never restores an active pilot across a login/restart. Clean
+			// virtual pilot mounts from older UOX saves before the first character
+			// packet, otherwise the client renders the player sunk into the deck
+			// and the wheel sees the stale mount as an ordinary ridden creature.
+			CItem *pilotMount = mChar->GetItemAtLayer( IL_MOUNT );
+			const bool hasPilotMount = ValidateObject( pilotMount ) && pilotMount->GetId() == 0x3E96;
+			if( hasPilotMount )
+			{
+				ReleaseBoatPilot( mChar );
+				if( hasPilotMount )
+					DismountCreature( mChar );
+				mChar->SetOnHorse( false );
+			}
+
 			CPClientVersion verCheck;
 			mSock->Send( &verCheck );
 
@@ -1735,6 +1749,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 		pSock = mChar->GetSocket();
 	}
 
+	ReleaseBoatPilot( mChar );
 	DismountCreature( mChar );
 
 	if( pSock != nullptr )

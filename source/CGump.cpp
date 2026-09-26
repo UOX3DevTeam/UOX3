@@ -58,7 +58,7 @@ void CGump::Send( CSocket *target )
 
 	std::for_each( TextList.begin(), TextList.end(), [&toSend]( const std::string &entry )
 	{
-		toSend.addCommand( entry );
+		toSend.addText( entry );
 	});
 
 	toSend.Send();
@@ -169,6 +169,20 @@ void MultiGumpCallback( [[maybe_unused]] CSocket *mySocket, SERIAL gumpSerial, [
 {
 	if( gumpSerial == 0 ) // Do nothing on close gump
 		return;
+
+	const UI32 encodedSerial = static_cast<UI32>( gumpSerial );
+	if(( encodedSerial & 0xFFFF0000u ) == 0x48530000u )
+	{
+		const UI16 houseEntry = static_cast<UI16>( encodedSerial & 0xFFFFu );
+		UI08 direction = NORTH;
+		if( button == 1 ) direction = WEST;
+		else if( button == 2 ) direction = NORTH;
+		else if( button == 3 ) direction = SOUTH;
+		else if( button == 4 ) direction = EAST;
+		else return;
+		SendBoatPlacementTarget( mySocket, houseEntry, direction );
+		return;
+	}
 
 	switch( gumpSerial )
 	{

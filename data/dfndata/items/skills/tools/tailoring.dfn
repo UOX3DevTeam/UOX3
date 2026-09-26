@@ -235,3 +235,11 @@ id=0x0ec7
 weight=2000
 movable=1
 }
+
+[highseas_powder_charge]
+{
+NAME=powder charge
+ID=0xA2BE
+PILEABLE=1
+ORIGIN=hs
+}

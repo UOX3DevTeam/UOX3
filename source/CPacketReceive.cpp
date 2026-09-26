@@ -23,6 +23,9 @@
 #include "IP4Address.hpp"
 #include "utf8.h"
 
+void MoveBoat( UI08 dir, CBoatObj *boat );
+void TurnBoat( CBoatObj *boat, bool rightTurn, bool disableChecks );
+
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	pSplit()
 //o------------------------------------------------------------------------------------------------o
@@ -864,11 +867,11 @@ bool CPINewClientVersion::Handle( void )
 //|						BYTE cmd
 //|						BYTE[2] len
 //|						If (client-version of packet)
-//|							BYTE[len-3] string stating the client version (0 terminated)  (like: ì1.26.4î)
+//|							BYTE[len-3] string stating the client version (0 terminated)  (like: ‚Äú1.26.4‚Äù)
 //|
 //|					Notes
 //|						Client + Server packet
-//|						Client version: client sends its version string (e.g ì3.0.8jî)
+//|						Client version: client sends its version string (e.g ‚Äú3.0.8j‚Äù)
 //|						Server version: 0xbd 0x0 0x3 (client replies with client version of this packet)
 //|						Clients sends a client version of this packet ONCE at login (without server request.)
 //o------------------------------------------------------------------------------------------------o
@@ -1787,12 +1790,12 @@ void CPISingleClick::Log( std::ostream &outStream, bool fullHeader )
 //|					Fastwalk prevention notes: each 0x02 pops the top element from fastwalk key stack.
 //|						(0xbf sub1 init. fastwalk stack, 0xbf sub2 pushes an element to stack)
 //|						If stack is empty key value is 0 (never set keys to 0 in 0xbf sub 1/2)
-//|						Because client sometimes sends bursts of 0x02ís DONíT check for a certain top stack value.
+//|						Because client sometimes sends bursts of 0x02‚Äôs DON‚ÄôT check for a certain top stack value.
 //|						The only safe way to detect fastwalk:
 //|							push a key after EACH x021, 0x22, (=send 0xbf sub 2) check in 0x02 for stack emptyness.
 //|							If empty -> fastwalk alert.
-//|					Note that actual key values are irrelevant. (just donít use 0)
-//|					Of course without perfect 0x02/0x21/0x22 synch (serverside) itís useless to use fastwalk detection.
+//|					Note that actual key values are irrelevant. (just don‚Äôt use 0)
+//|					Of course without perfect 0x02/0x21/0x22 synch (serverside) it‚Äôs useless to use fastwalk detection.
 //|					Last but not least: fastwalk detection adds 9 bytes per step and player!
 //o------------------------------------------------------------------------------------------------o
 CPIMoveRequest::CPIMoveRequest()
@@ -1955,7 +1958,7 @@ bool CPIAttack::Handle( void )
 //|						BYTE click zLoc
 //|						BYTE[2] model # (if a static tile, 0 if a map/landscape tile)
 //|
-//|					NOTE: The model # shouldnít be trusted.
+//|					NOTE: The model # shouldn‚Äôt be trusted.
 //|					NOTE: bool CPITargetCursor::Handle() in targeting.cpp
 //o------------------------------------------------------------------------------------------------o
 CPITargetCursor::CPITargetCursor()
@@ -2065,8 +2068,8 @@ void CPIGetItem::Receive( void )
 //|
 //|					NOTE: Client Message
 //|					NOTE: 3D clients sometimes sends 2 of them (bursts) for ONE drop action.
-//|						The last one having ñ1ís in X/Y locs. Be very careful how to handle this
-//|						odd ìburstsî server side, neither always process, nor always skipping is correct.
+//|						The last one having ‚Äì1‚Äôs in X/Y locs. Be very careful how to handle this
+//|						odd ‚Äúbursts‚Äù server side, neither always process, nor always skipping is correct.
 //|
 //|					NOTE: bool CPIDropItem::Handle() implemented in cplayeraction.cpp
 //o------------------------------------------------------------------------------------------------o
@@ -2630,25 +2633,25 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset );
 //|						BYTE[2] Color										4
 //|						BYTE[2] Font										6
 //|						BYTE[4] Language (Null Terminated)					8
-//|							ìenuì - United States English
-//|							ìdesî - German Swiss
-//|							ìdeaî - German Austria
-//|							ìdeuî - German Germany
+//|							‚Äúenu‚Äú - United States English
+//|							‚Äúdes‚Äù - German Swiss
+//|							‚Äúdea‚Äù - German Austria
+//|							‚Äúdeu‚Äù - German Germany
 //|							... for a complete list see langcode.iff
 //|						if (Type & 0xc0)
 //|							BYTE[1,5] Number of distinct Trigger words (NUMWORDS).
-//|								12 Bit number, Byte #13  = Bit 11Ö4 of NUMWORDS, Hi-Nibble of Byte #14 (Bit 7Ö4)  = Bit  0Ö3 of NUMWORDS
+//|								12 Bit number, Byte #13  = Bit 11‚Ä¶4 of NUMWORDS, Hi-Nibble of Byte #14 (Bit 7‚Ä¶4)  = Bit  0‚Ä¶3 of NUMWORDS
 //|							BYTE[1,5] Index to speech.mul
-//|								12 Bit number, Low Nibble of Byte #14 (Bits 3Ö0) = Bits 11..8 of Index, Byte #15  = Bits 7Ö0 of Index
-//|							UNKNOWNS = ( (NUMWORDS div 2) *3 ) + (NUMWORDS % 2)  ñ 1
+//|								12 Bit number, Low Nibble of Byte #14 (Bits 3‚Ä¶0) = Bits 11..8 of Index, Byte #15  = Bits 7‚Ä¶0 of Index
+//|							UNKNOWNS = ( (NUMWORDS div 2) *3 ) + (NUMWORDS % 2)  ‚Äì 1
 //|								div = Integeger division, % = modulo operation, NUMWORDS >= 1
 //|								examples: UNKNOWNS(1)=0, UNKNOWNS(2)=2, UNKNOWNS(3)=3, UNKNOWNS(4)=5, UNKNOWNS(5)=6,
 //|								UNKNOWNS(6)=8, UNKNOWNS(7)=9, UNKNOWNS(8)=11, UNKNOWNS(9)=12
 //|							BYTE[UNKNOWNS]
 //|								Idea behind this is getting speech parsing load client side.
 //|								Thus this contains data OSI server use for easier parsing.
-//|								Itís client side hardcoded and exact details are unkown.
-//|							BYTE[?] Ascii Msg ñ Null Terminated (blockSize ñ (15+UNKNOWNS) )
+//|								It‚Äôs client side hardcoded and exact details are unkown.
+//|							BYTE[?] Ascii Msg ‚Äì Null Terminated (blockSize ‚Äì (15+UNKNOWNS) )
 //|						else
 //|							BYTE[?][2] Unicode Msg - Null Terminated (blockSize - 12)
 //|
@@ -3603,8 +3606,8 @@ void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 //|						BYTE cmd
 //|						BYTE[4] pattern1 (0xedededed)
 //|						BYTE[30] char name (0 terminated)
-//|						BYTE[33] unknown, mostly 0ís  (Byte# 0x27, 0x28, 0x30  seem to be the only
-//|							non 0ís of these 33 bytes. Perhaps password data thatís not send anymore)
+//|						BYTE[33] unknown, mostly 0‚Äôs  (Byte# 0x27, 0x28, 0x30  seem to be the only
+//|							non 0‚Äôs of these 33 bytes. Perhaps password data that‚Äôs not send anymore)
 //|						BYTE slot choosen (0-based)
 //|						BYTE[4] clientIP
 //|
@@ -4211,11 +4214,11 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	BYTE[4] Serial
 //	BYTE Number of entries in the popup
 //	For each Entry
-//	∑ BYTE[2] Entry Tag (this will be returned by the client on selection)
-//	∑ BYTE[2] Text ID ID is the file number for intloc#.language e.g intloc6.enu and the index into that
-//	∑ BYTE[2] Flags 0x01 = locked, 0x02 = arrow, 0x20 = color
-//	∑ If (Flags &0x20)
-//	∑ BYTE[2] color; // rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black, 0x1F = blue, 0x3E0 = green, 0x7C00 = red)
+//	¬∑ BYTE[2] Entry Tag (this will be returned by the client on selection)
+//	¬∑ BYTE[2] Text ID ID is the file number for intloc#.language e.g intloc6.enu and the index into that
+//	¬∑ BYTE[2] Flags 0x01 = locked, 0x02 = arrow, 0x20 = color
+//	¬∑ If (Flags &0x20)
+//	¬∑ BYTE[2] color; // rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black, 0x1F = blue, 0x3E0 = green, 0x7C00 = red)
 
 //	Subcommand 0x15: Popup Entry Selection
 //	BYTE[4] Character ID
@@ -4224,13 +4227,13 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	Subcommand 0x17: Codex of wisdom
 //	BYTE unknown, always 1. if not 1, packet seems to have no effect
 //	BYTE[4] msg number
-//	BYTE presentation (0: ì?î flashing, 1: directly opening)
+//	BYTE presentation (0: ‚Äú?‚Äù flashing, 1: directly opening)
 
 //	Subcommand 0x18: Enable map-diff (files)
 //	BYTE[4] Number of maps
 //	For each map
-//	∑ BYTE[4] Number of map patches in this map
-//	∑ BYTE[4] Number of static patches in this map
+//	¬∑ BYTE[4] Number of map patches in this map
+//	¬∑ BYTE[4] Number of static patches in this map
 
 //	Subcommand: 0x19: Extended stats
 //	BYTE type // always 2 ? never seen other value
@@ -4303,6 +4306,7 @@ void CPISubcommands::Receive( void )
 		case 0x1C:	{	subPacket = new CPISpellbookSelect( tSock );	}	break;	// New SpellBook Selection
 		case 0x2C:	{	subPacket = new CPIBandageMacro( tSock );		}	break;	// Bandage macro
 		case 0x32:	{	subPacket = new CPIToggleFlying( tSock );		}	break;	// Toggle Flying on/off
+		case 0x33:	{	subPacket = new CPIBoatMouseMovement( tSock );	}	break;	// High Seas mouse piloting
 	}
 }
 bool CPISubcommands::Handle( void )
@@ -5660,6 +5664,128 @@ void CPIBandageMacro::Log( std::ostream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
 	}
 	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CPIBoatMouseMovement()
+//o------------------------------------------------------------------------------------------------o
+CPIBoatMouseMovement::CPIBoatMouseMovement()
+{
+}
+CPIBoatMouseMovement::CPIBoatMouseMovement( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+void CPIBoatMouseMovement::Receive( void )
+{
+	Handle();
+}
+bool CPIBoatMouseMovement::Handle( void )
+{
+	CChar *character = tSock->CurrcharObj();
+	if( !ValidateObject( character ) || tSock->GetDWord( 5 ) != character->GetSerial() )
+		return false;
+
+	CItem *pilotMount = character->GetItemAtLayer( IL_MOUNT );
+	if( !ValidateObject( pilotMount ) || pilotMount->GetId() != 0x3E96 )
+		return false;
+
+	const SERIAL pilotBoatSerial = pilotMount->GetTempVar( CITV_MOREX );
+	CMultiObj *multi = CalcMultiFromSer( pilotBoatSerial );
+	if( !ValidateObject( multi ) || !multi->CanBeObjType( OT_BOAT ))
+		return false;
+
+	CBoatObj *boat = static_cast<CBoatObj *>( multi );
+	if( boat->GetPilot() != character->GetSerial() )
+		return false;
+
+	if( character->GetMultiObj() != boat )
+		character->SetMulti( boat );
+
+	const UI08 direction = tSock->GetByte( 9 ) & 0x07;
+	const UI08 rawSpeed = tSock->GetByte( 11 );
+	if( rawSpeed > 2 )
+		return false;
+
+	if( rawSpeed == 0 )
+	{
+		boat->SetMoveType( BOAT_STOP );
+		boat->SetPilotSpeed( 0 );
+		return true;
+	}
+	// UO forces heavily and severely damaged vessels onto their slow
+	// movement interval even when the client continues requesting full speed.
+	const UI08 effectiveSpeed = boat->GetHullDamageLevel() >= 3 ? 1 : rawSpeed;
+
+	// ClassicUO can send the initial mouse order at slow speed before its full
+	// speed continuation. Resolve a requested cardinal facing before accepting
+	// either movement order; otherwise that first packet moves the vessel using
+	// its old facing and leaves the pilot rotated away from the wheel.
+	if(( direction % 2 ) == 0 && ( boat->GetDir() & 0x07 ) != direction )
+	{
+		UI08 delta = ( direction - ( boat->GetDir() & 0x07 )) & 0x07;
+		if( delta == 4 )
+		{
+			TurnBoat( boat, true, false );
+			if(( boat->GetDir() & 0x07 ) != direction )
+				TurnBoat( boat, true, false );
+		}
+		else
+			TurnBoat( boat, delta == 2, false );
+
+		// A collision can reject the requested facing. Do not translate that same
+		// world direction into sideways/backward movement on the old heading.
+		if(( boat->GetDir() & 0x07 ) != direction )
+		{
+			boat->SetMoveType( BOAT_STOP );
+			boat->SetPilotSpeed( 0 );
+			return true;
+		}
+	}
+
+	const UI08 relativeDirection = ( direction - ( boat->GetDir() & 0x07 )) & 0x07;
+	BoatMoveType moveType = BOAT_STOP;
+	if( effectiveSpeed == 1 )
+	{
+		switch( relativeDirection )
+		{
+			case 0: moveType = BOAT_SLOWFORWARD; break;
+			case 1: moveType = BOAT_SLOWFORWARDRIGHT; break;
+			case 2: moveType = BOAT_SLOWRIGHT; break;
+			case 3: moveType = BOAT_SLOWBACKWARDRIGHT; break;
+			case 4: moveType = BOAT_SLOWBACKWARD; break;
+			case 5: moveType = BOAT_SLOWBACKWARDLEFT; break;
+			case 6: moveType = BOAT_SLOWLEFT; break;
+			case 7: moveType = BOAT_SLOWFORWARDLEFT; break;
+		}
+	}
+	else
+	{
+		switch( relativeDirection )
+		{
+			case 0: moveType = BOAT_FORWARD; break;
+			case 1: moveType = BOAT_FORWARDRIGHT; break;
+			case 2: moveType = BOAT_RIGHT; break;
+			case 3: moveType = BOAT_BACKWARDRIGHT; break;
+			case 4: moveType = BOAT_BACKWARD; break;
+			case 5: moveType = BOAT_BACKWARDLEFT; break;
+			case 6: moveType = BOAT_LEFT; break;
+			case 7: moveType = BOAT_FORWARDLEFT; break;
+		}
+	}
+	boat->SetPilotSpeed( effectiveSpeed );
+	boat->SetMoveType( moveType );
+	// A reloaded boat starts with no scheduled movement tick. Make the first
+	// mouse order immediately eligible for the world boat-processing pass.
+	boat->SetMoveTime( 0 );
+	boat->SetMoveTime( cwmWorldState->GetUICurrentTime() );
+	return true;
+}
+void CPIBoatMouseMovement::Log( std::ostream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Boat Mouse Movement 0x33 --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 

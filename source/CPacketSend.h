@@ -1700,5 +1700,27 @@ public:
 	CPDropItemApproved();
 };
 
+class CPBoatSmoothMove : public CPUOXBuffer
+{
+public:
+	CPBoatSmoothMove( CBoatObj *boat, const std::vector<CItem *>& items, const std::vector<CChar *>& characters,
+		UI08 direction, UI08 speed, SI16 xOffset, SI16 yOffset );
+	virtual bool ClientCanReceive( CSocket *mSock ) override;
+};
+
+class CPBoatPilotLock : public CPUOXBuffer
+{
+public:
+	CPBoatPilotLock( CChar *pilot );
+	virtual bool ClientCanReceive( CSocket *mSock ) override;
+};
+
+class CPBoatPilotEquip : public CPUOXBuffer
+{
+public:
+	CPBoatPilotEquip( CChar *pilot, CItem *mount );
+	virtual bool ClientCanReceive( CSocket *mSock ) override;
+};
+
 #endif
 
