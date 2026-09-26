@@ -1,0 +1,22 @@
+[
+	{ "makeID": 298, "label": "Lesser Heal", "dictID": 10910, "page": 1, "timerID": 1, "harvest": [10022], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 299, "label": "Heal", "dictID": 10911, "page": 1, "timerID": 1, "harvest": [10022], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 300, "label": "Greater Heal", "dictID": 10912, "page": 1, "timerID": 1, "harvest": [10022], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 305, "label": "Refresh", "dictID": 10908, "page": 1, "timerID": 1, "harvest": [10025], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 306, "label": "Total Refresh", "dictID": 10909, "page": 1, "timerID": 1, "harvest": [10025], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 292, "label": "Lesser Cure", "dictID": 10913, "page": 1, "timerID": 1, "harvest": [10020], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 293, "label": "Cure", "dictID": 10914, "page": 1, "timerID": 1, "harvest": [10020], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 294, "label": "Greater Cure", "dictID": 10915, "page": 1, "timerID": 1, "harvest": [10020], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 290, "label": "Agility", "dictID": 10916, "page": 2, "timerID": 2, "harvest": [10019], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 291, "label": "Greater Agility", "dictID": 10917, "page": 2, "timerID": 2, "harvest": [10019], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 295, "label": "Strength", "dictID": 10918, "page": 2, "timerID": 2, "harvest": [10021], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 296, "label": "Greater Strength", "dictID": 10919, "page": 2, "timerID": 2, "harvest": [10021], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 297, "label": "Night Sight", "dictID": 10920, "page": 2, "timerID": 2, "harvest": [10021], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 301, "label": "Lesser Poison", "dictID": 10921, "page": 3, "timerID": 3, "harvest": [10024], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 302, "label": "Poison", "dictID": 10922, "page": 3, "timerID": 3, "harvest": [10024], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 303, "label": "Greater Poison", "dictID": 10923, "page": 3, "timerID": 3, "harvest": [10024], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 304, "label": "Deadly Poison", "dictID": 10924, "page": 3, "timerID": 3, "harvest": [10024], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 307, "label": "Explosion", "dictID": 10925, "page": 4, "timerID": 4, "harvest": [10026], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 308, "label": "Greater Explosion", "dictID": 10926, "page": 4, "timerID": 4, "harvest": [10026], "craftComplete": { "type": "autoIdentifyPotion" } },
+	{ "makeID": 309, "label": "Conflagration", "dictID": 10927, "page": 4, "timerID": 4, "harvest": [10023], "craftComplete": { "type": "autoIdentifyPotion" } }
+]

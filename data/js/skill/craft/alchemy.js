@@ -1,241 +1,536 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-const textHue = 0x480;				// Color of the text.
-const scriptID = 4028;				// Use this to tell the gump what script to close.
-const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
-const itemDetailsScriptID = 4026;
-const craftGumpID = 4027;
+const textHue               = 0x480;                 // Color of the text.
+const alchemyID             = 4028;                  // Script ID for this alchemy gump
+const gumpDelay             = 2000;                  // Delay (ms) before gump reappears after crafting
+const itemDetailsScriptID   = 4026;                  // Generic item details gump
+const craftGumpID           = 4027;                  // Shared crafting menu frame
+const itemsPerPage          = 10;                    // Items per subpage
+const displayUnlearnedRecipes = true;                // For future recipe use
+const coreShardEra          = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+const alchemySkillID        = 0;                     // Skill ID: Alchemy
 
-//////////////////////////////////////////////////////////////////////////////////////////
-//  The section below is the tables for each page.
-//  All you have to do is add the item to your dictionary 
-//  and then list the dictionary number in the right page and it will
-//  add it to the crafting gump.
-///////////////////////////////////////////////////////////////////////////////////////////
+const craftMapRegistryID = 4038;
+var AlchemyMap = {};
 
-const myPage = [
-	// Page 1 - Healing and Curative
-	[10908, 10909, 10910, 10911, 10912, 10913, 10914, 10915],
-
-	// Page 2 - Enhancement
-	[10916, 10917, 10918, 10919, 10920],
-
-	// Page 3 - Toxic
-	[10921, 10922, 10923, 10924],
-
-	// Page 4 - Explosives
-	[10925, 10926, 10927]
-];
-
-function PageX( socket, pUser, pageNum )
+function LoadAlchemyMap()
 {
-	// Pages 1 - 4
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
-	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
+	AlchemyMap = {};
+
+	var alchemyEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "alchemy" );
+
+	if( !alchemyEntries || !IsAlchemyArrayValue( alchemyEntries ) )
 	{
-		var index = i % 10;
-		if( index == 0 )
-		{
-			if( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage(( i / 10 ) + 1 );
-
-			if( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, ( 100 * pageNum ) + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ));
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, ( 2000 + ( 100 * pageNum )) + i );
+		Console.Warning( "Alchemy: Unable to load alchemy craft map data." );
+		return false;
 	}
-	myGump.Send( socket );
-	myGump.Free();
+
+	for( var i = 0; i < alchemyEntries.length; i++ )
+	{
+		var entry = alchemyEntries[i];
+
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
+
+		if( entry.skill === undefined )
+			entry.skill = alchemySkillID;
+
+		AlchemyMap[entry.makeID] = entry;
+	}
+
+	Console.Print( "Alchemy: Loaded " + alchemyEntries.length + " craft map entries.\n" );
+	return true;
 }
 
-/** @type { ( tObject: BaseObject, timerId: number ) => void } */
+function IsAlchemyArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
+
+// o--------------------------------------------------------------------------o
+// | PageX() - build a page of alchemy items                                  |
+// o--------------------------------------------------------------------------o
+/** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
+function PageX( socket, pUser, pageNum )
+{
+	if( !socket || !ValidateObject( pUser ))
+		return;
+
+	if( !AlchemyMap || Object.keys( AlchemyMap ).length == 0 )
+	{
+		if( !LoadAlchemyMap() )
+		{
+			socket.SysMessage( "Alchemy craft map failed to load." );
+			return;
+		}
+	}
+
+	var pageItems;
+
+	// Special Last Ten page
+	if( pageNum == 999 )
+	{
+		var lastTenRaw = pUser.GetTempTag( "LastTenAlchemy" ) || "";
+		var split = lastTenRaw.split( "," );
+		pageItems = [];
+
+		for( var i = 0; i < split.length; i++ )
+		{
+			var val = parseInt( split[i] );
+			if( !isNaN( val ))
+				pageItems.push( val ); // makeID itself
+		}
+	}
+	else
+	{
+		// Collect all makeIDs for this page
+		var makeIDs = [];
+		for( var key in AlchemyMap )
+		{
+			if( !AlchemyMap.hasOwnProperty( key ))
+				continue;
+
+			var makeID = parseInt( key );
+			var data = AlchemyMap[makeID];
+			if( !data || data.page != pageNum )
+				continue;
+
+			makeIDs.push( makeID );
+		}
+
+		// Sort by dictID so order matches dictionary sequence
+		makeIDs.sort( function( a, b )
+		{
+			var ea = AlchemyMap[a];
+			var eb = AlchemyMap[b];
+			if( ea && eb )
+				return ( ea.dictID || 0 ) - ( eb.dictID || 0 );
+			return a - b;
+		});
+
+		// Era / recipe filtering (no recipes yet, but keep hook)
+		pageItems = [];
+		for( var k = 0; k < makeIDs.length; k++ )
+		{
+			var id = makeIDs[k];
+			var data2 = AlchemyMap[id];
+			if( !data2 )
+				continue;
+
+			var needsRecipe = data2.recipeID;
+			var showAll = displayUnlearnedRecipes;
+
+			if( eraOK( data2 ) && ( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe )))
+				pageItems.push( id );
+		}
+
+		// Fallback: if no items on this page and it's not page 1, go to page 1
+		if( pageItems.length == 0 && pageNum != 1 )
+		{
+			pageNum = 1;
+
+			makeIDs = [];
+			for( var key2 in AlchemyMap )
+			{
+				if( !AlchemyMap.hasOwnProperty( key2 ))
+					continue;
+
+				var mid2 = parseInt( key2 );
+				var d3 = AlchemyMap[mid2];
+				if( !d3 || d3.page != 1 )
+					continue;
+
+				makeIDs.push( mid2 );
+			}
+
+			makeIDs.sort( function( a, b )
+			{
+				var ea2 = AlchemyMap[a];
+				var eb2 = AlchemyMap[b];
+				if( ea2 && eb2 )
+					return ( ea2.dictID || 0 ) - ( eb2.dictID || 0 );
+				return a - b;
+			});
+
+			pageItems = [];
+			for( var m = 0; m < makeIDs.length; m++ )
+			{
+				var id2 = makeIDs[m];
+				var data4 = AlchemyMap[id2];
+				if( !data4 )
+					continue;
+
+				var needsRecipe2 = data4.recipeID;
+				var showAll2 = displayUnlearnedRecipes;
+
+				if( eraOK( data4 ) && ( !needsRecipe2 || showAll2 || HasLearnedRecipe( pUser, needsRecipe2 )))
+					pageItems.push( id2 );
+			}
+		}
+	}
+
+	// Subpage handling
+	var subPage = pUser.GetTempTag( "subPage" );
+	var totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
+
+	if( totalSubPages < 1 )
+		totalSubPages = 1;
+	if( subPage < 1 )
+		subPage = 1;
+	if( subPage > totalSubPages )
+		subPage = totalSubPages;
+
+	pUser.SetTempTag( "page", pageNum );
+	pUser.SetTempTag( "subPage", subPage );
+
+	var startIndex = ( subPage - 1 ) * itemsPerPage;
+	var endIndex   = Math.min( startIndex + itemsPerPage, pageItems.length );
+
+	if( startIndex >= pageItems.length )
+	{
+		subPage    = 1;
+		startIndex = 0;
+		endIndex   = Math.min( itemsPerPage, pageItems.length );
+		pUser.SetTempTag( "subPage", subPage );
+	}
+
+	var alchGump = new Gump;
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", alchGump, socket );
+	alchGump.AddPage( 1 );
+
+	for( var j = startIndex; j < endIndex; j++ )
+	{
+		var index  = j - startIndex;
+		var makeID = pageItems[j];
+		var entryText;
+		var buttonID = makeID; // use makeID directly as buttonID
+
+		var data5 = AlchemyMap[makeID];
+
+		if( !data5 )
+		{
+			entryText = "[Missing MakeID: " + makeID + "]";
+		}
+		else
+		{
+			if( data5.customName )
+			{
+				entryText = data5.customName;
+			}
+			else if( data5.dictID )
+			{
+				entryText = GetDictionaryEntry( data5.dictID, socket.language );
+				if( !entryText || entryText === "" )
+					entryText = "[Missing EntryID: " + data5.dictID + "]";
+			}
+			else
+			{
+				entryText = "[Unnamed Item: " + makeID + "]";
+			}
+		}
+
+		// Craft button uses makeID
+		alchGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, buttonID );
+		alchGump.AddText(   255, 60 + ( index * 20 ), textHue, entryText );
+
+		// Detail button: 20000 + makeID (same pattern as glassblowing)
+		alchGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 20000 + buttonID );
+	}
+
+	// Prev subpage
+	if( subPage > 1 )
+	{
+		alchGump.AddButton( 220, 260, 4014, 4015, 1, 0, 8000 + ( subPage - 1 ));
+		alchGump.AddHTMLGump( 255, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" ); // PREV PAGE
+	}
+
+	// Next subpage
+	if( subPage < totalSubPages )
+	{
+		alchGump.AddButton( 370, 260, 4005, 4007, 1, 0, 9000 + ( subPage + 1 ));
+		alchGump.AddHTMLGump( 405, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" ); // NEXT PAGE
+	}
+
+	alchGump.Send( socket );
+	alchGump.Free();
+}
+
+// o--------------------------------------------------------------------------o
+// | onTimer - reopen last page after crafting                                |
+// o--------------------------------------------------------------------------o
+/** @type { ( pUser: Character, timerID: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
-	var socket = pUser.socket;
+	var pSocket = pUser.socket;
+	if( pSocket == null )
+		return;
 
-	switch( timerID )
+	if( timerID >= 1 && timerID <= 8 )
 	{
-		case 1: // Page 1
-		case 2: // Page 2
-		case 3: // Page 3
-		case 4: // Page 4
-			TriggerEvent( scriptID, "PageX", socket, pUser, timerID );
-			break;
-		default:
-			break;
+		PageX( pSocket, pUser, timerID );
+	}
+	else if( timerID == 999 )
+	{
+		PageX( pSocket, pUser, 999 );
 	}
 }
 
-/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
-function onGumpPress( pSock, pButton, gumpData )
+// o--------------------------------------------------------------------------o
+// | onGumpPress - navigation, Make Last, craft & details                     |
+// o--------------------------------------------------------------------------o
+/** @type { ( socket: Socket, pButton: number, gumpData: GumpData ) => void } */
+function onGumpPress( socket, pButton, gumpData )
 {
-	var pUser = pSock.currentChar;
+	if( socket == null )
+		return;
 
-	// Don't continue if character is invalid, or worse... dead!
+	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
-	// Don't continue if player no longer has access to the crafting tool
-	var bItem = pSock.tempObj;
-	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	var tool = socket.tempObj;
+	if( !ValidateObject( tool ) || !pUser.InRange( tool, 3 ))
 	{
-		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		socket.SysMessage( GetDictionaryEntry( 461, socket.language )); // You are too far away.
 		return;
 	}
 
-	var gumpID = scriptID + 0xffff;
-	var makeID = 0;
-	var itemDetailsID = 0;
+	if( tool.movable == 3 )
+	{
+		socket.SysMessage( GetDictionaryEntry( 6031, socket.language )); // That is locked down and cannot be used.
+		return;
+	}
+
+	var packOwner = GetPackOwner( tool, 0 );
+	if( ValidateObject( packOwner ))
+	{
+		if( packOwner.serial != pUser.serial )
+		{
+			socket.SysMessage( GetDictionaryEntry( 6032, socket.language )); // That is not in your pack.
+			return;
+		}
+	}
+	else
+	{
+		socket.SysMessage( GetDictionaryEntry( 6022, socket.language )); // You must have that item in your pack to use it.
+		return;
+	}
+
+	var gumpID = alchemyID + 0xffff;
+
+	// Subpage back / forward
+	if( pButton >= 8001 && pButton < 9000 )
+	{
+		var subPage = pButton - 8000;
+		var pageNum = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage );
+		PageX( socket, pUser, pageNum );
+		return;
+	}
+
+	if( pButton >= 9001 && pButton < 10000 )
+	{
+		var subPage2 = pButton - 9000;
+		var pageNum2 = pUser.GetTempTag( "page" );
+		pUser.SetTempTag( "subPage", subPage2 );
+		PageX( socket, pUser, pageNum2 );
+		return;
+	}
+
+	// Page tabs (Alchemy has 4 categories, but using <=8 is harmless)
+	if( pButton >= 1 && pButton <= 8 )
+	{
+		pUser.SetTempTag( "page", pButton );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, pButton );
+		return;
+	}
+
+	// Last Ten
+	if( pButton == 11000 )
+	{
+		pUser.SetTempTag( "page", 999 );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, 999 );
+		return;
+	}
+
+	// Close gump
+	if( pButton == 0 )
+	{
+		pUser.SetTempTag( "MakeLast_Alchemy", null );
+		pUser.SetTempTag( "CRAFT", null );
+		socket.CloseGump( gumpID, 0 );
+		return;
+	}
+
+	var makeID  = 0;
 	var timerID = 0;
 
-	if(( pButton >= 100 && pButton <= 402 ) || pButton == 5000 )
+	// Make Last
+	if( pButton == 5000 )
 	{
-		if( pButton == 5000 )
-		{
-			// Make Last button
-			pButton = pUser.GetTempTag( "MAKELAST" );
-		}
+		var last = pUser.GetTempTag( "MakeLast_Alchemy" );
+		if( last )
+			pButton = last;
 		else
+			return;
+	}
+
+	// Craft buttons use makeID directly
+	if( AlchemyMap[pButton] != undefined )
+	{
+		makeID = pButton;
+		var data = AlchemyMap[makeID];
+		timerID = data.timerID || 1;
+
+		if( !eraOK( data ))
 		{
-			pUser.SetTempTag( "MAKELAST", pButton );
+			socket.SysMessage( "That item is not available in this era." );
+			return;
 		}
-	}
 
-	switch( pButton )
-	{
-		case 0:
-			pUser.SetTempTag( "MAKELAST", null );
-			pUser.SetTempTag( "CRAFT", null )
-			pSock.CloseGump( gumpID, 0 );
-			break;// abort and do nothing
-		case 1: // Page 1
-		case 2: // Page 2
-		case 3: // Page 3
-		case 4: // Page 4
-			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "PageX", pSock, pUser, pButton );
-			break;
-		// Make Items
-		case 100: // Refresh
-			makeID = 305; timerID = 1; break;
-		case 101: // Greater Refresh
-			makeID = 306; timerID = 1; break;
-		case 102: // Lesser Heal
-			makeID = 298; timerID = 1; break;
-		case 103: // Heal
-			makeID = 299; timerID = 1; break;
-		case 104: // Greater Heal
-			makeID = 300; timerID = 1; break;
-		case 105: // Lesser Cure
-			makeID = 292; timerID = 1; break;
-		case 106: // Cure
-			makeID = 293; timerID = 1; break;
-		case 107: // Greater Cure
-			makeID = 294; timerID = 1; break;
-		case 200: // Agility
-			makeID = 290; timerID = 2; break;
-		case 201: // Greater Agility
-			makeID = 291; timerID = 2; break;
-		case 202: // Night Sight
-			makeID = 309; timerID = 2; break;
-		case 203: // Strength
-			makeID = 307; timerID = 2; break;
-		case 204: // Greater Strength
-			makeID = 308; timerID = 2; break;
-		case 300: // Lesser Poison
-			makeID = 301; timerID = 3; break;
-		case 301: // Poison
-			makeID = 302; timerID = 3; break;
-		case 302: // Greater Poison
-			makeID = 303; timerID = 3; break;
-		case 303: // Deadly Poison
-			makeID = 304; timerID = 3; break;
-		case 400: // Lesser Explosion
-			makeID = 295; timerID = 4; break;
-		case 401: // Explosion
-			makeID = 296; timerID = 4; break;
-		case 402: // Greater Explosion
-			makeID = 297; timerID = 4; break;
-		// Show Item Details
-		case 2100: // Item Details - Refresh
-			itemDetailsID = 305; break;
-		case 2101: // Item Details - Greater Refreshment
-			itemDetailsID = 306; break;
-		case 2102: // Item Details - Lesser Heal
-			itemDetailsID = 298; break;
-		case 2103: // Item Details - Heal
-			itemDetailsID = 299; break;
-		case 2104: // Item Details - Greater Heal
-			itemDetailsID = 300; break;
-		case 2105: // Item Details - Lesser Cure
-			itemDetailsID = 292; break;
-		case 2106: // Item Details - Cure
-			itemDetailsID = 293; break;
-		case 2107: // Item Details - Greater Cure
-			itemDetailsID = 294; break;
-		case 2200: // Item Details - Agility
-			itemDetailsID = 290; break;
-		case 2201: // Item Details - Greater Agility
-			itemDetailsID = 291; break;
-		case 2202: // Item Details - Night Sight
-			itemDetailsID = 309; break;
-		case 2203: // Item Details - Strength
-			itemDetailsID = 307; break;
-		case 2204: // Item Details - Greater Strength
-			itemDetailsID = 308; break;
-		case 2300: // Item Details - Lesser Poison
-			itemDetailsID = 301; break;
-		case 2301: // Item Details - Poison
-			itemDetailsID = 302; break;
-		case 2302: // Item Details - Greater Poison
-			itemDetailsID = 303; break;
-		case 2303: // Item Details - Deadly Poison
-			itemDetailsID = 304; break;
-		case 2400: // Item Details - Lesser Explosion
-			itemDetailsID = 295; break;
-		case 2401: // Item Details - Explosion
-			itemDetailsID = 296; break;
-		case 2402: // Item Details - Greater Explosion
-			itemDetailsID = 297; break;
-		default:
-			break;
-	}
+		if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+		{
+			socket.SysMessage( "You must learn that recipe from a scroll." );
+			return;
+		}
 
-	if( makeID != 0 )
-	{
-		MakeItem( pSock, pUser, makeID );
+		pUser.SetTempTag( "MakeLast_Alchemy", makeID );
+
+		MakeItem( socket, pUser, makeID );
+		AddToLastTen( pUser, makeID );
+
 		if( GetServerSetting( "ToolUseLimit" ))
 		{
-			bItem.usesLeft -= 1;
-			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+			tool.usesLeft -= 1;
+			if( tool.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 			{
-				bItem.Delete();
-				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-				// Play sound effect of tool breaking
+				tool.Delete();
+				socket.SysMessage( GetDictionaryEntry( 10202, socket.language )); // Your tool wears out.
 			}
-		}		
-		pUser.StartTimer( gumpDelay, timerID, true );
+		}
+
+		pUser.StartTimer( gumpDelay, timerID, alchemyID );
+		return;
 	}
-	else if( itemDetailsID != 0 )
+
+	// Detail buttons: 20000 + makeID
+	if( pButton >= 20000 && pButton < 30000 )
 	{
-		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
-		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		var detailMakeID = pButton - 20000;
+		var entry = AlchemyMap[detailMakeID];
+
+		if( entry )
+		{
+			// Which item details to show
+			pUser.SetTempTag( "ITEMDETAILS", detailMakeID );
+
+			// Skill used
+			pUser.SetTempTag( "Skill", entry.skill || alchemySkillID );
+
+			// Clear old harvest tags to avoid cross-contamination
+			pUser.SetTempTag( "Harvest", null );
+			pUser.SetTempTag( "Harvest2", null );
+			pUser.SetTempTag( "Harvest3", null );
+			pUser.SetTempTag( "Harvest4", null );
+
+			// Clear old harvest names
+			pUser.SetTempTag( "HarvestName",  null );
+			pUser.SetTempTag( "Harvest2Name", null );
+			pUser.SetTempTag( "Harvest3Name", null );
+			pUser.SetTempTag( "Harvest4Name", null );
+
+			// If you later add entry.harvest = [dictID1, dictID2,...], you can push them here
+			if( entry.harvest && entry.harvest.length > 0 )
+			{
+				if( entry.harvest.length >= 1 )
+					pUser.SetTempTag( "Harvest", entry.harvest[0] );
+				if( entry.harvest.length >= 2 )
+					pUser.SetTempTag( "Harvest2", entry.harvest[1] );
+				if( entry.harvest.length >= 3 )
+					pUser.SetTempTag( "Harvest3", entry.harvest[2] );
+				if( entry.harvest.length >= 4 )
+					pUser.SetTempTag( "Harvest4", entry.harvest[3] );
+			}
+
+			// OPTIONAL custom names – these override the dictionary string
+			if( entry.harvestNames && entry.harvestNames.length > 0 )
+			{
+				if( entry.harvestNames.length >= 1 )
+					pUser.SetTempTag( "HarvestName",  entry.harvestNames[0] );
+				if( entry.harvestNames.length >= 2 )
+					pUser.SetTempTag( "Harvest2Name", entry.harvestNames[1] );
+				if( entry.harvestNames.length >= 3 )
+					pUser.SetTempTag( "Harvest3Name", entry.harvestNames[2] );
+				if( entry.harvestNames.length >= 4 )
+					pUser.SetTempTag( "Harvest4Name", entry.harvestNames[3] );
+			}
+
+			if( entry.recipeID && entry.recipeID > 0 )
+				pUser.SetTempTag( "needRecipeID", entry.recipeID );
+			else
+				pUser.SetTempTag( "needRecipeID", 0 );
+
+			TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		}
+		return;
 	}
+}
+
+// o--------------------------------------------------------------------------o
+// | Last Ten handling                                                        |
+// o--------------------------------------------------------------------------o
+function AddToLastTen( pUser, makeID )
+{
+	var raw  = pUser.GetTempTag( "LastTenAlchemy" ) || "";
+	var list = raw.split( "," );
+
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( parseInt( list[i] ) == makeID )
+		{
+			list.splice( i, 1 );
+			break;
+		}
+	}
+
+	var newList = [ makeID ];
+	for( var j = 0; j < list.length && newList.length < 10; j++ )
+	{
+		var entry = parseInt( list[j] );
+		if( !isNaN( entry ) && entry > 0 )
+			newList.push( entry );
+	}
+
+	pUser.SetTempTag( "LastTenAlchemy", newList.join( "," ) );
+}
+
+function HasLearnedRecipe( pUser, recipeID )
+{
+	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	if( !myData || myData.length == 0 )
+		return false;
+
+	for( var i = 0; i < myData.length; i++ )
+	{
+		var data = myData[i].split( "," );
+		if( data[0] == recipeID )
+			return true;
+	}
+	return false;
+}
+
+function eraOK( entry )
+{
+	if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
+		return false;
+	if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))
+		return false;
+	return true;
 }

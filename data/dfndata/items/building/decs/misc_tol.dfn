@@ -1,0 +1,17 @@
+[0x9bc7]
+{
+get=base_item
+name=Tall 18th Anniversary Vase
+id=0x9bc7
+weight=1000
+movable=1
+}
+
+[0x9bca]
+{
+get=base_item
+name=Short 18th Anniversary Vase
+id=0x9bca
+weight=100
+movable=1
+}

@@ -979,6 +979,65 @@ MAXRANK=10
 SOUND=0x002A
 }
 
+[ITEM 367]
+{
+NAME=dragon sleeves
+ID=0x2657
+RESOURCE=SCALE 24
+SKILL=7 763 1120
+ADDITEM=dragonsleeves
+MINRANK=1
+MAXRANK=10
+SOUND=0x002A
+}
+
+[ITEM 368]
+{
+NAME=dragon breast plate
+ID=0x2657
+RESOURCE=SCALE 36
+SKILL=7 850 1120
+ADDITEM=dragonbreastplate
+MINRANK=1
+MAXRANK=10
+SOUND=0x002A
+}
+
+[ITEM 369]
+{
+NAME=dragon gloves
+ID=0x2657
+RESOURCE=SCALE 16
+SKILL=7 689 1120
+ADDITEM=dragongloves
+MINRANK=1
+MAXRANK=10
+SOUND=0x002A
+}
+
+[ITEM 370]
+{
+NAME=dragon helmet
+ID=0x2657
+RESOURCE=SCALE 20
+SKILL=7 722 1120
+ADDITEM=dragonhelm
+MINRANK=1
+MAXRANK=10
+SOUND=0x002A
+}
+
+[ITEM 371]
+{
+NAME=dragon leggings
+ID=0x2657
+RESOURCE=SCALE 28
+SKILL=7 788 1120
+ADDITEM=dragonleggings
+MINRANK=1
+MAXRANK=10
+SOUND=0x002A
+}
 
 // end of blacksmithing section
 //*****************************************

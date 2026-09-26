@@ -1125,15 +1125,17 @@ function onCallback8( pSocket, myTarget )
 	var StrangeByte = pSocket.GetWord( 1 );
 	if( StrangeByte === 0 && ValidateObject( myTarget ) && myTarget.isItem )
 	{
+		var isDoor = ( myTarget.GetTag( "BuildingCraftableDoor" ) === 1 );
+
 		if( myTarget.type == 87 )
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1888, pSocket.language )); // You cannot lock down trash barrels.
 		}
-		else if( myTarget.movable == 3 )
+		else if( !isDoor && ( myTarget.movable == 3 || myTarget.GetTag( "BuildingCraftable" ) == 1 ))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1889, pSocket.language )); // That is already locked down!
 		}
-		else if( myTarget.type == 12 || myTarget.type == 13 || myTarget.type == 203 || myTarget.id == 0x0BD2 ||
+		else if( !isDoor && myTarget.type == 12 || myTarget.type == 13 || myTarget.type == 203 || myTarget.id == 0x0BD2 ||
 			myTarget.movable == 2 || myTarget.movable == 3 || myTarget.id == 0x3996 || myTarget.id == 0x398C ||
 			myTarget.id == 0x3915 || myTarget.id == 0x3920 || myTarget.id == 0x3979 || myTarget.id == 0x3967 ||
 			myTarget.id == 0x3956 || myTarget.id == 0x3946 )
@@ -1173,7 +1175,7 @@ function onCallback8( pSocket, myTarget )
 
 			// Check if item blocks movement and is too close to a door
 			// 6 = TF_BLOCKING
-			if( CheckTileFlag( myTarget.id, 6 ))
+			if( !isDoor && CheckTileFlag( myTarget.id, 6 ))
 			{
 				// Check for nearby doors
 				var foundDoor = AreaItemFunction( "CheckForNearbyDoors", myTarget, 3, pSocket );

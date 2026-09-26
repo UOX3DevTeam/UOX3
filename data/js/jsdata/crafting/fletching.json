@@ -1,0 +1,18 @@
+[
+	{ "makeID": 190, "label": "Kindling", "dictID": 11205, "page": 1, "timerID": 1, "harvest": [10014] },
+	{ "makeID": 194, "label": "Shaft", "dictID": 11206, "page": 1, "timerID": 1, "harvest": [10014] },
+	{ "makeID": 195, "label": "Five Shafts", "dictID": 11207, "page": 1, "timerID": 1, "harvest": [10014] },
+	{ "makeID": 196, "label": "Twenty Shafts", "dictID": 11208, "page": 1, "timerID": 1, "harvest": [10014] },
+	{ "makeID": 197, "label": "Fifty Shafts", "dictID": 11209, "page": 1, "timerID": 1, "harvest": [10014] },
+	{ "makeID": 198, "label": "Arrow", "dictID": 11210, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 199, "label": "Five Arrows", "dictID": 11211, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 200, "label": "Twenty Arrows", "dictID": 11212, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 201, "label": "Fifty Arrows", "dictID": 11213, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 202, "label": "Bolt", "dictID": 11214, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 203, "label": "Five Bolts", "dictID": 11215, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 204, "label": "Twenty Bolts", "dictID": 11216, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 205, "label": "Fifty Bolts", "dictID": 11217, "page": 2, "timerID": 2, "harvest": [10029, 10028] },
+	{ "makeID": 191, "label": "Bow", "dictID": 11218, "page": 3, "timerID": 3, "harvest": [10014] },
+	{ "makeID": 192, "label": "Crossbow", "dictID": 11219, "page": 3, "timerID": 3, "harvest": [10014] },
+	{ "makeID": 193, "label": "Heavy Crossbow", "dictID": 11220, "page": 3, "timerID": 3, "harvest": [10014] }
+]

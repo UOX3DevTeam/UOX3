@@ -59,7 +59,7 @@ function LookForSittingPlayers( srcItem, trgChar, pSock )
 function onDrop( iDropped, pDropper )
 {
 	SmartTurn( iDropped );
-	return true;
+	return 1;
 }
 
 // Turn supported furniture clockwise, based on previous direction
@@ -81,109 +81,301 @@ function SmartTurn( iTurn )
 		// our partner is listed! this is an implicit subtraction operation
 		iTurn.id--;
 	}// Special Turn for glass made items
-	else if (iTurn.id == 0x1810 )//spinning hourglass
+	else if( iTurn.id == 0x1810 )//spinning hourglass
 	{
 		iTurn.id = 0x1811;
 	}
-	else if (iTurn.id == 0x1811 || iTurn.id == 0x1812 || iTurn.id == 0x1813 || iTurn.id == 0x1814 || iTurn.id == 0x1815 || iTurn.id == 0x1816 || iTurn.id == 0x1817 || iTurn.id == 0x1818 || iTurn.id == 0x1819 || iTurn.id == 0x181A || iTurn.id == 0x181B || iTurn.id == 0x181C)//spinning hourglass animations
+	else if( iTurn.id == 0x1811 || iTurn.id == 0x1812 || iTurn.id == 0x1813 || iTurn.id == 0x1814 || iTurn.id == 0x1815 || iTurn.id == 0x1816 || iTurn.id == 0x1817 || iTurn.id == 0x1818 || iTurn.id == 0x1819 || iTurn.id == 0x181A || iTurn.id == 0x181B || iTurn.id == 0x181C )//spinning hourglass animations
 	{
 		iTurn.id = 0x1810;
 	}
-	else if (iTurn.id == 0x185d)// Full Vials
+	else if( iTurn.id == 0x185d )// Full Vials
 	{
 		iTurn.id = 0x185e;
 	}
-	else if (iTurn.id == 0x185e)// Full Vials
+	else if( iTurn.id == 0x185e )// Full Vials
 	{
 		iTurn.id = 0x185d;
 	}
-	else if (iTurn.id == 0x185b)// Empty Vials
+	else if( iTurn.id == 0x185b )// Empty Vials
 	{
 		iTurn.id = 0x185c;
 	}
-	else if (iTurn.id == 0x185c)// Full Vials
+	else if( iTurn.id == 0x185c )// Full Vials
 	{
 		iTurn.id = 0x185b;
 	}
-	else if (iTurn.id == 0x182a)// Medium Flask
+	else if( iTurn.id == 0x182a )// Medium Flask
 	{
 		iTurn.id = 0x182b;
 	}
-	else if (iTurn.id == 0x182b)// Medium Flask
+	else if( iTurn.id == 0x182b )// Medium Flask
 	{
 		iTurn.id = 0x182c;
 	}
-	else if (iTurn.id == 0x182c)// Medium Flask
+	else if( iTurn.id == 0x182c )// Medium Flask
 	{
 		iTurn.id = 0x182d;
 	}
-	else if (iTurn.id == 0x182d)// Medium Flask
+	else if( iTurn.id == 0x182d )// Medium Flask
 	{
 		iTurn.id = 0x182a;
 	}
-	else if (iTurn.id == 0x182e)// Small Flask
+	else if( iTurn.id == 0x182e )// Small Flask
 	{
 		iTurn.id = 0x182f;
 	}
-	else if (iTurn.id == 0x182f)// Small Flask
+	else if( iTurn.id == 0x182f )// Small Flask
 	{
 		iTurn.id = 0x1830;
 	}
-	else if (iTurn.id == 0x1830)// Small Flask
+	else if( iTurn.id == 0x1830 )// Small Flask
 	{
 		iTurn.id = 0x1831;
 	}
-	else if (iTurn.id == 0x1831)// Small Flask
+	else if( iTurn.id == 0x1831 )// Small Flask
 	{
 		iTurn.id = 0x182e;
 	}
-	else if (iTurn.id == 0x1832)// Curved Flask
+	else if( iTurn.id == 0x1832 )// Curved Flask
 	{
 		iTurn.id = 0x1833;
 	}
-	else if (iTurn.id == 0x1833)// Curved Flask
+	else if( iTurn.id == 0x1833 )// Curved Flask
 	{
 		iTurn.id = 0x1834;
 	}
-	else if (iTurn.id == 0x1834)// Curved Flask
+	else if( iTurn.id == 0x1834 )// Curved Flask
 	{
 		iTurn.id = 0x1835;
 	}
-	else if (iTurn.id == 0x1835)// Curved Flask
+	else if( iTurn.id == 0x1835 )// Curved Flask
 	{
 		iTurn.id = 0x1836;
 	}
-	else if (iTurn.id == 0x1836)// Curved Flask
+	else if( iTurn.id == 0x1836 )// Curved Flask
 	{
 		iTurn.id = 0x1837;
 	}
-	else if (iTurn.id == 0x1837)// Curved Flask
+	else if( iTurn.id == 0x1837 )// Curved Flask
 	{
 		iTurn.id = 0x1832;
 	}
-	else if (iTurn.id == 0x1838)// Large Flask
+	else if( iTurn.id == 0x1838 )// Large Flask
 	{
 		iTurn.id = 0x1839;
 	}
-	else if (iTurn.id == 0x1839)// Large Flask
+	else if( iTurn.id == 0x1839 )// Large Flask
 	{
 		iTurn.id = 0x183a;
 	}
-	else if (iTurn.id == 0x1838)// Large Flask
+	else if(  iTurn.id == 0x1838 )// Large Flask
 	{
 		iTurn.id = 0x183b;
 	}
-	else if (iTurn.id == 0x183b)// Large Flask 2
+	else if( iTurn.id == 0x183b )// Large Flask 2
 	{
 		iTurn.id = 0x183c;
 	}
-	else if (iTurn.id == 0x183c)// Large Flask 2
+	else if( iTurn.id == 0x183c )// Large Flask 2
 	{
 		iTurn.id = 0x183d;
 	}
-	else if (iTurn.id == 0x183d)// Large Flask 2
+	else if( iTurn.id == 0x183d )// Large Flask 2
 	{
 		iTurn.id = 0x183b;
+	}
+	else if( iTurn.id == 0x01CF ) // RoughWindowless
+	{
+		iTurn.id = 0x01D0;
+	}
+	else if( iTurn.id == 0x01D0 )
+	{
+		iTurn.id = 0x01D1;
+	}
+	else if( iTurn.id == 0x01D1 )
+	{
+		iTurn.id = 0x01D0;
+	}
+	else if( iTurn.id == 0x01D2 )
+	{
+		iTurn.id = 0x01CF;
+	}
+	else if( iTurn.id == 0x01D3 ) // RoughWindow
+	{
+		iTurn.id = 0x01D4;
+	}
+	else if( iTurn.id == 0x01D4 )
+	{
+		iTurn.id = 0x01D3;
+	}
+	else if( iTurn.id == 0x01D5 ) // RoughArch
+	{
+		iTurn.id = 0x01D6;
+	}
+	else if( iTurn.id == 0x01D6 )
+	{
+		iTurn.id = 0x01D7;
+	}
+	else if( iTurn.id == 0x01D7 )
+	{
+		iTurn.id = 0x01D8;
+	}
+	else if( iTurn.id == 0x01D8 )
+	{
+		iTurn.id = 0x01D9;
+	}
+	else if( iTurn.id == 0x01D9 )
+	{
+		iTurn.id = 0x01D5;
+	}
+	else if( iTurn.id == 0x01DB ) // RoughRoundedArch
+	{
+		iTurn.id = 0x01DC;
+	}
+	else if( iTurn.id == 0x01DC )
+	{
+		iTurn.id = 0x01DD;
+	}
+	else if( iTurn.id == 0x01DD )
+	{
+		iTurn.id = 0x01DE;
+	}
+	else if( iTurn.id == 0x01DE )
+	{
+		iTurn.id = 0x01DF;
+	}
+	else if( iTurn.id == 0x01DF )
+	{
+		iTurn.id = 0x01DB;
+	}
+	else if( iTurn.id == 0x01E0 )  // RoughSmallArch
+	{
+		iTurn.id = 0x01E1;
+	}
+	else if( iTurn.id == 0x01E1 )
+	{
+		iTurn.id = 0x01E2;
+	}
+	else if( iTurn.id == 0x01E2 )
+	{
+		iTurn.id = 0x01E3;
+	}
+	else if( iTurn.id == 0x01E3 )
+	{
+		iTurn.id = 0x01E4;
+	}
+	else if( iTurn.id == 0x01E4 )
+	{
+		iTurn.id = 0x01E5;
+	}
+	else if( iTurn.id == 0x01E5 )
+	{
+		iTurn.id = 0x01E0;
+	}
+	else if( iTurn.id == 0x01E6 )  // RoughAngledPillar
+	{
+		iTurn.id = 0x01E7;
+	}
+	else if( iTurn.id == 0x01E7 )
+	{
+		iTurn.id = 0x01E6;
+	}
+	else if( iTurn.id == 0x01E8 )  // ShortRough
+	{
+		iTurn.id = 0x01E9;
+	}
+	else if( iTurn.id == 0x01E9 )
+	{
+		iTurn.id = 0x01EA;
+	}
+	else if( iTurn.id == 0x01EA )
+	{
+		iTurn.id = 0x01E9;
+	}
+	else if( iTurn.id == 0x01EB )
+	{
+		iTurn.id = 0x01E8;
+	}
+	else if( iTurn.id == 0x0789 ) // Rough steps
+	{
+		iTurn.id = 0x078A;
+	}
+	else if( iTurn.id == 0x078A )
+	{
+		iTurn.id = 0x078B;
+	}
+	else if( iTurn.id == 0x078B )
+	{
+		iTurn.id = 0x078C;
+	}
+	else if( iTurn.id == 0x078C )
+	{
+		iTurn.id = 0x0789;
+	}
+	else if( iTurn.id == 0x078D ) // Rough corner steps
+	{
+		iTurn.id = 0x078E;
+	}
+	else if( iTurn.id == 0x078E )
+	{
+		iTurn.id = 0x078F;
+	}
+	else if( iTurn.id == 0x078F )
+	{
+		iTurn.id = 0x0790;
+	}
+	else if( iTurn.id == 0x0790 )
+	{
+		iTurn.id = 0x078D;
+	}
+	else if( iTurn.id == 0x0791 ) // Rough rounded corner steps
+	{
+		iTurn.id = 0x0792;
+	}
+	else if( iTurn.id == 0x0792 )
+	{
+		iTurn.id = 0x0793;
+	}
+	else if( iTurn.id == 0x0793 )
+	{
+		iTurn.id = 0x0794;
+	}
+	else if( iTurn.id == 0x0794 )
+	{
+		iTurn.id = 0x0791;
+	}
+	else if( iTurn.id == 0x0795 ) // Rough inset steps
+	{
+		iTurn.id = 0x0796;
+	}
+	else if( iTurn.id == 0x0796 )
+	{
+		iTurn.id = 0x0797;
+	}
+	else if( iTurn.id == 0x0797 )
+	{
+		iTurn.id = 0x0798;
+	}
+	else if( iTurn.id == 0x0798 )
+	{
+		iTurn.id = 0x0795;
+	}
+	else if( iTurn.id == 0x0799 ) // Rough rounded inset steps
+	{
+		iTurn.id = 0x079A;
+	}
+	else if( iTurn.id == 0x079A )
+	{
+		iTurn.id = 0x079B;
+	}
+	else if( iTurn.id == 0x079B )
+	{
+		iTurn.id = 0x079C;
+	}
+	else if( iTurn.id == 0x079C )
+	{
+		iTurn.id = 0x0799;
 	}
 }
 

@@ -50,6 +50,11 @@ ID=0x1081
 ID=0x1082
 }
 
+[RESOURCE SCALE]
+{
+ID=0x26b4
+}
+
 [RESOURCE BONE]
 {
 ID=0x0f7e
@@ -163,4 +168,9 @@ ID=0x423A
 {
 ID=0x14eb
 ID=0x0E34
+}
+
+[RESOURCE STONE]
+{
+ID=0x1779
 }

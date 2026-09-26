@@ -1,194 +1,178 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-const textHue = 0x480;					// Color hue for all text in the crafting gump
-const scriptID = 4030;					// Script ID used to identify and close this gump
-const gumpDelay = 2000;					// Delay (ms) before gump reappears after crafting
-const repairDelay = 200;				// Delay (ms) before gump reappears after selecting a resource
-const itemDetailsScriptID = 4026;		// Script ID used to show item detail tooltips
-const craftGumpID = 4027;				// TriggerEvent ID used to build the crafting gump UI
-const itemsPerPage = 10;				// Number of craftable items shown per gump subpage
-const displayUnlearnedRecipes = true;	// Show recipes player hasn't learned
-const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
-//////////////////////////////////////////////////////////////////////////////////////////
-// UOX3 Tailoring CraftingMap Configuration
-//
-// Description:
-// This file defines the `CraftingMap` used to populate the tailoring crafting gump in UOX3.
-// Each entry links a craftable item (defined in `create/tailoring.dfn`) to its display name,
-// gump page, and crafting behavior. This setup powers the dynamic UI for tailoring.
-//
-// Data Sources:
-// - `makeID` refers to the unique item ID defined in `create/tailoring.dfn`.
-// - `dictID` refers to a localized string entry defined in `dictionaries/dictionary.eng`.
-// - `customName` is an optional hardcoded string that overrides dictionary text if present.
-// - `recipeID` is an optional ID that locks the item behind a learned recipe.
-//
-// Entry Format:
-//   makeID: {
-//     dictID: <dictionaryID>,       // (Optional) Used for localized names via dictionary.eng
-//     customName: "<item name>",    // (Optional) Overrides dictionary name if present
-//     page: <pageNumber>,           // Gump page to display item on
-//     timerID: <timerID>,           // Timer used to re-show gump after crafting
-//     recipeID: <recipeID>          // (Optional) Requires the player to learn the recipe before crafting
-//   }
-//
-// Display Logic:
-// - If `customName` is present, it is used directly in the crafting gump.
-// - If `dictID` is present (and `customName` is not), `GetDictionaryEntry()` is used.
-// - If both are missing, the gump will show a fallback like `[Unnamed Item: ####]`.
-// - The `page` field determines which category tab the item appears under.
-// - If `recipeID` is present and the player has not learned it, the item will either be:
-//     - Hidden entirely (default behavior), or
-//     - Displayed but uncraftable, depending on `displayUnlearnedRecipes` setting.
-//
-// Example Entries:
-//
-// // Standard item using dictionary ID for localization
-// 130: { dictID: 11415, page: 1, timerID: 1 },
-//
-// // Custom item with hardcoded display name, no dictionary entry required
-// 999: { customName: "harrys sword", page: 1, timerID: 1 },
-//
-// // Recipe-locked item (only craftable if recipe is learned)
-// 185: { dictID: 11469, page: 8, timerID: 8, recipeID: 185 },
-//
-// // Era Gating
-// 130: { dictID: 11415, page: 1, timerID: 1, minEra: "uo" },          // from UO and up
-// 185: { dictID: 11469, page: 8, timerID: 8, recipeID: 185, minEra: "aos" }, // AoS+
-// 169: { dictID: 11454, page: 6, timerID: 6, maxEra: "lbr" },         // up to LBR
-//
-// Organization:
-// - Items are grouped by `page` value (e.g., Hats, Armor, etc.).
-// - The crafting gump dynamically builds its layout from this CraftingMap.
-// - This system supports localized, custom, hybrid, and recipe-locked crafting menus.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
+const textHue                 = 0x480;                 // Color hue for all text in the crafting gump
+const tailoringID             = 4030;                  // Script ID used to identify and close this gump
+const gumpDelay               = 2000;                  // Delay (ms) before gump reappears after crafting
+const repairDelay             = 200;                   // Delay (ms) before gump reappears after selecting a resource
+const itemDetailsScriptID     = 4026;                  // Script ID used to show item detail tooltips
+const craftGumpID             = 4027;                  // TriggerEvent ID used to build the crafting gump UI
+const itemsPerPage            = 10;                    // Number of craftable items shown per gump subpage
+const displayUnlearnedRecipes = true;                  // Show recipes player hasn't learned
+const coreShardEra            = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+const tailoringSkillID        = 34;                    // Tailoring skill index
 
-const CraftingMap = {
-	// Hats (Page 1)
-	130: { dictID: 11415, page: 1, timerID: 1 },
-	131: { dictID: 11416, page: 1, timerID: 1 },
-	132: { dictID: 11417, page: 1, timerID: 1 },
-	134: { dictID: 11418, page: 1, timerID: 1 },
-	133: { dictID: 11419, page: 1, timerID: 1 },
-	136: { dictID: 11420, page: 1, timerID: 1 },
-	137: { dictID: 11421, page: 1, timerID: 1 },
-	138: { dictID: 11422, page: 1, timerID: 1 },
-	139: { dictID: 11423, page: 1, timerID: 1 },
-	140: { dictID: 11424, page: 1, timerID: 1 },
-	141: { dictID: 11425, page: 1, timerID: 1 },
-	135: { dictID: 11470, page: 1, timerID: 1 },
+const craftMapRegistryID = 4038;
+var CraftingMap = {};
 
-	// Shirts & Pants (Page 2)
-	142: { dictID: 11426, page: 2, timerID: 2 },
-	143: { dictID: 11427, page: 2, timerID: 2 },
-	144: { dictID: 11428, page: 2, timerID: 2 },
-	145: { dictID: 11429, page: 2, timerID: 2 },
-	146: { dictID: 11430, page: 2, timerID: 2 },
-	147: { dictID: 11431, page: 2, timerID: 2 },
-	148: { dictID: 11432, page: 2, timerID: 2 },
-	149: { dictID: 11433, page: 2, timerID: 2 },
-	150: { dictID: 11434, page: 2, timerID: 2 },
-	151: { dictID: 11435, page: 2, timerID: 2 },
-	180: { dictID: 11436, page: 2, timerID: 2 },
-	152: { dictID: 11437, page: 2, timerID: 2 },
-	153: { dictID: 11438, page: 2, timerID: 2 },
-	154: { dictID: 11439, page: 2, timerID: 2 },
-
-	// Misc (Page 3)
-	155: { dictID: 11440, page: 3, timerID: 3 },
-	156: { dictID: 11441, page: 3, timerID: 3 },
-	157: { dictID: 11442, page: 3, timerID: 3 },
-	158: { dictID: 11443, page: 3, timerID: 3 },
-
-	// Footwear (Page 4)
-	159: { dictID: 11444, page: 4, timerID: 4 },
-	160: { dictID: 11445, page: 4, timerID: 4 },
-	161: { dictID: 11446, page: 4, timerID: 4 },
-	162: { dictID: 11447, page: 4, timerID: 4 },
-
-	// Leather Armor (Page 5)
-	163: { dictID: 11448, page: 5, timerID: 5 },
-	164: { dictID: 11449, page: 5, timerID: 5 },
-	165: { dictID: 11450, page: 5, timerID: 5 },
-	166: { dictID: 11451, page: 5, timerID: 5 },
-	167: { dictID: 11452, page: 5, timerID: 5 },
-	168: { dictID: 11453, page: 5, timerID: 5 },
-
-	// Studded Armor (Page 6)
-	169: { dictID: 11454, page: 6, timerID: 6 },
-	170: { dictID: 11455, page: 6, timerID: 6 },
-	171: { dictID: 11456, page: 6, timerID: 6 },
-	172: { dictID: 11457, page: 6, timerID: 6 },
-	173: { dictID: 11458, page: 6, timerID: 6 },
-
-	// Female Armor (Page 7)
-	174: { dictID: 11459, page: 7, timerID: 7 },
-	175: { dictID: 11460, page: 7, timerID: 7 },
-	176: { dictID: 11461, page: 7, timerID: 7 },
-	177: { dictID: 11462, page: 7 , timerID: 7},
-	178: { dictID: 11463, page: 7, timerID: 7 },
-	179: { dictID: 11464, page: 7, timerID: 7 },
-
-	// Bone Armor (Page 8)
-	181: { dictID: 11465, page: 8, timerID: 8 },
-	182: { dictID: 11466, page: 8, timerID: 8 },
-	183: { dictID: 11467, page: 8, timerID: 8 },
-	184: { dictID: 11468, page: 8, timerID: 8 },
-	185: { dictID: 11469, page: 8, timerID: 8 }
-};
-
-function PageX( socket, pUser, pageNum )
+/** @type { () => boolean } */
+function LoadTailoringMap()
 {
-	let subPage = pUser.GetTempTag( "subPage" ) || 1;
+	CraftingMap = {};
 
-	// Build pages dynamically from CraftingMap
-	let myPage = [];
-	let dictToMakeID = {}; // local reverse map
+	var tailoringEntries = TriggerEvent( craftMapRegistryID, "CraftMapRegistry", "tailoring" );
 
-	for( let makeID in CraftingMap ) 
+	if( !tailoringEntries || !IsTailoringArrayValue( tailoringEntries ) )
 	{
-		let data = CraftingMap[makeID];
-		let page = data.page;
-		if( !myPage[page - 1] )
-			myPage[page - 1] = [];
-
-		let needsRecipe = data.recipeID;
-		let showAll = displayUnlearnedRecipes;
-
-		if( eraOK( data ) && ( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe )))
-		{
-			myPage[page - 1].push( data.dictID );
-		}
-
-		dictToMakeID[data.dictID] = parseInt( makeID );
+		Console.Warning( "Tailoring: Unable to load tailoring craft map data." );
+		return false;
 	}
 
-	let pageItems;
+	for( var i = 0; i < tailoringEntries.length; i++ )
+	{
+		var entry = tailoringEntries[i];
 
+		if( !entry || typeof entry.makeID == "undefined" )
+			continue;
+
+		if( entry.skill === undefined )
+			entry.skill = tailoringSkillID;
+
+		CraftingMap[entry.makeID] = entry;
+	}
+
+	return true;
+}
+
+/** @type { ( value: any ) => boolean } */
+function IsTailoringArrayValue( value )
+{
+	return Object.prototype.toString.call( value ) == "[object Array]";
+}
+
+/** @type { ( socket: Socket, pUser: Character, pageNum: number ) => void } */
+function PageX( socket, pUser, pageNum )
+{
+	if( !socket || !ValidateObject( pUser ))
+		return;
+
+	if( !CraftingMap || Object.keys( CraftingMap ).length == 0 )
+	{
+		if( !LoadTailoringMap() )
+		{
+			socket.SysMessage( "Tailoring craft map failed to load." );
+			return;
+		}
+	}
+
+	var subPage = pUser.GetTempTag( "subPage" ) || 1;
+	var pageItems;
+
+	// Last Ten page
 	if( pageNum == 999 )
 	{
-		let lastTenRaw = pUser.GetTag( "LastTenTailoring" ) || "";
-		let split = lastTenRaw.split( "," );
+		var lastTenRaw = pUser.GetTempTag( "LastTenTailoring" ) || "";
+		var split = lastTenRaw.split( "," );
 		pageItems = [];
 
 		for( var i = 0; i < split.length; i++ )
 		{
-			let val = parseInt(split[i]);
+			var val = parseInt( split[i] );
 			if( !isNaN( val ))
-				pageItems.push( val );
+				pageItems.push( val ); // makeID
 		}
 	}
 	else
 	{
-		if( pageNum < 1 || pageNum > myPage.length )
+		// Collect all makeIDs for this page
+		var makeIDs = [];
+		for( var key in CraftingMap )
+		{
+			if( !CraftingMap.hasOwnProperty( key ))
+				continue;
+
+			var makeID = parseInt( key );
+			var data = CraftingMap[makeID];
+			if( !data || data.page != pageNum )
+				continue;
+
+			makeIDs.push( makeID );
+		}
+
+		// Sort by dictID so order matches dictionary sequence
+		makeIDs.sort( function( a, b )
+		{
+			var ea = CraftingMap[a];
+			var eb = CraftingMap[b];
+			if( ea && eb )
+				return ( ea.dictID || 0 ) - ( eb.dictID || 0 );
+			return a - b;
+		});
+
+		// Era / recipe filtering
+		pageItems = [];
+		for( var k = 0; k < makeIDs.length; k++ )
+		{
+			var id = makeIDs[k];
+			var data2 = CraftingMap[id];
+			if( !data2 )
+				continue;
+
+			var needsRecipe = data2.recipeID;
+			var showAll = displayUnlearnedRecipes;
+
+			if( eraOK( data2 ) && ( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe )) )
+				pageItems.push( id );
+		}
+
+		// Fallback if page empty (and not page 1)
+		if( pageItems.length == 0 && pageNum != 1 )
+		{
 			pageNum = 1;
 
-		pageItems = myPage[pageNum - 1];
+			makeIDs = [];
+			for( var key2 in CraftingMap )
+			{
+				if( !CraftingMap.hasOwnProperty( key2 ))
+					continue;
+
+				var mid2 = parseInt( key2 );
+				var d3 = CraftingMap[mid2];
+				if( !d3 || d3.page != 1 )
+					continue;
+
+				makeIDs.push( mid2 );
+			}
+
+			makeIDs.sort( function( a, b )
+			{
+				var ea2 = CraftingMap[a];
+				var eb2 = CraftingMap[b];
+				if( ea2 && eb2 )
+					return ( ea2.dictID || 0 ) - ( eb2.dictID || 0 );
+				return a - b;
+			});
+
+			pageItems = [];
+			for( var m = 0; m < makeIDs.length; m++ )
+			{
+				var id2 = makeIDs[m];
+				var data4 = CraftingMap[id2];
+				if( !data4 )
+					continue;
+
+				var needsRecipe2 = data4.recipeID;
+				var showAll2 = displayUnlearnedRecipes;
+
+				if( eraOK( data4 ) && ( !needsRecipe2 || showAll2 || HasLearnedRecipe( pUser, needsRecipe2 )) )
+					pageItems.push( id2 );
+			}
+		}
 	}
 
-	let totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
-
+	// Subpage handling
+	var totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
+	if( totalSubPages < 1 )
+		totalSubPages = 1;
 	if( subPage < 1 )
 		subPage = 1;
 	if( subPage > totalSubPages )
@@ -197,108 +181,104 @@ function PageX( socket, pUser, pageNum )
 	pUser.SetTempTag( "page", pageNum );
 	pUser.SetTempTag( "subPage", subPage );
 
-	let startIndex = ( subPage - 1 ) * itemsPerPage;
-	let endIndex = Math.min( startIndex + itemsPerPage, pageItems.length );
+	var startIndex = ( subPage - 1 ) * itemsPerPage;
+	var endIndex   = Math.min( startIndex + itemsPerPage, pageItems.length );
 
-	if( startIndex >= pageItems.length ) 
+	if( startIndex >= pageItems.length )
 	{
-		subPage = 1;
+		subPage    = 1;
 		startIndex = 0;
-		endIndex = Math.min( itemsPerPage, pageItems.length );
+		endIndex   = Math.min( itemsPerPage, pageItems.length );
 		pUser.SetTempTag( "subPage", subPage );
 	}
 
-	let tailoringMenu = new Gump;
+	var tailoringMenu = new Gump;
 	TriggerEvent( craftGumpID, "CraftingGumpMenu", tailoringMenu, socket );
 	tailoringMenu.AddPage( 1 );
 
-	for( let i = startIndex; i < endIndex; i++)
+	for( var j = startIndex; j < endIndex; j++ )
 	{
-		let index = i - startIndex;
-		let makeID, entryID, entryText, buttonID;
+		var index  = j - startIndex;
+		var makeID = pageItems[j];
+		var entryText;
+		var buttonID = makeID; // craft button uses makeID directly
+		var data5 = CraftingMap[makeID];
 
-		if( pageNum == 999 )
+		if( !data5 )
 		{
-			makeID = pageItems[i];
+			entryText = "[Missing MakeID: " + makeID + "]";
 		}
 		else
 		{
-			entryID = pageItems[i];
-			makeID = dictToMakeID[entryID];
+			if( data5.customName )
+			{
+				entryText = data5.customName;
+			}
+			else if( data5.dictID )
+			{
+				entryText = GetDictionaryEntry( data5.dictID, socket.language );
+				if( !entryText || entryText === "" )
+					entryText = "[Missing EntryID: " + data5.dictID + "]";
+			}
+			else
+			{
+				entryText = "[Unnamed Item: " + makeID + "]";
+			}
 		}
 
-	let data = CraftingMap[makeID];
-
-	if( !data )
-	{
-		entryText = "[Missing MakeID: " + makeID + "]";
-		buttonID = makeID;
-	}
-	else
-	{
-		buttonID = makeID;
-
-		if( data.customName )
-		{
-			entryText = data.customName;
-		}
-		else if( data.dictID )
-		{
-			entryText = GetDictionaryEntry( data.dictID, socket.language );
-			if( !entryText || entryText === "" )
-				entryText = "[Missing EntryID: " + data.dictID + "]";
-		}
-		else
-		{
-			entryText = "[Unnamed Item: " + makeID + "]";
-		}
+		tailoringMenu.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, buttonID );
+		tailoringMenu.AddText(   255, 60 + ( index * 20 ), textHue, entryText );
+		// Detail button: 20000 + makeID (new system pattern)
+		tailoringMenu.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 20000 + buttonID );
 	}
 
-	tailoringMenu.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, buttonID );
-	tailoringMenu.AddText( 255, 60 + ( index * 20 ), textHue, entryText );
-	tailoringMenu.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2000 + buttonID );
-}
-
+	// Prev subpage
 	if( subPage > 1 )
 	{
 		tailoringMenu.AddButton( 220, 260, 4014, 4015, 1, 0, 8000 + ( subPage - 1 ));
-		tailoringMenu.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry(10101, socket.language ) + "</basefont>" );
+		tailoringMenu.AddHTMLGump( 255, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );
 	}
 
+	// Next subpage
 	if( subPage < totalSubPages )
 	{
 		tailoringMenu.AddButton( 370, 260, 4005, 4007, 1, 0, 9000 + ( subPage + 1 ));
-		tailoringMenu.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry(10100, socket.language ) + "</basefont>" );
+		tailoringMenu.AddHTMLGump( 405, 263, 100, 18, false, false,
+			"<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );
 	}
 
 	tailoringMenu.Send( socket );
 	tailoringMenu.Free();
 }
 
-/** @type { ( tObject: BaseObject, timerId: number ) => void } */
+/** @type { ( pUser: Character, timerID: number ) => void } */
 function onTimer( pUser, timerID )
 {
 	if( !ValidateObject( pUser ))
 		return;
 
-	let socket = pUser.socket;
+	var socket = pUser.socket;
+	if( socket == null )
+		return;
 
 	if( timerID >= 1 && timerID <= 8 )
 	{
-		PageX( socket, pUser, timerID ); // Pages 1 - 8
+		PageX( socket, pUser, timerID ); // Pages 1–8
 	}
-	else if ( timerID == 999 )
+	else if( timerID == 999 )
 	{
-		PageX(socket, pUser, 999); // Last Ten
+		PageX( socket, pUser, 999 ); // Last Ten
 	}
 }
 
-/** @type { ( myObj: Socket, pressed: number, gump: GumpData ) => void } */
+/** @type { ( socket: Socket, pButton: number, gumpData: GumpData ) => void } */
 function onGumpPress( socket, pButton, gumpData )
 {
-	var pUser = socket.currentChar;
-	var usedMakeLast = false;
+	if( socket == null )
+		return;
 
+	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
@@ -315,39 +295,43 @@ function onGumpPress( socket, pButton, gumpData )
 		return;
 	}
 
-	var iPackOwner = GetPackOwner(bItem, 0);
+	var iPackOwner = GetPackOwner( bItem, 0 );
 	if( ValidateObject( iPackOwner ))
 	{
 		if( iPackOwner.serial != pUser.serial )
 		{
-			socket.SysMessage(GetDictionaryEntry( 6032, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 6032, socket.language ));
 			return;
 		}
 	}
 	else
 	{
-		socket.SysMessage(GetDictionaryEntry( 6022, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 6022, socket.language ));
 		return;
 	}
 
+	var gumpID = tailoringID + 0xffff;
+
+	// Subpage back/forward
 	if( pButton >= 8001 && pButton < 9000 )
 	{
-		let subPage = pButton - 8000;
-		let pageNum = pUser.GetTempTag( "page" ) || 1;
+		var subPage = pButton - 8000;
+		var pageNum = pUser.GetTempTag( "page" ) || 1;
 		pUser.SetTempTag( "subPage", subPage );
-		PageX(socket, pUser, pageNum);
+		PageX( socket, pUser, pageNum );
 		return;
 	}
 
 	if( pButton >= 9001 && pButton < 10000 )
 	{
-		let subPage = pButton - 9000;
-		let pageNum = pUser.GetTempTag( "page" ) || 1;
-		pUser.SetTempTag("subPage", subPage);
-		PageX( socket, pUser, pageNum );
+		var subPage2 = pButton - 9000;
+		var pageNum2 = pUser.GetTempTag( "page" ) || 1;
+		pUser.SetTempTag( "subPage", subPage2 );
+		PageX( socket, pUser, pageNum2 );
 		return;
 	}
 
+	// Page tabs (1–8)
 	if( pButton >= 1 && pButton <= 8 )
 	{
 		pUser.SetTempTag( "page", pButton );
@@ -356,83 +340,95 @@ function onGumpPress( socket, pButton, gumpData )
 		return;
 	}
 
+	// Last Ten
 	if( pButton == 11000 )
 	{
 		pUser.SetTempTag( "page", 999 );
 		pUser.SetTempTag( "subPage", 1 );
-		PageX(socket, pUser, 999);
+		PageX( socket, pUser, 999 );
 		return;
 	}
 
+	// Close gump
+	if( pButton == 0 )
+	{
+		pUser.SetTempTag( "MakeLast_Tailoring", null );
+		pUser.SetTempTag( "CRAFT", null );
+		socket.CloseGump( gumpID, 0 );
+		return;
+	}
+
+	// Unravel button
+	if( pButton == 52 )
+	{
+		UnravelTarget( socket );
+		return;
+	}
+
+	var usedMakeLast = false;
 	var makeID = 0;
 	var timerID = 0;
 
-	// Handle "Make Last"
-	if(( pButton >= 100 && pButton <= 804 ) || pButton == 5000 )
+	// Make Last
+	if( pButton == 5000 )
 	{
-		if( pButton == 5000 )
+		var last = pUser.GetTempTag( "MakeLast_Tailoring" );
+		if( last )
 		{
-			pButton = pUser.GetTempTag( "MAKELAST" );
+			pButton = last;
 			usedMakeLast = true;
 		}
 		else
 		{
-			pUser.SetTempTag( "MAKELAST", pButton );
+			return;
 		}
 	}
 
-	// If it's a craft button (found in map)
+	// Craft buttons use makeID directly (if in map)
 	if( CraftingMap[pButton] != undefined )
 	{
 		makeID = pButton;
-		timerID = CraftingMap[makeID].timerID || 1;
+		var data = CraftingMap[makeID];
+		timerID = data.timerID || 1;
 
-		let materialHue = pUser.GetTempTag( "LastResourceColor" );
+		// Era / recipe checks
+		if( !eraOK( data ))
+		{
+			socket.SysMessage( "That item is not available in this era." );
+			return;
+		}
+		if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+		{
+			socket.SysMessage( "You must learn that recipe from a scroll." );
+			return;
+		}
+
+		pUser.SetTempTag( "MakeLast_Tailoring", makeID );
+
+		var materialHue = pUser.GetTempTag( "LastResourceColor" );
+
+		// Cloth items: select cloth (colour) unless Make Last + cached hue
 		if(( makeID >= 100 && makeID <= 158 ) || makeID == 180 )
 		{
 			if( usedMakeLast && materialHue != null )
 			{
-				// Check if recipe required and not known
-				let data = CraftingMap[makeID];
-				if( data && !eraOK( data ))
-				{
-					socket.SysMessage( "That item is not available in this era." );
-					return;
-				}
-
-				if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
-				{
-					socket.SysMessage("You must learn that recipe from a scroll.");
-					return;
-				}
 				MakeItem( socket, pUser, makeID, materialHue );
 				AddToLastTen( pUser, makeID );
-				pUser.StartTimer( gumpDelay, timerID, 4030 );
+				pUser.StartTimer( gumpDelay, timerID, tailoringID );
 			}
 			else
 			{
 				pUser.SetTempTag( "makeID", makeID );
 				pUser.SetTempTag( "timerID", timerID );
-				socket.CustomTarget(1, GetDictionaryEntry( 444, socket.language ));
+				socket.CustomTarget( 1, GetDictionaryEntry( 444, socket.language )); // Select material:
 			}
 		}
 		else
 		{
-			// Check if recipe required and not known
-			let data = CraftingMap[makeID];
-			if( data && !eraOK( data ))
-			{
-				socket.SysMessage( "That item is not available in this era." );
-				return;
-			}
-
-			if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
-			{
-				socket.SysMessage("You must learn that recipe from a scroll.");
-				return;
-			}
+			// Non-colour-selected tailoring (leather/bone etc.)
 			MakeItem( socket, pUser, makeID );
 			AddToLastTen( pUser, makeID );
+
 			if( GetServerSetting( "ToolUseLimit" ))
 			{
 				bItem.usesLeft -= 1;
@@ -442,40 +438,74 @@ function onGumpPress( socket, pButton, gumpData )
 					socket.SysMessage( GetDictionaryEntry( 10202, socket.language ));
 				}
 			}
-			pUser.StartTimer( gumpDelay, timerID, 4030 );
+			pUser.StartTimer( gumpDelay, timerID, tailoringID );
 		}
 		return;
 	}
 
-	// If it's a detail button (2000+ button ID pattern)
-	if( pButton >= 2000 && pButton <= 3000 )
+	// Detail buttons: 20000 + makeID (new system)
+	if( pButton >= 20000 && pButton < 30000 )
 	{
-		let makeID = pButton - 2000;
-		if( CraftingMap[makeID] )
+		var detailMakeID = pButton - 20000;
+		var entry = CraftingMap[detailMakeID];
+		if( entry )
 		{
-			pUser.SetTempTag( "ITEMDETAILS", makeID );
+			// Which item to show
+			pUser.SetTempTag( "ITEMDETAILS", detailMakeID );
+
+			// Skill used
+			pUser.SetTempTag( "Skill", entry.skill || tailoringSkillID );
+
+			// Clear old harvest tags
+			pUser.SetTempTag( "Harvest",  null );
+			pUser.SetTempTag( "Harvest2", null );
+			pUser.SetTempTag( "Harvest3", null );
+			pUser.SetTempTag( "Harvest4", null );
+
+			// Clear old custom harvest names
+			pUser.SetTempTag( "HarvestName",  null );
+			pUser.SetTempTag( "Harvest2Name", null );
+			pUser.SetTempTag( "Harvest3Name", null );
+			pUser.SetTempTag( "Harvest4Name", null );
+
+			// Optional harvest dictIDs (cloth, leather, bone etc.) – add later per item
+			if( entry.harvest && entry.harvest.length > 0 )
+			{
+				if( entry.harvest.length >= 1 )
+					pUser.SetTempTag( "Harvest",  entry.harvest[0] );
+				if( entry.harvest.length >= 2 )
+					pUser.SetTempTag( "Harvest2", entry.harvest[1] );
+				if( entry.harvest.length >= 3 )
+					pUser.SetTempTag( "Harvest3", entry.harvest[2] );
+				if( entry.harvest.length >= 4 )
+					pUser.SetTempTag( "Harvest4", entry.harvest[3] );
+			}
+
+			// Optional custom resource names (e.g. "Cloth", "Leather")
+			if( entry.harvestNames && entry.harvestNames.length > 0 )
+			{
+				if( entry.harvestNames.length >= 1 )
+					pUser.SetTempTag( "HarvestName",  entry.harvestNames[0] );
+				if( entry.harvestNames.length >= 2 )
+					pUser.SetTempTag( "Harvest2Name", entry.harvestNames[1] );
+				if( entry.harvestNames.length >= 3 )
+					pUser.SetTempTag( "Harvest3Name", entry.harvestNames[2] );
+				if( entry.harvestNames.length >= 4 )
+					pUser.SetTempTag( "Harvest4Name", entry.harvestNames[3] );
+			}
+
+			if( entry.recipeID && entry.recipeID > 0 )
+				pUser.SetTempTag( "needRecipeID", entry.recipeID );
+			else
+				pUser.SetTempTag( "needRecipeID", 0 );
+
 			TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 		}
 		return;
 	}
-
-	if( pButton == 0 ) // Exit/Close
-	{
-		let gumpID = scriptID + 0xffff;
-		pUser.SetTempTag( "MAKELAST", null );
-		pUser.SetTempTag( "CRAFT", null );
-		socket.CloseGump( gumpID, 0 );
-		return;
-	}
-
-	if( pButton == 52 ) // Unravel Item
-	{
-		UnravelTarget( socket );
-		return;
-	}
 }
 
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( socket: Socket, ourObj: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
 	var pUser = socket.currentChar;
@@ -483,58 +513,57 @@ function onCallback1( socket, ourObj )
 		return;
 
 	// Fetch makeID and timerID from temp tag
-	var makeID = pUser.GetTempTag( "makeID" );
+	var makeID  = pUser.GetTempTag( "makeID" );
 	var timerID = pUser.GetTempTag( "timerID" );
 	pUser.SetTempTag( "makeID", null );
 	pUser.SetTempTag( "timerID", null );
 
 	var bItem = socket.tempObj;
-	if( ValidateObject( bItem ))
+	if( !ValidateObject( bItem ))
+		return;
+
+	if( ValidateObject( ourObj ) && ourObj.isItem )
 	{
-		if( ValidateObject( ourObj ) && ourObj.isItem )
+		// Make sure targeted item is in player's backpack
+		var iPackOwner = GetPackOwner( ourObj, 0 );
+		if( ValidateObject( iPackOwner ))
 		{
-			// Make sure targeted item is in player's backpack
-			var iPackOwner = GetPackOwner( ourObj, 0 );
-			if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+			if( iPackOwner.serial != pUser.serial )
 			{
-				if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
-				{
-					socket.SysMessage( GetDictionaryEntry( 6032, socket.language )); // That resource is in someone else's backpack!
-					return;
-				}
-			}
-			else
-			{
-				socket.SysMessage( GetDictionaryEntry( 6022, socket.language )); // This has to be in your backpack before you can use it.
+				socket.SysMessage( GetDictionaryEntry( 6032, socket.language ));
 				return;
 			}
-
-			//Cache cloth color for future "Make Last"
-			pUser.SetTempTag( "LastResourceColor", ourObj.colour );
-
-			// Check if recipe required and not known
-			let data = CraftingMap[makeID];
-			if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
-			{
-				socket.SysMessage("You must learn that recipe from a scroll.");
-				return;
-			}
-
-			// Pass in the colour of the desired material to use for crafting
-			MakeItem( socket, pUser, makeID, ourObj.colour );
-			AddToLastTen( pUser, makeID );
-			if( GetServerSetting( "ToolUseLimit" ))
-			{
-				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
-				{
-					bItem.Delete();
-					socket.SysMessage( GetDictionaryEntry( 10202, socket.language )); // You have worn out your tool!
-					// Play sound effect of tool breaking
-				}
-			}
-			pUser.StartTimer( gumpDelay, timerID, 4030 );
 		}
+		else
+		{
+			socket.SysMessage( GetDictionaryEntry( 6022, socket.language ));
+			return;
+		}
+
+		// Cache cloth color for Make Last
+		pUser.SetTempTag( "LastResourceColor", ourObj.colour );
+
+		// Recipe re-check (just in case)
+		var data = CraftingMap[makeID];
+		if( data && data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+		{
+			socket.SysMessage( "You must learn that recipe from a scroll." );
+			return;
+		}
+
+		MakeItem( socket, pUser, makeID, ourObj.colour );
+		AddToLastTen( pUser, makeID );
+
+		if( GetServerSetting( "ToolUseLimit" ))
+		{
+			bItem.usesLeft -= 1;
+			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+			{
+				bItem.Delete();
+				socket.SysMessage( GetDictionaryEntry( 10202, socket.language )); // You have worn out your tool!
+			}
+		}
+		pUser.StartTimer( gumpDelay, timerID, tailoringID );
 	}
 }
 
@@ -544,15 +573,13 @@ function UnravelTarget( socket )
 }
 
 // Clothes and leather armor can be unravelled back into cloth and leather
-/** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
+/** @type { ( socket: Socket, ourObj: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
-	// Unravel item, get cloth/leather in return
 	var mChar = socket.currentChar;
 
 	if( !ValidateObject( ourObj ) || !ourObj.isItem )
 	{
-		// Targeted object is not an item that can be smelted
 		mChar.SetTempTag( "prevActionResult", "CANTUNRAVEL" );
 		mChar.StartTimer( repairDelay, 1, true );
 		return;
@@ -571,46 +598,40 @@ function onCallback2( socket, ourObj )
 	var resourceColor = ourObj.colour;
 	var materialType = TriggerEvent( 2506, "GetItemMaterialType", ourObj, 0 );
 
+	var resourceID = 0;
+
 	if( creatorSerial == -1 || entryMadeFrom == 0 || createEntry == null )
 	{
-		// Not a player-crafted item, return 1 resource if item is made of cloth/leather
+		// Not player-crafted; 1 resource if cloth/leather
 		if( materialType == "cloth" || materialType == "leather" )
-		{
 			resourceAmount = 1;
-		}
 	}
 	else
 	{
 		if( createEntry.avgMinSkill > mChar.skills.tailoring )
 		{
+			var gumpID = tailoringID + 0xffff;
 			socket.CloseGump( gumpID, 0 );
 			mChar.SetTempTag( "prevActionResult", "NOUNRAVELSKILL" );
-			mChar.StartTimer( gumpDelay, 1, 4030 );
+			mChar.StartTimer( gumpDelay, 1, tailoringID );
 			return;
 		}
 
-		// Loop through resources used to craft item, see how many resources were used
-		var resourceID = 0;
+		// Loop resources used to craft item
 		var resourcesUsed = createEntry.resources;
 		for( var i = 0; i < resourcesUsed.length; i++ )
 		{
 			var resource = resourcesUsed[i];
 			var amountNeeded = resource[0];
-			var colorNeeded = resource[1];
-			var resourceIDs = resource[2];
+			var colorNeeded  = resource[1]; // unused here but kept for completeness
+			var resourceIDs  = resource[2];
 
-			// Loop through list of resourceIDs that were valid for crafting this item, see if ANY
-			// were a match for the resource we're trying to return
 			for( var j = 0; j <= resourceIDs.length; j++ )
 			{
 				if( !isNaN( parseInt( resourceIDs[j] )))
 				{
-					// If we found some resource that match up to cloth, or leather, go for it
-					var resourceType = TriggerEvent( 2506, "GetResourceType", parseInt( resourceIDs[j] ));
-					/*mChar.TextMessage( "MaterialType: " + materialType );
-					mChar.TextMessage( "ResourceType: " + resourceType );
-					mChar.TextMessage( "resourceID: " + resourceIDs[j] );*/
-					if( materialType == resourceType )
+					var resType = TriggerEvent( 2506, "GetResourceType", parseInt( resourceIDs[j] ));
+					if( materialType == resType )
 					{
 						maxResourceAmount = amountNeeded;
 						resourceID = resourceIDs[j];
@@ -619,42 +640,26 @@ function onCallback2( socket, ourObj )
 				}
 			}
 
-			// We only really care about the first and primary resource....
 			if( maxResourceAmount > 0 )
 				break;
 		}
 
 		if( maxResourceAmount > 1 )
 		{
-			// Calculate amount of resources returned based on player's mining skill, item's wear and tear,
-			// and amount of resources that went into making the item in the first place
-			if( ourObj.health >= 1 || ourObj.usesLeft >= 1 )
-			{
-				var healthPercentage = 0;
-				if( ourObj.health >= 1 )
-				{
-					healthPercentage = Math.floor( ( ourObj.health * 100 ) / ourObj.maxhp );
-				}
+			var healthPercentage = 0;
+			if( ourObj.health >= 1 )
+				healthPercentage = Math.floor( ( ourObj.health * 100 ) / ourObj.maxhp );
 
-				var usesPercentage = 0;
-				if( ourObj.usesLeft >= 1 )
-				{
-					usesPercentage = Math.floor( ( ourObj.usesLeft * 100 ) / ourObj.maxUses );
-				}
+			var usesPercentage = 0;
+			if( ourObj.usesLeft >= 1 )
+				usesPercentage = Math.floor( ( ourObj.usesLeft * 100 ) / ourObj.maxUses );
 
-				var itemPercentage = usesPercentage > 0 ? Math.min( healthPercentage, usesPercentage ) : healthPercentage;
+			var itemPercentage = usesPercentage > 0 ? Math.min( healthPercentage, usesPercentage ) : healthPercentage;
 
-				// Reduce amount of resources returned based on state of object's wear and tear
-				resourceAmount = Math.floor( ( maxResourceAmount * itemPercentage ) / 100 );
-			}
-
-			// Halve the amount of resources returned
+			resourceAmount = Math.floor( ( maxResourceAmount * itemPercentage ) / 100 );
 			resourceAmount = Math.max( Math.floor( resourceAmount / 2 ), 1 );
 
-			// Fetch player's Tailoring skill
 			var playerSkill = mChar.skills.tailoring;
-
-			// Based on player's Tailoring skill, return between 1 to maxResourceAmount
 			resourceAmount = Math.min( Math.max( Math.floor( resourceAmount * ( playerSkill / 1000 )), 1 ), resourceAmount );
 		}
 		else
@@ -665,76 +670,67 @@ function onCallback2( socket, ourObj )
 
 	if( resourceAmount == 0 || resourceID == 0 )
 	{
-		// Targeted object is not an item that can be unravelled
 		mChar.SetTempTag( "prevActionResult", "CANTUNRAVEL" );
-		mChar.StartTimer( repairDelay, 1, 4030 );
+		mChar.StartTimer( repairDelay, 1, tailoringID );
 		return;
 	}
 
-	// Delete the unravelled item
+	// Delete unravelled item
 	ourObj.Delete();
 
-	// Run a generic skill check to give player a chance to increase their tailoring skill
-	mChar.CheckSkill( 34, 0, mChar.skillCaps.tailoring );
+	// Generic skill check
+	mChar.CheckSkill( tailoringSkillID, 0, mChar.skillCaps.tailoring );
 
-	// Determine the actual resource item to add to player's backpack
-	// We'll default to one specific resource per material type
+	// Determine returned resource
 	var itemToAdd = "";
 	switch( materialType )
 	{
-		case "cloth":
-			itemToAdd = "0x1766"; // cut cloth
-			break;
-		case "leather":
-			itemToAdd = "0x1068"; // cut leather
-			break;
-		default:
-			break;
+		case "cloth":   itemToAdd = "0x1766"; break; // cut cloth
+		case "leather": itemToAdd = "0x1068"; break; // cut leather
+		default: break;
 	}
+
 	var newResource = CreateDFNItem( socket, mChar, itemToAdd, resourceAmount, "ITEM", true, resourceColor );
 
 	mChar.SetTempTag( "resourceFromUnravelling", resourceAmount );
 	mChar.SetTempTag( "prevActionResult", "UNRAVELSUCCESS" );
-	mChar.StartTimer( gumpDelay, 1, 4030 );
+	mChar.StartTimer( gumpDelay, 1, tailoringID );
 }
 
 function AddToLastTen( pUser, makeID )
 {
-	// Append makeID to last ten list
-	var raw = pUser.GetTag( "LastTenTailoring" ) || "";
+	var raw  = pUser.GetTempTag( "LastTenTailoring" ) || "";
 	var list = raw.split( "," );
 
-	// Remove if already in list
 	for( var i = 0; i < list.length; i++ )
 	{
-		if( parseInt( list[i]) == makeID )
+		if( parseInt( list[i] ) == makeID )
 		{
-			list.splice(i, 1);
+			list.splice( i, 1 );
 			break;
 		}
 	}
 
-	// Add to front (no unshift in SpiderMonkey 1.8)
-	var newList = [makeID];
-	for( var i = 0; i < list.length && newList.length < 10; i++ )
+	var newList = [ makeID ];
+	for( var j = 0; j < list.length && newList.length < 10; j++ )
 	{
-		var entry = parseInt( list[i] );
+		var entry = parseInt( list[j] );
 		if( !isNaN( entry ) && entry > 0 )
 			newList.push( entry );
 	}
 
-	pUser.SetTag( "LastTenTailoring", newList.join( "," ));
+	pUser.SetTempTag( "LastTenTailoring", newList.join( "," ));
 }
 
 function HasLearnedRecipe( pUser, recipeID )
 {
 	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
-	if( !myData || myData.length == 0)
+	if( !myData || myData.length == 0 )
 		return false;
 
-	for( let i = 0; i < myData.length; i++ )
+	for( var i = 0; i < myData.length; i++ )
 	{
-		let data = myData[i].split( "," );
+		var data = myData[i].split( "," );
 		if( data[0] == recipeID )
 			return true;
 	}
@@ -743,8 +739,6 @@ function HasLearnedRecipe( pUser, recipeID )
 
 function eraOK( entry )
 {
-	// Optional per-entry gates. Accept either/both. Strings like "lbr","aos","ml","tol".
-	// If not present, the entry is valid for all eras.
 	if( entry.minEra && coreShardEra < EraStringToNum( entry.minEra ))
 		return false;
 	if( entry.maxEra && coreShardEra > EraStringToNum( entry.maxEra ))

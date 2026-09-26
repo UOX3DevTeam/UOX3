@@ -228,9 +228,9 @@ decay=1
 [0x139d]
 { S pegasus
 get=base_item
-name=statue
+name=pegasus statuette
 id=0x139d
-weight=1000
+weight=100
 movable=1
 decay=1
 }

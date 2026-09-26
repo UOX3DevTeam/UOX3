@@ -1639,6 +1639,64 @@ HOUSE_ITEM=629
 HOUSE_ITEM=630
 }
 
+// House Addon - stone table (east)
+[HOUSE 210]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=mediumstonetableeastdeed
+HOUSE_ITEM=631
+HOUSE_ITEM=632
+}
+
+// House Addon - stone table (south)
+[HOUSE 211]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=mediumstonetablesouthdeed
+HOUSE_ITEM=633
+HOUSE_ITEM=634
+}
+
+// House Addon - large stone table (east)
+[HOUSE 212]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largestonetableeastdeed
+HOUSE_ITEM=635
+HOUSE_ITEM=636
+HOUSE_ITEM=637
+}
+
+// House Addon - large stone table (south)
+[HOUSE 213]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largestonetablesouthdeed
+HOUSE_ITEM=638
+HOUSE_ITEM=639
+HOUSE_ITEM=640
+}
+
 [HOUSE ITEM 1]
 { Wooden Door (Small house)
 ITEM=0x06A5
@@ -3639,7 +3697,7 @@ Z=0
 
 // solenanthole dirt 1
 [HOUSE ITEM 600]
-{ 
+{
 ITEM=solenantholedirt1
 X=0
 Y=0
@@ -3657,7 +3715,7 @@ Z=0
 
 // solenanthole dirt 2
 [HOUSE ITEM 603]
-{ 
+{
 ITEM=solenantholedirt2
 X=1
 Y=1
@@ -3666,7 +3724,7 @@ Z=0
 
 // solenanthole dirt 3
 [HOUSE ITEM 604]
-{ 
+{
 ITEM=solenantholedirt3
 X=1
 Y=0
@@ -3675,7 +3733,7 @@ Z=0
 
 // solenanthole dirt 4
 [HOUSE ITEM 605]
-{ 
+{
 ITEM=solenantholedirt4
 X=1
 Y=-1
@@ -3684,7 +3742,7 @@ Z=0
 
 // solenanthole dirt 5
 [HOUSE ITEM 606]
-{ 
+{
 ITEM=solenantholedirt5
 X=0
 Y=-1
@@ -3693,7 +3751,7 @@ Z=0
 
 // solenanthole dirt 6
 [HOUSE ITEM 607]
-{ 
+{
 ITEM=solenantholedirt6
 X=-1
 Y=-1
@@ -3702,7 +3760,7 @@ Z=0
 
 // solenanthole dirt 7
 [HOUSE ITEM 608]
-{ 
+{
 ITEM=solenantholedirt7
 X=-1
 Y=0
@@ -3711,7 +3769,7 @@ Z=0
 
 // solenanthole dirt 8
 [HOUSE ITEM 609]
-{ 
+{
 ITEM=solenanthole dirt8
 X=-1
 Y=1
@@ -3720,7 +3778,7 @@ Z=0
 
 // solenanthole dirt 9
 [HOUSE ITEM 610]
-{ 
+{
 ITEM=solenantholedirt9
 X=0
 Y=1
@@ -3729,7 +3787,7 @@ Z=0
 
 // entrance hole
 [HOUSE ITEM 611]
-{ 
+{
 ITEM=solenentrancehole
 X=0
 Y=0
@@ -3738,7 +3796,7 @@ Z=0
 
 // entrance hole
 [HOUSE ITEM 612]
-{ 
+{
 ITEM=solenentrancehole
 X=1
 Y=0
@@ -3747,7 +3805,7 @@ Z=0
 
 // entrance hole
 [HOUSE ITEM 613]
-{ 
+{
 ITEM=solenentrancehole2
 X=1
 Y=1
@@ -3756,7 +3814,7 @@ Z=0
 
 // entrance hole
 [HOUSE ITEM 614]
-{ 
+{
 ITEM=solenentrancehole
 X=0
 Y=1
@@ -3764,7 +3822,7 @@ Z=0
 }
 
 [HOUSE ITEM 615]
-{ 
+{
 ITEM=shentrancepiece1
 X=-1
 Y=-1
@@ -3772,7 +3830,7 @@ Z=0
 }
 
 [HOUSE ITEM 616]
-{ 
+{
 ITEM=shentrancepiece2
 X=0
 Y=-1
@@ -3780,7 +3838,7 @@ Z=0
 }
 
 [HOUSE ITEM 617]
-{ 
+{
 ITEM=shentrancepiece3
 X=1
 Y=-1
@@ -3788,7 +3846,7 @@ Z=0
 }
 
 [HOUSE ITEM 618]
-{ 
+{
 ITEM=shentrancepiece4
 X=2
 Y=-1
@@ -3796,7 +3854,7 @@ Z=0
 }
 
 [HOUSE ITEM 619]
-{ 
+{
 ITEM=shentrancepiece5
 X=-1
 Y=0
@@ -3804,7 +3862,7 @@ Z=0
 }
 
 [HOUSE ITEM 620]
-{ 
+{
 ITEM=shentrancepiece6
 X=0
 Y=0
@@ -3812,7 +3870,7 @@ Z=0
 }
 
 [HOUSE ITEM 621]
-{ 
+{
 ITEM=shentrancepiece6
 X=1
 Y=0
@@ -3820,7 +3878,7 @@ Z=0
 }
 
 [HOUSE ITEM 622]
-{ 
+{
 ITEM=shentrancepiece7
 X=2
 Y=0
@@ -3828,7 +3886,7 @@ Z=0
 }
 
 [HOUSE ITEM 623]
-{ 
+{
 ITEM=shentrancepiece8
 X=-1
 Y=1
@@ -3836,7 +3894,7 @@ Z=0
 }
 
 [HOUSE ITEM 624]
-{ 
+{
 ITEM=shentrancepiece6
 X=0
 Y=1
@@ -3844,7 +3902,7 @@ Z=0
 }
 
 [HOUSE ITEM 625]
-{ 
+{
 ITEM=shentrancepiece6
 X=1
 Y=1
@@ -3852,7 +3910,7 @@ Z=0
 }
 
 [HOUSE ITEM 626]
-{ 
+{
 ITEM=shentrancepiece9
 X=2
 Y=1
@@ -3860,7 +3918,7 @@ Z=0
 }
 
 [HOUSE ITEM 627]
-{ 
+{
 ITEM=shentrancepiece10
 X=-1
 Y=2
@@ -3868,7 +3926,7 @@ Z=0
 }
 
 [HOUSE ITEM 628]
-{ 
+{
 ITEM=shentrancepiece11
 X=0
 Y=2
@@ -3876,7 +3934,7 @@ Z=0
 }
 
 [HOUSE ITEM 629]
-{ 
+{
 ITEM=shentrancepiece12
 X=1
 Y=2
@@ -3884,10 +3942,90 @@ Z=0
 }
 
 [HOUSE ITEM 630]
-{ 
+{
 ITEM=shentrancepiece13
 X=2
 Y=2
+Z=0
+}
+
+[HOUSE ITEM 631]
+{
+ITEM=0x1202
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 632]
+{
+ITEM=0x1201
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 633]
+{
+ITEM=0x1205
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 634]
+{
+ITEM=0x1204
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 635]
+{
+ITEM=0x1202
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 636]
+{
+ITEM=0x1203
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 637]
+{
+ITEM=0x1201
+X=0
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 638]
+{
+ITEM=0x1205
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 639]
+{
+ITEM=0x1206
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 640]
+{
+ITEM=0x1204
+X=2
+Y=0
 Z=0
 }
 
@@ -3964,7 +4102,7 @@ Z=0
 }
 
 [HOUSE ITEM 800]
-{ 
+{
 ITEM=brownbeartrophy
 X=0
 Y=0
@@ -3972,7 +4110,7 @@ Z=0
 }
 
 [HOUSE ITEM 801]
-{ 
+{
 ITEM=polarbeartrophy
 X=0
 Y=0
@@ -3980,7 +4118,7 @@ Z=0
 }
 
 [HOUSE ITEM 802]
-{ 
+{
 ITEM=stagtrophy
 X=0
 Y=0
@@ -3988,7 +4126,7 @@ Z=0
 }
 
 [HOUSE ITEM 803]
-{ 
+{
 ITEM=largefishtrophy
 X=0
 Y=0
@@ -3996,7 +4134,7 @@ Z=0
 }
 
 [HOUSE ITEM 804]
-{ 
+{
 ITEM=orctrophy
 X=0
 Y=0
@@ -4004,7 +4142,7 @@ Z=0
 }
 
 [HOUSE ITEM 805]
-{ 
+{
 ITEM=gorillatrophy
 X=0
 Y=0
@@ -4012,7 +4150,7 @@ Z=0
 }
 
 [HOUSE ITEM 806]
-{ 
+{
 ITEM=trolltrophy
 X=0
 Y=0

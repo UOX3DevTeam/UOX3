@@ -1,0 +1,17 @@
+[0x241C]
+{
+get=base_item
+name=Small Urn
+id=0x241C
+weight=100
+movable=1
+}
+
+[0x241A]
+{
+get=base_item
+name=Tower Sculpture
+id=0x241A
+weight=100
+movable=1
+}

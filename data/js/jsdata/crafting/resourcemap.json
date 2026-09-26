@@ -1,0 +1,44 @@
+[
+	{ "resourceSet": "wood", "label": "Wood", "dictID": 10687, "items": [
+		{ "label": "Logs", "itemID": 7136, "hue": 0 },
+		{ "label": "Boards", "itemID": 7127, "hue": 0 }
+	] },
+	{ "resourceSet": "tailoring", "label": "Tailoring Materials", "dictID": 11402, "items": [
+		{ "label": "Leather", "itemID": 4199, "hue": 0 },
+		{ "label": "Leather", "itemID": 4200, "hue": 0 },
+		{ "label": "Leather", "itemID": 4225, "hue": 0 },
+		{ "label": "Leather", "itemID": 4226, "hue": 0 },
+		{ "label": "Hides", "itemID": 4216, "hue": 0 },
+		{ "label": "Hides", "itemID": 4217, "hue": 0 }
+	] },
+	{ "resourceSet": "ore", "label": "Ore", "tempTag": "ORE", "defaultIndex": 0, "items": [
+		{ "index": 0, "label": "Iron", "dictID": 10291, "itemID": 7154, "hue": 0, "minSkill": 0 },
+		{ "index": 1, "label": "Dull Copper", "dictID": 10203, "itemID": 7154, "hue": 2419, "minSkill": 650 },
+		{ "index": 2, "label": "Shadow Iron", "dictID": 10204, "itemID": 7154, "hue": 2406, "minSkill": 700 },
+		{ "index": 3, "label": "Copper", "dictID": 10205, "itemID": 7154, "hue": 2013, "minSkill": 750 },
+		{ "index": 4, "label": "Bronze", "dictID": 10206, "itemID": 7154, "hue": 1750, "minSkill": 800 },
+		{ "index": 5, "label": "Gold", "dictID": 10207, "itemID": 7154, "hue": 2213, "minSkill": 850 },
+		{ "index": 6, "label": "Agapite", "dictID": 10208, "itemID": 7154, "hue": 2425, "minSkill": 900 },
+		{ "index": 7, "label": "Verite", "dictID": 10209, "itemID": 7154, "hue": 2207, "minSkill": 950 },
+		{ "index": 8, "label": "Valorite", "dictID": 10210, "itemID": 7154, "hue": 2219, "minSkill": 990 }
+	] },
+	{ "resourceSet": "granite", "label": "Granite", "tempTag": "Granite", "defaultIndex": 0, "items": [
+		{ "index": 0, "label": "Granite", "dictID": 14011, "itemID": 6009, "hue": 0 },
+		{ "index": 1, "label": "Dull Copper Granite", "dictID": 14012, "itemID": 6009, "hue": 2419 },
+		{ "index": 2, "label": "Shadow Iron Granite", "dictID": 14013, "itemID": 6009, "hue": 2406 },
+		{ "index": 3, "label": "Copper Granite", "dictID": 14014, "itemID": 6009, "hue": 2013 },
+		{ "index": 4, "label": "Bronze Granite", "dictID": 14015, "itemID": 6009, "hue": 1750 },
+		{ "index": 5, "label": "Gold Granite", "dictID": 14016, "itemID": 6009, "hue": 2213 },
+		{ "index": 6, "label": "Agapite Granite", "dictID": 14017, "itemID": 6009, "hue": 2425 },
+		{ "index": 7, "label": "Verite Granite", "dictID": 14018, "itemID": 6009, "hue": 2207 },
+		{ "index": 8, "label": "Valorite Granite", "dictID": 14019, "itemID": 6009, "hue": 2219 }
+	] },
+	{ "resourceSet": "dragonScales", "label": "Dragon Scales", "tempTag": "Scale", "defaultIndex": 0, "items": [
+		{ "index": 0, "label": "Red Scales", "dictID": 20299, "itemID": 9908, "hue": 1635, "minSkill": 0 },
+		{ "index": 1, "label": "Yellow Scales", "dictID": 20300, "itemID": 9908, "hue": 2125, "minSkill": 0 },
+		{ "index": 2, "label": "Black Scales", "dictID": 20301, "itemID": 9908, "hue": 1109, "minSkill": 0 },
+		{ "index": 3, "label": "Green Scales", "dictID": 20302, "itemID": 9908, "hue": 2129, "minSkill": 0 },
+		{ "index": 4, "label": "White Scales", "dictID": 20303, "itemID": 9908, "hue": 706, "minSkill": 0 },
+		{ "index": 5, "label": "Blue Scales", "dictID": 20304, "itemID": 9908, "hue": 6, "minSkill": 0 }
+	] }
+]

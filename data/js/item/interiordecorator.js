@@ -30,6 +30,7 @@ function onUseChecked( pUser, iUsed )
 
 function interiorDecoratorGump( pUser )
 {
+	var socket = pUser.socket;
 	var interiorGump = new Gump;
 	interiorGump.AddPage( 0 );
 	interiorGump.AddBackground( 0, 0, 200, 200, 2600 );
@@ -39,7 +40,7 @@ function interiorDecoratorGump( pUser )
 	interiorGump.AddXMFHTMLGump( 90, 100, 70, 40, 1018324, false, false );//up
 	interiorGump.AddButton( 50, 145, 0x868, 1, 0, 3 );
 	interiorGump.AddXMFHTMLGump( 90, 150, 70, 40, 1018325, false, false );//down
-	interiorGump.Send( pUser );
+	interiorGump.Send( socket );
 	interiorGump.Free();
 	return false;
 }
@@ -84,10 +85,18 @@ function onGumpPress( socket, pButton, gumpData )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback1( socket, ourObj )
 {
+	if( !ValidateObject( ourObj ))
+	{
+		return;
+	}
+
+	var isBuilding   = ourObj.GetTag( "BuildingCraftable" ) === 1;
+	var isWallLocked = ourObj.GetTag( "CraftWallLocked" ) === 1;
 	var pUser = socket.currentChar;
-	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
+	if( !ourObj.isItem || ( isBuilding && !isWallLocked ) || ( !isBuilding && ourObj.movable != 3 ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
+		socket.CustomTarget( 1 );
 		return;
 	}
 
@@ -126,10 +135,18 @@ function onCallback1( socket, ourObj )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback2( socket, ourObj )
 {
+	if( !ValidateObject( ourObj ))
+	{
+		return;
+	}
+
+	var isBuilding   = ourObj.GetTag( "BuildingCraftable" ) === 1;
+	var isWallLocked = ourObj.GetTag( "CraftWallLocked" ) === 1;
 	var pUser = socket.currentChar;
-	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
+	if( !ourObj.isItem || ( isBuilding && !isWallLocked ) || ( !isBuilding && ourObj.movable != 3 ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
+		socket.CustomTarget( 2 );
 		return;
 	}
 
@@ -168,10 +185,18 @@ function onCallback2( socket, ourObj )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback3( socket, ourObj )
 {
+	if( !ValidateObject( ourObj ))
+	{
+		return;
+	}
+
+	var isBuilding   = ourObj.GetTag( "BuildingCraftable" ) === 1;
+	var isWallLocked = ourObj.GetTag( "CraftWallLocked" ) === 1;
 	var pUser = socket.currentChar;
-	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
+	if( !ourObj.isItem || ( isBuilding && !isWallLocked ) || ( !isBuilding && ourObj.movable != 3 ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
+		socket.CustomTarget( 3 );
 		return;
 	}
 

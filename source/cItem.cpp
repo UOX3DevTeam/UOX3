@@ -2111,7 +2111,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'E':
 				if( UTag == "ENTRYMADEFROM" )
 				{
-					EntryMadeFrom( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					EntryMadeFrom( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "EVENT" )

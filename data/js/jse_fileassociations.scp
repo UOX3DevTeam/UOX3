@@ -244,6 +244,9 @@
 4034=skill/craft/cooking.js
 4035=skill/craft/cartography.js
 4036=skill/craft/glassblowing.js
+4037=skill/craft/masonry.js
+4038=skill/craft/craftmap_registry.js
+4040=skill/craft/customcraft.js
 4050=skill/mining.js
 4055=skill/snooping.js
 
@@ -317,7 +320,7 @@
 5052=item/sandminingbook.js
 5053=item/stoneminingbook.js
 5054=item/glassblowingbook.js
-//reserved for granitebook
+5055=item/masonrybook.js
 5056=item/crystalball.js
 5057=item/ballofpetsummoning.js
 5058=item/bagofsending.js
@@ -329,6 +332,9 @@
 5064=item/runicatlas.js
 5065=item/jacobspickaxe.js
 5070=item/dawns_music_box.js
+
+5080=item/buildingcraftables.js
+5081=item/buildingcraftables_doors.js
 
 5300=item/etherealstatuettes.js
 5301=npc/pets/dismountetherealmount.js
