@@ -9203,6 +9203,8 @@ ADDITEM=guildstonedeed
 ADDITEM=playervendordeed
 0x14F0=Hair Restyle Deed
 ADDITEM=hairrestyledeed
+0x14F0=Mannequin Deed
+ADDITEM=mannequindeed
 <=Previous Menu
 ITEMMENU=4
 }
