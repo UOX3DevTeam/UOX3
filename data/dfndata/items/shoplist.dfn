@@ -10,6 +10,7 @@
 [SHOPLIST ArchitectShopping]
 {
 RSHOPITEM=interiordecorator
+RSHOPITEM=houseplacementtool
 RSHOPITEM=smallsnphousedeed
 RSHOPITEM=smallstonehousedeed
 RSHOPITEM=smallbrickhousedeed
@@ -71,6 +72,7 @@ RSHOPITEM=largeforgedeedwest
 RSHOPITEM=largeforgedeednorth
 RSHOPITEM=largeforgedeedsouth
 SELLITEM=interiordecorator
+SELLITEM=houseplacementtool
 SELLITEM=smallsnphousedeed
 SELLITEM=smallstonehousedeed
 SELLITEM=smallbrickhousedeed
