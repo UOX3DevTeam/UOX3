@@ -213,3 +213,66 @@ id=0x14F0
 morex=323
 origin=ml
 }
+
+[aquariumsouthdeed]
+{
+name=Large Aquarium (South)
+id=0x14F0
+morex=324
+value=3000 1500
+restock=15
+}
+
+[aquariumeastdeed]
+{
+name=Large Aquarium (East)
+id=0x14F0
+morex=325
+value=3000 1500
+restock=15
+}
+
+[smallelegantaquariumdeed]
+{
+name=Small Elegant Aquarium
+id=0x14F0
+morex=326
+value=5000 2500
+restock=15
+}
+
+[wallmountedelegantaquariumsouthdeed]
+{
+name=Wall Mounted Aquarium (South)
+id=0x14F0
+morex=327
+value=6000 3000
+restock=15
+}
+
+[wallmountedelegantaquariumeastdeed]
+{
+name=Wall Mounted Aquarium (East)
+id=0x14F0
+morex=328
+value=6000 3000
+restock=15
+}
+
+[largeelegantaquariumsouthdeed]
+{
+name=Wall Mounted Aquarium (South)
+id=0x14F0
+morex=329
+value=10000 5000
+restock=15
+}
+
+[largeelegantaquariumeastdeed]
+{
+name=Large Aquarium (East)
+id=0x14F0
+morex=330
+value=10000 5000
+restock=15
+}

@@ -1,0 +1,374 @@
+[fishbowl]
+{
+get=base_item
+name=a Fish Bowl
+id=0x241C
+script=5103
+decay=0
+weight=1
+}
+
+//Aquarium Fish
+[base_aquarium_fish]
+{
+get=base_item
+decay=1
+weight=1
+custominttag=isAquariumFish 1
+script=5101
+}
+
+[albinofrog]
+{
+get=base_aquarium_fish
+name=An Albino Frog
+id=0x3B0D
+color=0x47E
+}
+
+[minocbluefish]
+{
+get=base_aquarium_fish
+name=A Minoc Blue Fish
+id=0x3AFE
+}
+
+[albinocourtesanfish]
+{
+get=base_aquarium_fish
+name=Albino Courtesan Fish
+id=0x3B04
+}
+
+[britaincrownfish]
+{
+get=base_aquarium_fish
+name=Britain Crown Fish
+id=0x3AFF
+}
+
+[fandancerfish]
+{
+get=base_aquarium_fish
+name=Fandancer Fish
+id=0x3B02
+}
+
+[goldenbroadtail]
+{
+get=base_aquarium_fish
+name=A Golden Broadtail
+id=0x3B03
+}
+
+[jellyfish]
+{
+get=base_aquarium_fish
+name=Jellyfish
+id=0x3B0E
+}
+
+[longclawcrab]
+{
+get=base_aquarium_fish
+name=A Long Claw Crab
+id=0x3AFC
+color=0x527
+}
+
+[speckledcrab]
+{
+get=base_aquarium_fish
+name=A Speckled Crab
+id=0x3AFC
+}
+
+[makotocourtesanfish]
+{
+get=base_aquarium_fish
+name=A Makoto Courtesan Fish
+id=0x3AFD
+}
+
+[killerfrog]
+{
+get=base_aquarium_fish
+name=A Killer Frog
+id=0x3B0D
+}
+
+[nujelmhoneyfish]
+{
+get=base_aquarium_fish
+name=A Nujelm Honey Fish
+id=0x3ACB
+}
+
+[purplefrog]
+{
+get=base_aquarium_fish
+name=A Purple Frog
+id=0x3AE5
+color=0x4fa
+}
+
+[reddartfish]
+{
+get=base_aquarium_fish
+name=A Red Dart Fish
+id=0x3AD1
+}
+
+[shrimp]
+{
+get=base_aquarium_fish
+name=A Shrimp
+id=0x3ACE
+}
+
+[smallmouthsuckerfin]
+{
+get=base_aquarium_fish
+name=A Smallmouth Suckerfin
+id=0x3ACF
+}
+
+[speckledcrab]
+{
+get=base_aquarium_fish
+name=A Speckled Crab
+id=0x3ACC
+}
+
+[spinedscratcherfish]
+{
+get=base_aquarium_fish
+name=A Spined Scratcher Fish
+id=0x3AD0
+}
+
+[spottedbuccaneer]
+{
+get=base_aquarium_fish
+name=A Spotted Buccaneer
+id=0x3ACE
+}
+
+[vesperreeftiger]
+{
+get=base_aquarium_fish
+name=A Vesper Reef Tiger
+id=0x3ACA
+}
+
+[yellowfinbluebelly]
+{
+get=base_aquarium_fish
+name=A Yellow-Fin Bluebelly
+id=0x3ACD
+}
+
+//Reward Fish
+
+[Coral]
+{
+get=base_aquarium_fish
+name=Coral
+id=0x3AF9
+}
+
+[Coral1]
+{
+get=Coral
+id=0x3AFA
+}
+
+[Coral2]
+{
+get=Coral
+id=0x3AFB
+}
+
+[brineshrimp]
+{
+get=base_aquarium_fish
+name=Brine Shrimp
+id=0x3B13
+}
+
+[fullmoonfish]
+{
+get=base_aquarium_fish
+name=A Full Moon Fish
+id=0x3B15
+}
+
+[seahorsefish]
+{
+get=base_aquarium_fish
+name=A Sea Horse
+id=0x3B10
+}
+
+[strippedflakefish]
+{
+get=base_aquarium_fish
+name=Stripped Flake Fish
+id=0x3B0A
+}
+
+[strippedsosarianswill]
+{
+get=base_aquarium_fish
+name=Stripped Sosarian Swill
+id=0x3B0A
+}
+
+[base_aquarium_decoration]
+{
+get=base_item
+decay=1
+weight=1
+custominttag=isAquariumDecor 1
+script=5102
+}
+
+[aquariummessage]
+{
+get=base_aquarium_decoration
+name=Message in a Bottle
+id=0x099F
+weight=100
+value=8 4
+script=5031
+}
+
+[captainblackheartsfishingpole]
+{
+get=base_aquarium_decoration
+name=Captain Blackheart's Fishing Pole
+id=0x0DC0
+weight=800
+value=15 7
+restock=20
+decay=1
+good=54
+layer=0x02
+maxuses=75
+usesleft=25
+sectionid=captainblackheartsfishingpole
+script=2200// uses left tooltip
+}
+
+[craftysfishinghat]
+{
+get=base_aquarium_decoration
+name=Crafty's Fishing Hat
+id=0x1713
+weight=100
+value=25 12
+layer=0x06
+def=3
+hp=50
+sectionid=craftysfishinghat
+more=0x1 0x0 0x0 0x0//Medable armor
+}
+
+[fishbones]
+{
+get=base_aquarium_decoration
+name=Fish bones
+id=0x3B0C
+}
+
+[islandstatue]
+{
+get=base_aquarium_decoration
+name=An island statue
+id=0x3B0F
+}
+
+[shell]
+{
+get=base_aquarium_decoration
+name=A shell
+id=0x3B12
+}
+
+[shell1]
+{
+get=Shell
+id=0x3B13
+}
+
+[toyboat]
+{
+get=base_aquarium_decoration
+name=A toy boat
+id=0x14F4
+}
+
+[waterloggedboots]
+{
+get=base_aquarium_decoration
+name=Waterlogged boots
+id=0x1711
+weight=400
+value=56 28
+layer=0x03
+def=7
+hp=50
+str=20
+dyeable=1
+decay=1
+good=19
+sectionid=waterloggedboots
+more=0x1 0x0 0x0 0x0//Medable armor
+}
+
+[aquariumfood]
+{
+get=base_item
+name=Aquarium Food
+id=0xEFC
+decay=1
+weight=1
+custominttag=isAquariumFood 1
+}
+
+[aquariumflakesphere]
+{
+get=base_item
+name=An aquarium flake sphere
+id=0x973
+decay=1
+weight=1
+custominttag=isAquariumFood 1
+script=5102
+}
+
+[0xA3E9]
+{
+get=base_item
+name=Live Rock
+id=0xA3E9
+decay=1
+weight=1000
+}
+
+[liverock]
+{
+get=0xA3E9
+}
+
+[yournewaquarium]
+{
+get=base_item
+name=Your New Aquarium
+id=0x0ff2
+weight=100
+type=11
+decay=1
+value=22 11
+more=0x00000042
+}
