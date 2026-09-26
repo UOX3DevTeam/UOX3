@@ -1510,3 +1510,26 @@ sectionid=0x2b70
 {
 get=0x2b70
 }
+
+// jack o lantern helm
+[0xa3ea]
+{
+getuo=0xa3ea_lbr
+gett2a=0xa3ea_lbr
+getuor=0xa3ea_lbr
+gettd=0xa3ea_lbr
+getlbr=0xa3ea_lbr
+getaos=0xa3ea_aos
+getse=0xa3ea_aos
+getml=0xa3ea_aos
+getsa=0xa3ea_aos
+geths=0xa3ea_aos
+gettol=0xa3ea_aos
+sectionid=0xa3ea
+}
+
+// jack o lantern helm - Alias
+[jackolantern_helm]
+{
+get=0xa3ea
+}

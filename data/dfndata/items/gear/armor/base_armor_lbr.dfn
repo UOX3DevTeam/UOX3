@@ -1911,3 +1911,14 @@ str=5
 value=62 31
 weight=500
 }
+
+// jack o' lantern helm - LBR stats (default)
+[0xa3ea_lbr]
+{
+get=base_jackolantern_helm
+def=6
+hp=46 58
+str=5
+value=250 125
+weight=300
+}

@@ -2143,3 +2143,16 @@ name=gargish wooden shield
 id=0x4200
 origin=sa
 }
+
+// jack o lantern helm - Base item with shared DFN tags
+[base_jackolantern_helm]
+{
+get=base_item
+name=jack o lantern helm
+id=0xa3ea
+decay=1
+good=15
+layer=0x06
+restock=15
+dir=1
+}

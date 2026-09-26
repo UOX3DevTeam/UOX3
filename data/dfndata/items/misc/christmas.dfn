@@ -225,6 +225,42 @@ id=0x232C
 get=0x232D 0x232C
 }
 
+[wreathdeed2]
+{
+get=base_item
+name=a holiday wreath deed
+id=0x14F0
+script=5608
+decay=1
+custominttag=addondeed 2
+}
+
+[0xA12E]
+{
+get=base_item
+name=a wreath
+id=0xA12E
+movable=1
+dyeable=1
+decay=1
+weight=100
+newbie
+script=5609
+custominttag=HolidayAddon 2
+}
+
+[0xA12F]
+{
+get=0xA12E
+id=0xA12F
+}
+
+[wreathaddon2]
+{
+get=0xA12E 0xA12F
+sectionID=wreathaddon2
+}
+
 [0x2328]
 {
 get=base_item
@@ -877,4 +913,82 @@ id=0xB1CA
 {//small
 get=0xB1C9
 id=0xB1CB
+}
+
+[0xA130]
+{
+get=base_item
+name=Candlelit Holiday Sign
+id=0xA130
+restock=10
+movable=1
+decay=1
+good=7
+weight=1000
+script=5610
+}
+
+[0xA134]
+{
+get=0xA130
+id=0xA134
+}
+
+[candlelitholidaysign]
+{
+get=0xA130
+id=0xA130 0xA134
+}
+
+[0xA4B2]
+{
+get=base_item
+name=Dove Cage
+id=0xA4B2
+restock=10
+movable=1
+decay=1
+good=7
+dyeable=1
+weight=1000
+script=5611
+}
+
+[0xA4B1]
+{
+get=0xA4B2
+id=0xA4B1
+}
+
+[dovecage]
+{
+get=0xA4B2
+id=0xA4B2 0xA4B1
+}
+
+[jollyholidaytreedeed]
+{
+name=Jolly Holiday Tree Deed
+id=0x14F0
+morex=360
+decay=1
+}
+
+[0xA4D0]
+{
+get=base_item
+name=Jolly Holiday Tree
+id=0xA4D0
+restock=10
+movable=2
+decay=0
+dyeable=1
+good=7
+script=5612
+}
+
+[jollyholidaytree]
+{
+get=0xA4D0
+id=0xA4D0
 }

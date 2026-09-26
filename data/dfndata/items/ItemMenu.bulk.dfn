@@ -10577,6 +10577,8 @@ ADDITEM=0x2788
 ADDITEM=0x2789
 0x278d=platemail haidate
 ADDITEM=0x278d
+0xa3ea=jack o lantern helm
+ADDITEM=0xa3ea
 <=Previous Menu
 ITEMMENU=92
 }

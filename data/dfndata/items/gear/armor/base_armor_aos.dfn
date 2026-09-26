@@ -1999,3 +1999,15 @@ str=20
 value=54 27
 weight=600
 }
+
+// jack o' lantern helm - AoS stats
+[0xa3ea_aos]
+{
+get=base_jackolantern_helm
+def=12
+elementresist=14 4 10 8
+hp=255 255
+str=10
+value=250 125
+weight=300
+}
