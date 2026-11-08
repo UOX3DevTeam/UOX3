@@ -1,3 +1,9 @@
+07/11/2026 - UOX3 Team
+    [ADD] Added an optional custom gump ID to the JavaScript Gump constructor: new Gump( gumpID )
+    [ADD] Added dynamic gump ID-to-script routing so button responses from custom-ID gumps invoke the correct script's onGumpPress() handler
+    [UPD] Gump IDs are reserved when sent; the same script may reuse an ID, while cross-script collisions raise a script error and prevent the conflicting gump from being sent
+    [DOC] Documented custom gump IDs, selective CloseGump() usage, callback routing, valid ID range and collision behavior
+
 23/09/2026 - Xoduz (#600)
     [FIX] Fixed a server crash related to an argument-count mismatch in cScript::OnCollide() that would trigger when walking onto items like moongates and dungeon traps
 

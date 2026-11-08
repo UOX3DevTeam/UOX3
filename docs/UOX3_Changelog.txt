@@ -1,5 +1,11 @@
 UOX3 Changelog
 ------------------------
+07/11/2026 - UOX3 Team
+	Added an optional custom gump ID to the JavaScript Gump constructor: new Gump( gumpID )
+	Added dynamic gump ID-to-script routing so custom-ID gump responses invoke the correct script's onGumpPress() handler
+	The same script may reuse a gump ID; cross-script collisions raise a script error and prevent the conflicting gump from being sent
+	Updated the JavaScript documentation with constructor, CloseGump(), callback routing, ID range and collision examples
+
 -================================-
 -= 30/07/2025 - UOX3 0.99.7a =-
 -================================-

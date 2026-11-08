@@ -61,6 +61,7 @@ private:
 	void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
 	std::stack< cScript * > activeScript;
+	std::map<UI32, UI16> customGumpScriptMap;
 
 public:
 	CJSMapping() = default;
@@ -77,6 +78,9 @@ public:
 
 	cScript *			GetScript( UI16 toFind );
 	cScript *			GetScript( JSObject *toFind );
+
+	bool				RegisterGump( UI32 gumpId, UI16 scriptId );
+	bool				GetGumpScript( UI32 gumpId, UI16 &scriptId ) const;
 
 	CEnvoke *			GetEnvokeById( void );
 	CEnvoke *			GetEnvokeByType( void );
