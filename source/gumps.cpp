@@ -1868,6 +1868,17 @@ bool CPIGumpMenuSelect::Handle( void )
 
 	BuildTextLocations();
 
+	UI16 customGumpScriptId = 0;
+	if( JSMapping->GetGumpScript( gumpId, customGumpScriptId ))
+	{
+		cScript *toExecute = JSMapping->GetScript( customGumpScriptId );
+		if( toExecute != nullptr )
+		{
+			toExecute->HandleGumpPress( this );
+		}
+		return true;
+	}
+
 	if( gumpId < 0xFFFF && ( buttonId > 10000 && buttonId < 20000 ))
 	{
 		BuildGumpFromScripts( tSock, static_cast<UI16>( buttonId - 10000 ));

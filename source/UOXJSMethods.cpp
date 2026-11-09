@@ -25,6 +25,8 @@
 #include "skills.h"
 #include "speech.h"
 #include "CGump.h"
+#include <cmath>
+#include <limits>
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
@@ -461,18 +463,53 @@ bool CSocket_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for creating a new JS Gump object
 //o------------------------------------------------------------------------------------------------o
+// JavaScript syntax: new Gump( [gumpId] ), where gumpId is an optional UI32 client gump ID.
 bool Gump( JSContext *cx, unsigned argc, JS::Value* vp )
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
+	if( argc > 1 )
+	{
+		ScriptError( cx, "Gump: Invalid number of arguments (takes an optional custom gumpId)" );
+		return false;
+	}
+
 	// Allocate the GumpList here and "SetPrivate" it to the Object
 	SEGump_st *toAdd = new SEGump_st;
 	toAdd->one = new std::vector<std::string>();
 	toAdd->two = new std::vector<std::string>();
 	toAdd->textId = 0;
+	toAdd->gumpId = 0;
+	toAdd->hasCustomGumpId = false;
+
+	if( argc == 1 )
+	{
+		if( !args.get( 0 ).isNumber() )
+		{
+			delete toAdd->one;
+			delete toAdd->two;
+			delete toAdd;
+			ScriptError( cx, "Gump: custom gumpId must be an integer between 0 and 0xffffffff" );
+			return false;
+		}
+
+		double customGumpId = args.get( 0 ).toNumber();
+		if( !std::isfinite( customGumpId ) || customGumpId < 0 ||
+			customGumpId > std::numeric_limits<UI32>::max() || std::floor( customGumpId ) != customGumpId )
+		{
+			delete toAdd->one;
+			delete toAdd->two;
+			delete toAdd;
+			ScriptError( cx, "Gump: custom gumpId must be an integer between 0 and 0xffffffff" );
+			return false;
+		}
+
+		toAdd->gumpId = static_cast<UI32>( customGumpId );
+		toAdd->hasCustomGumpId = true;
+	}
 
 	JS::RootedObject obj( cx, JS_NewObject( cx, &UOXGump_class ));
 	JS_DefineFunctions( cx, obj, CGump_Methods );
 	JS::SetReservedSlot(obj, 0, JS::PrivateValue( toAdd ) );
-	auto args = JS::CallArgsFromVp(argc, vp);
 	args.rval().setObjectOrNull( obj );
 	return true;
 }
@@ -1876,6 +1913,20 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto obj = getThis( cx, args );
   SEGump_st *myGump = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
+	cScript *activeScript = JSMapping->currentActive();
+	if( activeScript == nullptr )
+	{
+		ScriptError( cx, "Send: Unable to determine the active script" );
+		return false;
+	}
+
+	UI16 scriptId = activeScript->GetScriptID();
+	UI32 gumpId = myGump->hasCustomGumpId ? myGump->gumpId : ( 0xFFFF + scriptId );
+	if( !JSMapping->RegisterGump( gumpId, scriptId ))
+	{
+		ScriptError( cx, "Send: gumpId %u is already registered to another script", gumpId );
+		return false;
+	}
 
 	if( HasWrapperClass( args.get( 0 ), &UOXSocket_class ))
 	{
@@ -1885,7 +1936,6 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 			ScriptError( cx, "Send: Passed an invalid Socket" );
 			return false;
 		}
-		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
 		SendVecsAsCompressedGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else if( HasWrapperClass( args.get( 0 ), &UOXChar_class ))
@@ -1898,7 +1948,6 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 		}
 
 		CSocket *mySock = myChar->GetSocket();
-		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
 		SendVecsAsCompressedGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else

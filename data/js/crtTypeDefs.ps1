@@ -120,7 +120,13 @@ foreach ( $types in ($content.types | Sort-Object -Property name) ) {
     $parms = createTypeProps $types
     $funcs = createFuncSet $types.methods "    " ""
     if( $types.type -eq "class" ) {
-      $funcs += "    constructor();"
+      if( $null -ne $types.constructor ) {
+        $funcs += createFunc "constructor" $types.constructor.params.list "" "    " ""
+        $funcs[-1] = $funcs[-1] -replace '\): ;$', ');'
+      }
+      else {
+        $funcs += "    constructor();"
+      }
     }
     $lines += @(
       $decl,
