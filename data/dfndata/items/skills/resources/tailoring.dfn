@@ -58,6 +58,7 @@ value=74 37
 pileable=1
 decay=1
 good=49
+customstringtag=NpcDriveResource wool
 }
 
 [0x0df8]
@@ -70,6 +71,7 @@ value=74 37
 pileable=1
 decay=1
 good=49
+customstringtag=NpcDriveResource wool
 }
 
 [0x0def]

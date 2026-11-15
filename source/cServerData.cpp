@@ -434,6 +434,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"LOGINTHROTTLEMAXDELAY", 421},
 	{"LOGINTHROTTLEENTRYTTL", 422},
 	{"PASSWORDHASHINGENABLED", 423},
+	{"NPCDRIVESYSTEM", 424},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -560,6 +561,7 @@ constexpr auto BIT_LOGINQUESTENABLED				= UI32( 122 );
 constexpr auto BIT_VENDORCHARGESENABLED				= UI32( 123 );
 constexpr auto BIT_VENDORUSEITEMFEESENABLED			= UI32( 124 );
 constexpr auto BIT_ONLYRETURNTOBANK					= UI32( 125 );
+constexpr auto BIT_NPCDRIVESYSTEM					= UI32( 126 );
 
 
 // New uox3.ini format lookup
@@ -709,6 +711,7 @@ auto CServerData::ResetDefaults() -> void
 
 	// Event Manager
 	EventManagerSystem( true );
+	NpcDriveSystem( false );
 
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
@@ -5455,6 +5458,20 @@ auto CServerData::EventManagerSystem( bool nVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    - CServerData::NpcDriveSystem()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Gets/Sets whether the optional NPC drive system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::NpcDriveSystem() const -> bool
+{
+	return boolVals.test( BIT_NPCDRIVESYSTEM );
+}
+auto CServerData::NpcDriveSystem( bool nVal ) -> void
+{
+	boolVals.set( BIT_NPCDRIVESYSTEM, nVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GetDisabledAssistantFeature()
 //|					CServerData::SetDisabledAssistantFeature()
 //o------------------------------------------------------------------------------------------------o
@@ -5950,6 +5967,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MOONGATEFACETS=" << GetMoongateFacetStatus() << '\n';
 		ofsOutput << "OVERLOADPACKETS=" << ( ServerOverloadPackets() ? 1 : 0 ) << '\n';
 		ofsOutput << "ADVANCEDPATHFINDING=" << ( AdvancedPathfinding() ? 1 : 0 ) << '\n';
+		ofsOutput << "NPCDRIVESYSTEM=" << ( NpcDriveSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "LOOTINGISCRIME=" << ( LootingIsCrime() ? 1 : 0 ) << '\n';
 		ofsOutput << "BASICTOOLTIPSONLY=" << ( BasicTooltipsOnly() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWREPUTATIONTITLEINTOOLTIP=" << ( ShowReputationTitleInTooltip() ? 1 : 0 ) << '\n';
@@ -7803,6 +7821,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 423: // PASSWORDHASHINGENABLED
 			PasswordHashingEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 424: // NPCDRIVESYSTEM
+			NpcDriveSystem( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		default:
 			rValue = false;

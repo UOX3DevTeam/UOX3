@@ -2257,9 +2257,42 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 		}
 	}
 
+	const auto driveMode = mChar.GetTempTag( "npcDriveMode" );
+	const auto driveActive = ( driveMode.m_ObjectType == TAGMAP_TYPE_STRING ? !driveMode.m_StringValue.empty() : driveMode.m_IntValue != 0 );
+	if( !doAICheck && driveActive )
+	{
+		// An attached AI script claimed this slice. Release any drive-owned path or
+		// rest state first so the attached script receives clean movement control.
+		cScript *driveScript = JSMapping->GetScript( NPCDRIVESCRIPT );
+		if( driveScript )
+		{
+			driveScript->OnPathfindEnd( &mChar, -2 );
+		}
+	}
+
 	if( doAICheck && checkAI )
 	{
-		CheckAI( mChar );
+		auto runDriveSystem = driveActive;
+		if( !runDriveSystem && cwmWorldState->ServerData()->NpcDriveSystem() )
+		{
+			const auto aiType = mChar.GetNpcAiType();
+			const auto driveProfile = oldstrutil::lower( mChar.GetTag( "NpcDriveProfile" ).m_StringValue );
+			runDriveSystem = ( aiType == AI_ANIMAL || aiType == AI_ANIMAL_SCARED || driveProfile == "animal" || driveProfile == "humanoid" || driveProfile == "ambient" );
+		}
+
+		if( runDriveSystem )
+		{
+			cScript *driveScript = JSMapping->GetScript( NPCDRIVESCRIPT );
+			if( driveScript && driveScript->OnAISliver( &mChar ) == 1 )
+			{
+				doAICheck = false;
+			}
+		}
+
+		if( doAICheck )
+		{
+			CheckAI( mChar );
+		}
 	}
 	Movement->NpcMovement( mChar );
 

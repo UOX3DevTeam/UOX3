@@ -15,6 +15,7 @@ get=base_coin
 name=gold coin
 id=0x0eed
 amount=1
+customstringtag=NpcDriveResource gold,coin
 }
 
 [0x0eed-4]
@@ -23,6 +24,7 @@ get=base_coin
 name=gold coin
 id=0x0eed
 amount=4
+customstringtag=NpcDriveResource gold,coin
 }
 
 [0xeed-20]
@@ -31,6 +33,7 @@ get=base_coin
 name=gold coin
 id=0x0eed
 amount=20
+customstringtag=NpcDriveResource gold,coin
 }
 
 [0x0ef2]

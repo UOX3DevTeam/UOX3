@@ -1837,6 +1837,10 @@ packitem=0x0f8d,30
 							Enables/disables the A* Pathfinding routine for NPCs</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">NPCDRIVESYSTEM</span><strong>=0</strong><br>
+							Enables the optional NPC drive system. Eligible NPCs can temporarily pursue food, shelter, desires, avoid aversions and recover out of combat before returning control to their existing AI. Defaults to 0 (disabled)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">LOOTINGISCRIME</span><strong>=1</strong><br>
 							Toggles whether looting (innocent/blue) corpses is a crime or not</p>
 						</div>
@@ -6546,6 +6550,66 @@ function TestWeekly( args )
 					<p>NPCs can be assigned an AI type that will make them behave or react to events around them in particular ways. Some of these AI types are combat-oriented (guards, monsters), and some are more service-oriented (bankers, healers, playervendors).</p>
 					<p>NPC AI types can be assigned at spawn-time through the <span class="hl">npcai=#</span> tag in NPC DFNs, or at run-time via the <span class="hl">'set npcai #</span> GM command or the <span class="hl">aitype</span> JS character property.</p>
 					<div class="note"><p style="color: black; font-style: italic">Example: The Orc NPC contains the tag <strong>npcai=2</strong> in its definition in DFNDATA/NPC/humanoids.dfn. This assigns it the "evil" AI that most monsters use, which makes it attack innocent characters (including players) on sight.</p></div>
+					<h3>Optional NPC drives</h3>
+					<p>The <span class="hl">NPCDRIVESYSTEM</span> setting provides a needs-driven behavior layer without replacing UOX3's hard-coded NPC AI. The system is disabled by default. Untamed <strong>AI_ANIMAL</strong> and <strong>AI_ANIMAL_SCARED</strong> NPCs participate automatically when it is enabled; other NPCs must explicitly select the <strong>animal</strong>, <strong>humanoid</strong> or <strong>ambient</strong> profile. Combat, native fleeing, taming, stabling, mounting, frozen NPCs and attached AI scripts take precedence. When no drive owns the current AI slice, UOX3 immediately falls back to the NPC's existing AI.</p>
+					<p>The drive arbiter currently supports:</p>
+					<ul>
+						<li><strong>Survival and recovery:</strong> UOX3's existing <span class="hl">FLEEAT</span> and <span class="hl">REATTACKAT</span> properties continue to control combat survival. Outside combat, an NPC at or below 25% health can seek shelter and rest there until reaching 75% health, using the normal regeneration system.</li>
+						<li><strong>Food:</strong> A hungry NPC with hunger enabled and a valid <span class="hl">FOODLIST</span> can reserve, approach and consume a movable, unpoisoned ground item. Critical hunger takes priority over nighttime shelter.</li>
+						<li><strong>Shelter:</strong> From 22:00 until 06:00, an NPC can rest in its current building or seek the nearest NPC drive shelter marker. The marker can also be used as a recovery location. Rest suppresses idle wandering but still lets hard-coded AI scan and react to threats.</li>
+						<li><strong>Desires and aversions:</strong> An NPC can seek abstract resources exposed by nearby ground items or characters. A desire can pick up an item, remain near a target or follow a character. A cooldown of zero makes the desire constant; any positive cooldown makes it satiable. Aversions take survival priority and make the NPC run until it reaches the configured safe distance.</li>
+						<li><strong>Territory and hoard defense:</strong> An NPC can treat configured character resources as intruders inside its home territory and can defend configured ground resources as a hoard. The drive only selects the target; <span class="hl">InitiateCombat</span> hands the response to UOX3's native combat system, which retains line-of-sight, safe-zone, race, vulnerability and reputation rules.</li>
+						<li><strong>Pack and master relationships:</strong> NPCs with the same pack ID can assist a nearby pack member's legal combat target. Members can also regroup with a designated pack leader. An explicitly selected master takes precedence as the regroup anchor and can request the same native-combat assistance. Tamed creatures remain outside the drive system and continue to use UOX3's existing pet commands.</li>
+						<li><strong>Returning resources home:</strong> Selected pickup desires can carry their item back to the NPC's home. An optional ground container can receive the item when it has space; without one, the NPC returns home and retains the item in its backpack. Interrupted return trips remain pending and resume after combat.</li>
+						<li><strong>Boredom:</strong> Once higher-priority needs are quiet, configured NPCs can return home, roam within a home-centered radius or pause. Boredom timing and activity duration are configurable, and core AI can still notice threats during a pause.</li>
+					</ul>
+					<p>Shard admins can adjust individual NPCs with custom DFN tags:</p>
+					<ul>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveProfile none</span> disables drives for that NPC.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveProfile animal</span>, <span class="hl">humanoid</span> or <span class="hl">ambient</span> explicitly enables drives regardless of the NPC's core AI type.</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveDisableFood 1</span>, <span class="hl">NpcDriveDisableShelter 1</span>, <span class="hl">NpcDriveDisableSurvival 1</span>, <span class="hl">NpcDriveDisableDesire 1</span>, <span class="hl">NpcDriveDisableDefense 1</span>, <span class="hl">NpcDriveDisableSocial 1</span>, <span class="hl">NpcDriveDisableReturn 1</span> or <span class="hl">NpcDriveDisableBoredom 1</span> disables an individual drive.</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveFoodThreshold #</span> changes the hunger level that starts food seeking (1 to 5; default 3).</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveSearchRadius #</span> changes the food search radius (1 to 24 tiles; default 12).</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveShelterRadius #</span> changes the shelter search radius (1 to 64 tiles; default 24).</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveLeashRadius #</span> limits goals around the NPC's spawn or initial position (1 to 64 tiles; default 24).</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveRestHealth #</span> and <span class="hl">NpcDriveResumeHealth #</span> set the recovery start and stop percentages (defaults 25 and 75).</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveShelterStartHour #</span> and <span class="hl">NpcDriveShelterEndHour #</span> set the nighttime shelter window from 0 to 23 (defaults 22 and 6).</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveHomeX #</span> and <span class="hl">NpcDriveHomeY #</span> override the drive leash's home position. The admin gump manages these tags automatically.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveDesires gold:pickup:60,honey:nearby:30,human:follow:0</span> defines ordered desires as resource, action and cooldown in seconds. Valid actions are <strong>pickup</strong>, <strong>nearby</strong> and <strong>follow</strong>.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveAversions orc:10,carnivore:8</span> defines resource aversions and their safe radii.</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveDesireSearchRadius #</span>, <span class="hl">NpcDriveAversionSearchRadius #</span>, <span class="hl">NpcDriveDesireStayRange #</span> and <span class="hl">NpcDriveDesireDuration #</span> tune desire searches and interactions.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveTerritoryTargets player,human</span> defines character resources that can be treated as territorial intruders. There is no default target list, so territory defense remains non-aggressive until explicitly configured.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveHoardResources gold,gem</span> identifies ground resources the NPC protects as a hoard.</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDriveTerritoryRadius #</span> sets the home-centered territory radius and <span class="hl">NpcDriveHoardGuardRadius #</span> sets how close an intruder must approach a hoard item (both 1 to 24 tiles; defaults 12 and 4).</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDrivePackId wolves</span> groups NPCs for assistance and regrouping. <span class="hl">CUSTOMSTRINGTAG=NpcDrivePackRole leader</span> identifies a regroup leader; the other valid role is <strong>member</strong>.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveMasterSerial #</span> assigns a persistent character serial as an explicit master. The admin gump sets and clears this reference safely.</li>
+						<li><span class="hl">CUSTOMINTTAG=NpcDrivePackRadius #</span> sets the assistance and leader-search radius (1 to 24; default 12). <span class="hl">NpcDrivePackFollowDistance #</span> sets how close a member regroups (1 to 12; default 4).</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveReturnResources gold,gem</span> selects pickup desires that return home. Use <strong>all</strong> to return every picked-up resource.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveHoardContainerSerial #</span> designates an optional ground container for returned resources. Container item and weight limits are respected.</li>
+						<li><span class="hl">CUSTOMSTRINGTAG=NpcDriveIdleActivities home,roam,pause</span> enables selected boredom activities. <span class="hl">NpcDriveBoredomDelay #</span> sets the delay in seconds (10 to 3600; default 60), <span class="hl">NpcDriveIdleDuration #</span> sets the activity duration (1 to 300; default 10), and <span class="hl">NpcDriveIdleRadius #</span> sets the roam radius (1 to 24; default 8).</li>
+					</ul>
+					<p>Items and characters expose resources with <span class="hl">CUSTOMSTRINGTAG=NpcDriveResource gold,coin</span>. Resource names are case-insensitive and may contain letters, numbers, underscores or hyphens. Stock gold coins, gems, honey and wool provide representative tags. The implicit character resources are <strong>character</strong>, <strong>player</strong>, <strong>npc</strong>, <strong>human</strong> and <strong>animal</strong>; all items expose <strong>item</strong>, and gold coin art 0x0eed also exposes <strong>gold</strong>.</p>
+					<p>Administrators can use <span class="hl">'npcdrives</span> and target an NPC to inspect its live state, change profiles and thresholds, configure every drive, select masters and hoard chests, edit resource tags on world objects, toggle individual drives, set its home, create a shelter marker, cancel its current goal or force an immediate reevaluation.</p>
+					<div class="note"><p style="color: black; font-style: italic">Desire pickup is intentionally limited to movable, visible ground items and respects the NPC backpack's item and weight limits. The drive system does not search player containers or steal equipped or carried possessions.</p></div>
+					<div class="note"><p style="color: black; font-style: italic">Territory defense never creates hostility by default. Shard admins must configure at least one territory target resource. GM, counselor, dead, offline, invisible-to-the-defender and invulnerable characters are ignored before native combat validation.</p></div>
+					<div class="note"><p style="color: black; font-style: italic">Disabling NPCDRIVESYSTEM prevents new defense scans. A fight already handed to native combat is allowed to conclude normally; the drive layer does not erase legitimate combat state or aggressor flags.</p></div>
+					<div class="note"><p style="color: black; font-style: italic">Pack IDs, masters, return resources and idle activities have no stock defaults. They do not alter existing NPC behavior until configured. Social assistance always calls native InitiateCombat, while regrouping, return trips and boredom remain inside the NPC's existing home leash.</p></div>
+					<p>Add a GM-visible shelter marker with <span class="hl">'add npc_drive_shelter_marker</span>, then place it at the location where participating NPCs should rest. Any custom item with <span class="hl">CUSTOMINTTAG=NpcDriveShelter 1</span> can serve the same purpose.</p>
+					<div class="note"><p style="color: black; font-style: italic">Drive state is temporary and is discarded on restart. Disabling NPCDRIVESYSTEM while an NPC owns a goal releases its reservation, restores its previous wander mode and returns it to legacy AI behavior.</p></div>
+					<h4>Drive-system test actors</h4>
+					<p>The optional <span class="hl">npc_drive_tests.dfn</span> file defines test actors that are not referenced by stock spawn regions or menus. After enabling NPCDRIVESYSTEM and restarting the shard, place them near one another with:</p>
+					<p><span class="hl">'add npc npc_drive_test_leader</span><br>
+					<span class="hl">'add npc npc_drive_test_member</span><br>
+					<span class="hl">'add npc npc_drive_test_scared</span><br>
+					<span class="hl">'add npc npc_drive_test_intruder</span></p>
+					<ul>
+						<li>Move the intruder within eight tiles of the leader. The leader should record <strong>territory:drive_intruder</strong> in <span class="hl">'npcdrives</span>, initiate native combat, and the nearby member should assist.</li>
+						<li>Move a non-combat member more than four tiles from the leader while keeping it within the configured leash. It should regroup. The Social page can also assign the leader as an explicit master.</li>
+						<li>Move the intruder within eight tiles of the scared wolf. Its <strong>drive_threat</strong> aversion should make it run away.</li>
+						<li>Add gold with <span class="hl">'add item 0x0eed</span>. Add a chest with <span class="hl">'add item woodenchest</span>, open <strong>Pack, hoard chest and idle</strong> in <span class="hl">'npcdrives</span>, choose <strong>Set hoard chest - target</strong>, and target the chest. The leader should pick up the gold, return home and deposit it.</li>
+						<li>Add honey with <span class="hl">'add item 0x09ec</span> to test a nearby desire. Set a wolf's hunger with <span class="hl">'set hunger 1</span> and add meat with <span class="hl">'add item 0x09f1</span> to test food seeking.</li>
+						<li>Create a shelter marker and use <span class="hl">'set hp 5</span> on a wolf to test recovery. With higher-priority needs removed, the actors begin configured boredom activities after ten seconds.</li>
+					</ul>
 					<h3>Available NPC AI types</h3>
 						<p><span class="hl">0</span> - <strong>AI_NONE</strong><br>
 						Default - no AI.</p>
