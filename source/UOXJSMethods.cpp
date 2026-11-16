@@ -3078,7 +3078,7 @@ bool CBase_Teleport( JSContext *cx, unsigned argc, JS::Value* vp )
 					return false;
 				}
 			}
-			else if( args.get(0).isObject() )
+			else if( args.get(0).isInt32() )
 			{
 				UI16 placeNum = args.get(0).toInt32();
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )

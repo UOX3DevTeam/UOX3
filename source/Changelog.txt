@@ -1,3 +1,9 @@
+16/11/2026 - ghostsenpai1 (#603)
+    [FIX] Fixed Character/Item .Teleport()/.SetLocation() JS Methods rejecting single numeric location IDs from location.dfn, restoring location-name and place-ID handling for the 'go command
+
+16/11/2026 - ghostsenpai1 (#605)
+    [FIX] Fixed NPC quest givers treating archived daily quests as permanently completed by re-offering them after their configured reset period (js/server/quest/quest_core.js, js/server/quest/quest_conversation_gump.js)
+
 23/09/2026 - Xoduz (#600)
     [FIX] Fixed a server crash related to an argument-count mismatch in cScript::OnCollide() that would trigger when walking onto items like moongates and dungeon traps
 
