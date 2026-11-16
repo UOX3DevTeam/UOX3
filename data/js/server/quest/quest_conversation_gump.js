@@ -1328,6 +1328,15 @@ function ResolvePlayerQuestID( player, npcRootQuestID )
 		if( !IsQuestArchivedForPlayer( player, currentQuestID ) )
 			return currentQuestID;
 
+		// Re-offer an archived daily quest after its reset window has elapsed.
+		// A one-time quest remains permanently completed if both flags are set.
+		if( questData.dailyQuest == 1 && questData.oneTimeQuest != 1 )
+		{
+			var dailyQuestHoursLeft = TriggerEvent( 5800, "GetDailyQuestHoursUntilReset", player, currentQuestID, questData );
+			if( dailyQuestHoursLeft <= 0 )
+				return currentQuestID;
+		}
+
 		// Archived: advance using branching/linear
 		var nextQuestID = ResolveNextQuestID_Any( player, questData );
 		if( nextQuestID <= 0 )
