@@ -2319,6 +2319,14 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	{
 		GuildSys->DisplayTitle( this, i );
 	}
+	if( !i->IsNpc() && !i->IsIncognito() && !i->IsDisguised() )
+	{
+		const std::string factionKey = FactionKeyForChar( i );
+		if( !factionKey.empty() )
+		{
+			ObjMessage( oldstrutil::format( "[%s]", FactionNameForKey( factionKey ).c_str() ), i );
+		}
+	}
 
 	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{

@@ -6429,13 +6429,35 @@
           "cppID": "CREGP_OWNER",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "string"
+        },
+        {
+          "name": "guardsPurchased",
+          "cppID": "CREGP_GUARDSPURCHASED",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "alliedTowns",
+          "cppID": "CREGP_ALLIEDTOWNS",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "string",
+          "readOnly": true
+        },
+        {
+          "name": "enemyTowns",
+          "cppID": "CREGP_ENEMYTOWNS",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "string",
+          "readOnly": true
         }
       ],
       "methods": [
         { "name": "AddScriptTrigger",    "cppName": "CRegion_AddScriptTrigger",    "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number", "required": true } ] }, "returns": "void" },
         { "name": "RemoveScriptTrigger", "cppName": "CRegion_RemoveScriptTrigger", "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number", "required": true } ] }, "returns": "void" },
         { "name": "GetOrePref",          "cppName": "CRegion_GetOrePref",          "params": { "num": 1, "list": [ { "name": "oreId",    "type": "number", "required": true } ] }, "returns": "MiningData" },
-        { "name": "GetOreChance",        "cppName": "CRegion_GetOreChance",        "params": { "num": 0, "list": [] }, "returns": "void" }
+        { "name": "GetOreChance",        "cppName": "CRegion_GetOreChance",        "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "TownstoneAction",     "cppName": "CRegion_TownstoneAction",     "params": { "num": 3, "list": [ { "name": "socket", "type": "Socket", "required": true }, { "name": "buttonId", "type": "number", "required": true }, { "name": "itemSerial", "type": "number", "required": true } ] }, "returns": "boolean" }
       ]
     },
     {

@@ -167,15 +167,31 @@ void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	HandleTownstoneButton()
+//|	Function	-	HandleTownstoneAction()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles button pressed in townstone gump
+//|	Purpose		-	Handles an action requested by the JavaScript civic townstone gump
 //o------------------------------------------------------------------------------------------------o
-void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
+void HandleTownstoneAction( CSocket *s, SERIAL button, SERIAL itemSerial )
 {
+	if( s == nullptr )
+	{
+		return;
+	}
+
 	CChar *mChar = s->CurrcharObj();
-	CTownRegion *targetRegion;
-	CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
+	if( !ValidateObject( mChar ))
+	{
+		return;
+	}
+
+	CTownRegion *targetRegion = nullptr;
+	CTownRegion *ourRegion = nullptr;
+	auto townRegion = cwmWorldState->townRegions.find( mChar->GetTown() );
+	if( townRegion != cwmWorldState->townRegions.end() )
+	{
+		ourRegion = townRegion->second;
+	}
+
 	switch( button )
 	{
 			// buttons 2-20 are for generic town members
@@ -183,6 +199,11 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 			// buttons 41-60 are for potential candidates
 			// buttons 61-80 are for enemy towns
 		case 2:		// leave town
+			if( ourRegion == nullptr )
+			{
+				s->SysMessage( 540 ); // There was an error removing you from your town, contact a GM promptly!
+				break;
+			}
 			bool result;
 			// safe to assume we want to remove ourselves from our only town!
 			result = ourRegion->RemoveTownMember(( *mChar ));
@@ -191,37 +212,21 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 				s->SysMessage( 540 ); // There was an error removing you from your town, contact a GM promptly!
 			}
 			break;
-		case 3:		// view taxes
-			targetRegion = CalcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId() );
-			if( targetRegion != nullptr )
-			{
-				targetRegion->ViewTaxes( s );
-			}
-			else
-			{
-				s->SysMessage( 541 ); //Can't view taxes for a town you are not in.
-			}
-			break;
 		case 4:		// toggle town title
 			mChar->SetTownTitle( !mChar->GetTownTitle() );
-			ourRegion->DisplayTownMenu( nullptr, s );
 			break;
 		case 5:		s->SendTargetCursor( 0, TARGET_VOTEFORMAYOR, 0, 542 );								break;		// vote for town mayor
-		case 6:		TextEntryGump(  s, ser, static_cast<UI08>( type ), static_cast<UI08>( button ), 6, 543 );	break;		// gold donation
-		case 7:		ourRegion->ViewBudget( s );			break;		// View Budget
-		case 8:		ourRegion->SendAlliedTowns( s );	break;		// View allied towns
-		case 9:		ourRegion->SendEnemyTowns( s );		break;
-		case 20:	// access mayoral functions, never hit here if we don't have mayoral access anyway!
-			// also, we'll only get access, if we're in our OWN region
-			ourRegion->DisplayTownMenu( nullptr, s, 0x01 );	// mayor
-			break;
+		case 6:		TextEntryGump( s, itemSerial, 3, static_cast<UI08>( button ), 6, 543 );	break;		// gold donation
 		case 21:	s->SysMessage( 544 );				break;	// Can't set the taxes yet!
-		case 22:	ourRegion->DisplayTownMembers( s );	break;	// list town members
-		case 23:	ourRegion->ForceEarlyElection();		break;	// force early election
+		case 23:
+			if( ourRegion != nullptr )
+			{
+				ourRegion->ForceEarlyElection();
+			}
+			break;	// force early election
 		case 24:	s->SysMessage( 545 );	break;	// You cannot purchase more guards at this time.
 		case 25:	s->SysMessage( 546 );	break;	// You can't fire a guard at the moment.
 		case 26:	s->SendTargetCursor( 0, TARGET_TOWNALLY, 0, 547 );								break;	// make a town an ally
-		case 40:	ourRegion->DisplayTownMenu( nullptr, s );	break;	// we can't return from mayor menu if we weren't mayor!
 		case 41:	// join town!
 			if( !( CalcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId() )->AddAsTownMember(( *mChar ))))
 			{
@@ -292,6 +297,11 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 			break;
 		case 62:	// attack townstone
 			targetRegion = CalcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId() );
+			if( targetRegion == nullptr )
+			{
+				s->SysMessage( 553 ); // This is not a valid region!
+				break;
+			}
 			for( UI08 counter = 0; counter < RandomNum( 5, 10 ); ++counter )
 			{
 				Effects->PlayMovingAnimation( mChar, mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ));
@@ -1929,7 +1939,6 @@ bool CPIGumpMenuSelect::Handle( void )
 
 	switch( gumpId )
 	{
-		case 3:	HandleTownstoneButton( tSock, buttonId, id, gumpId );	break;	// Townstones
 		case 4:	WhoList->ButtonSelect( tSock, static_cast<UI16>( buttonId ), static_cast<UI08>( gumpId ));	break;	// Wholist
 		case 7:																		// Accounts
 			CChar *c;

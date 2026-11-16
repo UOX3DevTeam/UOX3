@@ -5,6 +5,17 @@ ID=0x14F0
 TYPE=35
 }
 
+[townstone]
+{
+NAME=Townstone
+ID=0x0ED4
+TYPE=35
+WEIGHT=255
+MOVABLE=2
+DECAY=0
+SCRIPT=6
+}
+
 [guildstonedeed]
 {
 NAME=Guildstone deed

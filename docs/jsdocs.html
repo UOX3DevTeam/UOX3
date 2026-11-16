@@ -15280,6 +15280,25 @@ myRegion.AddScriptTrigger( 16003 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_region_TownstoneAction"/>
+							<label for="spoiler_method_region_TownstoneAction">TownstoneAction <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool TownstoneAction( socket, buttonId, itemSerial );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Requests an authoritative legacy civic townstone action from JavaScript. The engine validates the townstone, current region, membership, mayor status and enemy relationship before performing the action.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>This bridge is used by <span class="hl">js/server/townstone.js</span>. Townstone buttons and views belong in JavaScript; this method is only for protected state-changing operations.</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_region_RemoveScriptTrigger"/>
 							<label for="spoiler_method_region_RemoveScriptTrigger">RemoveScriptTrigger <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -17923,6 +17942,10 @@ myObject.propertyName = newValue;
 							Get the number of guards supported by the region. Used by Townstone system</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.guardsPurchased</span> <strong>(int)</strong><br>
+							Get the number of guards purchased by the civic town (Read-Only).</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.numOrePrefs</span> <strong>(int)</strong><br>
 							Get the number of ore preferences present for the region (Read-Only)</p>
 						</div>
@@ -17969,6 +17992,14 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.members</span> <strong>(text)</strong><br>
 							Get list of serials belonging to members of the region, in the form of a comma-separated string. Used by Townstone system</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.alliedTowns</span> <strong>(text)</strong><br>
+							Get a comma-separated list of allied civic town region IDs (Read-Only).</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.enemyTowns</span> <strong>(text)</strong><br>
+							Get a comma-separated list of enemy civic town region IDs based on race relations (Read-Only).</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.name</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
