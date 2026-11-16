@@ -107,6 +107,7 @@ bool netpollthreadclose	= false;
 auto saveOnShutdown = false;
 std::atomic<bool> g_bPerformRestart = false;
 bool forceTimeUpdate = false;
+bool forceLightUpdate = false;
 
 //o------------------------------------------------------------------------------------------------o
 // Classes we will use
@@ -1764,6 +1765,20 @@ auto PassiveManaRegen( CSocket *mSock, CChar &mChar, UI16 maxMana ) -> SI32
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CalcCharLightLevel()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates a character's effective light level after racial visibility bonus
+//o------------------------------------------------------------------------------------------------o
+static auto CalcCharLightLevel( const CChar &mChar, UI08 curLevel ) -> LIGHTLEVEL
+{
+	if( Races->VisLevel( mChar.GetRace() ) > curLevel )
+	{
+		return 0;
+	}
+	return static_cast<LIGHTLEVEL>( curLevel - Races->VisLevel( mChar.GetRace() ));
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	GenericCheck()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
@@ -2027,16 +2042,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	{
 		if( doWeather )
 		{
-			const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-			LIGHTLEVEL toShow;
-			if( Races->VisLevel( mChar.GetRace() ) > curLevel )
-			{
-				toShow = 0;
-			}
-			else
-			{
-				toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar.GetRace() ));
-			}
+			const LIGHTLEVEL toShow = CalcCharLightLevel( mChar, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 			if( mChar.IsNpc() )
 			{
 				DoLight( &mChar, toShow );
@@ -2974,6 +2980,23 @@ auto CWorldMain::CheckAutoTimers() -> void
 		SetTimer( tWORLD_LIGHTTIME, serverData->BuildSystemTimeValue( tSERVER_WEATHER ));
 		doWeather = true;
 	}
+	else if( forceLightUpdate )
+	{
+		DoWorldLight();
+		Weather->UpdateLight();
+		const UI08 curLevel = serverData->WorldLightCurrentLevel();
+		for( auto &tSock : Network->connClients )
+		{
+			if( tSock == nullptr )
+				continue;
+			CChar *tChar = tSock->CurrcharObj();
+			if( ValidateObject( tChar ))
+			{
+				DoLight( tSock, CalcCharLightLevel( *tChar, curLevel ));
+			}
+		}
+	}
+	forceLightUpdate = false;
 
 	if( GetTimer( tWORLD_PETOFFLINECHECK ) <= GetUICurrentTime() )
 	{

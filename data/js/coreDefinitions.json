@@ -4707,7 +4707,7 @@
           "type": "boolean"
         },
         {
-          "name": "lowerStateReq",
+          "name": "lowerStatReq",
           "cppName": "CIP_LOWERSTATREQ",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
