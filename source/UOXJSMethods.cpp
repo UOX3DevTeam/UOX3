@@ -11659,6 +11659,59 @@ bool CBase_Resist( JSContext *cx, unsigned argc, JS::Value* vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_DamageType()
+//|	Prototype	-	int DamageType( damageType );
+//|					void DamageType( damageType, percentage );
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets or sets an item/NPC melee damage percentage for a WeatherType channel
+//o------------------------------------------------------------------------------------------------o
+bool CBase_DamageType( JSContext *cx, unsigned argc, JS::Value *vp )
+{
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
+	if( argc != 1 && argc != 2 )
+	{
+		ScriptError( cx, "DamageType: Invalid number of arguments (takes damage type, and optionally a percentage)" );
+		return false;
+	}
+
+	CBaseObject *baseObj = nullptr;
+	if( HasWrapperClass( obj, &UOXItem_class ))
+		baseObj = GetWrappedObject<CItem>( obj, &UOXItem_class );
+	else if( HasWrapperClass( obj, &UOXChar_class ))
+		baseObj = GetWrappedObject<CChar>( obj, &UOXChar_class );
+
+	if( !ValidateObject( baseObj ))
+	{
+		ScriptError( cx, "DamageType: Operating on an invalid Item or Character" );
+		return false;
+	}
+
+	int32_t type = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &type ))
+		return false;
+	if( type < PHYSICAL || type >= WEATHNUM )
+	{
+		ScriptError( cx, "DamageType: Invalid damage type %d", type );
+		return false;
+	}
+
+	if( argc == 1 )
+	{
+		args.rval().setInt32( baseObj->GetDamageType( static_cast<WeatherType>( type )));
+	}
+	else
+	{
+		int32_t value = 0;
+		if( !JS::ToInt32( cx, args.get( 1 ), &value ))
+			return false;
+		baseObj->SetDamageType( static_cast<UI08>( std::clamp( value, 0, 100 )), static_cast<WeatherType>( type ));
+		args.rval().setBoolean( true );
+	}
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_Defense()
 //|	Prototype	-	int Defense( hitLoc, damageType, doArmorDamage, ignoreMedable, includeShield )
 //o------------------------------------------------------------------------------------------------o

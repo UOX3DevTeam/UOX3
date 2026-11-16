@@ -9,6 +9,8 @@
 //*(As told to me by Abaddon)
 //*
 //* [WEATHERAB 0] 	//The weather definition ID. Referenced from regions.dfn as ABWEATH=...
+//*  ACIDCHANCE #	//Chance of an acid weather effect becoming active for the next hour.
+//*  ACIDINTENSITY #,#	//Minimum and maximum percentage of ACIDDAMAGE from races.dfn to apply.
 //*  COLDCHANCE # 	//This is the chance of there being a cold snap on the day.
 //*               	//If it passes the temperature will be fixed at a value between MINTEMP
 //*			//and COLDINTENSITY
@@ -24,6 +26,8 @@
 //*			//Below 10 degrees, Krrios' client takes on a blue tinge.
 //*  MAXWIND #		//Currently unused.
 //*  MINWIND #		//Currently unused.
+//*  NECROTICCHANCE #	//Chance of a necrotic weather effect becoming active for the next hour.
+//*  NECROTICINTENSITY #,# //Minimum and maximum percentage of NECROTICDAMAGE from races.dfn to apply.
 //*  RAINCHANCE #	//Chance of there being rain on the next hour(only if snowchance fails to snow).
 //*  RAININTENSITY #,#	//Sets the minimal and maximal damage in percent the rain does, based of the damage value in races.dfn.
 //*  RAINTEMPDROP #	//Sets the amount the temperature drops when it rains.
@@ -39,6 +43,10 @@
 // no weather
 [WEATHERAB 0]
 {
+ACIDCHANCE=0
+ACIDINTENSITY=0,0
+NECROTICCHANCE=0
+NECROTICINTENSITY=0,0
 RAINCHANCE=0
 RAININTENSITY=0,0
 RAINTEMPDROP=5

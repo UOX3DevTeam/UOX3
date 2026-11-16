@@ -35,6 +35,8 @@ public:
 
 	SI08	Chance( UI08 weathType ) const;
 	void	Chance( UI08 weathType, SI08 value );
+	bool	Active( UI08 weathType ) const;
+	void	Active( UI08 weathType, bool value );
 
 	R32		Value( UI08 valType, UI08 valOff ) const;
 	void	Value( UI08 valType, UI08 valOff, R32 value );
@@ -139,6 +141,8 @@ private:
 	void	Intensity( WEATHID toCheck, UI08 weathType, SI08 value );
 	SI08	Chance( WEATHID toCheck, UI08 weathType );
 	void	Chance( WEATHID toCheck, UI08 weathType, SI08 value );
+	bool	Active( WEATHID toCheck, UI08 weathType );
+	void	Active( WEATHID toCheck, UI08 weathType, bool value );
 	R32		Value( WEATHID toCheck, UI08 valType, UI08 valOff );
 	void	Value( WEATHID toCheck, UI08 valType, UI08 valOff, R32 value );
 
