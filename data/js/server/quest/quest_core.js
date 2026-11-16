@@ -296,43 +296,54 @@ function CheckQuest( player, questID, mode)
 	}
 
 	// Check if the quest is a daily quest and ensure it has reset
-	if( quest.dailyQuest == 1 )
+	var dailyQuestHoursLeft = GetDailyQuestHoursUntilReset( player, questID, quest );
+	if( dailyQuestHoursLeft > 0 )
 	{
-		var archivedQuestEntries = ReadArchivedQuestEntries( player );
-
-		for( var dailyArchiveIndex = 0; dailyArchiveIndex < archivedQuestEntries.length; dailyArchiveIndex++ )
+		if( socket != null )
 		{
-			var archivedQuestEntry = archivedQuestEntries[dailyArchiveIndex];
-			if( !archivedQuestEntry )
-			{
-				continue;
-			}
-
-			if( parseInt( archivedQuestEntry.questID, 10 ) == questID )
-			{
-				var lastCompleted = parseInt( archivedQuestEntry.lastCompleted, 10 );
-				if( isNaN( lastCompleted))
-				{
-					lastCompleted = 0;
-				}
-
-				var resetTime = quest.resetDailyTime || 24;
-				var currentTime = Date.now();
-
-				if(( currentTime - lastCompleted ) < resetTime * 3600 * 1000 )
-				{
-					var hoursLeft = Math.ceil(( resetTime * 3600 * 1000 - ( currentTime - lastCompleted )) / ( 3600 * 1000 ));
-					if (socket != null)
-					{
-						socket.SysMessage( "This is a daily quest, and you must wait " + hoursLeft + " more hour(s) to attempt it again." );
-					}
-					return false;
-				}
-			}
+			socket.SysMessage( "This is a daily quest, and you must wait " + dailyQuestHoursLeft + " more hour(s) to attempt it again." );
 		}
+		return false;
 	}
 	socket.SoundEffect( 0x5B4, true );
 	return true;
+}
+
+/** @type { ( player: Character, questID: number, questData?: any ) => number } */
+function GetDailyQuestHoursUntilReset( player, questID, questData )
+{
+	if( !ValidateObject( player ) )
+		return 0;
+
+	var quest = questData || TriggerEvent( 5801, "QuestList", questID );
+	if( !quest || quest.dailyQuest != 1 )
+		return 0;
+
+	var archivedQuestEntries = ReadArchivedQuestEntries( player );
+	for( var archiveIndex = 0; archiveIndex < archivedQuestEntries.length; archiveIndex++ )
+	{
+		var archivedQuestEntry = archivedQuestEntries[archiveIndex];
+		if( !archivedQuestEntry || parseInt( archivedQuestEntry.questID, 10 ) != questID )
+		{
+			continue;
+		}
+
+		var lastCompleted = parseInt( archivedQuestEntry.lastCompleted, 10 );
+		if( isNaN( lastCompleted ) )
+		{
+			lastCompleted = 0;
+		}
+
+		var resetTime = quest.resetDailyTime || 24;
+		var resetTimeRemaining = resetTime * 3600 * 1000 - ( Date.now() - lastCompleted );
+		if( resetTimeRemaining > 0 )
+		{
+			return Math.ceil( resetTimeRemaining / ( 3600 * 1000 ));
+		}
+		return 0;
+	}
+
+	return 0;
 }
 
 /** @type { ( tObject: BaseObject, timerId: number ) => void } */
