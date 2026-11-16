@@ -352,6 +352,16 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			}
 			return;
 		}
+		// High Seas deck records are not all flagged as ordinary walkable multi
+		// components. Keep the authoritative mobile Z on the known main deck so
+		// observers receive the same elevation the moving client predicts.
+		auto *highSeasBoat = FindHighSeasBoatAtXY( oldx, oldy, c->WorldNumber(), c->GetInstanceId() );
+		if( ValidateObject( highSeasBoat ) && HighSeasBoatContainsXY( highSeasBoat, myx, myy ))
+		{
+			const SI08 deckZ = HighSeasBoatDeckZ( highSeasBoat );
+			if( myz < deckZ )
+				myz = deckZ;
+		}
 #if DEBUG_WALKING
 		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
@@ -1035,7 +1045,22 @@ bool CMovement::CheckForStealth( CChar *c )
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::CheckForHouseBan( CChar *c, [[maybe_unused]] CSocket *mSock )
 {
-	CMultiObj *house = FindMulti( c );
+	CMultiObj *house = nullptr;
+	CMultiObj *currentMulti = c->GetMultiObj();
+	if( ValidateObject( currentMulti ) && currentMulti->CanBeObjType( OT_BOAT ))
+	{
+		auto *currentBoat = static_cast<CBoatObj *>( currentMulti );
+		if( HighSeasBoatContainsXY( currentBoat, c->GetX(), c->GetY() ))
+		{
+			house = currentMulti;
+		}
+	}
+	if( !ValidateObject( house ))
+	{
+		house = FindMulti( c );
+	}
+	if( !ValidateObject( house ))
+		house = FindHighSeasBoatAtXY( c->GetX(), c->GetY(), c->WorldNumber(), c->GetInstanceId() );
 	if( ValidateObject( house ))
 	{
 		if( c->GetMultiObj() != house )

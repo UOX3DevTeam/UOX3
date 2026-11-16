@@ -2025,7 +2025,23 @@ void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 insta
 	z		= newZ;
 	WorldNumber( world );
 	SetInstanceId( instanceId );
-	CMultiObj *newMulti = FindMulti( newX, newY, newZ, world, instanceId );
+	// When two High Seas hulls overlap, FindMulti can return the other vessel and
+	// detach a passenger from the ship they are already standing on. Keep the
+	// current boat association while the destination remains inside its hull.
+	CMultiObj *newMulti = nullptr;
+	CMultiObj *currentMulti = GetMultiObj();
+	if( ValidateObject( currentMulti ) && currentMulti->CanBeObjType( OT_BOAT ))
+	{
+		auto *currentBoat = static_cast<CBoatObj *>( currentMulti );
+		if( HighSeasBoatContainsXY( currentBoat, newX, newY ))
+		{
+			newMulti = currentMulti;
+		}
+	}
+	if( !ValidateObject( newMulti ))
+	{
+		newMulti = FindMulti( newX, newY, newZ, world, instanceId );
+	}
 	if( GetMultiObj() != newMulti )
 	{
 		SetMulti( newMulti );
@@ -7419,6 +7435,14 @@ CSocket * CChar::GetSocket( void ) const
 }
 void CChar::SetSocket( CSocket *newVal )
 {
+	// The High Seas pilot controller is a virtual mount. UO forcibly drops
+	// it on disconnect so a boat never retains an offline pilot or movement
+	// state. Do this before the old socket reference is detached.
+	if( newVal == nullptr && IsValidPlayer() && mPlayer->socket != nullptr )
+	{
+		ReleaseBoatPilot( this );
+		DismountCreature( this );
+	}
 	if( !IsValidPlayer() )
 	{
 		if( newVal != nullptr )

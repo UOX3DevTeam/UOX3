@@ -98,3 +98,10 @@ maxuses=75
 usesleft=25
 script=2200// uses left tooltip
 }
+
+[highseas_ramrod]
+{
+NAME=ramrod
+ID=0x4246
+ORIGIN=hs
+}

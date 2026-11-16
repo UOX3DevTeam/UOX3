@@ -952,6 +952,16 @@ public:
 
 };
 
+class CPIBoatMouseMovement : public CPInputBuffer
+{
+public:
+	CPIBoatMouseMovement();
+	CPIBoatMouseMovement( CSocket *s );
+	virtual void Receive( void ) override;
+	virtual bool Handle( void ) override;
+	virtual void Log( std::ostream &outStream, bool fullHeader = true ) override;
+};
+
 class CPIClosedStatusGump : public CPInputBuffer
 {
 public:

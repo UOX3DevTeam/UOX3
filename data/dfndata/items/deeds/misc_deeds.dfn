@@ -86,3 +86,46 @@ name=a solen hive entrance deed
 id=0x14F0
 morex=209
 }
+
+[blundercannon_deed]
+{
+NAME=blundercannon deed
+ID=0x14F2
+COLOR=1126
+SCRIPT=5099
+VALUE=100000
+CANNONINFO=1,3,0,12,2000
+ORIGIN=hs
+}
+
+[highseas_light_cannon_deed]
+{
+NAME=light ship cannon deed
+ID=0x14F0
+SCRIPT=5099
+VALUE=50000
+CANNONINFO=1,1,0,10,1500
+ORIGIN=hs
+}
+
+[highseas_heavy_cannon_deed]
+{
+NAME=heavy ship cannon deed
+ID=0x14F0
+COLOR=1118
+SCRIPT=5099
+VALUE=75000
+CANNONINFO=1,2,0,10,2000
+ORIGIN=hs
+}
+
+[pumpkin_cannon_deed]
+{
+NAME=pumpkin cannon deed
+ID=0x14F2
+COLOR=1192
+SCRIPT=5099
+VALUE=50000
+CANNONINFO=1,4,0,10,1500
+ORIGIN=hs
+}

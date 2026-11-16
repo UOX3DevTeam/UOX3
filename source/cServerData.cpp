@@ -434,6 +434,18 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"LOGINTHROTTLEMAXDELAY", 421},
 	{"LOGINTHROTTLEENTRYTTL", 422},
 	{"PASSWORDHASHINGENABLED", 423},
+	{"BOATDECAY", 424},
+	{"BOATDECAYSECS", 425},
+	{"BOATPAINTDECAYSECS", 426},
+	{"BOATFASTMOVEINTERVAL", 427},
+	{"BOATSLOWMOVEINTERVAL", 428},
+	{"BOATNPCMOVEINTERVAL", 429},
+	{"CLASSICBOATMOUSECONTROL", 430},
+	{"HIGHSEASSHIPANCHORS", 431},
+	{"BOATDRIFT", 432},
+	{"BOATDRIFTINTERVAL", 433},
+	{"HIGHSEASSHIPSPEECHCONTROL", 434},
+	{"CANNONCHARACTERTARGETING", 435},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -553,6 +565,12 @@ constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
 constexpr auto BIT_HOUSEDECAY						= UI32( 111 );
 constexpr auto BIT_HOUSEITEMSDELETEONDECAY			= UI32( 112 );
 constexpr auto BIT_HOUSEGRANDFATHERED				= UI32( 113 );
+constexpr auto BIT_BOATDECAY						= UI32( 114 );
+constexpr auto BIT_CLASSICBOATMOUSECONTROL		= UI32( 115 );
+constexpr auto BIT_HIGHSEASSHIPANCHORS			= UI32( 116 );
+constexpr auto BIT_BOATDRIFT						= UI32( 117 );
+constexpr auto BIT_HIGHSEASSHIPSPEECHCONTROL	= UI32( 118 );
+constexpr auto BIT_CANNONCHARACTERTARGETING	= UI32( 126 );
 constexpr auto BIT_SPEEDHACKDETECTION				= UI32( 119 );
 constexpr auto BIT_EVENTMANAGERSYSTEM				= UI32( 120 );
 constexpr auto BIT_QUESTSYSTEMENABLED				= UI32( 121 );
@@ -1065,6 +1083,20 @@ auto CServerData::ResetDefaults() -> void
 	DecayStageLowHrs( 48 );
 	DecayStageHiHrs( 72 );
 	DecayStageDangerHrs( 18 );
+
+	// Boats
+	BoatDecay( true );
+	ClassicBoatMouseControl( false );
+	HighSeasShipAnchors( true );
+	HighSeasShipSpeechControl( true );
+	CannonCharacterTargeting( false );
+	BoatDrift( true );
+	BoatDecaySeconds( 13 * 24 * 60 * 60 );
+	BoatPaintDecaySeconds( 14 * 24 * 60 * 60 );
+	BoatFastMoveInterval( 250 );
+	BoatSlowMoveInterval( 1000 );
+	BoatNpcMoveInterval( 500 );
+	BoatDriftInterval( 10000 );
 
 	// Bulk Order Deeds
 	OfferBODsFromItemSales( true );
@@ -3931,6 +3963,120 @@ auto CServerData::HouseGrandFatheredSystem( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Functions	-	CServerData High Seas boat settings
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets and sets boat decay, movement, anchoring, speech-control, paint and
+//|				cannon-targeting configuration loaded from the [boats] INI section.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::BoatDecay() const -> bool
+{
+	return boolVals.test( BIT_BOATDECAY );
+}
+auto CServerData::BoatDecay( bool newVal ) -> void
+{
+	boolVals.set( BIT_BOATDECAY, newVal );
+}
+
+auto CServerData::ClassicBoatMouseControl() const -> bool
+{
+	return boolVals.test( BIT_CLASSICBOATMOUSECONTROL );
+}
+auto CServerData::ClassicBoatMouseControl( bool newVal ) -> void
+{
+	boolVals.set( BIT_CLASSICBOATMOUSECONTROL, newVal );
+}
+
+auto CServerData::BoatDrift() const -> bool
+{
+	return boolVals.test( BIT_BOATDRIFT );
+}
+auto CServerData::BoatDrift( bool newVal ) -> void
+{
+	boolVals.set( BIT_BOATDRIFT, newVal );
+}
+
+auto CServerData::HighSeasShipAnchors() const -> bool
+{
+	return boolVals.test( BIT_HIGHSEASSHIPANCHORS );
+}
+auto CServerData::HighSeasShipAnchors( bool newVal ) -> void
+{
+	boolVals.set( BIT_HIGHSEASSHIPANCHORS, newVal );
+}
+
+auto CServerData::HighSeasShipSpeechControl() const -> bool
+{
+	return boolVals.test( BIT_HIGHSEASSHIPSPEECHCONTROL );
+}
+auto CServerData::HighSeasShipSpeechControl( bool newVal ) -> void
+{
+	boolVals.set( BIT_HIGHSEASSHIPSPEECHCONTROL, newVal );
+}
+
+auto CServerData::CannonCharacterTargeting() const -> bool
+{
+	return boolVals.test( BIT_CANNONCHARACTERTARGETING );
+}
+auto CServerData::CannonCharacterTargeting( bool newVal ) -> void
+{
+	boolVals.set( BIT_CANNONCHARACTERTARGETING, newVal );
+}
+
+UI32 CServerData::BoatDecaySeconds() const
+{
+	return boatDecaySeconds;
+}
+auto CServerData::BoatDecaySeconds( UI32 value ) -> void
+{
+	boatDecaySeconds = std::max<UI32>( 1, value );
+}
+
+UI32 CServerData::BoatPaintDecaySeconds() const
+{
+	return boatPaintDecaySeconds;
+}
+auto CServerData::BoatPaintDecaySeconds( UI32 value ) -> void
+{
+	boatPaintDecaySeconds = std::max<UI32>( 1, value );
+}
+
+UI16 CServerData::BoatFastMoveInterval() const
+{
+	return boatFastMoveInterval;
+}
+auto CServerData::BoatFastMoveInterval( UI16 value ) -> void
+{
+	boatFastMoveInterval = std::max<UI16>( 1, value );
+}
+
+UI16 CServerData::BoatSlowMoveInterval() const
+{
+	return boatSlowMoveInterval;
+}
+auto CServerData::BoatSlowMoveInterval( UI16 value ) -> void
+{
+	boatSlowMoveInterval = std::max<UI16>( 1, value );
+}
+
+UI16 CServerData::BoatNpcMoveInterval() const
+{
+	return boatNpcMoveInterval;
+}
+auto CServerData::BoatNpcMoveInterval( UI16 value ) -> void
+{
+	boatNpcMoveInterval = std::max<UI16>( 1, value );
+}
+
+UI16 CServerData::BoatDriftInterval() const
+{
+	return boatDriftInterval;
+}
+auto CServerData::BoatDriftInterval( UI16 value ) -> void
+{
+	boatDriftInterval = std::max<UI16>( 1, value );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DecayStageLikeNewMins()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time in minutes for which houses are considered 'like new' 
@@ -6013,7 +6159,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
 		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << '\n';
-		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
 		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << '\n';
 		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << '\n';
 		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
@@ -6208,6 +6353,22 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "DECAYSTAGELOWHRS=" << DecayStageLowHrs() << '\n';
 		ofsOutput << "DECAYSTAGEHIHRS=" << DecayStageHiHrs() << '\n';
 		ofsOutput << "DECAYSTAGEDANGERHRS=" << DecayStageDangerHrs() << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[boats]" << '\n' << "{" << '\n';
+		ofsOutput << "BOATDECAY=" << ( BoatDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLASSICBOATMOUSECONTROL=" << ( ClassicBoatMouseControl() ? 1 : 0 ) << '\n';
+		ofsOutput << "HIGHSEASSHIPANCHORS=" << ( HighSeasShipAnchors() ? 1 : 0 ) << '\n';
+		ofsOutput << "BOATDRIFT=" << ( BoatDrift() ? 1 : 0 ) << '\n';
+		ofsOutput << "BOATDRIFTINTERVAL=" << BoatDriftInterval() << '\n';
+		ofsOutput << "HIGHSEASSHIPSPEECHCONTROL=" << ( HighSeasShipSpeechControl() ? 1 : 0 ) << '\n';
+		ofsOutput << "CANNONCHARACTERTARGETING=" << ( CannonCharacterTargeting() ? 1 : 0 ) << '\n';
+		ofsOutput << "BOATDECAYSECS=" << BoatDecaySeconds() << '\n';
+		ofsOutput << "BOATPAINTDECAYSECS=" << BoatPaintDecaySeconds() << '\n';
+		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
+		ofsOutput << "BOATFASTMOVEINTERVAL=" << BoatFastMoveInterval() << '\n';
+		ofsOutput << "BOATSLOWMOVEINTERVAL=" << BoatSlowMoveInterval() << '\n';
+		ofsOutput << "BOATNPCMOVEINTERVAL=" << BoatNpcMoveInterval() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
@@ -7803,6 +7964,42 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 423: // PASSWORDHASHINGENABLED
 			PasswordHashingEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 424: // BOATDECAY
+			BoatDecay( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 425: // BOATDECAYSECS
+			BoatDecaySeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 426: // BOATPAINTDECAYSECS
+			BoatPaintDecaySeconds( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 427: // BOATFASTMOVEINTERVAL
+			BoatFastMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 428: // BOATSLOWMOVEINTERVAL
+			BoatSlowMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 429: // BOATNPCMOVEINTERVAL
+			BoatNpcMoveInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 430: // CLASSICBOATMOUSECONTROL
+			ClassicBoatMouseControl( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 431: // HIGHSEASSHIPANCHORS
+			HighSeasShipAnchors( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 432: // BOATDRIFT
+			BoatDrift( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 433: // BOATDRIFTINTERVAL
+			BoatDriftInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 434: // HIGHSEASSHIPSPEECHCONTROL
+			HighSeasShipSpeechControl( std::stoul( value, nullptr, 0 ) != 0 );
+			break;
+		case 435: // CANNONCHARACTERTARGETING
+			CannonCharacterTargeting( std::stoul( value, nullptr, 0 ) != 0 );
 			break;
 		default:
 			rValue = false;

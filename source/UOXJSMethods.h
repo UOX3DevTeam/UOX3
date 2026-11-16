@@ -220,6 +220,14 @@ bool CMulti_IsOnFriendList( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_IsOnGuestList( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_IsOnOwnerList( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_IsOwner( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_GetSecurityLevel( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_HasAccess( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_CanCommand( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_SetSecurityLevel( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_GetAccessSetting( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_SetAccessSetting( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_ResetSecurity( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_RelocateTillerman( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_AddToBanList( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_AddToFriendList( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_AddToGuestList( JSContext *cx, unsigned argc, JS::Value *vp );
@@ -236,7 +244,20 @@ bool CMulti_FirstChar( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_NextChar( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_FinishedChars( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_TurnBoat( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CMulti_SailBoat( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CMulti_GetTiller( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CMulti_GetHold( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_DamageHull( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_RepairHull( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_IsNearLandOrDocks( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_GetHullHits( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_GetHullMaxHits( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_StartEmergencyRepairs( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_IsUnderEmergencyRepairs( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_CheckDryDock( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_DeleteForDryDock( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_PaintShip( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CBoat_RemoveShipPaint( JSContext *cx, unsigned argc, JS::Value *vp );
 
 // Socket Methods
 bool CSocket_Disconnect( JSContext *cx, unsigned argc, JS::Value *vp );
@@ -542,12 +563,31 @@ inline JSFunctionSpec CItem_Methods[] =
 	JS_FN( "OpenPlank",			CItem_OpenPlank,			0, 0 ),
 	JS_FN( "IsMulti",			CItem_IsMulti,				0, 0 ),
 	JS_FN( "IsBoat",				CBase_IsBoat,				0, 0 ),
+	JS_FN( "DamageHull",			CBoat_DamageHull,			1, 0 ),
+	JS_FN( "RepairHull",			CBoat_RepairHull,			1, 0 ),
+	JS_FN( "IsNearLandOrDocks",	CBoat_IsNearLandOrDocks,	0, 0 ),
+	JS_FN( "GetHullHits",			CBoat_GetHullHits,			0, 0 ),
+	JS_FN( "GetHullMaxHits",		CBoat_GetHullMaxHits,		0, 0 ),
+	JS_FN( "StartEmergencyRepairs", CBoat_StartEmergencyRepairs, 1, 0 ),
+	JS_FN( "IsUnderEmergencyRepairs", CBoat_IsUnderEmergencyRepairs, 0, 0 ),
+	JS_FN( "CheckDryDock",			CBoat_CheckDryDock,		0, 0 ),
+	JS_FN( "DeleteForDryDock",		CBoat_DeleteForDryDock,	1, 0 ),
+	JS_FN( "PaintShip",			CBoat_PaintShip,			2, 0 ),
+	JS_FN( "RemoveShipPaint",		CBoat_RemoveShipPaint,		0, 0 ),
 	JS_FN( "IsInMulti",			CMulti_IsInMulti,			1, 0 ),
 	JS_FN( "IsOnBanList",		CMulti_IsOnBanList,			1, 0 ),
 	JS_FN( "IsOnFriendList",		CMulti_IsOnFriendList,		1, 0 ),
 	JS_FN( "IsOnGuestList",		CMulti_IsOnGuestList,		1, 0 ),
 	JS_FN( "IsOwner",			CMulti_IsOwner,				1, 0 ),
 	JS_FN( "IsOnOwnerList",		CMulti_IsOnOwnerList,		1, 0 ),
+	JS_FN( "GetSecurityLevel",	CBoat_GetSecurityLevel,		1, 0 ),
+	JS_FN( "HasShipAccess",		CBoat_HasAccess,			1, 0 ),
+	JS_FN( "CanCommandShip",		CBoat_CanCommand,			1, 0 ),
+	JS_FN( "SetSecurityLevel",	CBoat_SetSecurityLevel,		2, 0 ),
+	JS_FN( "GetShipAccessSetting", CBoat_GetAccessSetting,	1, 0 ),
+	JS_FN( "SetShipAccessSetting", CBoat_SetAccessSetting,	2, 0 ),
+	JS_FN( "ResetShipSecurity",	CBoat_ResetSecurity,		0, 0 ),
+	JS_FN( "RelocateTillerman",	CBoat_RelocateTillerman,	3, 0 ),
 	JS_FN( "AddToBanList",		CMulti_AddToBanList,		1, 0 ),
 	JS_FN( "AddToFriendList",	CMulti_AddToFriendList,		1, 0 ),
 	JS_FN( "AddToGuestList",		CMulti_AddToGuestList,		1, 0 ),
@@ -604,7 +644,9 @@ inline JSFunctionSpec CItem_Methods[] =
 	JS_FN( "FinishedChars",		CMulti_FinishedChars,		1, 0 ),
 
 	JS_FN( "TurnBoat",			CMulti_TurnBoat,			1, 0 ),
+	JS_FN( "SailBoat",			CMulti_SailBoat,			1, 0 ),
 	JS_FN( "GetTiller",			CMulti_GetTiller,			0, 0 ),
+	JS_FN( "GetHold",			CMulti_GetHold,			0, 0 ),
 
 	JS_FN( "SetRandomName",		CBase_SetRandomName,		1, 0 ),
 	JS_FN( "SetRandomColor",		CBase_SetRandomColor,		1, 0 ),

@@ -5782,6 +5782,42 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 			case 423:	// PASSWORDHASHINGENABLED
 				args.rval().setBoolean( cwmWorldState->ServerData()->PasswordHashingEnabled() );
 				break;
+			case 424:	// BOATDECAY
+				args.rval().setBoolean( cwmWorldState->ServerData()->BoatDecay() );
+				break;
+			case 425:	// BOATDECAYSECS
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->BoatDecaySeconds() ));
+				break;
+			case 426:	// BOATPAINTDECAYSECS
+				args.rval().setInt32( static_cast<UI32>( cwmWorldState->ServerData()->BoatPaintDecaySeconds() ));
+				break;
+			case 427:	// BOATFASTMOVEINTERVAL
+				args.rval().setInt32( static_cast<UI16>( cwmWorldState->ServerData()->BoatFastMoveInterval() ));
+				break;
+			case 428:	// BOATSLOWMOVEINTERVAL
+				args.rval().setInt32( static_cast<UI16>( cwmWorldState->ServerData()->BoatSlowMoveInterval() ));
+				break;
+			case 429:	// BOATNPCMOVEINTERVAL
+				args.rval().setInt32( static_cast<UI16>( cwmWorldState->ServerData()->BoatNpcMoveInterval() ));
+				break;
+			case 430:	// CLASSICBOATMOUSECONTROL
+				args.rval().setBoolean( cwmWorldState->ServerData()->ClassicBoatMouseControl() );
+				break;
+			case 431:	// HIGHSEASSHIPANCHORS
+				args.rval().setBoolean( cwmWorldState->ServerData()->HighSeasShipAnchors() );
+				break;
+			case 432:	// BOATDRIFT
+				args.rval().setBoolean( cwmWorldState->ServerData()->BoatDrift() );
+				break;
+			case 433:	// BOATDRIFTINTERVAL
+				args.rval().setInt32( static_cast<UI16>( cwmWorldState->ServerData()->BoatDriftInterval() ));
+				break;
+			case 434:	// HIGHSEASSHIPSPEECHCONTROL
+				args.rval().setBoolean( cwmWorldState->ServerData()->HighSeasShipSpeechControl() );
+				break;
+			case 435:	// CANNONCHARACTERTARGETING
+				args.rval().setBoolean( cwmWorldState->ServerData()->CannonCharacterTargeting() );
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
