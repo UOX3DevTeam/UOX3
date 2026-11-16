@@ -1913,14 +1913,7 @@ bool CGump_Send( JSContext *cx, unsigned argc, JS::Value* vp )
 
 	auto obj = getThis( cx, args );
   SEGump_st *myGump = JS::GetMaybePtrFromReservedSlot<SEGump_st>( obj, 0 );
-	cScript *activeScript = JSMapping->currentActive();
-	if( activeScript == nullptr )
-	{
-		ScriptError( cx, "Send: Unable to determine the active script" );
-		return false;
-	}
-
-	UI16 scriptId = activeScript->GetScriptID();
+	UI16 scriptId = JSMapping->currentActive()->GetScriptID();
 	UI32 gumpId = myGump->hasCustomGumpId ? myGump->gumpId : ( 0xFFFF + scriptId );
 	if( !JSMapping->RegisterGump( gumpId, scriptId ))
 	{
