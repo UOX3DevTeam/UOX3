@@ -417,6 +417,8 @@
 7504=item/power_scroll.js
 7505=item/champion_system/champ_rotation.js
 
+7700=server/misc/community_collections.js
+
 //-------------------------------------------
 // Misc Player Scripts [8000-8499]
 //-------------------------------------------
