@@ -8,3 +8,15 @@ visible=3
 decay=0
 wipe=0
 }
+
+[npc_drive_shelter_marker]
+{
+get=base_item
+id=0x04a9
+name=NPC Drive Shelter Marker
+movable=2
+visible=3
+decay=0
+wipe=0
+custominttag=NpcDriveShelter 1
+}

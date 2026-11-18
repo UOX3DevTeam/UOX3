@@ -432,6 +432,7 @@ id=0x09ec
 weight=200
 value=3 1
 pileable=1
+customstringtag=NpcDriveResource honey
 }
 
 [0x09f0]

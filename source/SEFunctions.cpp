@@ -5782,6 +5782,9 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 			case 423:	// PASSWORDHASHINGENABLED
 				args.rval().setBoolean( cwmWorldState->ServerData()->PasswordHashingEnabled() );
 				break;
+			case 424:	// NPCDRIVESYSTEM
+				args.rval().setBoolean( cwmWorldState->ServerData()->NpcDriveSystem() );
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

@@ -13,6 +13,7 @@ pileable=1
 amount=1
 decay=1
 good=36
+customstringtag=NpcDriveResource gem
 }
 
 [0x0F0F]

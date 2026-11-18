@@ -90,6 +90,7 @@ constexpr auto INVALIDSERIAL	= SERIAL( 0xFFFFFFFF );
 constexpr auto INVALIDID		= std::uint16_t( 0xFFFF );
 constexpr auto INVALIDCOLOUR	= std::uint16_t( 0xFFFF );
 constexpr auto BASEITEMSERIAL	= SERIAL( 0x40000000 );
+constexpr auto NPCDRIVESCRIPT	= std::uint16_t( 6 ); // Reserved core JSE entry in jse_fileassociations.scp
 #if PLATFORM != WINDOWS
 constexpr auto  MAX_PATH = 268;
 #endif

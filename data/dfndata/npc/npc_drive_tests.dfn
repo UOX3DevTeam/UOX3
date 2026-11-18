@@ -1,0 +1,90 @@
+// Optional NPC drive-system test actors.
+// These sections are never spawned by stock regions or menus. Add them manually:
+//   'add npc npc_drive_test_leader
+//   'add npc npc_drive_test_member
+//   'add npc npc_drive_test_scared
+//   'add npc npc_drive_test_intruder
+
+[npc_drive_test_leader]
+{
+GET=greywolf
+NAME=NPC drive test pack leader
+NPCWANDER=0
+WILLHUNGER=1
+CUSTOMSTRINGTAG=NpcDriveProfile animal
+CUSTOMSTRINGTAG=NpcDrivePackId drive_test_pack
+CUSTOMSTRINGTAG=NpcDrivePackRole leader
+CUSTOMINTTAG=NpcDrivePackRadius 12
+CUSTOMINTTAG=NpcDrivePackFollowDistance 4
+CUSTOMSTRINGTAG=NpcDriveTerritoryTargets drive_intruder
+CUSTOMSTRINGTAG=NpcDriveHoardResources gold,gem
+CUSTOMINTTAG=NpcDriveTerritoryRadius 8
+CUSTOMINTTAG=NpcDriveHoardGuardRadius 4
+CUSTOMSTRINGTAG=NpcDriveDesires gold:pickup:15,honey:nearby:15
+CUSTOMSTRINGTAG=NpcDriveReturnResources gold
+CUSTOMINTTAG=NpcDriveDesireSearchRadius 12
+CUSTOMSTRINGTAG=NpcDriveIdleActivities home,roam,pause
+CUSTOMINTTAG=NpcDriveBoredomDelay 10
+CUSTOMINTTAG=NpcDriveIdleDuration 5
+CUSTOMINTTAG=NpcDriveIdleRadius 6
+CUSTOMINTTAG=NpcDriveLeashRadius 16
+}
+
+[npc_drive_test_member]
+{
+GET=greywolf
+NAME=NPC drive test pack member
+NPCWANDER=0
+WILLHUNGER=1
+CUSTOMSTRINGTAG=NpcDriveProfile animal
+CUSTOMSTRINGTAG=NpcDrivePackId drive_test_pack
+CUSTOMSTRINGTAG=NpcDrivePackRole member
+CUSTOMINTTAG=NpcDrivePackRadius 12
+CUSTOMINTTAG=NpcDrivePackFollowDistance 4
+CUSTOMSTRINGTAG=NpcDriveDesires honey:nearby:15
+CUSTOMINTTAG=NpcDriveDesireSearchRadius 12
+CUSTOMSTRINGTAG=NpcDriveIdleActivities home,roam,pause
+CUSTOMINTTAG=NpcDriveBoredomDelay 10
+CUSTOMINTTAG=NpcDriveIdleDuration 5
+CUSTOMINTTAG=NpcDriveIdleRadius 6
+CUSTOMINTTAG=NpcDriveLeashRadius 16
+}
+
+[npc_drive_test_scared]
+{
+GET=greywolf
+NAME=NPC drive test scared wolf
+NPCAI=12
+NPCWANDER=0
+WILLHUNGER=1
+CUSTOMSTRINGTAG=NpcDriveProfile animal
+CUSTOMSTRINGTAG=NpcDriveAversions drive_threat:8
+CUSTOMINTTAG=NpcDriveAversionSearchRadius 12
+CUSTOMSTRINGTAG=NpcDriveDesires honey:nearby:10
+CUSTOMSTRINGTAG=NpcDriveIdleActivities home,roam,pause
+CUSTOMINTTAG=NpcDriveBoredomDelay 10
+CUSTOMINTTAG=NpcDriveIdleDuration 5
+CUSTOMINTTAG=NpcDriveIdleRadius 6
+CUSTOMINTTAG=NpcDriveLeashRadius 16
+}
+
+[npc_drive_test_intruder]
+{
+NAME=NPC drive test intruder
+ID=0x0011
+DIRECTION=RND
+STR=500
+DEX=40
+INT=20
+MANAMAX=0
+MAGICRESISTANCE=300
+TACTICS=300
+WRESTLING=300
+DAMAGE=1 4
+DEF=5
+NPCWANDER=0
+NPCAI=7
+FLAG=EVIL
+RACE=22
+CUSTOMSTRINGTAG=NpcDriveResource drive_intruder,drive_threat
+}

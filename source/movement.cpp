@@ -2639,16 +2639,28 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 			{
 				mChar.SetNpcWander( mChar.GetOldNpcWander() );
 
-				std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
-				for( auto scriptTrig : scriptTriggers )
+				bool pathHandled = false;
+				const auto driveMode = mChar.GetTempTag( "npcDriveMode" );
+				const auto driveActive = ( driveMode.m_ObjectType == TAGMAP_TYPE_STRING ? !driveMode.m_StringValue.empty() : driveMode.m_IntValue != 0 );
+				if( cwmWorldState->ServerData()->NpcDriveSystem() || driveActive )
 				{
-					cScript *toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != nullptr )
+					cScript *driveScript = JSMapping->GetScript( NPCDRIVESCRIPT );
+					pathHandled = ( driveScript && driveScript->OnPathfindEnd( &mChar, mChar.GetPathResult() ) == 1 );
+				}
+
+				if( !pathHandled )
+				{
+					std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
 					{
-						// Reached end of pathfinding, if script returns true/1, prevent other scripts with event from running
-						if( toExecute->OnPathfindEnd( &mChar, mChar.GetPathResult() ) == 1 )
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
 						{
-							break;
+							// Reached end of pathfinding, if script returns true/1, prevent other scripts with event from running
+							if( toExecute->OnPathfindEnd( &mChar, mChar.GetPathResult() ) == 1 )
+							{
+								break;
+							}
 						}
 					}
 				}
