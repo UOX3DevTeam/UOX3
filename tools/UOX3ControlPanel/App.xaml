@@ -1,0 +1,25 @@
+<Application x:Class="UOX3ControlPanel.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="PanelBrush" Color="#182231" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#D5A84B" />
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Background" Value="#28384D" />
+            <Setter Property="Foreground" Value="#F4F7FA" />
+            <Setter Property="BorderBrush" Value="#40536B" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#0D141D" />
+            <Setter Property="Foreground" Value="#DDE6EF" />
+            <Setter Property="BorderBrush" Value="#40536B" />
+            <Setter Property="CaretBrush" Value="White" />
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="Padding" Value="18,8" />
+        </Style>
+    </Application.Resources>
+</Application>

@@ -55,6 +55,13 @@ CEndL		myendl;
 constexpr auto NORMALMODE = std::uint8_t( 0 );
 constexpr auto WARNINGMODE = std::uint8_t( 1 );
 constexpr auto ERRORMODE = std::uint8_t( 2 );
+#if PLATFORM == WINDOWS
+auto IsRedirectedConsoleOutput() -> bool
+{
+	auto handle = GetStdHandle( STD_OUTPUT_HANDLE );
+	return handle == INVALID_HANDLE_VALUE || handle == nullptr || GetFileType( handle ) != FILE_TYPE_CHAR;
+}
+#endif
 //const UI08 COLOURMODE			= 3;
 const std::string	CConsole::ESC			= "\x1b"s;
 const std::string	CConsole::CSI			= CConsole::ESC + "["s;
@@ -197,9 +204,16 @@ auto CConsole::WindowSize() -> std::pair<int, int>
 #else
 	HANDLE hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	GetConsoleScreenBufferInfo( hco, &csbi );
-	col	= csbi.dwSize.X;
-	row	= csbi.dwSize.Y;
+	if( GetConsoleScreenBufferInfo( hco, &csbi ))
+	{
+		col = csbi.dwSize.X;
+		row = csbi.dwSize.Y;
+	}
+	else
+	{
+		col = 120;
+		row = 40;
+	}
 #endif
 	return std::make_pair( row, col );
 }
@@ -212,6 +226,11 @@ auto CConsole::WindowSize() -> std::pair<int, int>
 auto CConsole::DoClearScreen() -> void
 {
 #if defined( _WIN32 )
+	if( IsRedirectedConsoleOutput() )
+	{
+		SendCMD( CSI + "2J" + CSI + "H" );
+		return;
+	}
 	unsigned long y;
 	COORD xy;
 
@@ -236,6 +255,11 @@ auto CConsole::operator << ( const char *output ) ->CConsole&
 {
 	StartOfLineCheck();
 #if PLATFORM == WINDOWS
+	if( IsRedirectedConsoleOutput() )
+	{
+		std::cout << output;
+		return ( *this );
+	}
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
@@ -517,6 +541,14 @@ auto CConsole::PrintSectionBegin() -> void
 		std::cout << "-";
 	}
 	std::cout << "o";
+#if PLATFORM == WINDOWS
+	// A real console automatically wraps after the width-sized border. A pipe
+	// has no screen width, so reproduce that wrap for GUI terminal hosts.
+	if( IsRedirectedConsoleOutput() )
+	{
+		std::cout << std::endl;
+	}
+#endif
 	curLeft = 0;
 	curTop = 0;
 	TurnNormal();
@@ -543,8 +575,8 @@ auto CConsole::Start(const std::string& temp) -> void
 auto CConsole::TurnYellow() -> void
 {
 #if PLATFORM == WINDOWS
-	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
-	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
+	if( IsRedirectedConsoleOutput() ) std::cout << "\033[1;33m";
+	else SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;33m";
 #endif
@@ -559,8 +591,8 @@ auto CConsole::TurnYellow() -> void
 auto CConsole::TurnRed() -> void
 {
 #if PLATFORM == WINDOWS
-	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
-	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
+	if( IsRedirectedConsoleOutput() ) std::cout << "\033[1;31m";
+	else SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;31m";
 #endif
@@ -575,8 +607,8 @@ auto CConsole::TurnRed() -> void
 auto CConsole::TurnGreen() -> void
 {
 #if PLATFORM == WINDOWS
-	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
-	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
+	if( IsRedirectedConsoleOutput() ) std::cout << "\033[1;32m";
+	else SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;32m";
 #endif
@@ -591,8 +623,8 @@ auto CConsole::TurnGreen() -> void
 auto CConsole::TurnBlue() -> void
 {
 #if PLATFORM == WINDOWS
-	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
-	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
+	if( IsRedirectedConsoleOutput() ) std::cout << "\033[1;34m";
+	else SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;34m";
 #endif
@@ -607,8 +639,8 @@ auto CConsole::TurnBlue() -> void
 auto CConsole::TurnNormal() -> void
 {
 #if PLATFORM == WINDOWS
-	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
-	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
+	if( IsRedirectedConsoleOutput() ) std::cout << "\033[0;37m";
+	else SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
 	std::cout << "\033[0;37m";
 #endif
@@ -623,8 +655,8 @@ auto CConsole::TurnNormal() -> void
 auto CConsole::TurnBrightWhite() -> void
 {
 #if PLATFORM == WINDOWS
-	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
-	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
+	if( IsRedirectedConsoleOutput() ) std::cout << "\033[1;37m";
+	else SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;37m";
 #endif
@@ -750,6 +782,16 @@ auto CConsole::PrintStartOfLine() -> void
 #if PLATFORM == WINDOWS
 auto CConsole::MoveTo( SI32 x, SI32 y ) -> void
 {
+	if( IsRedirectedConsoleOutput() )
+	{
+		// A redirected GUI is a scrolling terminal, not the fixed screen used by
+		// the native Windows console. Keep horizontal status alignment, but turn
+		// absolute row moves into new logical lines so headings cannot overwrite
+		// or concatenate with previously committed output.
+		if( y != -1 ) std::cout << '\n';
+		std::cout << "\033[" << ( x + 1 ) << "G";
+		return;
+	}
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	COORD Pos;
 	if( y == -1 )
@@ -926,7 +968,26 @@ auto CConsole::cl_getch() -> std::int32_t
 	}
 
 #else
-	// uox is not wrapped simply use the kbhit routine
+	// GUI wrappers redirect stdin to a pipe. _kbhit() only works with a real
+	// console, so poll redirected input with PeekNamedPipe instead.
+	HANDLE stdinHandle = GetStdHandle( STD_INPUT_HANDLE );
+	if( stdinHandle != INVALID_HANDLE_VALUE && stdinHandle != nullptr &&
+		GetFileType( stdinHandle ) == FILE_TYPE_PIPE )
+	{
+		DWORD bytesAvailable = 0;
+		if( PeekNamedPipe( stdinHandle, nullptr, 0, nullptr, &bytesAvailable, nullptr ) && bytesAvailable > 0 )
+		{
+			char data = 0;
+			DWORD bytesRead = 0;
+			if( ReadFile( stdinHandle, &data, 1, &bytesRead, nullptr ) && bytesRead == 1 )
+			{
+				return static_cast<std::int32_t>( static_cast<unsigned char>( data ));
+			}
+		}
+		return -1;
+	}
+
+	// UOX3 was launched in its normal console; read the physical keyboard.
 	if( _kbhit() )
 	{
 		return _getch();

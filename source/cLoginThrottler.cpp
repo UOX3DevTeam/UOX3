@@ -84,6 +84,11 @@ bool cLoginThrottler::IsBlocked( CSocket *socket, const std::string &username, U
 //o------------------------------------------------------------------------------------------------o
 void cLoginThrottler::RecordFailure( CSocket *socket, const std::string &username )
 {
+	if( socket != nullptr )
+	{
+		Console.Log( oldstrutil::format( "Failed login for account '%s' from [%i.%i.%i.%i].", SafeLoginNameForLog( username ).c_str(),
+			socket->ClientIP4(), socket->ClientIP3(), socket->ClientIP2(), socket->ClientIP1() ), "accounts.log" );
+	}
 	RecordAttempt( socket, username, "" );
 }
 
