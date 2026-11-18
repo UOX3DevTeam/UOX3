@@ -79,6 +79,8 @@ void CJSMapping::ResetDefaults( void )
 //o------------------------------------------------------------------------------------------------o
 void CJSMapping::Cleanup( void )
 {
+	customGumpScriptMap.clear();
+
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
 		if( mapSection[i] != nullptr )
@@ -98,6 +100,34 @@ void CJSMapping::Cleanup( void )
 		delete envokeByType;
 		envokeByType = nullptr;
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CJSMapping::RegisterGump()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Associates a client gump id with the script that owns its callback
+//o------------------------------------------------------------------------------------------------o
+bool CJSMapping::RegisterGump( UI32 gumpId, UI16 scriptId )
+{
+	auto result = customGumpScriptMap.emplace( gumpId, scriptId );
+	return result.second || result.first->second == scriptId;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    - CJSMapping::GetGumpScript()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     - Looks up the script that owns a client gump id
+//o------------------------------------------------------------------------------------------------o
+bool CJSMapping::GetGumpScript( UI32 gumpId, UI16 &scriptId ) const
+{
+	auto found = customGumpScriptMap.find( gumpId );
+	if( found == customGumpScriptMap.end() )
+	{
+		return false;
+	}
+
+	scriptId = found->second;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -141,6 +141,8 @@ struct SEGump_st
 {
 	std::vector<std::string> *one, *two;
 	UI32 textId;
+	UI32 gumpId;
+	bool hasCustomGumpId;
 };
 
 struct SEGumpData_st

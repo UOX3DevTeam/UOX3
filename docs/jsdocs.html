@@ -12874,8 +12874,10 @@ if( myGuild != null )
 				<a class="cd-faq__trigger" href="#methodsGump" id="methodsGump"><span>Gump Methods</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
-						<p>Before any gump methods can be used, you need to instantiate a new Gump object:</p>
-	<pre><code class="language-javascript">var myGump = new Gump;</code></pre>
+						<p>Before any gump methods can be used, instantiate a new <code>Gump</code> object. The constructor accepts an optional unsigned 32-bit custom gump ID:</p>
+	<pre><code class="language-javascript">var defaultGump = new Gump();           // ID defaults to 0xffff + this script's ID
+var customGump = new Gump( 0x123456 ); // Explicit ID for identifying this particular gump</code></pre>
+						<p>UOX3 records the gump ID-to-script mapping when the gump is sent, so button presses still invoke the creating script's <code>onGumpPress()</code> handler. A gump ID may be reused by the same script, but must not be shared by different scripts. A cross-script collision raises a script error and the conflicting gump is not sent. Mappings are cleared by a full JavaScript reload or server shutdown.</p>
 
 					<div class="spoilerWrapper">
 						<input type="checkbox" id="spoiler_method_gump_addbackground"/>
@@ -15344,7 +15346,7 @@ myRegion.RemoveScriptTrigger( 16003 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Closes specified gump based on its ID, and provides a button ID response</p>
+									<p>Closes the specified gump based on its ID and provides a button ID response. Pass the custom ID supplied to <code>new Gump( gumpID )</code> when selectively closing one of several gumps created by the same script.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -15353,7 +15355,10 @@ myRegion.RemoveScriptTrigger( 16003 );</code></pre>
 var scriptID = 8000;
 
 // Close gump opened via this script (by default, gumps are assigned a gumpID based on script ID + 0xffff)
-mySocket.CloseGump( scriptID + 0xffff, 0 );</code></pre>
+mySocket.CloseGump( scriptID + 0xffff, 0 );
+
+// Or selectively close a gump created with: new Gump( 0x123456 )
+mySocket.CloseGump( 0x123456, 0 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -19215,13 +19220,15 @@ function onTimer( tObject, timerID )
 					<input type="checkbox" id="spoiler_qr_gumps"/>
 					<label for="spoiler_qr_gumps">Constructing and sending custom Gump menus <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>You can create custom UI dialogs (gumps) and send them to players using the <code>Gump</code> object. Button clicks are returned to the <code>onGumpPress()</code> event handler:</p>
+						<p>You can create custom UI dialogs (gumps) and send them to players using the <code>Gump</code> object. Button clicks are returned to the <code>onGumpPress()</code> event handler. Pass an optional unique ID to the constructor when a script needs to identify or close this gump independently:</p>
 <pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
 {
 	const pSock = pUser.socket;
 	if( pSock )
 	{
-		const myGump = new Gump();
+		const portalGumpID = 0x123456;
+		pSock.CloseGump( portalGumpID, 0 ); // Close only an older portal gump, if present
+		const myGump = new Gump( portalGumpID );
 		myGump.AddBackground( 0, 0, 300, 200, 0x0A28 );
 		myGump.AddText( 40, 30, 0, "Welcome to the Shard Portal!" );
 		myGump.AddButton( 40, 80, 0x0FA5, 0x0FA7, 1, 0, 1 ); // Button ID 1

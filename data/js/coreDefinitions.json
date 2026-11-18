@@ -7608,6 +7608,9 @@
     {
       "name": "Gump",
       "type": "class",
+      "constructor": { "params": { "num": 1, "list": [
+        { "name": "gumpId", "type": "number", "required": false }
+      ] } },
       "properties": [],
       "methods": [
         { "name": "Free",                "cppName": "CGump_Free",                "params": { "num":  0, "list": [] }, "returns": "void" },
