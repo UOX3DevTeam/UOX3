@@ -35,6 +35,7 @@
 
 extern CThreadQueue messageLoop;
 extern bool forceTimeUpdate;
+extern bool forceLightUpdate;
 
 void CollectGarbage( void );
 void EndMessage( SI32 x );
@@ -516,8 +517,9 @@ void Command_SetTime( CSocket *s )
 			cwmWorldState->ServerData()->ServerTimeHours( newhours );
 			cwmWorldState->ServerData()->ServerTimeMinutes( newminutes );
 
-			// Force time update packet on next server loop
+			// Force time and light update packets on next server loop
 			forceTimeUpdate = true;
+			forceLightUpdate = true;
 		}
 	}
 }

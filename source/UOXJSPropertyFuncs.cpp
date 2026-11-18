@@ -31,6 +31,7 @@
 #include "cSpawnRegion.h"
 
 #include "PartySystem.h"
+#include "network.h"
 
 #include <jsapi.h>
 #include <js/Array.h>
@@ -257,6 +258,8 @@ IMPL_GET_NP( CTimer, FLYINGTOGGLE,              setInt32, tCHAR_FLYINGTOGGLE )
 IMPL_GET_NP( CTimer, FIREFIELDTICK,             setInt32, tCHAR_FIREFIELDTICK )
 IMPL_GET_NP( CTimer, POISONFIELDTICK,           setInt32, tCHAR_POISONFIELDTICK )
 IMPL_GET_NP( CTimer, PARAFIELDTICK,             setInt32, tCHAR_PARAFIELDTICK )
+IMPL_GET_NP( CTimer, YOUNGHEAL,                 setInt32, tCHAR_YOUNGHEAL )
+IMPL_GET_NP( CTimer, YOUNGMESSAGE,              setInt32, tCHAR_YOUNGMESSAGE )
 IMPL_GET_NP( CTimer, MOVETIME,                  setInt32, tNPC_MOVETIME )
 IMPL_GET_NP( CTimer, SPATIMER,                  setInt32, tNPC_SPATIMER )
 IMPL_GET_NP( CTimer, SUMMONTIME,                setInt32, tNPC_SUMMONTIME )
@@ -803,7 +806,7 @@ IMPL_GET_OBJ( CItem, staminaBonus, CItem, setInt32, GetStaminaBonus() )
 IMPL_GET_OBJ( CItem, manaBonus, CItem, setInt32, GetManaBonus() )
 IMPL_GET_OBJ( CItem, artifactRarity, CItem, setInt32, GetArtifactRarity() )
 IMPL_GET_OBJ( CItem, durabilityHpBonus, CItem, setInt32, GetDurabilityHpBonus() )
-IMPL_GET_OBJ( CItem, lowerStateReq, CItem, setInt32, GetLowerStatReq() )
+IMPL_GET_OBJ( CItem, lowerStatReq, CItem, setInt32, GetLowerStatReq() )
 static bool SetItemTempVariable( JSContext *cx, CItem *item, CITempVars variable, JS::HandleValue input )
 {
 	JS::RootedString converted( cx, JS::ToString( cx, input ));
@@ -873,7 +876,7 @@ ITEM_COMBAT_INT_SET( staminaBonus, SI16, SetStaminaBonus )
 ITEM_COMBAT_INT_SET( manaBonus, SI16, SetManaBonus )
 ITEM_COMBAT_INT_SET( artifactRarity, SI16, SetArtifactRarity )
 ITEM_COMBAT_INT_SET( durabilityHpBonus, SI16, SetDurabilityHpBonus )
-ITEM_COMBAT_INT_SET( lowerStateReq, SI16, SetLowerStatReq )
+ITEM_COMBAT_INT_SET( lowerStatReq, SI16, SetLowerStatReq )
 #undef ITEM_COMBAT_INT_SET
 
 #define ITEM_RESIST_SET( attr, damageType )                              \
@@ -1646,6 +1649,7 @@ CHARACTER_MISC_INT_SET( orgSkin, UI16, character->SetOrgSkin( value ))
 CHARACTER_MISC_INT_SET( maxLoyalty, UI16, character->SetMaxLoyalty( value ))
 CHARACTER_MISC_INT_SET( loyalty, UI16, character->SetLoyalty( value ))
 CHARACTER_MISC_INT_SET( tithing, SI32, character->SetTithing( value ))
+CHARACTER_MISC_INT_SET( accountNum, UI16, character->SetAccountNum( value ))
 CHARACTER_MISC_BOOL_SET( isGM, character->SetGM( value ))
 CHARACTER_MISC_BOOL_SET( canBroadcast, character->SetBroadcast( value ))
 CHARACTER_MISC_BOOL_SET( singClickSer, character->SetSingClickSer( value ))
@@ -1660,9 +1664,19 @@ CHARACTER_MISC_BOOL_SET( noNeedReags, character->SetNoNeedReags( value ))
 #undef CHARACTER_MISC_BOOL_SET
 FDCLS( CCharacter, ownerCount ) { return true; }
 FDCLS( CCharacter, loyaltyRate ) { return true; }
-FDCLS( CCharacter, accountNum ) { return true; }
 FDCLS( CCharacter, createdOn ) { return true; }
-FDCLS( CCharacter, playTime ) { return true; }
+FDCLS( CCharacter, playTime )
+{
+	FNARGS
+	auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 );
+	if( !ValidateObject( character ))
+		return false;
+	uint32_t value = 0;
+	if( !JS::ToUint32( cx, args.get( 0 ), &value ))
+		return false;
+	character->SetPlayTime( static_cast<UI32>( value ));
+	return true;
+}
 FDCLS( CCharacter, housesOwned ) { return true; }
 FDCLS( CCharacter, housesCoOwned ) { return true; }
 FDCLS( CCharacter, origin ) { FNARGS auto character = JS::GetMaybePtrFromReservedSlot<CChar>( thisObj, 0 ); JS::RootedString value( cx, JS::ToString( cx, args.get( 0 ))); if( value == nullptr ) return false; character->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( JSStringToString( cx, value ))); return true; }
@@ -1867,6 +1881,144 @@ FDCLG( CRegion, scriptTriggers )
 	return true;
 }
 
+IMPL_SETS( CRegion, name, CTownRegion, toString, SetName )
+
+#define REGION_INT_SET( attr, valueType, accessor )                           \
+FDCLS( CRegion, attr )                                                        \
+{                                                                             \
+	FNARGS                                                                    \
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 ); \
+	int32_t value = 0;                                                        \
+	if( !JS::ToInt32( cx, args.get( 0 ), &value ))                            \
+		return false;                                                         \
+	region->accessor( static_cast<valueType>( value ));                       \
+	return true;                                                              \
+}
+
+#define REGION_UINT_SET( attr, accessor )                                     \
+FDCLS( CRegion, attr )                                                        \
+{                                                                             \
+	FNARGS                                                                    \
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 ); \
+	uint32_t value = 0;                                                       \
+	if( !JS::ToUint32( cx, args.get( 0 ), &value ))                           \
+		return false;                                                         \
+	region->accessor( static_cast<UI32>( value ));                            \
+	return true;                                                              \
+}
+
+#define REGION_BOOL_SET( attr, accessor )                                     \
+FDCLS( CRegion, attr )                                                        \
+{                                                                             \
+	FNARGS                                                                    \
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 ); \
+	region->accessor( JS::ToBoolean( args.get( 0 )));                         \
+	return true;                                                              \
+}
+
+REGION_INT_SET(  race,              RACEID,    SetRace )
+REGION_INT_SET(  tax,               UI16,      TaxedAmount )
+REGION_INT_SET(  taxResource,       UI16,      SetResourceId )
+REGION_INT_SET(  health,            SI16,      SetHealth )
+REGION_INT_SET(  worldNumber,       UI08,      WorldNumber )
+REGION_INT_SET(  instanceID,        UI16,      SetInstanceId )
+REGION_INT_SET(  chanceBigOre,      UI08,      SetChanceBigOre )
+REGION_INT_SET(  numGuards,         UI16,      SetNumGuards )
+REGION_INT_SET(  appearance,        WorldType, SetAppearance )
+REGION_INT_SET(  music,             UI16,      SetMusicList )
+REGION_UINT_SET( taxes,             SetTaxesLeft )
+REGION_UINT_SET( reserves,          SetReserves )
+REGION_BOOL_SET( canMark,           CanMark )
+REGION_BOOL_SET( canRecall,         CanRecall )
+REGION_BOOL_SET( canGate,           CanGate )
+REGION_BOOL_SET( canTeleport,       CanTeleport )
+REGION_BOOL_SET( canPlaceHouse,     CanPlaceHouse )
+REGION_BOOL_SET( isGuarded,         IsGuarded )
+REGION_BOOL_SET( canCastAggressive, CanCastAggressive )
+REGION_BOOL_SET( isSafeZone,        IsSafeZone )
+REGION_BOOL_SET( isDungeon,         IsDungeon )
+REGION_BOOL_SET( isDisabled,        IsDisabled )
+
+#undef REGION_INT_SET
+#undef REGION_UINT_SET
+#undef REGION_BOOL_SET
+
+FDCLS( CRegion, mayor )
+{
+	FNARGS
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 );
+	if( args.get( 0 ).isNullOrUndefined() )
+	{
+		region->SetMayorSerial( INVALIDSERIAL );
+		return true;
+	}
+	if( args.get( 0 ).isObject() )
+	{
+		JS::RootedObject mayorObj( cx, &args.get( 0 ).toObject() );
+		if( JS::GetClass( mayorObj ) == &UOXChar_class )
+		{
+			CChar *mayor = JS::GetMaybePtrFromReservedSlot<CChar>( mayorObj, 0 );
+			if( ValidateObject( mayor ))
+				region->SetMayorSerial( mayor->GetSerial() );
+		}
+		return true;
+	}
+	uint32_t value = 0;
+	if( !JS::ToUint32( cx, args.get( 0 ), &value ))
+		return false;
+	region->SetMayorSerial( static_cast<SERIAL>( value ));
+	return true;
+}
+
+static bool SetRegionScriptTrigger( JSContext *cx, CTownRegion *region, JS::HandleValue input, bool replace )
+{
+	if( input.isNullOrUndefined() )
+	{
+		region->ClearScriptTriggers();
+		return true;
+	}
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, input, &value ))
+		return false;
+	const UI16 scriptId = static_cast<UI16>( value );
+	if( JSMapping->GetScript( scriptId ) == nullptr )
+	{
+		ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+		return true;
+	}
+	if( replace )
+		region->ClearScriptTriggers();
+	region->AddScriptTrigger( scriptId );
+	return true;
+}
+
+FDCLS( CRegion, scriptTrigger )  { FNARGS auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 ); return SetRegionScriptTrigger( cx, region, args.get( 0 ), true ); }
+FDCLS( CRegion, scriptTriggers ) { FNARGS auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 ); return SetRegionScriptTrigger( cx, region, args.get( 0 ), false ); }
+
+FDCLS( CRegion, weather )
+{
+	FNARGS
+	auto region = JS::GetMaybePtrFromReservedSlot<CTownRegion>( thisObj, 0 );
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &value ))
+		return false;
+	region->SetWeather( static_cast<WEATHID>( value ));
+	if( Network != nullptr )
+	{
+		for( auto &tSock : Network->connClients )
+		{
+			if( tSock == nullptr )
+				continue;
+			CChar *tChar = tSock->CurrcharObj();
+			if( ValidateObject( tChar ) && tChar->GetRegion() == region )
+			{
+				DoLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+			}
+		}
+	}
+	return true;
+}
+
 static std::string JoinSpawnEntries( const std::vector<std::string> &entries )
 {
 	std::string result;
@@ -1985,6 +2137,61 @@ IMPL_GET_GUILD_OBJECT( master, CChar, Master, IUE_CHAR, CalcCharObjFromSer )
 IMPL_GET_GUILD_OBJECT( stone,  CItem, Stone,  IUE_ITEM, CalcItemObjFromSer )
 
 #undef IMPL_GET_GUILD_OBJECT
+
+FDCLS( CGuild, type )
+{
+	FNARGS
+	auto guild = JS::GetMaybePtrFromReservedSlot<CGuild>( thisObj, 0 );
+	int32_t value = 0;
+	if( !JS::ToInt32( cx, args.get( 0 ), &value ))
+		return false;
+	guild->Type( static_cast<GuildType>( value ));
+	return true;
+}
+
+FDCLS( CGuild, master )
+{
+	FNARGS
+	auto guild = JS::GetMaybePtrFromReservedSlot<CGuild>( thisObj, 0 );
+	if( args.get( 0 ).isNullOrUndefined() )
+	{
+		guild->Master( INVALIDSERIAL );
+		return true;
+	}
+	if( args.get( 0 ).isObject() )
+	{
+		JS::RootedObject masterObj( cx, &args.get( 0 ).toObject() );
+		if( JS::GetClass( masterObj ) == &UOXChar_class )
+		{
+			CChar *master = JS::GetMaybePtrFromReservedSlot<CChar>( masterObj, 0 );
+			if( ValidateObject( master ))
+				guild->Master( *master );
+		}
+	}
+	return true;
+}
+
+FDCLS( CGuild, stone )
+{
+	FNARGS
+	auto guild = JS::GetMaybePtrFromReservedSlot<CGuild>( thisObj, 0 );
+	if( args.get( 0 ).isNullOrUndefined() )
+	{
+		guild->Stone( INVALIDSERIAL );
+		return true;
+	}
+	if( args.get( 0 ).isObject() )
+	{
+		JS::RootedObject stoneObj( cx, &args.get( 0 ).toObject() );
+		if( JS::GetClass( stoneObj ) == &UOXItem_class )
+		{
+			CItem *stone = JS::GetMaybePtrFromReservedSlot<CItem>( stoneObj, 0 );
+			if( ValidateObject( stone ))
+				guild->Stone( *stone );
+		}
+	}
+	return true;
+}
 
 // clang-format off
 IMPL_GET(  CRace, id,               CRace, setInt32,   GetRaceID() )

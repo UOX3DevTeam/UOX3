@@ -117,6 +117,33 @@ void CWeather::CurrentLight( R32 value )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeather::UpdateLight()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates the current light level of the weather system for current server time
+//o------------------------------------------------------------------------------------------------o
+void CWeather::UpdateLight( void )
+{
+	UI08 hour	= cwmWorldState->ServerData()->ServerTimeHours();
+	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
+	bool isAfterNoon = ( hour >= 12 ); // Is time after noon and before midnight?
+
+	if( LightMin() < 300 && LightMax() < 300 )
+	{
+		R32 hourIncrement = static_cast<R32>( fabs(( LightMax() - LightMin() ) / 12.0f ));	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
+		R32 minuteIncrement = hourIncrement / 60.0f;
+		R32 tempLight = hourIncrement * static_cast<R32>( hour % 12 ) + minuteIncrement * static_cast<R32>( minute );
+		if( isAfterNoon )
+		{
+			CurrentLight( LightMin() + tempLight );
+		}
+		else
+		{
+			CurrentLight( LightMax() - tempLight );
+		}
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::PeriodicUpdate()
 //|	Date		-	11th April, 2001
 //o------------------------------------------------------------------------------------------------o
@@ -140,20 +167,7 @@ bool CWeather::PeriodicUpdate( void )
 		StormDelay( true );
 	}
 
-	if( LightMin() < 300 && LightMax() < 300 )
-	{
-		R32 hourIncrement = static_cast<R32>( fabs(( LightMax() - LightMin() ) / 12.0f ));	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
-		R32 minuteIncrement = hourIncrement / 60.0f;
-		R32 tempLight = hourIncrement * static_cast<R32>( hour % 12 ) + minuteIncrement * static_cast<R32>( minute );
-		if( isAfterNoon )
-		{
-			CurrentLight( LightMin() + tempLight );
-		}
-		else
-		{
-			CurrentLight( LightMax() - tempLight );
-		}
-	}
+	UpdateLight();
 
 	R32	effTempMax			= EffectiveMaxTemp();
 	R32	effTempMin			= EffectiveMinTemp();
@@ -1021,18 +1035,18 @@ auto cWeatherAb::Load() -> bool
 						{
 							StormChance( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( data, nullptr, 0 )));
 						}
-						else if( UTag == "STORMINTENSITY" ) // chance of a storm
+						else if( UTag == "STORMINTENSITY" ) // intensity of a storm
 						{
 							auto csecs = oldstrutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-								SnowIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+								StormIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+								StormIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 							}
 							else
 							{
-								SnowIntensityLow( static_cast<WEATHID>( i ), 0 );
-								SnowIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( data, nullptr, 0 )));
+								StormIntensityLow( static_cast<WEATHID>( i ), 0 );
+								StormIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( data, nullptr, 0 )));
 							}
 						}
 						else if( UTag == "STORMTEMPDROP" ) // temp drop of storm
@@ -1557,6 +1571,19 @@ bool cWeatherAb::DoStuff( void )
 		( *wIter ).PeriodicUpdate();
 	}
 	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cWeatherAb::UpdateLight()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates light levels across all weather systems without advancing weather state
+//o------------------------------------------------------------------------------------------------o
+void cWeatherAb::UpdateLight( void )
+{
+	for( auto &wSys : weather )
+	{
+		wSys.UpdateLight();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
