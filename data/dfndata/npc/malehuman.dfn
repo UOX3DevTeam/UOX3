@@ -694,6 +694,13 @@ NOTRAIN
 RUNS
 }
 
+[m_shepherd]
+{
+GET=m_peasant
+TITLE=the Shepherd
+EQUIPITEM=0x0e81
+}
+
 [m_gypsy]
 {
 GET=basehuman
