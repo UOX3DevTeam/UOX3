@@ -1,3 +1,9 @@
+18/11/2026 - ghostsenpai1 (#602)
+     [ADD] Added an optional custom gump ID to the JavaScript Gump constructor: new Gump( gumpID )
+    [ADD] Added dynamic gump ID-to-script routing so button responses from custom-ID gumps invoke the correct script's onGumpPress() handler
+    [UPD] Gump IDs are reserved when sent; the same script may reuse an ID, while cross-script collisions raise a script error and prevent the conflicting gump from being sent
+    [UPD] Documented custom gump IDs, selective CloseGump() usage, callback routing, valid ID range and collision behavior
+
 16/11/2026 - ghostsenpai1 (#603)
     [FIX] Fixed Character/Item .Teleport()/.SetLocation() JS Methods rejecting single numeric location IDs from location.dfn, restoring location-name and place-ID handling for the 'go command
 
