@@ -157,6 +157,8 @@ add_executable(uox3
    ../../source/cAccountClass.cpp
 	../../source/cLoginThrottler.cpp
 	../../source/cLoginThrottler.h
+	../../source/cLoginHandoff.cpp
+	../../source/cLoginHandoff.h
 	../../source/cPasswordHasher.cpp
 	../../source/cPasswordHasher.h
    ../../source/cAccountClass.h

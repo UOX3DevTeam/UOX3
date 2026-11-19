@@ -8,6 +8,7 @@
 #include "cScript.h"
 #include "cEffects.h"
 #include "cThreadQueue.h"
+#include "cLoginHandoff.h"
 #include "CPacketSend.h"
 #include "scriptc.h"
 #include "ssection.h"
@@ -1365,10 +1366,27 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			messageLoop << oldstrutil::format( "Incoming connection from [%i.%i.%i.%i] (Socket %u)", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1(), s );
 #endif
 		}
+		if( count > 0 && mSock->GetDWord( 0 ) == cLoginHandoff::MAGIC )
+		{
+			auto *serverData = cwmWorldState->ServerData();
+			auto error = std::string{};
+			if(( serverData->GetServerRole() == ServerRole::Game || serverData->GetServerRole() == ServerRole::Combined ) &&
+				LoginHandoff.AcceptRegistration( mSock, serverData->LoginHandoffSecret(), serverData->ShardId(),
+					serverData->LoginHandoffTimeout(), error ))
+			{
+				Console.Print( "Accepted authenticated login handoff.\n" );
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "Rejected login handoff: %s", error.c_str() ));
+			}
+			LoginDisconnect( s );
+			return;
+		}
 
 		auto packetId = mSock->Buffer()[0];
 
-		if( cwmWorldState->ServerData()->ServerOverloadPackets() )
+		if( cwmWorldState->ServerData()->GetServerRole() != ServerRole::Login && cwmWorldState->ServerData()->ServerOverloadPackets() )
 		{
 			// Allow overloading initial connection packets
 			std::map<UI16, UI16>::const_iterator pFind = packetOverloads.find( packetId );
@@ -1423,7 +1441,7 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				return;
 			}
 			bool doSwitch = true;
-			if( cwmWorldState->ServerData()->ServerOverloadPackets() )
+			if( cwmWorldState->ServerData()->GetServerRole() != ServerRole::Login && cwmWorldState->ServerData()->ServerOverloadPackets() )
 			{
 				std::map<UI16, UI16>::const_iterator pFind = packetOverloads.find( packetId );
 				if( pFind != packetOverloads.end() )

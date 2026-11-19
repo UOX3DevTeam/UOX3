@@ -125,6 +125,7 @@
     <ClCompile Include="..\..\source\books.cpp" />
     <ClCompile Include="..\..\source\cAccountClass.cpp" />
 	<ClCompile Include="..\..\source\cLoginThrottler.cpp" />
+	<ClCompile Include="..\..\source\cLoginHandoff.cpp" />
 	<ClCompile Include="..\..\source\cPasswordHasher.cpp" />
     <ClCompile Include="..\..\source\CGump.cpp" />
     <ClCompile Include="..\..\source\cHTMLSystem.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="..\..\source\books.h" />
     <ClInclude Include="..\..\source\cAccountClass.h" />
 	<ClInclude Include="..\..\source\cLoginThrottler.h" />
+	<ClInclude Include="..\..\source\cLoginHandoff.h" />
 	<ClInclude Include="..\..\source\cPasswordHasher.h" />
     <ClInclude Include="..\..\source\cEffects.h" />
     <ClInclude Include="..\..\source\CGump.h" />

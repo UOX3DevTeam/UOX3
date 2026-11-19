@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdint>
 #include <array>
+#include <vector>
 
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"
@@ -158,6 +159,13 @@ enum CSDDirectoryPaths
 	CSDDP_SCRIPTDATA,
 	CSDDP_COUNT
 };
+
+enum class ServerRole : UI08
+{
+	Combined = 0,
+	Login,
+	Game
+};
 struct __STARTLOCATIONDATA__
 {
 	__STARTLOCATIONDATA__()
@@ -187,19 +195,28 @@ struct __STARTLOCATIONDATA__
 class PhysicalServer
 {
 public:
+	PhysicalServer() : shardId( 1 ), port( 2593 )
+	{
+	}
+	auto SetShardId( UI16 newShardId ) -> void;
 	auto SetName( const std::string& newName ) -> void;
 	auto SetDomain( const std::string& newDomain ) -> void;
 	auto SetIP( const std::string& newIP ) -> void;
+	auto SetHandoffAddress( const std::string& newAddress ) -> void;
 	auto SetPort( UI16 newPort ) -> void;
+	auto GetShardId() const -> UI16;
 	auto GetName() const -> const std::string&;
 	auto GetDomain() const -> const std::string&;
 	auto GetIP() const -> const std::string&;
+	auto GetHandoffAddress() const -> const std::string&;
 	auto GetPort() const -> UI16;
 
 private:
+	UI16 shardId;
 	std::string name;
 	std::string domain;
 	std::string ip;
+	std::string handoffAddress;
 	UI16 port;
 };
 
@@ -218,11 +235,22 @@ private:
 
 	// ServerSystems
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
+	std::string serverDomain;
+	std::string serverIP;
 	std::string	commandprefix;				//	Character that acts as the command prefix
 	std::string externalIP;
+	std::string shardListFile;
+	std::string loginHandoffSecret;
+	std::string localAdminIpList;
+	std::vector<Ip4Addr_st> localAdminIps;
 	ip4list_t   availableIPs;
 	
 	std::vector<PhysicalServer> serverList;	//	Series of server entries for shard list
+	ServerRole	serverRole;
+	UI16		shardId;
+	UI16		loginHandoffTimeout;
+	bool		configuredShardList;
+	bool		allowLocalAdminLogin;
 	UI08		consoleLogEnabled;			//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
 	UI16		serverLanguage;				//	Default language used on server
 	UI16		port;						//	Port number that the server listens on, for connections
@@ -571,6 +599,24 @@ public:
 	auto 		ExternalIP( const std::string &ip ) -> void;
 	auto		ServerPort( UI16 setport ) -> void;
 	auto		ServerPort() const -> UI16;
+	auto		SetServerRole( const std::string &role ) -> bool;
+	auto		GetServerRole() const -> ServerRole;
+	auto		GetServerRoleName() const -> const char *;
+	auto		ShardId( UI16 value ) -> void;
+	auto		ShardId() const -> UI16;
+	auto		ShardListFile( const std::string &value ) -> void;
+	auto		ShardListFile() const -> const std::string &;
+	auto		LoginHandoffSecret( const std::string &value ) -> void;
+	auto		LoginHandoffSecret() const -> const std::string &;
+	auto		LoginHandoffTimeout( UI16 value ) -> void;
+	auto		LoginHandoffTimeout() const -> UI16;
+	auto		AllowLocalAdminLogin( bool value ) -> void;
+	auto		AllowLocalAdminLogin() const -> bool;
+	auto		LocalAdminIPs( const std::string &value ) -> bool;
+	auto		LocalAdminIPs() const -> const std::string &;
+	auto		IsLocalAdminIP( const Ip4Addr_st &address ) const -> bool;
+	auto		LoadShardList( const std::string &filename ) -> bool;
+	auto		HasConfiguredShardList() const -> bool;
 	auto		ServerConsoleLog( bool setting ) -> void;
 	auto		ServerConsoleLog() const -> bool;
 	auto		ServerNetworkLog( bool setting ) -> void;
