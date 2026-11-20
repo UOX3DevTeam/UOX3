@@ -246,6 +246,28 @@ The central login server never receives or stores the direct shard administrator
 
 The central login server is still trusted for ordinary player authentication. Its operator can control where ordinary players are relayed, so use only a trusted login host and protect the handoff secret. An administrator should connect directly to the shard and should never type the shard-local administrator password into the central login server.
 
+## Local and global account bans
+
+Split login mode has two deliberately separate ban scopes:
+
+- A local ban is stored in one game shard's account database. The player can still authenticate centrally and play other shards, but the affected shard refuses the handoff.
+- A global ban is stored in the login server's central account database. The player cannot complete central authentication, see the shard list, or receive a handoff ticket for any shard.
+
+Game-shard staff can apply local bans in-game:
+
+```text
+'localban [durationInMinutes]
+'localunban
+```
+
+Omitting the duration defaults to 24 hours. A duration of `0` creates a permanent local ban, and timed local bans are capped at 10 years. The older `'ban` and `'unban` commands remain supported as aliases, but they are also shard-local; they never modify the central account database.
+
+The login-server operator applies global bans from the `SERVERTYPE=LOGIN` console. Press `*` to disable secure console mode, then press `B` for GLOBAL BAN or `U` for GLOBAL UNBAN. A global ban asks for the central username and duration in minutes, with `0` meaning permanent. Each action is saved immediately and recorded in `logs/account.log` when console logging is enabled.
+
+A global ban takes effect at the next central login. It does not remotely disconnect a player who is already inside a game shard. The shard owner can separately disconnect that session or apply a local ban.
+
+The login server remains a trust boundary: whoever controls its machine and executable can always refuse authentication, stop the service, or redirect ordinary clients. Command names can make authority clear, but software running on that operator's machine cannot force the operator to provide access. Shard owners should agree on a global-ban policy and use a trusted login-service operator. Shard-local administrators retain independent control of local bans and their local staff credentials.
+
 ## Firewall and port forwarding
 
 For the example ports:
