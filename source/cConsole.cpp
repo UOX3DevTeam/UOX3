@@ -33,6 +33,7 @@
 #include <js/Value.h>
 #include <iostream>
 #include <cctype>
+#include <limits>
 #include <stdexcept>
 
 #if PLATFORM != WINDOWS
@@ -1065,6 +1066,124 @@ auto CConsole::Process(std::int32_t c) -> void
 				messageLoop << "CMD: Account password reset successfully.";
 				break;
 			}
+			case 'B':
+			{
+				if( cwmWorldState->ServerData()->GetServerRole() != ServerRole::Login )
+				{
+					messageLoop << "GLOBAL BAN is available only on a SERVERTYPE=LOGIN console. Use 'localban on a game shard.";
+					break;
+				}
+
+				const auto username = oldstrutil::trim( ReadConsoleLine( "Central account username to globally ban (Esc cancels): " ));
+				if( username.empty() )
+				{
+					messageLoop << "CMD: Global account ban canceled.";
+					break;
+				}
+
+				const auto durationText = oldstrutil::trim( ReadConsoleLine(
+					"Duration in minutes (0 = permanent; Esc cancels): " ));
+				if( durationText.empty() )
+				{
+					messageLoop << "CMD: Global account ban canceled.";
+					break;
+				}
+
+				auto durationMinutes = std::uint64_t{ 0 };
+				try
+				{
+					auto consumed = std::size_t{ 0 };
+					durationMinutes = std::stoull( durationText, &consumed, 10 );
+					const auto currentMinutes = static_cast<std::uint64_t>( GetMinutesSinceEpoch() );
+					if( consumed != durationText.size() ||
+						durationMinutes > std::numeric_limits<UI32>::max() - currentMinutes )
+					{
+						throw std::out_of_range( "global ban duration" );
+					}
+				}
+				catch( const std::exception & )
+				{
+					messageLoop << "ERROR: Duration must be a whole number of minutes; use 0 for a permanent ban.";
+					break;
+				}
+
+				auto &account = Accounts->GetAccountByName( username );
+				if( account.wAccountIndex == AB_INVALID_ID )
+				{
+					messageLoop << oldstrutil::format( "ERROR: Central account '%s' was not found.", username.c_str() );
+					break;
+				}
+
+				const auto previouslyBanned = account.wFlags.test( AB_FLAGS_BANNED );
+				const auto previousTimeBan = account.wTimeBan;
+				const auto previouslyChanged = account.bChanged;
+				account.wFlags.set( AB_FLAGS_BANNED, true );
+				account.wTimeBan = durationMinutes == 0 ? 0 :
+					GetMinutesSinceEpoch() + static_cast<UI32>( durationMinutes );
+				account.bChanged = true;
+				const auto saveResult = Accounts->Save();
+				if( saveResult == 0 || saveResult == AB_INVALID_ID )
+				{
+					account.wFlags.set( AB_FLAGS_BANNED, previouslyBanned );
+					account.wTimeBan = previousTimeBan;
+					account.bChanged = previouslyChanged;
+					messageLoop << "ERROR: Unable to save the global account ban.";
+					break;
+				}
+
+				const auto durationDescription = durationMinutes == 0 ? "permanently"s :
+					oldstrutil::format( "for %llu minute(s)", static_cast<unsigned long long>( durationMinutes ));
+				const auto logMessage = oldstrutil::format( "GLOBAL BAN: Central account '%s' was banned %s.",
+					account.sUsername.c_str(), durationDescription.c_str() );
+				Log( logMessage, "account.log" );
+				messageLoop << logMessage;
+				messageLoop << "The ban takes effect on the account's next central login and does not disconnect an active shard session.";
+				break;
+			}
+			case 'U':
+			{
+				if( cwmWorldState->ServerData()->GetServerRole() != ServerRole::Login )
+				{
+					messageLoop << "GLOBAL UNBAN is available only on a SERVERTYPE=LOGIN console. Use 'localunban on a game shard.";
+					break;
+				}
+
+				const auto username = oldstrutil::trim( ReadConsoleLine( "Central account username to globally unban (Esc cancels): " ));
+				if( username.empty() )
+				{
+					messageLoop << "CMD: Global account unban canceled.";
+					break;
+				}
+
+				auto &account = Accounts->GetAccountByName( username );
+				if( account.wAccountIndex == AB_INVALID_ID )
+				{
+					messageLoop << oldstrutil::format( "ERROR: Central account '%s' was not found.", username.c_str() );
+					break;
+				}
+
+				const auto previouslyBanned = account.wFlags.test( AB_FLAGS_BANNED );
+				const auto previousTimeBan = account.wTimeBan;
+				const auto previouslyChanged = account.bChanged;
+				account.wFlags.set( AB_FLAGS_BANNED, false );
+				account.wTimeBan = 0;
+				account.bChanged = true;
+				const auto saveResult = Accounts->Save();
+				if( saveResult == 0 || saveResult == AB_INVALID_ID )
+				{
+					account.wFlags.set( AB_FLAGS_BANNED, previouslyBanned );
+					account.wTimeBan = previousTimeBan;
+					account.bChanged = previouslyChanged;
+					messageLoop << "ERROR: Unable to save the global account unban.";
+					break;
+				}
+
+				const auto logMessage = oldstrutil::format( "GLOBAL UNBAN: Central account '%s' was unbanned.",
+					account.sUsername.c_str() );
+				Log( logMessage, "account.log" );
+				messageLoop << logMessage;
+				break;
+			}
 			case 'R':
 				// Force server to restart
 				messageLoop << "CMD: Restarting server...";
@@ -1332,6 +1451,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
 				messageLoop << "    C - Configuration       Y - Console Broadcast";
 				messageLoop << "    E - Reset Account Password";
+				messageLoop << "    B - Global Account Ban  U - Global Account Unban (LOGIN only)";
 				messageLoop << "    Q - Quit/Exit           R - Restart Server";
 				messageLoop << " Load Commands:";
 				messageLoop << "    1 - Ini                 2 - Accounts";

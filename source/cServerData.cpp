@@ -11,6 +11,8 @@
 #include <netdb.h>
 
 #include <arpa/inet.h>
+#else
+#include <ws2tcpip.h>
 #endif
 
 #include "StringUtility.hpp"
@@ -434,6 +436,13 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"LOGINTHROTTLEMAXDELAY", 421},
 	{"LOGINTHROTTLEENTRYTTL", 422},
 	{"PASSWORDHASHINGENABLED", 423},
+	{"SERVERTYPE", 424},
+	{"SHARDID", 425},
+	{"SHARDLIST", 426},
+	{"LOGINHANDOFFSECRET", 427},
+	{"LOGINHANDOFFTIMEOUT", 428},
+	{"ALLOWLOCALADMINLOGIN", 429},
+	{"LOCALADMINIPS", 430},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -655,6 +664,14 @@ auto CServerData::ResetDefaults() -> void
 {
 	resettingDefaults = true;
 	serverList.resize( 1 );		// Set the initial count to hold one server.
+	serverRole = ServerRole::Combined;
+	shardId = 1;
+	shardListFile.clear();
+	loginHandoffSecret = "None";
+	loginHandoffTimeout = 30;
+	configuredShardList = false;
+	allowLocalAdminLogin = false;
+	LocalAdminIPs( "127.0.0.1" );
 
 	ServerIP( "127.0.0.1" );
 	ServerPort( 2593 );
@@ -1143,18 +1160,18 @@ auto CServerData::Startup() -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ServerName() const -> const std::string&
 {
-	return serverList[0].GetName();
+	return sServerName;
 }
 auto CServerData::ServerName( const std::string &setname ) -> void
 {
+	sServerName = setname.empty() ? "My UOX3 Shard" : setname;
 	if( serverList.empty() )
 	{
 		serverList.resize( 1 );
 	}
-	serverList[0].SetName( setname );
-	if( setname.empty() )
+	if( !configuredShardList )
 	{
-		serverList[0].SetName( "My UOX3 Shard" );
+		serverList[0].SetName( sServerName );
 	}
 }
 
@@ -1183,21 +1200,18 @@ auto CServerData::SecretShardKey( const std::string &newName ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ServerDomain() const -> const std::string&
 {
-	return serverList[0].GetDomain();
+	return serverDomain;
 }
 auto CServerData::ServerDomain( const std::string &setdomain ) -> void
 {
+	serverDomain = setdomain;
 	if( serverList.empty() )
 	{
 		serverList.resize( 1 );
 	}
-	if( setdomain.empty() )
+	if( !configuredShardList )
 	{
-		serverList[0].SetDomain( "" );
-	}
-	else
-	{
-		serverList[0].SetDomain( setdomain );
+		serverList[0].SetDomain( serverDomain );
 	}
 }
 
@@ -1208,21 +1222,18 @@ auto CServerData::ServerDomain( const std::string &setdomain ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ServerIP() const -> const std::string &
 {
-	return serverList[0].GetIP();
+	return serverIP;
 }
 auto CServerData::ServerIP( const std::string &setip ) -> void
 {
+	serverIP = setip.empty() ? "127.0.0.1" : setip;
 	if( serverList.empty() )
 	{
 		serverList.resize( 1 );
 	}
-	if( setip.empty() )
+	if( !configuredShardList )
 	{
-		serverList[0].SetIP("127.0.0.1" );
-	}
-	else
-	{
-		serverList[0].SetIP( setip );
+		serverList[0].SetIP( serverIP );
 	}
 }
 //o------------------------------------------------------------------------------------------------o
@@ -1285,6 +1296,256 @@ auto CServerData::ServerPort( UI16 setport ) -> void
 	{
 		port = setport;
 	}
+	if( serverList.empty() )
+	{
+		serverList.resize( 1 );
+	}
+	if( !configuredShardList )
+	{
+		serverList[0].SetPort( port );
+	}
+}
+
+auto CServerData::SetServerRole( const std::string &role ) -> bool
+{
+	auto roleName = oldstrutil::upper( oldstrutil::trim( role ));
+	if( roleName == "COMBINED" )
+	{
+		serverRole = ServerRole::Combined;
+	}
+	else if( roleName == "LOGIN" )
+	{
+		serverRole = ServerRole::Login;
+	}
+	else if( roleName == "GAME" )
+	{
+		serverRole = ServerRole::Game;
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+auto CServerData::GetServerRole() const -> ServerRole
+{
+	return serverRole;
+}
+
+auto CServerData::GetServerRoleName() const -> const char *
+{
+	switch( serverRole )
+	{
+		case ServerRole::Login: return "LOGIN";
+		case ServerRole::Game: return "GAME";
+		default: return "COMBINED";
+	}
+}
+
+auto CServerData::ShardId( UI16 value ) -> void
+{
+	shardId = value == 0 ? 1 : value;
+}
+
+auto CServerData::ShardId() const -> UI16
+{
+	return shardId;
+}
+
+auto CServerData::ShardListFile( const std::string &value ) -> void
+{
+	shardListFile = oldstrutil::trim( value );
+}
+
+auto CServerData::ShardListFile() const -> const std::string &
+{
+	return shardListFile;
+}
+
+auto CServerData::LoginHandoffSecret( const std::string &value ) -> void
+{
+	loginHandoffSecret = oldstrutil::trim( value );
+}
+
+auto CServerData::LoginHandoffSecret() const -> const std::string &
+{
+	return loginHandoffSecret;
+}
+
+auto CServerData::LoginHandoffTimeout( UI16 value ) -> void
+{
+	loginHandoffTimeout = value == 0 ? 30 : value;
+}
+
+auto CServerData::LoginHandoffTimeout() const -> UI16
+{
+	return loginHandoffTimeout;
+}
+
+auto CServerData::AllowLocalAdminLogin( bool value ) -> void
+{
+	allowLocalAdminLogin = value;
+}
+
+auto CServerData::AllowLocalAdminLogin() const -> bool
+{
+	return allowLocalAdminLogin;
+}
+
+auto CServerData::LocalAdminIPs( const std::string &value ) -> bool
+{
+	auto parsedAddresses = std::vector<Ip4Addr_st>{};
+	auto canonicalAddresses = std::vector<std::string>{};
+	auto offset = std::size_t{ 0 };
+	while( offset <= value.size() )
+	{
+		const auto separator = value.find( ',', offset );
+		const auto length = separator == std::string::npos ? std::string::npos : separator - offset;
+		const auto addressText = oldstrutil::trim( value.substr( offset, length ));
+		if( addressText.empty() )
+		{
+			return false;
+		}
+		in_addr nativeAddress{};
+		if( inet_pton( AF_INET, addressText.c_str(), &nativeAddress ) != 1 )
+		{
+			return false;
+		}
+		if( std::find( canonicalAddresses.begin(), canonicalAddresses.end(), addressText ) == canonicalAddresses.end() )
+		{
+			canonicalAddresses.push_back( addressText );
+			parsedAddresses.emplace_back( addressText );
+		}
+		if( separator == std::string::npos )
+		{
+			break;
+		}
+		offset = separator + 1;
+	}
+	if( parsedAddresses.empty() )
+	{
+		return false;
+	}
+	localAdminIps = std::move( parsedAddresses );
+	localAdminIpList.clear();
+	for( const auto &address : canonicalAddresses )
+	{
+		if( !localAdminIpList.empty() )
+		{
+			localAdminIpList += ',';
+		}
+		localAdminIpList += address;
+	}
+	return true;
+}
+
+auto CServerData::LocalAdminIPs() const -> const std::string &
+{
+	return localAdminIpList;
+}
+
+auto CServerData::IsLocalAdminIP( const Ip4Addr_st &address ) const -> bool
+{
+	return std::any_of( localAdminIps.begin(), localAdminIps.end(), [&address]( const auto &allowedAddress )
+	{
+		return allowedAddress.exact( address );
+	});
+}
+
+auto CServerData::HasConfiguredShardList() const -> bool
+{
+	return configuredShardList;
+}
+
+auto CServerData::LoadShardList( const std::string &filename ) -> bool
+{
+	auto input = std::ifstream( filename );
+	if( !input.is_open() )
+	{
+		Console.Error( oldstrutil::format( "Unable to open shard list %s", filename.c_str() ));
+		return false;
+	}
+
+	auto loadedServers = std::vector<PhysicalServer>{};
+	auto line = std::string{};
+	auto lineNumber = UI32{ 0 };
+	while( std::getline( input, line ))
+	{
+		++lineNumber;
+		line = oldstrutil::trim( oldstrutil::removeTrailing( line, "//" ));
+		if( line.empty() || line[0] == '#' || line[0] == ';' || line[0] == '[' || line[0] == '{' || line[0] == '}' )
+		{
+			continue;
+		}
+
+		auto separator = line.find( '=' );
+		if( separator == std::string::npos || oldstrutil::upper( oldstrutil::trim( line.substr( 0, separator ))) != "SHARD" )
+		{
+			Console.Warning( oldstrutil::format( "Ignoring invalid shard list entry on line %u", lineNumber ));
+			continue;
+		}
+
+		auto fields = oldstrutil::sections( line.substr( separator + 1 ), "|" );
+		if( fields.size() < 4 )
+		{
+			Console.Warning( oldstrutil::format( "Ignoring incomplete shard list entry on line %u", lineNumber ));
+			continue;
+		}
+
+		try
+		{
+			auto server = PhysicalServer{};
+			auto parsedId = std::stoul( oldstrutil::trim( fields[0] ), nullptr, 0 );
+			auto entryName = oldstrutil::trim( fields[1] );
+			auto entryIp = oldstrutil::trim( fields[2] );
+			auto parsedPort = std::stoul( oldstrutil::trim( fields[3] ), nullptr, 0 );
+			auto ipParts = oldstrutil::sections( entryIp, "." );
+			auto validIp = ipParts.size() == 4;
+			for( const auto &part : ipParts )
+			{
+				auto consumed = std::size_t{ 0 };
+				auto trimmedPart = oldstrutil::trim( part );
+				auto partValue = std::stoul( trimmedPart, &consumed, 10 );
+				validIp = validIp && consumed == trimmedPart.size() && partValue <= 255;
+			}
+			if( parsedId == 0 || parsedId > std::numeric_limits<UI16>::max() || entryName.empty() ||
+				entryName.size() > 32 || !validIp || parsedPort == 0 || parsedPort > std::numeric_limits<UI16>::max() )
+			{
+				throw std::invalid_argument( "empty shard field" );
+			}
+			auto entryId = static_cast<UI16>( parsedId );
+			auto entryPort = static_cast<UI16>( parsedPort );
+			if( std::any_of( loadedServers.begin(), loadedServers.end(), [entryId]( const PhysicalServer &entry )
+				{ return entry.GetShardId() == entryId; } ))
+			{
+				throw std::invalid_argument( "duplicate shard id" );
+			}
+			server.SetShardId( entryId );
+			server.SetName( entryName );
+			server.SetIP( entryIp );
+			server.SetPort( entryPort );
+			server.SetHandoffAddress( fields.size() >= 5 ? oldstrutil::trim( fields[4] ) : entryIp );
+			if( server.GetHandoffAddress().empty() )
+			{
+				server.SetHandoffAddress( entryIp );
+			}
+			loadedServers.push_back( server );
+		}
+		catch( const std::exception & )
+		{
+			Console.Warning( oldstrutil::format( "Ignoring invalid shard list entry on line %u", lineNumber ));
+		}
+	}
+
+	if( loadedServers.empty() )
+	{
+		Console.Error( oldstrutil::format( "Shard list %s contains no valid shards", filename.c_str() ));
+		return false;
+	}
+	serverList = std::move( loadedServers );
+	configuredShardList = true;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1609,6 +1870,20 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 			case CSDDP_COUNT:
 			default:					verboseDirectory = "Unknown directory";			break;
 		};
+
+		// A dedicated login server only loads networking and accounts. Keep the
+		// configured game paths for compatibility, but do not require their
+		// directories to exist. The few writable paths used by login mode are
+		// created below when necessary.
+		const bool loginServer = ( GetServerRole() == ServerRole::Login );
+		const bool requiredByLoginServer =
+			( dp == CSDDP_ROOT || dp == CSDDP_ACCOUNTS || dp == CSDDP_ACCESS || dp == CSDDP_LOGS );
+		const bool skipExistenceCheck = loginServer && !requiredByLoginServer;
+		if( loginServer && ( dp == CSDDP_ACCOUNTS || dp == CSDDP_ACCESS || dp == CSDDP_LOGS ))
+		{
+			create_dir = true;
+		}
+
 		// First, let's normalize the path name and fix common errors
 		// remove all trailing and leading spaces...
 		auto sText = oldstrutil::trim( value );
@@ -1627,7 +1902,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 			sText = oldstrutil::fixDirectory( sText );
 			
 			bool error = false;
-			if( !resettingDefaults )
+			if( !resettingDefaults && !skipExistenceCheck )
 			{
 				error = true;
 				//auto curWorkingDir = fixDirectory( std::filesystem::current_path().string() );
@@ -5760,6 +6035,13 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << ( static_cast<UI16>( 1 ) << 8 | static_cast<UI16>( 2 )) << '\n' << "//================================" << '\n' << '\n';
 		ofsOutput << "[system]" << '\n' << "{" << '\n';
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
+		ofsOutput << "SERVERTYPE=" << GetServerRoleName() << '\n';
+		ofsOutput << "SHARDID=" << ShardId() << '\n';
+		ofsOutput << "SHARDLIST=" << ShardListFile() << '\n';
+		ofsOutput << "LOGINHANDOFFSECRET=" << LoginHandoffSecret() << '\n';
+		ofsOutput << "LOGINHANDOFFTIMEOUT=" << LoginHandoffTimeout() << '\n';
+		ofsOutput << "ALLOWLOCALADMINLOGIN=" << ( AllowLocalAdminLogin() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOCALADMINIPS=" << LocalAdminIPs() << '\n';
 		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
 		ofsOutput << "PORT=" << ServerPort() << '\n';
 		ofsOutput << "SECRETSHARDKEY=" << SecretShardKey() << '\n';
@@ -6282,6 +6564,31 @@ auto CServerData::Load( const std::string &filename ) -> bool
 	}
 	actualINI = iniFile;
 	auto rValue = ParseIni( iniFile );
+	if( rValue && !ShardListFile().empty() )
+	{
+		auto shardPath = std::filesystem::path( ShardListFile() );
+		if( shardPath.is_relative() )
+		{
+			shardPath = std::filesystem::path( actualINI ).parent_path() / shardPath;
+		}
+		rValue = LoadShardList( shardPath.lexically_normal().string() );
+	}
+	else if( rValue && GetServerRole() == ServerRole::Login )
+	{
+		Console.Error( "SERVERTYPE=LOGIN requires SHARDLIST to name a shard registry file." );
+		rValue = false;
+	}
+	if( rValue && ( GetServerRole() != ServerRole::Combined || HasConfiguredShardList() ) &&
+		( LoginHandoffSecret().size() < 16 || oldstrutil::upper( LoginHandoffSecret() ) == "NONE" ))
+	{
+		Console.Error( "Split login mode requires LOGINHANDOFFSECRET with at least 16 characters." );
+		rValue = false;
+	}
+	if( rValue && AllowLocalAdminLogin() && GetServerRole() != ServerRole::Game )
+	{
+		Console.Error( "ALLOWLOCALADMINLOGIN is only valid with SERVERTYPE=GAME." );
+		rValue = false;
+	}
 	PostLoadDefaults();
 	return rValue;
 }
@@ -7804,6 +8111,35 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 423: // PASSWORDHASHINGENABLED
 			PasswordHashingEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
+		case 424: // SERVERTYPE
+			if( !SetServerRole( value ))
+			{
+				Console.Warning( oldstrutil::format( "Unknown SERVERTYPE '%s'; using COMBINED", value.c_str() ));
+				SetServerRole( "COMBINED" );
+			}
+			break;
+		case 425: // SHARDID
+			ShardId( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 426: // SHARDLIST
+			ShardListFile( value );
+			break;
+		case 427: // LOGINHANDOFFSECRET
+			LoginHandoffSecret( value );
+			break;
+		case 428: // LOGINHANDOFFTIMEOUT
+			LoginHandoffTimeout( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 429: // ALLOWLOCALADMINLOGIN
+			AllowLocalAdminLogin( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 430: // LOCALADMINIPS
+			if( !LocalAdminIPs( value ))
+			{
+				Console.Warning( oldstrutil::format( "Invalid LOCALADMINIPS value '%s'; keeping %s",
+					value.c_str(), LocalAdminIPs().c_str() ));
+			}
+			break;
 		default:
 			rValue = false;
 			break;
@@ -8464,6 +8800,11 @@ auto CServerData::ServerCount() const -> UI16
 //==============================================================================================
 
 //==============================================================================================
+auto PhysicalServer::SetShardId( UI16 newShardId ) -> void
+{
+	shardId = newShardId;
+}
+//==============================================================================================
 auto PhysicalServer::SetName( const std::string& newName ) -> void
 {
 	name = newName;
@@ -8479,6 +8820,11 @@ auto PhysicalServer::SetIP( const std::string& newIP ) -> void
 	ip = newIP;
 }
 //==============================================================================================
+auto PhysicalServer::SetHandoffAddress( const std::string& newAddress ) -> void
+{
+	handoffAddress = newAddress;
+}
+//==============================================================================================
 auto PhysicalServer::SetPort( UI16 newPort ) -> void
 {
 	port = newPort;
@@ -8489,6 +8835,11 @@ auto PhysicalServer::GetName() const -> const std::string&
 	return name;
 }
 //==============================================================================================
+auto PhysicalServer::GetShardId() const -> UI16
+{
+	return shardId;
+}
+//==============================================================================================
 auto PhysicalServer::GetDomain() const -> const std::string &
 {
 	return domain;
@@ -8497,6 +8848,11 @@ auto PhysicalServer::GetDomain() const -> const std::string &
 auto PhysicalServer::GetIP() const -> const std::string &
 {
 	return ip;
+}
+//==============================================================================================
+auto PhysicalServer::GetHandoffAddress() const -> const std::string &
+{
+	return handoffAddress;
 }
 //==============================================================================================
 auto PhysicalServer::GetPort() const -> UI16

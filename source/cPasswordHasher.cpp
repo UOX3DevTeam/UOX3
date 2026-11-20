@@ -386,6 +386,17 @@ bool cPasswordHasher::GenerateTemporaryPassword( std::string &temporaryPassword 
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	- cPasswordHasher::HmacSha256()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose	- Calculates an HMAC-SHA256 for internal authenticated server messages
+//o------------------------------------------------------------------------------------------------o
+std::array<unsigned char, 32> cPasswordHasher::HmacSha256(
+	const std::string &key, const unsigned char *data, size_t length )
+{
+	return HMACSHA256( key ).Calculate( data, length );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	- cPasswordHasher::FillRandom()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose	- Fills a buffer using the operating system's cryptographically secure random source

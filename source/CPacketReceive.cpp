@@ -19,6 +19,8 @@
 #include "StringUtility.hpp"
 #include "cRaces.h"
 #include "cLoginThrottler.h"
+#include "cLoginHandoff.h"
+#include "cPasswordHasher.h"
 #include <chrono>
 #include "IP4Address.hpp"
 #include "utf8.h"
@@ -169,6 +171,47 @@ void CheckBanTimer( CAccountBlock_st &actbTemp )
 	}
 }
 
+namespace
+{
+	constexpr UI16 TRANSFERABLE_ACCOUNT_FLAGS = ( 1u << AB_FLAGS_PUBLIC ) | ( 1u << AB_FLAGS_YOUNG );
+
+	auto LoginClientIp( const CSocket *socket ) -> UI32
+	{
+		return CalcSerial( socket->ClientIP4(), socket->ClientIP3(), socket->ClientIP2(), socket->ClientIP1() );
+	}
+
+	auto TransferableAccountFlags( const CAccountBlock_st &account ) -> UI16
+	{
+		return static_cast<UI16>( account.wFlags.to_ulong() ) & TRANSFERABLE_ACCOUNT_FLAGS;
+	}
+
+	auto SanitizeTransferredAccountFlags( UI16 flags ) -> UI16
+	{
+		return flags & TRANSFERABLE_ACCOUNT_FLAGS;
+	}
+
+	void ApplyTransferredAccountFlags( CAccountBlock_st &account, UI16 flags )
+	{
+		for( const auto flag : { AB_FLAGS_PUBLIC, AB_FLAGS_YOUNG } )
+		{
+			account.wFlags.set( flag, ( flags & ( 1u << flag )) != 0 );
+		}
+		account.bChanged = true;
+	}
+
+	auto IsPrivilegedLocalAccount( const CAccountBlock_st &account ) -> bool
+	{
+		return account.wFlags.test( AB_FLAGS_GM ) || account.wFlags.test( AB_FLAGS_SEER ) ||
+			account.wFlags.test( AB_FLAGS_COUNSELOR );
+	}
+
+	auto LocalAdminSourceAllowed( const CServerData *serverData, const CSocket *socket ) -> bool
+	{
+		return serverData != nullptr && socket != nullptr && serverData->AllowLocalAdminLogin() &&
+			serverData->IsLocalAdminIP( socket->ipaddress );
+	}
+}
+
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIFirstLogin()
 //o------------------------------------------------------------------------------------------------o
@@ -198,6 +241,15 @@ void CPIFirstLogin::Log( std::ostream &outStream, bool fullHeader )
 bool CPIFirstLogin::Handle( void )
 {
 	tSock->AcctNo( AB_INVALID_ID );
+	auto *serverData = cwmWorldState->ServerData();
+	const auto gameServerLogin = serverData->GetServerRole() == ServerRole::Game;
+	if( gameServerLogin && !LocalAdminSourceAllowed( serverData, tSock ))
+	{
+		CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+		tSock->Send( &pckDeny );
+		Network->LoginDisconnect( tSock );
+		return true;
+	}
 	LoginDenyReason t = LDR_NODENY;
 
 	std::string username = Name();
@@ -224,7 +276,7 @@ bool CPIFirstLogin::Handle( void )
 	// Need auto account creation code here
 	if( tSock->AcctNo() == AB_INVALID_ID )
 	{
-		if( cwmWorldState->ServerData()->InternalAccountStatus() )
+		if( !gameServerLogin && serverData->InternalAccountStatus() )
 		{
 			Accounts->AddAccount( username, pass1, "" );
 			actbTemp = &Accounts->GetAccountByName( username );
@@ -241,7 +293,11 @@ bool CPIFirstLogin::Handle( void )
 		// Check if player's bantime is up, and if so, unban player
 		CheckBanTimer( *actbTemp );
 
-		if( actbTemp->wFlags.test( AB_FLAGS_BANNED ))
+		if( gameServerLogin && !actbTemp->wFlags.test( AB_FLAGS_GM ))
+		{
+			t = LDR_ACCOUNTDISABLED;
+		}
+		else if( actbTemp->wFlags.test( AB_FLAGS_BANNED ))
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
@@ -377,12 +433,23 @@ bool CPIFirstLogin::Handle( void )
 			actbTemp->dwLastClientVerShort = tSock->ClientVerShort();
 		}
 
-		// change for IP4Address
-		auto address = cwmWorldState->ServerData()->matchIP( tSock->ipaddress );
-		
-		CPGameServerList toSend( 1 );
-		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.ipaddr( true ));
-		tSock->Send( &toSend );
+		if( serverData->HasConfiguredShardList() )
+		{
+			CPGameServerList toSend( serverData->ServerCount() );
+			for( UI16 serverIndex = 0; serverIndex < serverData->ServerCount(); ++serverIndex )
+			{
+				toSend.AddServer( serverIndex, serverData->ServerEntry( serverIndex ));
+			}
+			tSock->Send( &toSend );
+		}
+		else
+		{
+			// change for IP4Address
+			auto address = serverData->matchIP( tSock->ipaddress );
+			CPGameServerList toSend( 1 );
+			toSend.addEntry( serverData->ServerName(), address.ipaddr( true ));
+			tSock->Send( &toSend );
+		}
 	}
 	// If socket's ClientType is still CV_DEFAULT, it's an old client,
 	// since there was no packet before 0x80 where ClientType changed
@@ -501,13 +568,96 @@ SI16 CPIServerSelect::ServerNum( void )
 
 bool CPIServerSelect::Handle( void )
 {
-	auto ip = cwmWorldState->ServerData()->matchIP( tSock->ipaddress );
+	auto *serverData = cwmWorldState->ServerData();
+	if( serverData->GetServerRole() == ServerRole::Game )
+	{
+		auto &account = tSock->GetAccount();
+		if( tSock->AcctNo() == AB_INVALID_ID || !LocalAdminSourceAllowed( serverData, tSock ) ||
+			!account.wFlags.test( AB_FLAGS_GM ))
+		{
+			CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+			tSock->Send( &pckDeny );
+			Network->LoginDisconnect( tSock );
+			return true;
+		}
 
-	auto name = cwmWorldState->ServerData()->ServerName();
-	auto port = cwmWorldState->ServerData()->ServerPort();
-	CPRelay toSend( ip.ipaddr( false ), port );
-	tSock->Send( &toSend );
-	// Mark packet as sent. No we need to change how we network.
+		auto ticket = LoginHandoffTicket{};
+		if( !LoginHandoff.CreateLocalAdminTicket( account.sUsername, LoginClientIp( tSock ),
+			tSock->ClientVersion(), static_cast<UI32>( tSock->ClientType() ),
+			static_cast<UI32>( tSock->ClientVerShort() ), serverData->ShardId(),
+			serverData->LoginHandoffTimeout(), ticket ))
+		{
+			CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+			tSock->Send( &pckDeny );
+			Network->LoginDisconnect( tSock );
+			return true;
+		}
+
+		auto address = serverData->matchIP( tSock->ipaddress );
+		CPRelay toSend( address.ipaddr( false ), serverData->ServerPort() );
+		toSend.SeedIP( ticket.token );
+		tSock->Send( &toSend );
+		tSock->FlushBuffer();
+		Network->LoginDisconnect( tSock );
+		return true;
+	}
+
+	if( serverData->HasConfiguredShardList() )
+	{
+		const auto selectedIndex = ServerNum() - 1;
+		auto *selectedServer = selectedIndex >= 0 ? serverData->ServerEntry( static_cast<UI16>( selectedIndex )) : nullptr;
+		if( selectedServer == nullptr || tSock->AcctNo() == AB_INVALID_ID )
+		{
+			CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+			tSock->Send( &pckDeny );
+			Network->LoginDisconnect( tSock );
+			return true;
+		}
+
+		auto ticket = LoginHandoffTicket{};
+		auto &account = tSock->GetAccount();
+		if( !LoginHandoff.CreateTicket( account.sUsername, LoginClientIp( tSock ), tSock->ClientVersion(),
+			static_cast<UI32>( tSock->ClientType() ), static_cast<UI32>( tSock->ClientVerShort() ),
+			selectedServer->GetShardId(), TransferableAccountFlags( account ), serverData->LoginHandoffTimeout(), ticket ))
+		{
+			CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+			tSock->Send( &pckDeny );
+			Network->LoginDisconnect( tSock );
+			return true;
+		}
+
+		auto error = std::string{};
+		if( !LoginHandoff.RegisterWithGame( selectedServer->GetHandoffAddress(), selectedServer->GetPort(),
+			ticket, serverData->LoginHandoffSecret(), error ))
+		{
+			Console.Warning( oldstrutil::format( "Unable to relay account '%s' to shard '%s': %s",
+				account.sUsername.c_str(), selectedServer->GetName().c_str(), error.c_str() ));
+			CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+			tSock->Send( &pckDeny );
+			Network->LoginDisconnect( tSock );
+			return true;
+		}
+
+		try
+		{
+			CPRelay toSend( Ip4Addr_st( selectedServer->GetIP() ).ipaddr( false ), selectedServer->GetPort() );
+			toSend.SeedIP( ticket.token );
+			tSock->Send( &toSend );
+			tSock->FlushBuffer();
+		}
+		catch( const std::exception &exception )
+		{
+			Console.Warning( oldstrutil::format( "Invalid advertised IP for shard '%s': %s",
+				selectedServer->GetName().c_str(), exception.what() ));
+		}
+		Network->LoginDisconnect( tSock );
+	}
+	else
+	{
+		auto ip = serverData->matchIP( tSock->ipaddress );
+		CPRelay toSend( ip.ipaddr( false ), serverData->ServerPort() );
+		tSock->Send( &toSend );
+	}
 	return true;
 }
 
@@ -591,6 +741,14 @@ bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
 	tSock->AcctNo( AB_INVALID_ID );
+	auto *serverData = cwmWorldState->ServerData();
+	if( serverData->GetServerRole() == ServerRole::Login )
+	{
+		CPLoginDeny pckDeny( LDR_COMMSFAILURE );
+		tSock->Send( &pckDeny );
+		Network->LoginDisconnect( tSock );
+		return true;
+	}
 	UI32 retryAfterSeconds = 0;
 	if( LoginThrottler.IsBlocked( tSock, Name(), retryAfterSeconds ))
 	{
@@ -599,43 +757,83 @@ bool CPISecondLogin::Handle( void )
 		Network->LoginDisconnect( tSock );
 		return true;
 	}
-	CAccountBlock_st& actbTemp = Accounts->GetAccountByName( Name() );
-	if( actbTemp.wAccountIndex != AB_INVALID_ID )
+	auto handoffTicket = LoginHandoffTicket{};
+	const auto authenticatedHandoff = LoginHandoff.Consume( Account(), Name(), LoginClientIp( tSock ), handoffTicket );
+	if( serverData->GetServerRole() == ServerRole::Game && !authenticatedHandoff )
 	{
-		tSock->SetAccount( actbTemp );
+		t = LDR_COMMSFAILURE;
 	}
 
-	// Add socket version info from first login, stored in account, to new socket!
-	tSock->ClientVersion( actbTemp.dwLastClientVer );
-	tSock->ClientType( static_cast<ClientTypes>( actbTemp.dwLastClientType ));
-	tSock->ClientVerShort( static_cast<ClientVersions>( actbTemp.dwLastClientVerShort ));
-
-	std::string pass0, pass1, pass2;
-	pass0 = Pass();
-	pSplit( pass0, pass1, pass2 );
-
-	if( tSock->AcctNo() != AB_INVALID_ID )
+	auto *actbTemp = &Accounts->GetAccountByName( Name() );
+	const auto localAdminHandoff = authenticatedHandoff && handoffTicket.localAdmin;
+	if( authenticatedHandoff && !localAdminHandoff && actbTemp->wAccountIndex == AB_INVALID_ID )
 	{
-		// Check if player's bantime is up, and if so, unban player
-		CheckBanTimer( actbTemp );
+		auto temporaryPassword = std::string{};
+		if( !cPasswordHasher::GenerateTemporaryPassword( temporaryPassword ) ||
+			Accounts->AddAccount( Name(), temporaryPassword, "CENTRAL LOGIN",
+				SanitizeTransferredAccountFlags( handoffTicket.accountFlags )) == 0 )
+		{
+			t = LDR_UNKNOWNUSER;
+		}
+		actbTemp = &Accounts->GetAccountByName( Name() );
+	}
 
-		if( actbTemp.wFlags.test( AB_FLAGS_BANNED ))
+	if( t == LDR_NODENY && actbTemp->wAccountIndex != AB_INVALID_ID )
+	{
+		if( localAdminHandoff )
+		{
+			if( !LocalAdminSourceAllowed( serverData, tSock ) || !actbTemp->wFlags.test( AB_FLAGS_GM ))
+			{
+				t = LDR_ACCOUNTDISABLED;
+			}
+		}
+		else if( authenticatedHandoff )
+		{
+			if( serverData->AllowLocalAdminLogin() && IsPrivilegedLocalAccount( *actbTemp ))
+			{
+				t = LDR_ACCOUNTDISABLED;
+			}
+			else
+			{
+				ApplyTransferredAccountFlags( *actbTemp, handoffTicket.accountFlags );
+			}
+			actbTemp->dwLastClientVer = handoffTicket.clientVersion;
+			actbTemp->dwLastClientType = static_cast<UI08>( handoffTicket.clientType );
+			actbTemp->dwLastClientVerShort = static_cast<UI08>( handoffTicket.clientVersionShort );
+		}
+		tSock->SetAccount( *actbTemp );
+		tSock->ClientVersion( actbTemp->dwLastClientVer );
+		tSock->ClientType( static_cast<ClientTypes>( actbTemp->dwLastClientType ));
+		tSock->ClientVerShort( static_cast<ClientVersions>( actbTemp->dwLastClientVerShort ));
+
+		CheckBanTimer( *actbTemp );
+		if( actbTemp->wFlags.test( AB_FLAGS_BANNED ))
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
-		else if( !Accounts->VerifyPassword( actbTemp, pass1 ))
+		else if( authenticatedHandoff && actbTemp->wFlags.test( AB_FLAGS_ONLINE ))
 		{
-			t = LDR_BADPASSWORD;
+			t = LDR_ACCOUNTINUSE;
+		}
+		else if( !authenticatedHandoff )
+		{
+			auto pass1 = std::string{};
+			auto pass2 = std::string{};
+			pSplit( Pass(), pass1, pass2 );
+			if( !Accounts->VerifyPassword( *actbTemp, pass1 ))
+			{
+				t = LDR_BADPASSWORD;
+			}
 		}
 	}
-	else
+	else if( t == LDR_NODENY )
 	{
 		t = LDR_UNKNOWNUSER;
 	}
 
 	if( t != LDR_NODENY )
 	{
-		if( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER )
+		if( !authenticatedHandoff && ( t == LDR_BADPASSWORD || t == LDR_UNKNOWNUSER ))
 		{
 			LoginThrottler.RecordFailure( tSock, Name() );
 		}
@@ -652,9 +850,9 @@ bool CPISecondLogin::Handle( void )
 		messageLoop << temp;
 
 		// If first login timestamp has not been set, set it here
-		if( actbTemp.wFirstLogin == 0 )
+		if( actbTemp->wFirstLogin == 0 )
 		{
-			actbTemp.wFirstLogin = GetMinutesSinceEpoch();
+			actbTemp->wFirstLogin = GetMinutesSinceEpoch();
 		}
 
 		//Send supported client features before character-list stuff
@@ -664,14 +862,14 @@ bool CPISecondLogin::Handle( void )
 		UI08 charCount = 0;
 		for( UI08 i = 0; i < 7; ++i )
 		{
-			if( actbTemp.dwCharacters[i] != INVALIDSERIAL )
+			if( actbTemp->dwCharacters[i] != INVALIDSERIAL )
 			{
 				++charCount;
 			}
 		}
 		CServerData *sd		= cwmWorldState->ServerData();
 		size_t serverCount	= sd->NumServerLocations();
-		CPCharAndStartLoc toSend( actbTemp, charCount, static_cast<UI08>( serverCount ), tSock );
+		CPCharAndStartLoc toSend( *actbTemp, charCount, static_cast<UI08>( serverCount ), tSock );
 		for( size_t j = 0; j < serverCount; ++j )
 		{
 			if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13 )

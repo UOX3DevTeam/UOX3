@@ -270,6 +270,20 @@ auto main( SI32 argc, char *argv[] ) ->int
 	// Core server loop
 	while( cwmWorldState->GetKeepRun() )
 	{
+		if( cwmWorldState->ServerData()->GetServerRole() == ServerRole::Login )
+		{
+			std::this_thread::sleep_for( std::chrono::milliseconds( 20 ));
+			cwmWorldState->SetUICurrentTime( GetClock() );
+			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() )
+			{
+				Network->CheckConnections();
+				uiNextCheckConn = BuildTimeValue( 1.0 );
+			}
+			Network->CheckLoginMessage();
+			Network->ClearBuffers();
+			DoMessageLoop();
+			continue;
+		}
 		std::this_thread::sleep_for( std::chrono::milliseconds( cwmWorldState->GetPlayersOnline() ? 5 : 90 ));
 		if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 )
 		{
@@ -426,7 +440,10 @@ auto main( SI32 argc, char *argv[] ) ->int
 	}
 
 	// Shutdown/Cleanup
-	SysBroadcast( "The server is shutting down." );
+	if( cwmWorldState->ServerData()->GetServerRole() != ServerRole::Login )
+	{
+		SysBroadcast( "The server is shutting down." );
+	}
 	Console << "Closing sockets...";
 	netpollthreadclose = true;
 	///HERE
@@ -436,7 +453,11 @@ auto main( SI32 argc, char *argv[] ) ->int
 #if PLATFORM == WINDOWS
 	SetConsoleCtrlHandler( exit_handler, true );
 #endif
-	if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
+	if( cwmWorldState->ServerData()->GetServerRole() == ServerRole::Login )
+	{
+		Accounts->Save();
+	}
+	else if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{
 		isWorldSaving = true;
 		do
@@ -445,7 +466,10 @@ auto main( SI32 argc, char *argv[] ) ->int
 		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
 		isWorldSaving = false;
 	}
-	cwmWorldState->ServerData()->SaveIni();
+	if( cwmWorldState->ServerData()->GetServerRole() != ServerRole::Login )
+	{
+		cwmWorldState->ServerData()->SaveIni();
+	}
 #if PLATFORM == WINDOWS
 	SetConsoleCtrlHandler( exit_handler, false );
 #endif
@@ -563,10 +587,35 @@ auto StartInitialize( CServerData &serverdata ) -> void
 
 	cwmWorldState = &aWorld;
 	cwmWorldState->SetServerData( serverdata );
+	cwmWorldState->SetUICurrentTime( GetClock() );
+
+	if( serverdata.GetServerRole() == ServerRole::Login )
+	{
+		Console << "Initializing login server services... " << myendl;
+		cwmWorldState->ClassesInitialized( true );
+		Network = &aNetwork;
+		Accounts = &aAccounts;
+		aNetwork.Startup();
+		aAccounts.SetPath( serverdata.Directory( CSDDP_ACCOUNTS ));
+		Console << "Loading central accounts        ";
+		Accounts->Load();
+		Console.PrintDone();
+		cwmWorldState->SetStartTime( cwmWorldState->GetUICurrentTime() );
+		cwmWorldState->SetLoaded( true );
+		DisplayBanner();
+		Console << "Login server listening on port " << serverdata.ServerPort() << " with "
+			<< serverdata.ServerCount() << " configured shard(s)." << myendl;
+		cons = std::thread( &CheckConsoleKeyThread );
+		auto startupEndTime = std::chrono::high_resolution_clock::now();
+		auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>( startupEndTime - startupStartTime ).count();
+		Console.TurnGreen();
+		Console << "UOX: Login server startup completed in " << static_cast<R32>( startupDuration ) / 1000 << " seconds." << myendl;
+		Console.TurnNormal();
+		return;
+	}
 
 	Console << "Initializing and creating class pointers... " << myendl;
 	InitClasses();
-	cwmWorldState->SetUICurrentTime( GetClock() );
 
 	Console.PrintSectionBegin();
 
@@ -3378,7 +3427,7 @@ auto Shutdown( SI32 retCode ) -> void
 {
 	Console.PrintSectionBegin();
 	Console << "Beginning UOX final shut down sequence..." << myendl;
-	if( retCode && saveOnShutdown )
+	if( retCode && saveOnShutdown && cwmWorldState->ServerData()->GetServerRole() != ServerRole::Login )
 	{
 		//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
 #if PLATFORM == WINDOWS
@@ -3417,7 +3466,7 @@ auto Shutdown( SI32 retCode ) -> void
 	}
 
 	//Lets wait for console thread to quit here
-	if( !retCode )
+	if( !retCode && cons.joinable() )
 	{
 		cons.join();
 	}

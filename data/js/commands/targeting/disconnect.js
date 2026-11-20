@@ -1,11 +1,15 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
-// Commands to handle kicking, banning and unbanning players from the server
+// Commands to handle kicking, shard-local banning and shard-local unbanning
 
 function CommandRegistration()
 {
 	RegisterCommand( "kick", 8, true );
 	RegisterCommand( "disconnect", 8, true );
+	RegisterCommand( "localban", 8, true );
+	RegisterCommand( "localunban", 8, true );
+	// Backwards-compatible aliases. Account changes made by these commands are
+	// always local to the game shard on which the command is used.
 	RegisterCommand( "ban", 8, true );
 	RegisterCommand( "unban", 8, true );
 }
@@ -27,14 +31,24 @@ function command_DISCONNECT( socket, cmdString )
 /** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_BAN( socket, cmdString )
 {
+	command_LOCALBAN( socket, cmdString );
+}
+
+/** @type { ( socket: Socket, cmdString: string ) => void } */
+function command_LOCALBAN( socket, cmdString )
+{
 	var banDuration = 60 * 24;
 	if( cmdString !== "" )
 	{
-		banDuration = parseInt( cmdString );
+		var trimmedDuration = cmdString.trim();
+		banDuration = Number( trimmedDuration );
 
-		if( isNaN( banDuration ))
+		if( trimmedDuration === "" || !/^\d+$/.test( trimmedDuration ) ||
+			!isFinite( banDuration ) || banDuration > 5256000 )
 		{
-			// Invalid command syntax! Correct syntax: ban / ban <durationInMinutes> (if no duration is specified, ban defaults to 24 hours)
+			// Invalid command syntax! Correct syntax: localban / localban <durationInMinutes>
+			// If no duration is specified, the ban defaults to 24 hours. A duration of 0 is permanent.
+			// Timed bans are capped at 10 years to keep the stored absolute expiry within range.
 			socket.SysMessage( GetDictionaryEntry( 2018, socket.language ));
 			return;
 		}
@@ -48,6 +62,12 @@ function command_BAN( socket, cmdString )
 
 /** @type { ( socket: Socket, cmdString: string ) => void } */
 function command_UNBAN( socket, cmdString )
+{
+	command_LOCALUNBAN( socket, cmdString );
+}
+
+/** @type { ( socket: Socket, cmdString: string ) => void } */
+function command_LOCALUNBAN( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 2019, socket.language); // Select character to unban.
 	socket.CustomTarget( 2, targMsg );
@@ -89,6 +109,8 @@ function onCallback1( socket, ourObj )
 				timebanDuration = socket.tempint;
 			}
 			ourAccount.timeban = timebanDuration;
+			Console.Log( "LOCAL BAN: Account #" + ourAccount.id + " was banned for " +
+				timebanDuration + " minute(s) on " + GetServerSetting( "SERVERNAME" ) + ".", "command.log" );
 
 			// Disconnect player, if online
 			if( ourAccount.isOnline && ValidateObject( ourAccount.currentChar ) && ourAccount.currentChar.socket != null )
@@ -116,6 +138,8 @@ function onCallback2( socket, ourObj )
 
 			ourAccount.isBanned = 0;
 			ourAccount.timeban = 0;
+			Console.Log( "LOCAL UNBAN: Account #" + ourAccount.id + " was unbanned on " +
+				GetServerSetting( "SERVERNAME" ) + ".", "command.log" );
 
 			socket.SysMessage( GetDictionaryEntry( 2020, socket.language ), ourAccount.id ); // Account with ID #%d has been unbanned.
 		}

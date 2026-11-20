@@ -1,0 +1,12 @@
+// Shards shown by a SERVERTYPE=LOGIN process.
+// Format: SHARD=id|display name|advertised IPv4|game port|handoff host
+//
+// The advertised address must be an IPv4 literal because it is written into
+// Ultima Online's legacy 0x8C relay packet. The handoff host may instead be a
+// private address or DNS name reachable only by the login server.
+
+[shards]
+{
+SHARD=1|Britannia|203.0.113.10|2594|10.0.0.10
+SHARD=2|Ilshenar|203.0.113.11|2595|10.0.0.11
+}

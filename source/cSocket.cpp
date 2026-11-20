@@ -738,7 +738,12 @@ bytesRecvWarningCount( DEFSOCK_BYTESRECEIVEDWARNINGCOUNT ), bytesSentWarningCoun
 //o------------------------------------------------------------------------------------------------o
 CSocket::~CSocket()
 {
-	JSEngine->ReleaseObject( IUE_SOCK, this );
+	// Dedicated login servers intentionally do not initialize the JavaScript
+	// engine, so socket cleanup must not assume it is available.
+	if( JSEngine != nullptr )
+	{
+		JSEngine->ReleaseObject( IUE_SOCK, this );
+	}
 
 	if( ValidateObject( currCharObj ))
 	{
