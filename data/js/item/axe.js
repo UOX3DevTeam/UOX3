@@ -178,9 +178,12 @@ function onCallback1( socket, ourObj )
 					}
 					else
 					{
-						objMulti.ReleaseItem( addonParent );
-						var lockdownsLeft = objMulti.maxLockdowns - objMulti.lockdowns;
-						socket.SysMessage( GetDictionaryEntry( 1902, socket.language ), lockdownsLeft ); // You release the item (%i lockdown(s) remaining).
+						if( !addonParent.GetTag( "shipAddon" ))
+						{
+							objMulti.ReleaseItem( addonParent );
+							var lockdownsLeft = objMulti.maxLockdowns - objMulti.lockdowns;
+							socket.SysMessage( GetDictionaryEntry( 1902, socket.language ), lockdownsLeft ); // You release the item (%i lockdown(s) remaining).
+						}
 
 						var addonDeed = addonParent.GetTag( "deed" );
 						if( addonDeed )
