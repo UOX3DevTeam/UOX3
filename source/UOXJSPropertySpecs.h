@@ -239,6 +239,7 @@ DECL_GET_SET( CRace, visibleDistance )
 DECL_GET_SET( CRace, weakToWeather )
 
 // Region Properties
+DECL_GET( CRegion, alliedTowns )
 DECL_GET_SET( CRegion, appearance )
 DECL_GET_SET( CRegion, canCastAggressive )
 DECL_GET_SET( CRegion, canGate )
@@ -247,6 +248,8 @@ DECL_GET_SET( CRegion, canPlaceHouse )
 DECL_GET_SET( CRegion, canRecall )
 DECL_GET_SET( CRegion, canTeleport )
 DECL_GET_SET( CRegion, chanceBigOre )
+DECL_GET( CRegion, enemyTowns )
+DECL_GET( CRegion, guardsPurchased )
 DECL_GET_SET( CRegion, health )
 DECL_GET_SET( CRegion, id )
 DECL_GET_SET( CRegion, instanceID )
@@ -1045,6 +1048,9 @@ inline JSPropertySpec CRegionProperties[] =
   UX_PSG(  CRegion, music,             JSPROP_ENUMANDPERM ),
   UX_PSG(  CRegion, weather,           JSPROP_ENUMANDPERM ),
   UX_PSG(  CRegion, owner,             JSPROP_ENUMANDPERM ),
+  UX_PSG(  CRegion, guardsPurchased,   JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CRegion, alliedTowns,       JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CRegion, enemyTowns,        JSPROP_ENUMPERMRO  ),
   JS_PS_END
 };
 // clang-format on
