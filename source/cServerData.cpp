@@ -409,6 +409,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"DECAYSTAGEHIHRS"s, 387},
 	{"DECAYSTAGEDANGERHRS"s, 388},
 	{"HOUSEDECAY"s, 389},
+	{"RANDOMZERODAMAGEFALLBACK"s, 390},
 	{"QUESTSYSTEMENABLED"s, 395},
 	{"SPEEDHACKDETECTION", 400},
 	{"SPEEDHACKMAXDEBT", 401},
@@ -434,6 +435,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"LOGINTHROTTLEMAXDELAY", 421},
 	{"LOGINTHROTTLEENTRYTTL", 422},
 	{"PASSWORDHASHINGENABLED", 423},
+	{"ELEMENTALDAMAGE"s, 424},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -560,6 +562,7 @@ constexpr auto BIT_LOGINQUESTENABLED				= UI32( 122 );
 constexpr auto BIT_VENDORCHARGESENABLED				= UI32( 123 );
 constexpr auto BIT_VENDORUSEITEMFEESENABLED			= UI32( 124 );
 constexpr auto BIT_ONLYRETURNTOBANK					= UI32( 125 );
+constexpr auto BIT_RANDOMZERODAMAGEFALLBACK			= UI32( 126 );
 
 
 // New uox3.ini format lookup
@@ -821,6 +824,7 @@ auto CServerData::ResetDefaults() -> void
 	StaminaRegenCap( 24 );
 	ManaRegenCap( 18 );
 	CombatArmorClassDamageBonus( false );
+	CombatRandomZeroDamageFallback( true );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
 	PetCombatTraining( true );
@@ -876,6 +880,7 @@ auto CServerData::ResetDefaults() -> void
 	// Expansion settings
 	ExpansionCoreShardEra( ER_LBR ); // Default to LBR expansion
 	ExpansionArmorCalculation( ER_CORE );
+	ExpansionElementalDamage( ER_CORE );
 	ExpansionStrengthDamageBonus( ER_CORE );
 	ExpansionTacticsDamageBonus( ER_CORE );
 	ExpansionAnatomyDamageBonus( ER_CORE );
@@ -1728,6 +1733,26 @@ auto CServerData::ExpansionArmorCalculation( UI08 setting ) -> void
 		setting = ExpansionCoreShardEra();
 	}
 	expansionArmorCalculation = setting;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ExpansionElementalDamage()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the era ruleset for elemental damage and percentage-based resistance
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ExpansionElementalDamage() const -> UI08
+{
+	if( static_cast<ExpansionRuleset>( expansionElementalDamage ) == ER_CORE )
+		return ExpansionCoreShardEra();
+
+	return expansionElementalDamage;
+}
+auto CServerData::ExpansionElementalDamage( UI08 setting ) -> void
+{
+	if( setting >= ER_COUNT )
+		setting = ER_COUNT - 1;
+
+	expansionElementalDamage = setting;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3008,6 +3033,20 @@ auto CServerData::CombatArmorClassDamageBonus() const -> bool
 auto CServerData::CombatArmorClassDamageBonus( bool newVal ) -> void
 {
 	boolVals.set( BIT_ARMORCLASSDAMAGEBONUS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::CombatRandomZeroDamageFallback()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether fully mitigated melee hits receive the legacy random 0-4 damage
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::CombatRandomZeroDamageFallback() const -> bool
+{
+	return boolVals.test( BIT_RANDOMZERODAMAGEFALLBACK );
+}
+auto CServerData::CombatRandomZeroDamageFallback( bool newVal ) -> void
+{
+	boolVals.set( BIT_RANDOMZERODAMAGEFALLBACK, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5893,6 +5932,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "[expansion settings]" << '\n' << "{" << '\n';
 		ofsOutput << "CORESHARDERA=" << EraEnumToString( static_cast<ExpansionRuleset>( ExpansionCoreShardEra() ), true ) << '\n';
 		ofsOutput << "ARMORCALCULATION=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionArmorCalculation )) << '\n';
+		ofsOutput << "ELEMENTALDAMAGE=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionElementalDamage )) << '\n';
 		ofsOutput << "STRENGTHDAMAGEBONUS=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionStrengthDamageBonus )) << '\n';
 		ofsOutput << "TACTICSDAMAGEBONUS=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionTacticsDamageBonus )) << '\n';
 		ofsOutput << "ANATOMYDAMAGEBONUS=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionAnatomyDamageBonus )) << '\n';
@@ -6125,6 +6165,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "PARRYDAMAGEMIN=" << static_cast<UI16>( CombatParryDamageMin() ) << '\n';
 		ofsOutput << "PARRYDAMAGEMAX=" << static_cast<UI16>( CombatParryDamageMax() ) << '\n';
 		ofsOutput << "ARMORCLASSDAMAGEBONUS=" << ( CombatArmorClassDamageBonus() ? 1 : 0 ) << '\n';
+		ofsOutput << "RANDOMZERODAMAGEFALLBACK=" << ( CombatRandomZeroDamageFallback() ? 1 : 0 ) << '\n';
 		ofsOutput << "ALCHEMYBONUSENABLED=" << ( AlchemyDamageBonusEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>( AlchemyDamageBonusModifier() ) << '\n';
 		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
@@ -7729,6 +7770,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 389:	// HOUSEDECAY
 			HouseDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
+		case 390:	// RANDOMZERODAMAGEFALLBACK
+			CombatRandomZeroDamageFallback( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 );
+			break;
 		case 395:	 // QUESTSYSTEMENABLED
 			QuestSystemEnabled( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;  
@@ -7803,6 +7847,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 423: // PASSWORDHASHINGENABLED
 			PasswordHashingEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 424: // ELEMENTALDAMAGE
+			ExpansionElementalDamage( EraStringToEnum( oldstrutil::trim( value )));
 			break;
 		default:
 			rValue = false;
