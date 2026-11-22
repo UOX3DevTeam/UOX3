@@ -1,0 +1,517 @@
+{
+	"id": "arts_section",
+	"name": "Arts Section",
+	"holderName": "Zorda the artist",
+	"startTier": 10000000,
+	"nextTier": 10000000,
+	"maxTier": 1,
+	"dailyDecay": 100000,
+	"donationLabel": "Arts Section Donation Representative",
+	"donations": [
+		{
+			"key": "gold",
+			"name": "Gold",
+			"itemId": 3823,
+			"hue": 0,
+			"points": 0.06666,
+			"tooltipCliloc": 1073116
+		},
+		{
+			"key": "scribespen",
+			"name": "Scribes Pen",
+			"itemId": 4031,
+			"hue": 0,
+			"points": 1.0
+		},
+		{
+			"key": "blankscroll",
+			"name": "Blank Scroll",
+			"itemId": 3827,
+			"hue": 0,
+			"points": 1.0,
+			"tooltipCliloc": 1044377
+		},
+		{
+			"key": "fertiledirt",
+			"name": "Fertile Dirt",
+			"itemId": 3969,
+			"hue": 0,
+			"points": 1.0,
+			"tooltipCliloc": 1023969
+		},
+		{
+			"key": "board",
+			"name": "Board",
+			"itemId": 7127,
+			"hue": 0,
+			"points": 1.0,
+			"tooltipCliloc": 1015101
+		},
+		{
+			"key": "oakboard",
+			"name": "Oak Board",
+			"itemId": 7127,
+			"hue": 2010,
+			"points": 3.0,
+			"tooltipCliloc": 1075052
+		},
+		{
+			"key": "ashboard",
+			"name": "Ash Board",
+			"itemId": 7127,
+			"hue": 1191,
+			"points": 6.0,
+			"tooltipCliloc": 1075053
+		},
+		{
+			"key": "yewboard",
+			"name": "Yew Board",
+			"itemId": 7127,
+			"hue": 1192,
+			"points": 9.0,
+			"tooltipCliloc": 1075054
+		},
+		{
+			"key": "heartwoodboard",
+			"name": "Heartwood Board",
+			"itemId": 7127,
+			"hue": 1193,
+			"points": 12.0,
+			"tooltipCliloc": 1075062
+		},
+		{
+			"key": "bloodwoodboard",
+			"name": "Bloodwood Board",
+			"itemId": 7127,
+			"hue": 1194,
+			"points": 24.0,
+			"tooltipCliloc": 1075055
+		},
+		{
+			"key": "frostwoodboard",
+			"name": "Frostwood Board",
+			"itemId": 7127,
+			"hue": 1151,
+			"points": 48.0,
+			"tooltipCliloc": 1075056
+		},
+		{
+			"key": "brownbook",
+			"name": "Brown Book",
+			"itemId": 4079,
+			"hue": 0,
+			"points": 3.0,
+			"tooltipCliloc": 1074906
+		},
+		{
+			"key": "tanbook",
+			"name": "Tan Book",
+			"itemId": 4080,
+			"hue": 0,
+			"points": 3.0,
+			"tooltipCliloc": 1074906
+		}
+	],
+	"rewards": [
+		{
+			"key": "specialprintingofvirtue",
+			"name": "Special Printing of Virtue",
+			"itemId": 4080,
+			"hue": 1150,
+			"cost": 5000,
+			"tooltipCliloc": 1075793
+		},
+		{
+			"key": "libraryfriendbodysash",
+			"name": "Library Friend Body Sash",
+			"itemId": 5441,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073346
+		},
+		{
+			"key": "libraryfriendfeatheredhat",
+			"name": "Library Friend Feathered Hat",
+			"itemId": 5914,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073347
+		},
+		{
+			"key": "libraryfriendsurcoat",
+			"name": "Library Friend Surcoat",
+			"itemId": 8189,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			]
+		},
+		{
+			"key": "libraryfriendpants",
+			"name": "Library Friend Pants",
+			"itemId": 5433,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073349
+		},
+		{
+			"key": "libraryfriendcloak",
+			"name": "Library Friend Cloak",
+			"itemId": 5397,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073350
+		},
+		{
+			"key": "libraryfrienddoublet",
+			"name": "Library Friend Doublet",
+			"itemId": 8059,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073351
+		},
+		{
+			"key": "libraryfriendskirt",
+			"name": "Library Friend Skirt",
+			"itemId": 5431,
+			"hue": 400,
+			"cost": 100000,
+			"hues": [
+				480,
+				400,
+				337
+			],
+			"tooltipCliloc": 1073352
+		},
+		{
+			"key": "britain_public_library_contributor",
+			"name": "Britain Public Library Contributor",
+			"title": "Britain Public Library Contributor",
+			"cost": 100000
+		},
+		{
+			"key": "libraryfriendlantern",
+			"name": "Library Friend Lantern",
+			"itemId": 2597,
+			"hue": 450,
+			"cost": 200000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			],
+			"tooltipCliloc": 1073339
+		},
+		{
+			"key": "libraryfriendreadingchair",
+			"name": "Library Friend Reading Chair",
+			"itemId": 11755,
+			"hue": 450,
+			"cost": 200000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			],
+			"tooltipCliloc": 1073340
+		},
+		{
+			"key": "distinguished_library_contributor",
+			"name": "Distinguished Library Contributor",
+			"title": "Distinguished Library Contributor",
+			"cost": 200000
+		},
+		{
+			"key": "sherrythemousequotes",
+			"name": "Sherry The Mouse Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "wyrdbeastmasterquotes",
+			"name": "Wyrd Beastmaster Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "mercenaryjustinquotes",
+			"name": "Mercenary Justin Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "heigelofmoonglowquotes",
+			"name": "Heigel of Moonglow Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "traderhoracequotes",
+			"name": "Trader Horace Quotes",
+			"itemId": 4029,
+			"hue": 450,
+			"cost": 350000,
+			"hues": [
+				0,
+				450,
+				800,
+				400,
+				480
+			]
+		},
+		{
+			"key": "honored_library_contributor",
+			"name": "Honored Library Contributor",
+			"title": "Honored Library Contributor",
+			"cost": 350000
+		},
+		{
+			"key": "treatiseonalchemytalisman",
+			"name": "Treatiseon Alchemy Talisman",
+			"itemId": 12120,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073353
+		},
+		{
+			"key": "primeronarmstalisman",
+			"name": "Primer On Arms Talisman",
+			"itemId": 12121,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073354
+		},
+		{
+			"key": "mybooktalisman",
+			"name": "My Book Talisman",
+			"itemId": 12122,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073355
+		},
+		{
+			"key": "talkingtowispstalisman",
+			"name": "Talkingto Wisps Talisman",
+			"itemId": 12123,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073356
+		},
+		{
+			"key": "grammaroforchishtalisman",
+			"name": "Grammar of Orchish Talisman",
+			"itemId": 12121,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073354
+		},
+		{
+			"key": "birdsofbritanniatalisman",
+			"name": "Birdsof Britannia Talisman",
+			"itemId": 12122,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073355
+		},
+		{
+			"key": "thelifeoftravelingminstreltalisman",
+			"name": "The Life of Traveling Minstrel Talisman",
+			"itemId": 12122,
+			"hue": 0,
+			"cost": 550000,
+			"tooltipCliloc": 1073355
+		},
+		{
+			"key": "prominent_library_contributor",
+			"name": "Prominent Library Contributor",
+			"title": "Prominent Library Contributor",
+			"cost": 550000
+		},
+		{
+			"key": "eminent_library_contributor",
+			"name": "Eminent Library Contributor",
+			"title": "Eminent Library Contributor",
+			"cost": 800000
+		},
+		{
+			"key": "glassesofthearts",
+			"name": "Glasses of The Arts",
+			"itemId": 12216,
+			"hue": 115,
+			"cost": 800000,
+			"tooltipCliloc": 1073363
+		}
+	],
+	"displayObjects": [
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1602,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3942,
+			"name": "easel with canvas"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1606,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 2923,
+			"name": "table"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1605,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 2925
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1604,
+			"z": 30,
+			"movable": 2,
+			"type": "static",
+			"itemID": 2924
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1604,
+			"z": 36,
+			"movable": 2,
+			"type": "static",
+			"itemID": 10460,
+			"name": "bonsai tree"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1605,
+			"z": 37,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3625,
+			"name": "bottles"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1605,
+			"z": 36,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3624
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1606,
+			"z": 37,
+			"movable": 2,
+			"type": "static",
+			"itemID": 3628
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1417,
+			"y": 1606,
+			"z": 36,
+			"movable": 2,
+			"type": "static",
+			"itemID": 4031,
+			"name": "pen and ink"
+		},
+		{
+			"tier": 1,
+			"absolute": true,
+			"x": 1418,
+			"y": 1606,
+			"z": 42,
+			"movable": 2,
+			"type": "static",
+			"itemID": 4030,
+			"name": "A Cookbook"
+		}
+	]
+}
