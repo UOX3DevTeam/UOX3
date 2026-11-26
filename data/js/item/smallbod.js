@@ -1,6 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
-const scriptID = 5042;
+const smallBODID = 5042;
 
 const BODTypesToSkillNames = {
 	1: "blacksmithing",
@@ -44,7 +44,7 @@ function onCreateDFN( objMade, objType )
 /** @type { ( user: Character, iUsing: Item ) => boolean } */
 function onUseChecked( pUser, smallBOD )
 {
-	var gumpID = scriptID + 0xffff;
+	var gumpID = smallBODID + 0xffff;
 	var pSocket = pUser.socket;
 	if( pSocket == null )
 		return false;
@@ -253,7 +253,7 @@ function CombineItemWithBod( pUser, smallBOD )
 /** @type { ( tSock: Socket, target: Character | Item | null ) => void } */
 function onCallback0( socket, myTarget )
 {
-	var gumpID = scriptID + 0xffff;
+	var gumpID = smallBODID + 0xffff;
 	var pUser = socket.currentChar;
 	var smallBOD = pUser.bodItem;
 	var bodSectionID 	= smallBOD.GetTag( "bodSectionID" ); // sectionID of item required by BOD

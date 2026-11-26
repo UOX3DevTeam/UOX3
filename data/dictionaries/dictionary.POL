@@ -5307,6 +5307,16 @@
 17273=Będziesz musiał poczekać kilka sekund, podczas gdy ja będę sprawdzał ostatnie zamówienie.
 17274=Akt zamówienia zbiorczego został umieszczony w twoim plecaku.
 17275=Nie masz wystarczająco dużo miejsca w plecaku na nagrodę za zamówienie zbiorcze.
+17276=Połącz ten akt z innym aktem.
+17277=To nie jest zamówienie zbiorcze.
+17278=Oba zamówienia muszą być wyjątkowej jakości.
+17279=Oba zamówienia muszą używać tego samego typu zasobu.
+17280=Oba zamówienia mają różne żądane ilości i nie można ich połączyć.
+17281=Zamówienie, z którym chcesz połączyć, nie zostało zrealizowane.
+17282=To nie jest zamówienie zbiorcze dla tego dużego zamówienia.
+17283=Maksymalna liczba żądanych pozycji została już połączona z tym aktem.
+17284=Zamówienia zostały połączone.
+17285=Duże zamówienie zbiorcze
 // [17500-17529] Nazwy gildii NPC
 17500=Jestem %s z %d
 17501=Gildia Sztuk Tajemnych

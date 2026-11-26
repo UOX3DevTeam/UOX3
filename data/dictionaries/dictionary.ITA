@@ -5307,6 +5307,16 @@
 17273=Devi aspettare qualche secondo mentre ispeziono l'ultimo ordine.
 17274=L'atto d'ordine è stato messo nel tuo zaino.
 17275=Non c'è abbastanza spazio nello zaino per la ricompensa della richiesta in blocco.
+17276=Unisci questo atto con un altro atto.
+17277=Questo non è un ordine all'ingrosso.
+17278=Entrambi gli ordini devono essere di qualità eccezionale.
+17279=Entrambi gli ordini devono utilizzare lo stesso tipo di risorsa.
+17280=I due ordini hanno quantità richieste diverse e non possono essere combinati.
+17281=L'ordine da combinare non è stato completato.
+17282=Questo non è un ordine all'ingrosso per questa richiesta di grandi dimensioni.
+17283=La quantità massima di articoli richiesti è già stata combinata in questo atto.
+17284=Gli ordini sono stati combinati.
+17285=Un ordine all'ingrosso di grandi dimensioni
 // [17500-17529] Nomi delle gilde PNG
 17500=Sono il %s di %d
 17501=La Gilda delle Arti Arcane
