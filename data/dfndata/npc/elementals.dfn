@@ -1,389 +1,284 @@
-// Base elementals with shared DFN tags
-[base_elemental]
+[base_elementals]
 {
 DIRECTION=RND
 BACKPACK
 NPCWANDER=4
 FX2=20
-NPCAI=2
 FLAG=NEUTRAL
+NPCAI=2
 }
 
-//------------------------------------------------------------------------------------------------//
-
-[airele]
+[base_airele]
 {
+GET=base_elementals
 NAME=#//an air elemental
 ID=0x000d
 SKIN=0x777f
-DIRECTION=RND
-BACKPACK
-GOLD=200 300
-LOOT=lowlevelscrolls
-LOOT=midlevelscrolls
-LOOT=randompotions,2
-LOOT=TreasureMapLvl2Loot
-STR=126 155
-DEX=166 185
-INT=101 105
-KARMA=-4500
-FAME=4500
-MAGERY=600 750
-MAGICRESISTANCE=600 750
-PARRYING=550 650
-TACTICS=600 800
-WRESTLING=600 800
-DAMAGE=5 13
-DEF=20
 SPATTACK=7
 SPADELAY=7
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=757
-TOPEACE=757 5
 FLEEAT=-1
 RACE=16
-FLAG=NEUTRAL
+}
+
+[airele]
+{
+GETUO=airele_lbr
+GETT2A=airele_lbr
+GETUOR=airele_lbr
+GETTD=airele_lbr
+GETLBR=airele_lbr
+GETAOS=airele_aos
+GETSE=airele_aos
+GETML=airele_aos
+GETSA=airele_aos
+GETHS=airele_aos
+GETTOL=airele_aos
+}
+
+[base_earthele]
+{
+GET=base_elementals
+NAME=#//an earth elemental
+ID=0x000e
+FLEEAT=-1
+RACE=17
 }
 
 [earthele]
 {
-NAME=#//an earth elemental
-ID=0x000e
-DIRECTION=RND
-BACKPACK
-GOLD=200 350
-LOOT=eartheleLoot,5
-LOOT=TreasureMapLvl1Loot
-STR=126 155
-DEX=166 185
-INT=71 95
-KARMA=-3500
-FAME=3500
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=3 18
-DEF=20
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=650
-TOPEACE=650 5
+GETUO=earthele_lbr
+GETT2A=earthele_lbr
+GETUOR=earthele_lbr
+GETTD=earthele_lbr
+GETLBR=earthele_lbr
+GETAOS=earthele_aos
+GETSE=earthele_aos
+GETML=earthele_aos
+GETSA=earthele_aos
+GETHS=earthele_aos
+GETTOL=earthele_aos
+}
+
+[base_fireele]
+{
+GET=base_elementals
+NAME=#//a fire elemental
+ID=0x000f
+SPATTACK=7
+SPADELAY=7
 FLEEAT=-1
-RACE=17
-FLAG=NEUTRAL
+RACE=14
 }
 
 [fireele]
 {
-NAME=#//a fire elemental
-ID=0x000f
-DIRECTION=RND
-BACKPACK
-GOLD=150 300
-LOOT=randomgems,4
-LOOT=TreasureMapLvl2Loot
-PACKITEM=0x0f8c,8
-STR=126 155
-DEX=166 185
-INT=101 125
-KARMA=-4500
-FAME=4500
-MAGERY=600 750
-MAGICRESISTANCE=750 1050
-PARRYING=400 600
-TACTICS=800 1000
-WRESTLING=700 1000
-DAMAGE=4 12
-DEF=20
+GETUO=fireele_lbr
+GETT2A=fireele_lbr
+GETUOR=fireele_lbr
+GETTD=fireele_lbr
+GETLBR=fireele_lbr
+GETAOS=fireele_aos
+GETSE=fireele_aos
+GETML=fireele_aos
+GETSA=fireele_aos
+GETHS=fireele_aos
+GETTOL=fireele_aos
+}
+
+[base_waterele]
+{
+GET=base_elementals
+NAME=#//a water elemental
+ID=0x0010
+SKIN=0000
 SPATTACK=7
 SPADELAY=7
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=745
-TOPEACE=745 5
 FLEEAT=-1
-RACE=14
-FLAG=NEUTRAL
+RACE=15
 }
 
 [waterele]
 {
-NAME=#//a water elemental
-ID=0x0010
-SKIN=0000
-DIRECTION=RND
-BACKPACK
-GOLD=200 250
-LOOT=randomreagents,4
-LOOT=randompotions,2
-LOOT=TreasureMapLvl2Loot
-STR=126 155
-DEX=66 85
-INT=101 125
-KARMA=-4500
-FAME=4500
-MAGERY=600 750
-MAGICRESISTANCE=1000 1150
-PARRYING=900 1000
-TACTICS=500 700
-WRESTLING=500 700
-DAMAGE=4 12
-DEF=20
+GETUO=waterele_lbr
+GETT2A=waterele_lbr
+GETUOR=waterele_lbr
+GETTD=waterele_lbr
+GETLBR=waterele_lbr
+GETAOS=waterele_aos
+GETSE=waterele_aos
+GETML=waterele_aos
+GETSA=waterele_aos
+GETHS=waterele_aos
+GETTOL=waterele_aos
+}
+
+[base_bloodele]
+{
+GET=base_elementals
+NAME=#//a blood elemental
+ID=0x009f
 SPATTACK=7
 SPADELAY=7
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=730
-TOPEACE=730 5
+RACE=18
 FLEEAT=-1
-RACE=15
-FLAG=NEUTRAL
+SCRIPT=3300
 }
 
 [bloodele]
 {
-NAME=#//a blood elemental
-ID=0x009f
-DIRECTION=RND
-BACKPACK
-GOLD=1100 1400
-LOOT=lowlevelscrolls,4
-LOOT=midlevelscrolls,2
-LOOT=randomgems,10
-LOOT=TreasureMapLvl5Loot
-PACKITEM=0x0f7d,2
-STR=526 615
-DEX=66 85
-INT=226 350
-KARMA=-12500
-FAME=12500
-EVALUATINGINTEL=500 950
-MAGERY=850 1000
-MAGICRESISTANCE=800 950
-MEDITATION=100 500
-PARRYING=850 950
-TACTICS=800 1000
-WRESTLING=800 1000
-DAMAGE=8 36
-DEF=30
-NPCWANDER=4
-FX2=20
-NPCAI=2
+GETUO=bloodele_lbr
+GETT2A=bloodele_lbr
+GETUOR=bloodele_lbr
+GETTD=bloodele_lbr
+GETLBR=bloodele_lbr
+GETAOS=bloodele_aos
+GETSE=bloodele_aos
+GETML=bloodele_aos
+GETSA=bloodele_aos
+GETHS=bloodele_aos
+GETTOL=bloodele_aos
+}
+
+[base_poisonele]
+{
+GET=base_elementals
+NAME=#//a poison elemental
+ID=0x00a2
 SPATTACK=7
 SPADELAY=7
-TOPROV=935
-TOPEACE=935 5
+POISONSTRENGTH=5
 RACE=18
 FLEEAT=-1
-FLAG=NEUTRAL
 SCRIPT=3300
 }
 
 [poisonele]
 {
-NAME=#//a poison elemental
-ID=0x00a2
-DIRECTION=RND
-BACKPACK
-GOLD=800 1100
-LOOT=randomgems,10
-LOOT=TreasureMapLvl5Loot
-STR=426 515
-DEX=166 185
-INT=361 435
-KARMA=-12500
-FAME=12500
-MAGERY=800 950
-MAGICRESISTANCE=850 1150
-MEDITATION=800 1200
-PARRYING=750 850
-POISONING=900 1000
-TACTICS=800 1000
-WRESTLING=700 900
-DAMAGE=5 25
-SPATTACK=7
-SPADELAY=7
-DEF=35
-NPCAI=2
-NPCWANDER=4
-FX2=20
-POISONSTRENGTH=5
-TOPROV=1051
-TOPEACE=1051 5
-RACE=18
-FLEEAT=-1
-FLAG=NEUTRAL
-SCRIPT=3300
+GETUO=poisonele_lbr
+GETT2A=poisonele_lbr
+GETUOR=poisonele_lbr
+GETTD=poisonele_lbr
+GETLBR=poisonele_lbr
+GETAOS=poisonele_aos
+GETSE=poisonele_aos
+GETML=poisonele_aos
+GETSA=poisonele_aos
+GETHS=poisonele_aos
+GETTOL=poisonele_aos
 }
 
-[iceele]
+[base_iceele]
 {
+GET=base_elementals
 NAME=#//an ice elemental
 ID=0x00a1
-DIRECTION=RND
-BACKPACK
-GOLD=150 300
-LOOT=randomreagents,4
-LOOT=randompotions,4
-STR=156 185
-DEX=96 115
-INT=171 192
-KARMA=-4000
-FAME=4000
-MAGICRESISTANCE=300 800
-MAGERY=110 600
-PARRYING=600 850
-TACTICS=700 100
-WRESTLING=600 100
-DAMAGE=5 26
-DEF=20
-NPCWANDER=4
-FX2=20
 SPATTACK=5
 SPADELAY=6
-NPCAI=2
-TOPROV=769
-TOPEACE=769 5
 RACE=13
 FLEEAT=-1
-FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3505
 }
 
-[snowele]
+[iceele]
 {
+GETUO=iceele_lbr
+GETT2A=iceele_lbr
+GETUOR=iceele_lbr
+GETTD=iceele_lbr
+GETLBR=iceele_lbr
+GETAOS=iceele_aos
+GETSE=iceele_aos
+GETML=iceele_aos
+GETSA=iceele_aos
+GETHS=iceele_aos
+GETTOL=iceele_aos
+}
+
+[base_snowele]
+{
+GET=base_elementals
 NAME=#//a snow elemental
 ID=0x00a3
-DIRECTION=RND
-BACKPACK
-GOLD=200 250
-LOOT=snoweleLoot,5
-LOOT=TreasureMapLvl2Loot
-LOOT=TreasureMapLvl3Loot
-STR=326 355
-DEX=166 185
-INT=71 95
-KARMA=-6000
-FAME=6000
-MAGICRESISTANCE=500 650
-PARRYING=650 750
-TACTICS=800 1000
-WRESTLING=800 1000
-DAMAGE=4 24
-DEF=25
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=782
-TOPEACE=782 5
 RACE=13
 FLEEAT=-1
-FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3503
 }
 
-[acidele]
+[snowele]
 {
+GETUO=snowele_lbr
+GETT2A=snowele_lbr
+GETUOR=snowele_lbr
+GETTD=snowele_lbr
+GETLBR=snowele_lbr
+GETAOS=snowele_aos
+GETSE=snowele_aos
+GETML=snowele_aos
+GETSA=snowele_aos
+GETHS=snowele_aos
+GETTOL=snowele_aos
+}
+
+[base_acidele]
+{
+GET=base_elementals
 NAME=#//an acid elemental
 ID=0x009e
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=lowlevelscrolls
-LOOT=midlevelscrolls,2
-STR=326 355
-DEX=66 85
-INT=271 295
-KARMA=-10000
-FAME=10000
-ANATOMY=300 600
-MAGERY=700 850
-MAGICRESISTANCE=600 750
-PARRYING=550 650
-TACTICS=800 900
-WRESTLING=700 900
-DAMAGE=4 20
-DEF=25
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=839
-TOPEACE=839 5
 RACE=18
 FLEEAT=-1
-FLAG=NEUTRAL
 ORIGIN=uor
 SCRIPT=3300
 SCRIPT=3506
 }
 
-//AoS ELEMENTAL!
-[crystalele]
+[acidele]
 {
+GETUO=acidele_lbr
+GETT2A=acidele_lbr
+GETUOR=acidele_lbr
+GETTD=acidele_lbr
+GETLBR=acidele_lbr
+GETAOS=acidele_aos
+GETSE=acidele_aos
+GETML=acidele_aos
+GETSA=acidele_aos
+GETHS=acidele_aos
+GETTOL=acidele_aos
+}
+
+[base_crystalele]
+{
+GET=base_elementals
 NAME=#//a crystal elemental
 ID=0x012c
-DIRECTION=RND
-BACKPACK
-GOLD=400 500
-LOOT=randomgems,4
-STR=136 160
-DEX=51 65
-INT=86 110
-KARMA=-6500
-FAME=6500
-MAGERY=700 750
-MAGICRESISTANCE=800 900
-MEDITATION=650 750
-TACTICS=750 850
-WRESTLING=650 750
-DAMAGE=3 20
-DEF=15
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=836
-TOPEACE=836 5
 FLEEAT=-1
 RACE=17
-FLAG=NEUTRAL
 ORIGIN=aos
 }
 
-[dullcopperele]
+[crystalele]
 {
+GETUO=crystalele_lbr
+GETT2A=crystalele_lbr
+GETUOR=crystalele_lbr
+GETTD=crystalele_lbr
+GETLBR=crystalele_lbr
+GETAOS=crystalele_aos
+GETSE=crystalele_aos
+GETML=crystalele_aos
+GETSA=crystalele_aos
+GETHS=crystalele_aos
+GETTOL=crystalele_aos
+}
+
+[base_dullcopperele]
+{
+GET=base_elementals
 NAME=#//a dull copper elemental
 ID=0x006e
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=randomgems,3
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-3500
-FAME=3750
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=5 20
-DEF=17
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=738
-TOPEACE=738 5
 RACE=17
-FLAG=NEUTRAL
 WALKINGSPEED=0.7
 FLEEAT=-1
 ORIGIN=uor
@@ -391,33 +286,27 @@ SCRIPT=3300
 SCRIPT=3500
 }
 
-[shadowironele]
+[dullcopperele]
 {
+GETUO=dullcopperele_lbr
+GETT2A=dullcopperele_lbr
+GETUOR=dullcopperele_lbr
+GETTD=dullcopperele_lbr
+GETLBR=dullcopperele_lbr
+GETAOS=dullcopperele_aos
+GETSE=dullcopperele_aos
+GETML=dullcopperele_aos
+GETSA=dullcopperele_aos
+GETHS=dullcopperele_aos
+GETTOL=dullcopperele_aos
+}
+
+[base_shadowironele]
+{
+GET=base_elementals
 NAME=#//a shadow iron elemental
 ID=0x006f
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=randomgems,4
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-4500
-FAME=4500
-MAGICRESISTANCE=1000
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=5 20
-DEF=17
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=723
-TOPEACE=723 5
 RACE=17
-FLAG=NEUTRAL
 WALKINGSPEED=0.65
 FLEEAT=-1
 ORIGIN=uor
@@ -425,33 +314,27 @@ SCRIPT=3300
 SCRIPT=3502
 }
 
-[copperele]
+[shadowironele]
 {
+GETUO=shadowironele_lbr
+GETT2A=shadowironele_lbr
+GETUOR=shadowironele_lbr
+GETTD=shadowironele_lbr
+GETLBR=shadowironele_lbr
+GETAOS=shadowironele_aos
+GETSE=shadowironele_aos
+GETML=shadowironele_aos
+GETSA=shadowironele_aos
+GETHS=shadowironele_aos
+GETTOL=shadowironele_aos
+}
+
+[base_copperele]
+{
+GET=base_elementals
 NAME=#//a copper elemental
 ID=0x006d
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=randomgems,5
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-3500
-FAME=4500
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=5 20
-DEF=17
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=733
-TOPEACE=733 5
 RACE=17
-FLAG=NEUTRAL
 WALKINGSPEED=0.6
 FLEEAT=-1
 PRIV=0x8000
@@ -460,33 +343,27 @@ SCRIPT=3300
 SCRIPT=3501
 }
 
-[bronzeele]
+[copperele]
 {
+GETUO=copperele_lbr
+GETT2A=copperele_lbr
+GETUOR=copperele_lbr
+GETTD=copperele_lbr
+GETLBR=copperele_lbr
+GETAOS=copperele_aos
+GETSE=copperele_aos
+GETML=copperele_aos
+GETSA=copperele_aos
+GETHS=copperele_aos
+GETTOL=copperele_aos
+}
+
+[base_bronzeele]
+{
+GET=base_elementals
 NAME=#//a bronze elemental
 ID=0x006c
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=randomgems,6
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-3500
-FAME=4750
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=5 20
-DEF=17
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=718
-TOPEACE=718 5
 RACE=17
-FLAG=NEUTRAL
 WALKINGSPEED=0.55
 FLEEAT=-1
 ORIGIN=uor
@@ -494,34 +371,55 @@ SCRIPT=3300
 SCRIPT=3503
 }
 
-[goldele]
+[bronzeele]
 {
+GETUO=bronzeele_lbr
+GETT2A=bronzeele_lbr
+GETUOR=bronzeele_lbr
+GETTD=bronzeele_lbr
+GETLBR=bronzeele_lbr
+GETAOS=bronzeele_aos
+GETSE=bronzeele_aos
+GETML=bronzeele_aos
+GETSA=bronzeele_aos
+GETHS=bronzeele_aos
+GETTOL=bronzeele_aos
+}
+
+[base_goldele]
+{
+GET=base_elementals
 NAME=#//a gold elemental
 ID=0x00a6
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=randomgems,7
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-3500
-FAME=5000
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=5 20
-DEF=34
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=739
-TOPEACE=739 5
 RACE=17
-FLAG=NEUTRAL
 WALKINGSPEED=0.5
+FLEEAT=-1
+ORIGIN=uor
+SCRIPT=3300
+}
+
+[goldele]
+{
+GETUO=goldele_lbr
+GETT2A=goldele_lbr
+GETUOR=goldele_lbr
+GETTD=goldele_lbr
+GETLBR=goldele_lbr
+GETAOS=goldele_aos
+GETSE=goldele_aos
+GETML=goldele_aos
+GETSA=goldele_aos
+GETHS=goldele_aos
+GETTOL=goldele_aos
+}
+
+[base_agapiteele]
+{
+GET=base_elementals
+NAME=#//an agapite elemental
+ID=0x006b
+RACE=17
+WALKINGSPEED=0.45
 FLEEAT=-1
 ORIGIN=uor
 SCRIPT=3300
@@ -529,32 +427,26 @@ SCRIPT=3300
 
 [agapiteele]
 {
-NAME=#//an agapite elemental
-ID=0x006b
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=randomgems,8
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-3500
-FAME=5500
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=16 40
-DEF=17
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=729
-TOPEACE=729 5
+GETUO=agapiteele_lbr
+GETT2A=agapiteele_lbr
+GETUOR=agapiteele_lbr
+GETTD=agapiteele_lbr
+GETLBR=agapiteele_lbr
+GETAOS=agapiteele_aos
+GETSE=agapiteele_aos
+GETML=agapiteele_aos
+GETSA=agapiteele_aos
+GETHS=agapiteele_aos
+GETTOL=agapiteele_aos
+}
+
+[base_veriteele]
+{
+GET=base_elementals
+NAME=#//a verite elemental
+ID=0x0071
 RACE=17
-FLAG=NEUTRAL
-WALKINGSPEED=0.45
+WALKINGSPEED=0.4
 FLEEAT=-1
 ORIGIN=uor
 SCRIPT=3300
@@ -562,64 +454,25 @@ SCRIPT=3300
 
 [veriteele]
 {
-NAME=#//a verite elemental
-ID=0x0071
-DIRECTION=RND
-BACKPACK
-GOLD=300 600
-LOOT=randomgems,9
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-3500
-FAME=5750
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=5 20
-DEF=17
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=729
-TOPEACE=729 5
-RACE=17
-FLAG=NEUTRAL
-WALKINGSPEED=0.4
-FLEEAT=-1
-ORIGIN=uor
-SCRIPT=3300
+GETUO=veriteele_lbr
+GETT2A=veriteele_lbr
+GETUOR=veriteele_lbr
+GETTD=veriteele_lbr
+GETLBR=veriteele_lbr
+GETAOS=veriteele_aos
+GETSE=veriteele_aos
+GETML=veriteele_aos
+GETSA=veriteele_aos
+GETHS=veriteele_aos
+GETTOL=veriteele_aos
 }
 
-[valoriteele]
+[base_valoriteele]
 {
+GET=base_elementals
 NAME=#//a valorite elemental
 ID=0x0070
-DIRECTION=RND
-BACKPACK
-GOLD=450 650
-LOOT=randomgems,10
-LOOT=TreasureMapLvl1Loot
-STR=226 255
-DEX=126 145
-INT=71 92
-KARMA=-3500
-FAME=6000
-MAGICRESISTANCE=500 950
-PARRYING=400 650
-TACTICS=600 1000
-WRESTLING=600 1000
-DAMAGE=16 40
-DEF=34
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=2000
-TOPEACE=950 5
 RACE=17
-FLAG=EVIL
 WALKINGSPEED=0.35
 FLEEAT=-1
 PRIV=0x8000
@@ -628,35 +481,49 @@ SCRIPT=3300
 SCRIPT=3504
 }
 
-[energyvortex]
+[valoriteele]
 {
-NAME=#//an energy vortex
-ID=0x00a4
-DIRECTION=RND
-BACKPACK
-STR=200
-DEX=200
-INT=100
-HPMAX=1900
-STAMINAMAX=250
-MAGICRESISTANCE=999
-TACTICS=900
-WRESTLING=1200
-DAMAGE=8 26
-NPCWANDER=4
-FX2=20
-NPCAI=2
-TOPROV=753
-TOPEACE=753 5
-WALKINGSPEED=0.35
-FLEEAT=-1
-FLAG=NEUTRAL
+GETUO=valoriteele_lbr
+GETT2A=valoriteele_lbr
+GETUOR=valoriteele_lbr
+GETTD=valoriteele_lbr
+GETLBR=valoriteele_lbr
+GETAOS=valoriteele_aos
+GETSE=valoriteele_aos
+GETML=valoriteele_aos
+GETSA=valoriteele_aos
+GETHS=valoriteele_aos
+GETTOL=valoriteele_aos
 }
 
-// RaiJu - Base NPC with shared DFN tags
+[base_energyvortex]
+{
+GET=base_elementals
+NAME=#//an energy vortex
+ID=0x00a4
+STAMINAMAX=250
+WALKINGSPEED=0.35
+FLEEAT=-1
+}
+
+[energyvortex]
+{
+GETUO=energyvortex_lbr
+GETT2A=energyvortex_lbr
+GETUOR=energyvortex_lbr
+GETTD=energyvortex_lbr
+GETLBR=energyvortex_lbr
+GETAOS=energyvortex_aos
+GETSE=energyvortex_aos
+GETML=energyvortex_aos
+GETSA=energyvortex_aos
+GETHS=energyvortex_aos
+GETTOL=energyvortex_aos
+}
+
 [base_raiju]
 {
-GET=base_elemental
+GET=base_elementals
 NAME=#//a Rai-Ju
 ID=0x0xc7
 SCRIPT=3225
@@ -665,11 +532,11 @@ ORIGIN=se
 
 [raiju]
 {
-GETUO=raiju_se
-GETT2A=raiju_se
-GETUOR=raiju_se
-GETTD=raiju_se
-GETLBR=raiju_se
+GETUO=raiju_lbr
+GETT2A=raiju_lbr
+GETUOR=raiju_lbr
+GETTD=raiju_lbr
+GETLBR=raiju_lbr
 GETAOS=raiju_se
 GETSE=raiju_se
 GETML=raiju_se
