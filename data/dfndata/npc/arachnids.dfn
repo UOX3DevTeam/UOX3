@@ -1,290 +1,247 @@
-[giantblackwidow]
+[base_arachnids]
 {
-NAME=#//a giant black widow
-ID=0x009d
 DIRECTION=RND
 BACKPACK
-PACKITEM=0x0f8d,5
-LOOT=giantblackwidowLoot
-STR=76 100
-DEX=96 115
-INT=36 60
-KARMA=-3500
-FAME=3500
-ANATOMY=300 750
-MAGICRESISTANCE=450 600
-PARRYING=350 450
-POISONING=600 800
-TACTICS=650 800
-WRESTLING=700 850
-DAMAGE=2 20
-DEF=12
 NPCWANDER=4
 FX2=20
+FLAG=NEUTRAL
+}
+
+[base_giantblackwidow]
+{
+GET=base_arachnids
+NAME=#//a giant black widow
+ID=0x009d
 NPCAI=2
-POISONSTRENGTH=4
-TOPROV=706
-TOPEACE=706 5
 RUNS
 RACE=6
-FLAG=NEUTRAL
+}
+
+[giantblackwidow]
+{
+GETUO=giantblackwidow_lbr
+GETT2A=giantblackwidow_lbr
+GETUOR=giantblackwidow_lbr
+GETTD=giantblackwidow_lbr
+GETLBR=giantblackwidow_lbr
+GETAOS=giantblackwidow_aos
+GETSE=giantblackwidow_aos
+GETML=giantblackwidow_aos
+GETSA=giantblackwidow_aos
+GETHS=giantblackwidow_aos
+GETTOL=giantblackwidow_aos
+}
+
+[base_dreadspider]
+{
+GET=base_arachnids
+NAME=#//a dread spider
+ID=0x000b
+NPCAI=2
+RUNS
+RACE=6
 }
 
 [dreadspider]
 {
-NAME=#//a dread spider
-ID=0x000b
-DIRECTION=RND
-BACKPACK
-GOLD=200 250
-PACKITEM=0x0f8d,8
-LOOT=giantblackwidowLoot,2
-LOOT=TreasureMapLvl3Loot
-STR=196 220
-DEX=126 145
-INT=286 310
-KARMA=-5000
-FAME=5000
-MAGERY=650 800
-MAGICRESISTANCE=450 600
-PARRYING=350 450
-TACTICS=550 700
-WRESTLING=600 750
-DAMAGE=3 19
-DEF=18
-NPCWANDER=4
-FX2=20
-NPCAI=2
-POISONSTRENGTH=5
-TOPROV=880
-TOPEACE=880 5
-RUNS
-RACE=6
-FLAG=NEUTRAL
+GETUO=dreadspider_lbr
+GETT2A=dreadspider_lbr
+GETUOR=dreadspider_lbr
+GETTD=dreadspider_lbr
+GETLBR=dreadspider_lbr
+GETAOS=dreadspider_aos
+GETSE=dreadspider_aos
+GETML=dreadspider_aos
+GETSA=dreadspider_aos
+GETHS=dreadspider_aos
+GETTOL=dreadspider_aos
 }
 
-[frostspider]
+[base_frostspider]
 {
+GET=base_arachnids
 NAME=#//a frost spider
 ID=0x0014
-DIRECTION=RND
-BACKPACK
-GOLD=25 75
-PACKITEM=0x0f8d,7
-STR=76 100
-DEX=126 145
-INT=36 60
-HPMAX=46 60
-KARMA=-775
-FAME=775
-ANATOMY=830
-HIDING=430 650
-MAGICRESISTANCE=250 400
-PARRYING=750 950
-TACTICS=350 500
-WRESTLING=500 650
-DAMAGE=3 19
-DEF=14
-NPCWANDER=4
-FX2=20
 NPCAI=2
-TOPROV=454
-TOPEACE=454 5
-TOTAME=747
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
 RACE=6
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 ORIGIN=t2a
 }
 
-[giantspider]
+[frostspider]
 {
+GETUO=frostspider_lbr
+GETT2A=frostspider_lbr
+GETUOR=frostspider_lbr
+GETTD=frostspider_lbr
+GETLBR=frostspider_lbr
+GETAOS=frostspider_aos
+GETSE=frostspider_aos
+GETML=frostspider_aos
+GETSA=frostspider_aos
+GETHS=frostspider_aos
+GETTOL=frostspider_aos
+}
+
+[base_giantspider]
+{
+GET=base_arachnids
 NAME=#//a giant spider
 ID=0x001c
-DIRECTION=RND
-BACKPACK
-GOLD=0 25
-PACKITEM=0x0f8d,5
-STR=76 100
-DEX=76 95
-INT=36 60
-KARMA=-600
-FAME=600
-ANATOMY=700
-HIDING=500 800
-MAGICRESISTANCE=250 400
-PARRYING=350 450
-POISONING=600 800
-TACTICS=350 500
-WRESTLING=500 650
-DAMAGE=3 15
-DEF=8
-NPCWANDER=4
-FX2=20
 NPCAI=2
-POISONSTRENGTH=1
-TOPROV=575
-TOPEACE=575 5
-TOTAME=591
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
 RACE=6
-FLAG=NEUTRAL
 CONTROLSLOTS=1
 }
 
-//Terathans
-[teradrone]
+[giantspider]
 {
+GETUO=giantspider_lbr
+GETT2A=giantspider_lbr
+GETUOR=giantspider_lbr
+GETTD=giantspider_lbr
+GETLBR=giantspider_lbr
+GETAOS=giantspider_aos
+GETSE=giantspider_aos
+GETML=giantspider_aos
+GETSA=giantspider_aos
+GETHS=giantspider_aos
+GETTOL=giantspider_aos
+}
+
+//Terathans
+[base_teradrone]
+{
+GET=base_arachnids
 NAME=#//terathan drone
 ID=0x0047
-DIRECTION=RND
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
-BACKPACK
-GOLD=0 25
-PACKITEM=0x0f8d,2
-STR=36 65
-DEX=96 145
-INT=21 45
-MANAMAX=0
-KARMA=-2000
-FAME=2000
-MAGICRESISTANCE=300 450
-PARRYING=300 400
-POISONING=400 600
-TACTICS=300 500
-WRESTLING=400 500
-DAMAGE=4 14
-DEF=12
-NPCWANDER=4
-FX2=30
 NPCAI=2
-TOPROV=369
-TOPEACE=369 5
 RACE=26
-FLAG=NEUTRAL
+ORIGIN=t2a
+}
+
+[teradrone]
+{
+GETUO=teradrone_lbr
+GETT2A=teradrone_lbr
+GETUOR=teradrone_lbr
+GETTD=teradrone_lbr
+GETLBR=teradrone_lbr
+GETAOS=teradrone_aos
+GETSE=teradrone_aos
+GETML=teradrone_aos
+GETSA=teradrone_aos
+GETHS=teradrone_aos
+GETTOL=teradrone_aos
+}
+
+[terathandrone]
+{
+GET=teradrone
+}
+
+[base_terawarrior]
+{
+GET=base_arachnids
+NAME=#//terathan warrior
+ID=0x0046
+SAYCOLOR=0x0026
+EMOTECOLOR=0x0026
+NPCAI=2
+RACE=26
 ORIGIN=t2a
 }
 
 [terawarrior]
 {
-NAME=#//terathan warrior
-ID=0x0046
-DIRECTION=RND
+GETUO=terawarrior_lbr
+GETT2A=terawarrior_lbr
+GETUOR=terawarrior_lbr
+GETTD=terawarrior_lbr
+GETLBR=terawarrior_lbr
+GETAOS=terawarrior_aos
+GETSE=terawarrior_aos
+GETML=terawarrior_aos
+GETSA=terawarrior_aos
+GETHS=terawarrior_aos
+GETTOL=terawarrior_aos
+}
+
+[terathanwarrior]
+{
+GET=terawarrior
+}
+
+[base_teraavenger]
+{
+GET=base_arachnids
+NAME=#//terathan avenger
+ID=0x0098
+SKIN=0x066d
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
-BACKPACK
-GOLD=50 150
-LOOT=randompotions,2
-LOOT=TreasureMapLvl1Loot
-STR=166 215
-DEX=96 145
-INT=41 65
-MANAMAX=0
-KARMA=-4000
-FAME=4000
-MAGICRESISTANCE=600 750
-PARRYING=550 650
-POISONING=600 800
-TACTICS=800 1000
-WRESTLING=800 900
-DAMAGE=4 20
-DEF=15
-NPCWANDER=4
-FX2=30
 NPCAI=2
-TOPROV=706
-TOPEACE=706 5
 RACE=26
-FLAG=NEUTRAL
 ORIGIN=t2a
-SCRIPT=3300//Magic Items
 }
 
 [teraavenger]
 {
-NAME=#//terathan avenger
-ID=0x0098
-SKIN=0x066d
-DIRECTION=RND
+GETUO=teraavenger_lbr
+GETT2A=teraavenger_lbr
+GETUOR=teraavenger_lbr
+GETTD=teraavenger_lbr
+GETLBR=teraavenger_lbr
+GETAOS=teraavenger_aos
+GETSE=teraavenger_aos
+GETML=teraavenger_aos
+GETSA=teraavenger_aos
+GETHS=teraavenger_aos
+GETTOL=teraavenger_aos
+}
+
+[terathanavenger]
+{
+GET=teraavenger
+}
+
+[base_teramatriarch]
+{
+GET=base_arachnids
+NAME=#//terathan matriarch
+ID=0x0048
+SKIN=0000
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
-BACKPACK
-GOLD=200 250
-LOOT=randomgems,4
-LOOT=midlevelscrolls,2
-LOOT=TreasureMapLvl3Loot
-STR=467 645
-DEX=77 95
-INT=126 150
-MANAMAX=46 70
-KARMA=-15000
-FAME=15000
-MAGERY=700 1000
-MAGICRESISTANCE=650 850
-PARRYING=750 850
-POISONING=600 800
-TACTICS=900 1000
-WRESTLING=900 1000
-DAMAGE=10 30
-DEF=25
-POISONSTRENGTH=5
-NPCWANDER=4
-FX2=30
-NPCAI=2
-SPATTACK=5
-SPADELAY=7
-TOPROV=915
-TOPEACE=915 5
+FLEEAT=-1
+NPCAI=11
 RACE=26
-FLAG=NEUTRAL
 ORIGIN=t2a
-SCRIPT=3300//Magic Items
 }
 
 [teramatriarch]
 {
-NAME=#//terathan matriarch
-ID=0x0048
-SKIN=0000
-DIRECTION=RND
-SAYCOLOR=0x0026
-EMOTECOLOR=0x0026
-BACKPACK
-GOLD=150 300
-PACKITEM=0x0f8d,5
-LOOT=randomgems
-LOOT=midlevelscrolls,2
-LOOT=randomreagents,5 10
-LOOT=TreasureMapLvl4Loot
-STR=316 405
-DEX=96 115
-INT=366 455
-KARMA=-10000
-FAME=10000
-MAGERY=900 1000
-MAGICRESISTANCE=900 1000
-MEDITATION=50 300
-PARRYING=550 650
-TACTICS=500 700
-WRESTLING=600 800
-DAMAGE=5 20
-DEF=25
-NPCWANDER=4
-FX2=30
-FLEEAT=-1
-NPCAI=11
-SPATTACK=7
-SPADELAY=5
-TOPROV=912
-TOPEACE=912 5
-RACE=26
-FLAG=NEUTRAL
-ORIGIN=t2a
-SCRIPT=3300//Magic Items
+GETUO=teramatriarch_lbr
+GETT2A=teramatriarch_lbr
+GETUOR=teramatriarch_lbr
+GETTD=teramatriarch_lbr
+GETLBR=teramatriarch_lbr
+GETAOS=teramatriarch_aos
+GETSE=teramatriarch_aos
+GETML=teramatriarch_aos
+GETSA=teramatriarch_aos
+GETHS=teramatriarch_aos
+GETTOL=teramatriarch_aos
+}
+
+[terathanmatriarch]
+{
+GET=teramatriarch
 }
