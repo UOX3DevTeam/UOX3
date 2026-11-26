@@ -34,7 +34,16 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 	// Apply special effect based on item crafted
 	if( ValidateObject( itemCrafted ))
 	{
-		// Jewelry, furniture, potions, maps
+		var craftMapEntry = TriggerEvent( 4038, "GetCraftMapEntryByMakeID", craftEntryID );
+		if( craftMapEntry && craftMapEntry.craftComplete )
+		{
+			if( HandleCraftCompleteType( pSock, pCrafter, itemCrafted, craftEntryID, craftMapEntry.craftComplete ))
+			{
+				return;
+			}
+		}
+
+		// Fallback support for older entries not yet moved into JSON
 		switch( craftEntryID )
 		{
 			case 239: // necklace
@@ -156,6 +165,92 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 	ClearTagsAndScript( pCrafter );
 }
 
+/** @type { ( pSock: Socket, pCrafter: Character, itemCrafted: Item, craftEntryID: number, craftComplete: object ) => boolean } */
+function HandleCraftCompleteType( pSock, pCrafter, itemCrafted, craftEntryID, craftComplete )
+{
+	if( !craftComplete || !craftComplete.type )
+	{
+		return false;
+	}
+
+	switch( craftComplete.type )
+	{
+		case "gemJewelry":
+			ApplyGemJewelryName( pCrafter, itemCrafted );
+			ClearTagsAndScript( pCrafter );
+			return true;
+
+		case "lockableContainer":
+			ApplyCraftedContainerLock( pSock, pCrafter, itemCrafted, craftEntryID );
+			ClearTagsAndScript( pCrafter );
+			return true;
+
+		case "autoIdentifyPotion":
+			ApplyPotionAutoIdentify( itemCrafted );
+			ClearTagsAndScript( pCrafter );
+			return true;
+
+		case "craftedMap":
+			CraftedMapCoords( pSock, itemCrafted );
+			ClearTagsAndScript( pCrafter );
+			return true;
+	}
+
+	return false;
+}
+
+/** @type { ( itemCrafted: Item ) => void } */
+function ApplyPotionAutoIdentify( itemCrafted )
+{
+	itemCrafted.name = itemCrafted.name2;
+	itemCrafted.name2 = "#";
+}
+
+/** @type { ( pSock: Socket, pCrafter: Character, itemCrafted: Item, craftEntryID: number ) => void } */
+function ApplyCraftedContainerLock( pSock, pCrafter, itemCrafted, craftEntryID )
+{
+	var createEntry = CreateEntries[craftEntryID];
+	if( !createEntry )
+		return;
+
+	var skills = createEntry.skills;
+	if( !skills )
+		return;
+
+	for( var i = 0; i < skills.length; i++ )
+	{
+		var skillReq = skills[i];
+		var skillNumber = skillReq[0];
+		var minSkill = skillReq[1];
+
+		if( skillNumber == 11 ) // Carpentry
+		{
+			if( pCrafter.skills.tinkering >= RandomNumber( minSkill / 2, 1000 ))
+			{
+				var newKey = CreateDFNItem( pSock, pCrafter, "0x100E", 1, "ITEM", true );
+				newKey.container = itemCrafted;
+				newKey.PlaceInPack();
+				newKey.name = "key for " + itemCrafted.name;
+
+				newKey.more = itemCrafted.serial;
+				itemCrafted.more = itemCrafted.serial;
+				pSock.SysMessage( GetDictionaryEntry( 12009, pSock.language ));
+			}
+			break;
+		}
+	}
+}
+
+/** @type { ( pCrafter: Character, itemCrafted: Item ) => void } */
+function ApplyGemJewelryName( pCrafter, itemCrafted )
+{
+	var gemName = pCrafter.GetTempTag( "targetedSubResourceName" );
+	if( gemName )
+	{
+		itemCrafted.name = gemName + " " + itemCrafted.name;
+	}
+}
+
 function CraftedMapCoords( socket, mapItem )
 {
 	var pUser = socket.currentChar;
@@ -194,7 +289,7 @@ function CraftedMapCoords( socket, mapItem )
 	mapItem.SetTag( "dimensions", size + "," + size );																						// saves information for the map to be reopened
 	mapItem.SetTag( "boundingbox", ( pUser.x - dist ) + "," + ( pUser.y - dist ) + "," + ( pUser.x + dist ) + "," + ( pUser.y + dist ));	// saves information for the map to be reopened
 	mapItem.SetTag( "Drawn", 1 );
-	ClearTagsAndScript(pUser);
+	ClearTagsAndScript( pUser );
 }
 
 function ApplyExceptionalArmorBonuses( pCrafter, itemCrafted, coreShardEraValue )

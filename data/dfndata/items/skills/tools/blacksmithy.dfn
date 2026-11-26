@@ -1,5 +1,4 @@
 //Blacksmithy Tools
-
 [0x0fbb]
 {
 get=base_item
@@ -51,3 +50,18 @@ id=0x0fb0
 get=0x0faf 0x0fb0
 }
 
+[0x2dd6]
+{// stone anvil east
+get=0x0faf
+name=elven anvil
+id=0x2dd6
+origin=ml
+}
+
+[0x2dd5]
+{// stone anvil south
+get=0x0faf
+name=elven anvil
+id=0x2dd5
+origin=ml
+}

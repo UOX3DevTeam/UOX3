@@ -346,7 +346,7 @@ decay=1
 good=46
 }
 
-[irongranite]
+[granite]
 {
 get=base_granite
 }

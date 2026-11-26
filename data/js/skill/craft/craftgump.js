@@ -14,38 +14,24 @@ const Tinkering = 4032;
 const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
+const Masonry = 4037;
 
  // If enabled, players can craft coloured variants of weapons using Blacksmithing skill, though
  // unless the craftItems array in blacksmithing.js is updated with specific create entries for the
  // coloured weapon variants, they'll just be regular weapons with ore colour applied
 const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 
 function CraftingGumpMenu( myGump, socket )
 {
 	var pUser = socket.currentChar;
-
-	// Get player's resource counts
-	var iron = pUser.ResourceCount( 0x1BF2 );
-	var dullcopper = pUser.ResourceCount( 0x1BF2, 0x0973 );
-	var shadowiron = pUser.ResourceCount( 0x1BF2, 0x0966 );
-	var copper = pUser.ResourceCount( 0x1BF2, 0x07dd );
-	var bronze = pUser.ResourceCount( 0x1BF2, 0x06d6 );
-	var gold = pUser.ResourceCount( 0x1BF2, 0x08a5 );
-	var agapite = pUser.ResourceCount( 0x1BF2, 0x0979 );
-	var verite = pUser.ResourceCount( 0x1BF2, 0x089f );
-	var valorite = pUser.ResourceCount( 0x1BF2, 0x08ab );
-	var logs = pUser.ResourceCount( 0x1BE0 );
-	var boards = pUser.ResourceCount( 0x1bd7 );
-	var leather = pUser.ResourceCount( 0x1067 );
-	var leather1 = pUser.ResourceCount( 0x1068 );
-	var leather2 = pUser.ResourceCount( 0x1081 );
-	var leather3 = pUser.ResourceCount( 0x1082 );
-	var hides = pUser.ResourceCount( 0x1078 );
-	var hides1 = pUser.ResourceCount( 0x1079 );
-
 	var resourcename = 10291;
-	var resource = iron;
-	var groupList;
+	var resourcename2 = 10291;
+	var resource = 0;
+	var resource2 = 0;
+	var resourceSelection = null;
+	var resourceSelection2 = null;
+	var grouplist = [];
 	var gumpMenuName = "";
 	var repair = 51;
 	var craftingSkillUsed = pUser.GetTempTag( "CRAFT" );
@@ -53,10 +39,11 @@ function CraftingGumpMenu( myGump, socket )
 	switch( craftingSkillUsed )
 	{
 		case 1: // Carpentry
-			grouplist = [10601, 10602, 10603, 10604, 10605, 10606, 10607, 10608, 10609, 10610]; //CATEGORIES
-			resourcename = 10687;
-			resource = ( logs + boards );
-			gumpMenuName = 10600;//Carpentry
+			grouplist = [10601, 10602, 10603, 10604, 10605, 10606, 10607, 10608, 10609, 10610];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "wood", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10687;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 10600;
 			repair = 51;
 			break;
 		case 2: // Alchemy
@@ -64,65 +51,28 @@ function CraftingGumpMenu( myGump, socket )
 			gumpMenuName = 10901;//Alchemy Menu
 			break;
 		case 3: // Bowcraft/Fletching
-			grouplist = [11202, 11203, 11204]; //CATEGORIES
-			gumpMenuName = 11201;//Bowcraft Menu
-			resourcename = 10687;
-			resource = ( logs + boards );
-			//repair = 51;
+			grouplist = [11202, 11203, 11204];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "wood", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10687;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 11201;
 			break;
 		case 4: // Tailoring
-			grouplist = [11404, 11405, 11406, 11407, 11408, 11410, 11411, 11412]; //CATEGORIES
-			gumpMenuName = 11401;//Tailoring Menu
-			resourcename = 11402;
-			resource = ( leather + leather1 + leather2 + leather3 + hides + hides1 );
-			//repair = 51;
+			grouplist = [11404, 11405, 11406, 11407, 11408, 11410, 11411, 11412];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "tailoring", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 11402;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 11401;
 			break;
 		case 5: // Blacksmithing
-			grouplist = [10279, 10280, 10281, 10282, 10283, 10284, 10285] //CATEGORIES
-			gumpMenuName = 10188;//Blacksmithing Menu
-			switch( pUser.GetTempTag( "ORE" ))
-			{
-				case 0: // Iron
-					resourcename = 10291;
-					resource = iron;
-					break;
-				case 1: // Dull Copper
-					resourcename = 10203;
-					resource = dullcopper;
-					break;
-				case 2: // Shadow Iron
-					resourcename = 10204;
-					resource = shadowiron;
-					break;
-				case 3: // Copper
-					resourcename = 10205;
-					resource = copper;
-					break;
-				case 4: // Bronze
-					resourcename = 10206;
-					resource = bronze;
-					break;
-				case 5: // Gold
-					resourcename = 10207;
-					resource = gold;
-					break;
-				case 6: // Agapite
-					resourcename = 10208;
-					resource = agapite;
-					break;
-				case 7: // Verite
-					resourcename = 10209;
-					resource = verite;
-					break;
-				case 8: // Valorite
-					resourcename = 10210;
-					resource = valorite;
-					break;
-				default: // Iron
-					resourcename = 10291;
-					resource = iron;
-					break;
-			}
+			grouplist = [10279, 10280, 10281, 10282, 10283, 10284, 10285];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "ore", pUser );
+			resourceSelection2 = TriggerEvent( 4038, "GetCraftResourceSelection", "dragonScales", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10291;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			resourcename2 = resourceSelection2 ? resourceSelection2.dictID : 20299;
+			resource2 = resourceSelection2 ? resourceSelection2.amount : 0;
+			gumpMenuName = 10188;
 			repair = 49;
 			break;
 		case 6: // Cooking
@@ -131,6 +81,9 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 		case 7: // Tinkering
 			grouplist = [11991, 11992, 11993, 11994, 11995, 11996, 11997, 11998, 11999]; // CATEGORIES
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "ore", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 10291;
+			resource = resourceSelection ? resourceSelection.amount : 0;
 			gumpMenuName = 11990; // Tinkering Menu
 			break;
 		case 8: // Cartography
@@ -139,8 +92,21 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 		case 9: // Glassblowing
 			grouplist = [13502]; //CATEGORIES
+			// Only show Glass Weapons (page 2) in SA+ era
+			if( coreShardEra >= EraStringToNum( "sa" ))
+			{
+				grouplist.push( 13503 ); // Glass Weapons
+			}
 			gumpMenuName = 13501;//Cartography Menu
-      break;
+			break;
+		case 10: // Masonry
+			grouplist = [14002, 14003, 14004, 14005, 14006, 14007, 14008, 14009, 14010];
+			resourceSelection = TriggerEvent( 4038, "GetCraftResourceSelection", "granite", pUser );
+			resourcename = resourceSelection ? resourceSelection.dictID : 14011;
+			resource = resourceSelection ? resourceSelection.amount : 0;
+			gumpMenuName = 14001;
+			repair = 49;
+			break;
 	}
 
 	myGump.AddPage( 0 );
@@ -249,7 +215,7 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 	}
 
-	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 && craftingSkillUsed != 8 )
+	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 && craftingSkillUsed != 8  && craftingSkillUsed != 9 )
 	{
 		myGump.AddText( 50, 362, textHue, GetDictionaryEntry( resourcename, socket.language ) + " (" + resource.toString() + ")" );
 
@@ -261,6 +227,8 @@ function CraftingGumpMenu( myGump, socket )
 
 		if( craftingSkillUsed == 5 )
 		{
+			myGump.AddText( 50, 380, textHue, GetDictionaryEntry( resourcename2, socket.language ) + " (" + resource2.toString() + ")" );
+			myGump.AddButton(15, 380, 4005, 4007, 1, 0, 51); // Material Selection Button
 			// Blacksmithing
 			myGump.AddButton(270, 342, 0xfa5, 1, 0, repair); // Repair Button
 			myGump.AddHTMLGump(305, 345, 150, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10212, socket.language ) + "</basefont>" );// REPAIR ITEM
@@ -346,8 +314,12 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 9:
 					TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
-          break;
-        default:
+					break;
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 1 );
+					}
 					break;
 			}
 		case 2:
@@ -377,8 +349,11 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 2 );
-					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 2 );
+					}
 					break;
 			}
 		case 3:
@@ -409,7 +384,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 3 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 3 );
+					}
 					break;
 			}
 		case 4:
@@ -437,7 +416,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 4 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 4 );
+					}
 					break;
 			}
 		case 5:
@@ -459,7 +442,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 5 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 5 );
+					}
 					break;
 			}
 		case 6:
@@ -481,7 +468,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 6 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 6 );
+					}
 					break;
 			}
 		case 7:
@@ -503,7 +494,11 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 7 );
 					break;
-				default:
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 7 );
+					}
 					break;
 			}
 		case 8:
@@ -519,6 +514,12 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 8 );
 					break;
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 8 );
+					}
+					break;
 			}
 			break;
 		case 9:
@@ -533,6 +534,12 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 9 );
+					break;
+				case 10:
+					if( pUser.GetTempTag( "Granite" ) >= 0 && pUser.GetTempTag( "Granite" ) <= 8 )
+					{
+						TriggerEvent( Masonry, "PageX", pSock, pUser, 9 );
+					}
 					break;
 			}
 			break;

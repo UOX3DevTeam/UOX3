@@ -1,0 +1,32 @@
+[base_jewelry_sa]
+{
+get=base_item
+weight=100
+value=26 13
+restock=10
+decay=1
+good=37
+}
+
+[0x4D0a]
+{
+get=base_jewelry_sa
+name=gargish stone amulet
+id=0x4D0a
+colour=2500
+layer=0x0a
+str=40
+}
+
+[0x4210]
+{
+get=base_jewelry_sa
+name=gargish amulet
+id=0x4210
+layer=0x0a
+str=40
+hp=30
+maxhp=40
+def=1
+elementresist=2 2 3 2
+}
