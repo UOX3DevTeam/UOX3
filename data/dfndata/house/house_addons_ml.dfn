@@ -346,6 +346,109 @@ HOUSE_ITEM=1058
 HOUSE_ITEM=1059
 }
 
+// House Addon - Aquarium (South)
+[HOUSE 324]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=aquariumsouthdeed
+HOUSE_ITEM=1060
+HOUSE_ITEM=1061
+}
+
+// House Addon - Aquarium (East)
+[HOUSE 325]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=aquariumeastdeed
+HOUSE_ITEM=1062
+HOUSE_ITEM=1063
+}
+
+// House Addon - Small Elegant Aquarium
+[HOUSE 326]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=smallelegantaquarium
+HOUSE_ITEM=1064
+}
+
+// House Addon - Wall Mounted Elegant Aquarium
+[HOUSE 327]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=wallmountedelegantaquariumsouthdeed
+HOUSE_ITEM=1065
+HOUSE_ITEM=1066
+HOUSE_ITEM=1067
+}
+
+// House Addon - Wall Mounted Elegant Aquarium
+[HOUSE 328]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=wallmountedelegantaquariumeastdeed
+HOUSE_ITEM=1068
+HOUSE_ITEM=1069
+HOUSE_ITEM=1070
+}
+
+// House Addon - Large Elegant Aquarium
+[HOUSE 329]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largeelegantaquariumsouthdeed
+HOUSE_ITEM=1071
+HOUSE_ITEM=1072
+HOUSE_ITEM=1073
+HOUSE_ITEM=1074
+}
+
+// House Addon - Large Elegant Aquarium
+[HOUSE 330]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largeelegantaquariumeastdeed
+HOUSE_ITEM=1075
+HOUSE_ITEM=1076
+HOUSE_ITEM=1077
+HOUSE_ITEM=1078
+}
+
 [HOUSE ITEM 1000]
 { alchemist table part 1 (east)
 ITEM=0x3077
@@ -824,5 +927,157 @@ Z=0
 ITEM=0x3056
 X=0
 Y=1
+Z=0
+}
+
+[HOUSE ITEM 1060]
+{ 
+ITEM=0x3060
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1061]
+{ 
+ITEM=0x3061
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1062]
+{ 
+ITEM=0x3062
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1063]
+{ 
+ITEM=0x3063
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1064]
+{ 
+ITEM=0xA3A6
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1065]
+{ 
+ITEM=0xA3B0
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1066]
+{ 
+ITEM=0xA3B5
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1067]
+{ 
+ITEM=0xA3BA
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1068]
+{ 
+ITEM=0xA3BF
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1069]
+{ 
+ITEM=0xA3C4
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1070]
+{ 
+ITEM=0xA3C9
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1071]
+{ large middle
+ITEM=0xA3CE
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1072]
+{ large right
+ITEM=0xA3D3
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1073]
+{ large middle
+ITEM=0xA3D4
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1074]
+{ large left
+ITEM=0xA3D5
+X=-2
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1075]
+{ large middle
+ITEM=0xA3D6
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1076]
+{ large right
+ITEM=0xA3DB
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1077]
+{ large middle
+ITEM=0xA3DC
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 1078]
+{ large left
+ITEM=0xA3DD
+X=0
+Y=-2
 Z=0
 }

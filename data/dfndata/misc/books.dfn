@@ -10493,3 +10493,122 @@ LINE=
 LINE=We no longer bury the
 LINE=dead.
 }
+
+// ============================ Your New Aquarium
+[BOOK 66]
+{
+PAGES=9
+TITLE=Your New Aquarium
+AUTHOR=Les Bilgewater
+PAGE=9100
+PAGE=9101
+PAGE=9102
+PAGE=9103
+PAGE=9104
+PAGE=9105
+PAGE=9106
+PAGE=9107
+PAGE=9108
+}
+
+[PAGE 9100]
+{
+LINE=Welcome to the
+LINE=wonderful world
+LINE=of aquarium ownership.
+LINE=With a little time and
+LINE=skill your aquarium can
+LINE=become a work of art!
+}
+
+[PAGE 9101]
+{
+LINE=Catching Fish:
+LINE=You will need to
+LINE=aquire a fishing net,
+LINE=and a number of fish
+LINE=bowls, from your local
+LINE=fisherman.
+LINE=To use the net,
+LINE=select it from your
+}
+
+[PAGE 9102]
+{
+LINE=backpack, and cast it
+LINE=into shallow water.
+LINE=Then we wait.
+LINE=  The fish will be so
+LINE=happy to be in your
+LINE=aquarium, they will
+LINE=jump right into your
+LINE=fish bowl when caught!
+}
+
+[PAGE 9103]
+{
+LINE=Just take them home
+LINE=and pour them into
+LINE=your aquarium, and
+LINE=BING! You have a happy
+LINE=new addition to your
+LINE=collection!
+}
+
+[PAGE 9104]
+{
+LINE=Caring for our
+LINE=Underwater Allies:
+LINE=
+LINE=  Fish need clean
+LINE=water and food to
+LINE=survive.
+LINE=  Our aquarium comes
+LINE=with a status monitoring
+}
+
+[PAGE 9105]
+{
+LINE=aid.  Must be Magic!
+LINE=  Just look at the
+LINE=front of your aquarium
+LINE=(mouse over). See the
+LINE=helpful and friendly
+LINE=guide? It tells how much
+LINE=food and water is
+LINE=needed to maintain,
+}
+
+[PAGE 9106]
+{
+LINE=and improve the quality
+LINE=of your tank.
+LINE=  You dont want to
+LINE=overfeed your fish
+LINE=very often.  In fact,
+LINE=you only want to feed
+LINE=them every other day.
+LINE=But, remember to keep
+}
+
+[PAGE 9107]
+{
+LINE=the water strong and
+LINE=healthy, and add more
+LINE=on a regular basis
+LINE=to keep your aquarium
+LINE=a pretty, sparkely blue.
+LINE=
+LINE=  Well, I hope you
+LINE=get as much enjoyment,
+}
+
+[PAGE 9108]
+{
+LINE=collecting a beautiful
+LINE=array of our fine, finned,
+LINE=friends from the sea,
+LINE=as I do!
+LINE=
+LINE=Happy Fishing!
+}
