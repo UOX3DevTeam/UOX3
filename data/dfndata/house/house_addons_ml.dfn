@@ -346,6 +346,19 @@ HOUSE_ITEM=1058
 HOUSE_ITEM=1059
 }
 
+// House Addon - Jolly Holiday Tree
+[HOUSE 360]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=jollyholidaytreedeed
+HOUSE_ITEM=1090
+}
+
 [HOUSE ITEM 1000]
 { alchemist table part 1 (east)
 ITEM=0x3077
@@ -824,5 +837,13 @@ Z=0
 ITEM=0x3056
 X=0
 Y=1
+Z=0
+}
+
+[HOUSE ITEM 1090]
+{ jolly holiday tree
+ITEM=0xA4D0
+X=0
+Y=0
 Z=0
 }

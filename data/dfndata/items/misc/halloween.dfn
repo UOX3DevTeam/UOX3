@@ -859,3 +859,121 @@ type=61
 spawnobjlist=151
 amount=1
 }
+
+//2025 halloween
+[pumpkinwartyraw]
+{
+get=base_item
+name=pumpkin warty raw
+id=0xB255
+weight=1800
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinwartyraw
+}
+
+[pumpkinwartyserpent]
+{
+get=base_item
+name=serpent
+id=0xb258
+weight=1600
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinwartyserpent
+}
+
+[pumpkinwartyraven]
+{
+get=base_item
+name=raven
+id=0xb25c
+weight=1600
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinwartyraven
+}
+
+[pumpkinwhiteraw]
+{
+get=base_item
+name=pumpkin white raw
+id=0xb256
+weight=1800
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinwhiteraw
+}
+
+[pumpkinwhitevoidcat]
+{
+get=base_item
+name=void cat
+id=0xb260
+weight=1600
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinwhitevoidcat
+}
+
+[pumpkinwhitetsillyface]
+{
+get=base_item
+name=silly face
+id=0xb264
+weight=1600
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinwhitetsillyface
+}
+
+[pumpkinstripedraw]
+{
+get=base_item
+name=pumpkin striped raw
+id=0xb257
+weight=1800
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinstripedraw
+}
+
+[pumpkinstrippedvictor]
+{
+get=base_item
+name=victor blackthorn insignia
+id=0xb268
+weight=1600
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinstrippedvictor
+}
+
+[pumpkinstrippedhappyface]
+{
+get=base_item
+name=happy face
+id=0xb26C
+weight=1600
+decay=1
+origin=hs
+VALUE=5000 2500
+RESTOCK=10
+sectionid=pumpkinstrippedhappyface
+}
