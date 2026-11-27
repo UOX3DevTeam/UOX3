@@ -132,6 +132,7 @@ DECL_SET( main, attr )
 DECL_GET( CSpell, action )
 DECL_GET( CSpell, aggressiveSpell )
 DECL_GET( CSpell, baseDmg )
+DECL_GET( CSpell, castingSkill )
 DECL_GET( CSpell, circle )
 DECL_GET( CSpell, damageDelay )
 DECL_GET( CSpell, delay )
@@ -147,6 +148,7 @@ DECL_GET( CSpell, name )
 DECL_GET( CSpell, reagents )
 DECL_GET( CSpell, recoveryDelay )
 DECL_GET( CSpell, reflectable )
+DECL_GET( CSpell, requiredLevel )
 DECL_GET( CSpell, requireChar )
 DECL_GET( CSpell, requireItem )
 DECL_GET( CSpell, requireLocation )
@@ -898,6 +900,8 @@ inline JSPropertySpec CSpellProperties[] =
   UX_PSG( CSpell, scrollLow,       JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, scrollHigh,      JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, circle,          JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, castingSkill,    JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, requiredLevel,   JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, lowSkill,        JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, highSkill,       JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireTarget,   JSPROP_ENUMANDPERM ),

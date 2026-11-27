@@ -13,6 +13,7 @@
 // ABILITY references a [CLASS ABILITY #] section. Supported built-in ACTIONs
 // are RESTOREHEALTH, RESTOREMANA, RESTORESTAMINA, SPELL and PASSIVE. SCRIPT
 // dispatches to SCRIPT/FUNCTION and passes the character, ability id and VALUE.
+// CANTAME grants access to level-gated animal taming while level mode is active.
 //=============================================================================
 
 [CLASS 1]
@@ -84,12 +85,13 @@ ABILITY=3002
 [CLASS 4]
 {
 NAME=Ranger
-DESCRIPTION=Ranged hunter with tracking, survival and animal support.
+DESCRIPTION=Ranged hunter and dedicated animal tamer with strong tracking and survival.
+CANTAME=1
 HEALTHPERLEVEL=1
 MANAPERLEVEL=1
 STAMINAPERLEVEL=1
-PRIMARYSKILLS=ARCHERY,TACTICS,TRACKING,ANATOMY,HEALING
-CORESKILLS=TAMING,ANIMALLORE,VETERINARY,CAMPING,HIDING,FENCING,SWORDSMANSHIP
+PRIMARYSKILLS=ARCHERY,TACTICS,TRACKING,TAMING,ANIMALLORE
+CORESKILLS=ANATOMY,HEALING,VETERINARY,CAMPING,HIDING,FENCING,SWORDSMANSHIP
 SUPPORTSKILLS=STEALTH,MAGICRESISTANCE,FOCUS
 PRIMARYSTART=300
 PRIMARYCAP=100

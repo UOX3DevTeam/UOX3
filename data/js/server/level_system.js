@@ -476,6 +476,8 @@ function ActivateClassAbility( pUser, abilityIndex )
 			}
 			break;
 		case "SPELL":
+			// Class spell abilities are normal character casts, never stale scroll/wand casts.
+			pUser.socket.currentSpellType = 0;
 			succeeded = pUser.CastSpell( ability.value ) !== false;
 			break;
 		case "SCRIPT":

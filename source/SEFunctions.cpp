@@ -2637,6 +2637,7 @@ bool SE_GetLevelClassProperty( JSContext *cx, unsigned int argc, JS::Value *vp )
 	else if( propertyName == "HEALTHPERLEVEL" ) { args.rval().setInt32( levelClass->HealthPerLevel() ); return true; }
 	else if( propertyName == "MANAPERLEVEL" ) { args.rval().setInt32( levelClass->ManaPerLevel() ); return true; }
 	else if( propertyName == "STAMINAPERLEVEL" ) { args.rval().setInt32( levelClass->StaminaPerLevel() ); return true; }
+	else if( propertyName == "CANTAME" ) { args.rval().setBoolean( levelClass->CanTame() ); return true; }
 	else if( propertyName == "PRIMARYCAP" ) { args.rval().setInt32( levelClass->TierCap( 3 )); return true; }
 	else if( propertyName == "CORECAP" ) { args.rval().setInt32( levelClass->TierCap( 2 )); return true; }
 	else if( propertyName == "SUPPORTCAP" ) { args.rval().setInt32( levelClass->TierCap( 1 )); return true; }

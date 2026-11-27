@@ -757,7 +757,7 @@
         { "name": "classId", "type": "number", "required": true },
         { "name": "propertyName", "type": "string", "required": true }
       ] },
-      "returns": "string | number | null"
+      "returns": "string | number | boolean | null"
     },
     {
       "name": "GetLevelClassAbilityCount",
@@ -2188,6 +2188,22 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "readOnly": true,
           "type": "number"
+        },
+        {
+          "name": "castingSkill",
+          "cppName": "CSP_CASTINGSKILL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number",
+          "comments": "Skill ID used for class spell-school access and casting success."
+        },
+        {
+          "name": "requiredLevel",
+          "cppName": "CSP_REQUIREDLEVEL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number",
+          "comments": "Minimum level in level-system mode; zero means no level restriction."
         },
         {
           "name": "lowSkill",

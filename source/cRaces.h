@@ -82,6 +82,7 @@ private:
 	UI16 healthPerLevel;
 	UI16 manaPerLevel;
 	UI16 staminaPerLevel;
+	bool canTame;
 	std::unordered_set<UI16> allowedEquipment;
 	std::unordered_set<UI16> bannedEquipment;
 	std::vector<CLevelClassAbility> abilities;
@@ -99,6 +100,7 @@ public:
 	UI16 HealthPerLevel() const;
 	UI16 ManaPerLevel() const;
 	UI16 StaminaPerLevel() const;
+	bool CanTame() const;
 	UI08 SkillTier( UI08 skill ) const;
 	std::string SkillList( UI08 tier ) const;
 	UI16 TierStart( UI08 tier ) const;

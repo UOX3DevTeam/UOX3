@@ -20,6 +20,9 @@ function onSkill( pUser, skillUsed, objType )
 	var pSock = pUser.socket;
 	if( pSock )
 	{
+		if( !CheckLevelTamingClass( pUser, true ))
+			return true;
+
 		// Check to see if player actually has space for ANY more pets
 		if( maxControlSlots > 0 )
 		{
@@ -65,9 +68,11 @@ function onCallback0( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 1593, pLanguage )); // You can't tame that creature
 			return;
 		}
+		if( !CheckLevelTamingAccess( pUser, ourObj, true ))
+			return;
 
 		var hasBeenOwner = ourObj.HasBeenOwner( pUser );
-		if( !hasBeenOwner && skillToTame > pUser.skills.taming )
+		if( !GetServerSetting( "LevelSystemEnabled" ) && !hasBeenOwner && skillToTame > pUser.skills.taming )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 2398, pLanguage )); // You are not skilled enough to tame that creature
 			return;
@@ -171,8 +176,10 @@ function onTimer( pUser, timerID )
 function CheckTameSuccess( pUser, toTame )
 {
 	var hasBeenOwner = toTame.HasBeenOwner( pUser );
+	var levelSystemEnabled = GetServerSetting( "LevelSystemEnabled" );
+	var minimumSkill = levelSystemEnabled ? 0 : toTame.orneriness;
 
-	if( !hasBeenOwner && !pUser.CheckSkill( 35, toTame.orneriness, pUser.skillCaps.taming ))
+	if( !hasBeenOwner && !pUser.CheckSkill( 35, minimumSkill, pUser.skillCaps.taming ))
 	{
 		return false;
 	}
@@ -309,6 +316,8 @@ function RunTameChecks( pUser )
 	var toTame = pSock.tempObj2;
 	if( !ValidateObject( toTame ))
 		return false;
+	if( !CheckLevelTamingAccess( pUser, toTame, true ))
+		return false;
 
 	// Unhide player if they're hidden
 	if( pUser.visible > 0 && pUser.visible < 3 )
@@ -377,6 +386,46 @@ function RunTameChecks( pUser )
 	else if( toTame.ownerCount == 0 && NeedsSubduing( toTame )) // Creature needs to be subdued before it can be tamed
 	{
 		toTame.TextMessage( GetDictionaryEntry( 2432, pSock.language ), false, 0x3b2, 0, pUser.serial ); // You must subdue this creature before you can tame it!
+		return false;
+	}
+	return true;
+}
+
+function CheckLevelTamingClass( pUser, showMessage )
+{
+	if( !GetServerSetting( "LevelSystemEnabled" ) || pUser.isGM )
+		return true;
+
+	var canTame = pUser.levelClass > 0 && GetLevelClassProperty( pUser.levelClass, "CANTAME" ) === true;
+	if( !canTame && showMessage && pUser.socket != null )
+		pUser.socket.SysMessage( "Only Rangers can tame creatures while the level system is enabled." );
+	return canTame;
+}
+
+function CheckLevelTamingAccess( pUser, toTame, showMessage )
+{
+	if( !GetServerSetting( "LevelSystemEnabled" ))
+		return true;
+	if( toTame.skillToTame >= 2000 )
+	{
+		if( showMessage && pUser.socket != null )
+			pUser.socket.SysMessage( GetDictionaryEntry( 1593, pUser.socket.language )); // You can't tame that creature.
+		return false;
+	}
+	if( pUser.isGM )
+		return true;
+	if( !CheckLevelTamingClass( pUser, showMessage ))
+		return false;
+
+	var requiredLevel = Number( toTame.GetTag( "tameLevel" ));
+	if( !Number.isFinite( requiredLevel ) || requiredLevel < 1 )
+		requiredLevel = Math.max( 1, Number( toTame.level ) || 1 );
+	requiredLevel = Math.floor( requiredLevel );
+
+	if( pUser.level < requiredLevel )
+	{
+		if( showMessage && pUser.socket != null )
+			pUser.socket.SysMessage( "You must be level " + requiredLevel + " to tame that creature." );
 		return false;
 	}
 	return true;

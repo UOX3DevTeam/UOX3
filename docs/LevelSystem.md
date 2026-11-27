@@ -60,6 +60,7 @@ DESCRIPTION=Armored holy warrior with healing and chivalry.
 HEALTHPERLEVEL=2
 MANAPERLEVEL=1
 STAMINAPERLEVEL=0
+CANTAME=0
 PRIMARYSKILLS=SWORDSMANSHIP,TACTICS,CHIVALRY
 CORESKILLS=ANATOMY,HEALING,PARRYING,MAGICRESISTANCE
 SUPPORTSKILLS=MEDITATION,FOCUS,ARMSLORE
@@ -83,6 +84,34 @@ listed in Primary, Core, or Support use the Other tier.
 
 `HEALTHPERLEVEL`, `MANAPERLEVEL`, and `STAMINAPERLEVEL` add to the matching
 maximum resource for every level gained after level 1.
+
+`CANTAME=1` marks a class as an animal-taming class. The supplied Ranger has
+this flag and uses Animal Taming and Animal Lore as primary skills. While level
+mode is active, classes without this flag cannot tame creatures.
+
+## Animal taming and mounts
+
+Tameable NPC definitions use `TAMELEVEL` to set the character level at which a
+taming class can attempt that creature:
+
+```dfn
+[horse]
+{
+TOTAME=291
+TAMELEVEL=2
+}
+```
+
+In level mode, `TAMELEVEL` controls creature access and the Ranger's virtual
+Animal Taming value controls success chance. If the tag is omitted, the NPC's
+combat level is used. Existing follower limits, ownership, line-of-sight,
+subduing, control slots, and creature-specific restrictions still apply. NPCs
+using the existing impossible `TOTAME=2000` convention remain untameable.
+
+Mounting is deliberately class-neutral. Any class may ride a tamed mount it
+owns or is allowed to use. Existing ownership and special race/gender mount
+rules remain in force. With `LEVELSYSTEMENABLED=0`, `CANTAME` and `TAMELEVEL`
+are ignored and the original UO taming difficulty and mounting behavior apply.
 
 ## Class abilities
 
@@ -302,6 +331,44 @@ Nearby, online party members in the same world and instance share the reward.
 Each additional eligible member adds 10% group XP, up to a 50% bonus, before
 the result is divided evenly. Only characters with a selected class can accept
 XP.
+
+## Level-gated spells
+
+Spells can define the class skill school and level at which they unlock:
+
+```dfn
+[SPELL 18]
+{
+NAME=Fireball
+SKILL=MAGERY
+LEVEL=10
+}
+```
+
+While the level system is enabled, a player can cast a spell with `LEVEL`
+only when their selected class lists `SKILL` as a primary, core, or support
+skill and their character level meets the requirement. A skill left in the
+class's Other tier does not grant access to that spell school. GMs, NPCs, and
+wands bypass these progression checks. Scrolls obey them.
+
+The original 64 Magery spells use this circle progression:
+
+| Circle | Required level |
+| ---: | ---: |
+| 1 | 1 |
+| 2 | 5 |
+| 3 | 10 |
+| 4 | 15 |
+| 5 | 20 |
+| 6 | 28 |
+| 7 | 36 |
+| 8 | 44 |
+
+Spellbooks still determine which spells a character knows. Mana, reagents,
+`LOSKILL`, `HISKILL`, scroll difficulty, and effect calculations continue to
+use the existing magic system. Level mode supplies the character's virtual
+class skill to those calculations. With `LEVELSYSTEMENABLED=0`, `SKILL` and
+`LEVEL` spell restrictions are bypassed and classic casting is unchanged.
 
 ## Player and GM commands
 

@@ -4025,6 +4025,8 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	/*SI16 lowSkill = 0, highSkill = 0;*/
 	CChar *mChar = mSock->CurrcharObj();
+	if( !CheckLevelSpellAccess( mSock, mChar, num ))
+		return false;
 
 	cScript *jsScript = JSMapping->GetScript( spells[num].JSScript() );
 
@@ -4402,6 +4404,40 @@ void CMagic::ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMagic::CheckLevelSpellAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enforces spell level and class-school access while level mode is enabled
+//o------------------------------------------------------------------------------------------------o
+bool CMagic::CheckLevelSpellAccess( CSocket *socket, CChar *caster, SI32 spellNumber ) const
+{
+	if( !ValidateObject( caster ) || spellNumber < 1 || static_cast<size_t>( spellNumber ) >= spells.size() )
+		return false;
+
+	const CSpellInfo &spell = spells[spellNumber];
+	if( !cwmWorldState->ServerData()->LevelSystemEnabled() || caster->IsNpc() || caster->IsGM() || spell.RequiredLevel() == 0 ||
+		( socket != nullptr && socket->CurrentSpellType() == 2 ))
+	{
+		return true;
+	}
+
+	const CLevelClass *levelClass = Races->LevelClass( caster->GetLevelClass() );
+	if( levelClass == nullptr || levelClass->SkillTier( spell.CastingSkill() ) == 0 )
+	{
+		if( socket != nullptr )
+			socket->SysMessage( "Your class cannot cast that spell." );
+		return false;
+	}
+
+	if( caster->GetLevel() < spell.RequiredLevel() )
+	{
+		if( socket != nullptr )
+			socket->SysMessage( oldstrutil::format( "That spell unlocks at level %u.", spell.RequiredLevel() ));
+		return false;
+	}
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMagic::CheckMagicSkill()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles skill checks for spellcasting
@@ -4409,6 +4445,7 @@ void CMagic::ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell )
 bool CMagic::CheckMagicSkill( CSocket *s, CChar *caster, SI08 curSpell )
 {
 	bool validSocket = ( s != nullptr );
+	const UI08 castingSkill = spells[curSpell].CastingSkill();
 	SI16 lowSkill = 0, highSkill = 0;
 	if( validSocket && s->CurrentSpellType() == 1 && cwmWorldState->ServerData()->CutScrollRequirementStatus() ) // only if enabled
 	{
@@ -4422,7 +4459,7 @@ bool CMagic::CheckMagicSkill( CSocket *s, CChar *caster, SI08 curSpell )
 	}
 
 	// Do the skill check, and fizzle if player fails
-	if( !caster->IsNpc() && !caster->IsGM() && ( !Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill )))
+	if( !caster->IsNpc() && !caster->IsGM() && ( !Skills->CheckSkill( caster, castingSkill, lowSkill, highSkill )))
 	{
 		if( validSocket )
 		{
@@ -4434,7 +4471,7 @@ bool CMagic::CheckMagicSkill( CSocket *s, CChar *caster, SI08 curSpell )
 	else if( caster->IsNpc() )
 	{
 		// Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini
-		Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill );
+		Skills->CheckSkill( caster, castingSkill, lowSkill, highSkill );
 	}
 	return true;
 }
@@ -4454,6 +4491,11 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 	// No spell! Abort
 	if( curSpell == -1 )
 		return;
+	if( !CheckLevelSpellAccess( s, caster, curSpell ))
+	{
+		caster->StopSpell();
+		return;
+	}
 
 	cScript *jsScript = JSMapping->GetScript( spells[curSpell].JSScript() );
 	if( jsScript != nullptr )
@@ -5307,7 +5349,11 @@ void CMagic::LoadScript( void )
 								}
 								break;
 							case 'L':
-								if( UTag == "LOSKILL" )
+								if( UTag == "LEVEL" )
+								{
+									spells[i].RequiredLevel( static_cast<UI16>( std::min<UI32>( std::stoul( data, nullptr, 0 ), std::numeric_limits<UI16>::max() )));
+								}
+								else if( UTag == "LOSKILL" )
 								{
 									spells[i].LowSkill( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
 								}
@@ -5368,7 +5414,23 @@ void CMagic::LoadScript( void )
 								}
 								break;
 							case 'S':
-								if( UTag == "SOUNDFX" )
+								if( UTag == "SKILL" )
+								{
+									const std::string skillName = oldstrutil::upper( data );
+									bool foundSkill = false;
+									for( UI08 skill = 0; skill < ALLSKILLS; ++skill )
+									{
+										if( oldstrutil::upper( cwmWorldState->skill[skill].name ) == skillName )
+										{
+											spells[i].CastingSkill( skill );
+											foundSkill = true;
+											break;
+										}
+									}
+									if( !foundSkill )
+										Console.Warning( oldstrutil::format( "Unknown SKILL '%s' in spell %i; defaulting to Magery", data.c_str(), i ));
+								}
+								else if( UTag == "SOUNDFX" )
 								{
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )

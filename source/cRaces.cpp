@@ -164,7 +164,7 @@ UI16 CLevelClassAbility::ScriptId() const { return scriptId; }
 const std::string &CLevelClassAbility::FunctionName() const { return functionName; }
 
 CLevelClass::CLevelClass() : classId( 0 ), className( "Unselected" ), description( "Choose a class to begin progression." ),
-	healthPerLevel( 0 ), manaPerLevel( 0 ), staminaPerLevel( 0 )
+	healthPerLevel( 0 ), manaPerLevel( 0 ), staminaPerLevel( 0 ), canTame( false )
 {
 	skillTiers.fill( 0 );
 	tierSettings[0] = { 0, 25 };
@@ -249,6 +249,7 @@ void CLevelClass::Load( UI08 id )
 		else if( upperTag == "HEALTHPERLEVEL" ) healthPerLevel = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 		else if( upperTag == "MANAPERLEVEL" ) manaPerLevel = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 		else if( upperTag == "STAMINAPERLEVEL" ) staminaPerLevel = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "CANTAME" ) canTame = ( std::stoul( data, nullptr, 0 ) != 0 );
 		else if( upperTag == "PRIMARYSKILLS" ) LoadSkillList( data, 3 );
 		else if( upperTag == "CORESKILLS" ) LoadSkillList( data, 2 );
 		else if( upperTag == "SUPPORTSKILLS" ) LoadSkillList( data, 1 );
@@ -272,6 +273,7 @@ const std::string &CLevelClass::Description() const { return description; }
 UI16 CLevelClass::HealthPerLevel() const { return healthPerLevel; }
 UI16 CLevelClass::ManaPerLevel() const { return manaPerLevel; }
 UI16 CLevelClass::StaminaPerLevel() const { return staminaPerLevel; }
+bool CLevelClass::CanTame() const { return canTame; }
 UI08 CLevelClass::SkillTier( UI08 skill ) const { return ( skill < ALLSKILLS ? skillTiers[skill] : 0 ); }
 UI16 CLevelClass::TierStart( UI08 tier ) const { return ( tier < tierSettings.size() ? tierSettings[tier].startValue : 0 ); }
 UI16 CLevelClass::TierCap( UI08 tier ) const { return ( tier < tierSettings.size() ? tierSettings[tier].capPercent : 0 ); }

@@ -1217,6 +1217,7 @@ declare global {
     readonly  action:          number;
     readonly  aggressiveSpell: boolean;
     readonly  baseDmg:         number;
+    readonly  castingSkill:    number;
     readonly  circle:          number;
     readonly  damageDelay:     number;
     readonly  delay:           number;
@@ -1233,6 +1234,7 @@ declare global {
     readonly  recoveryDelay:   number;
     readonly  reflectable:     boolean;
     readonly  requireChar:     boolean;
+    readonly  requiredLevel:   number;
     readonly  requireItem:     boolean;
     readonly  requireLocation: boolean;
     readonly  requireTarget:   boolean;
@@ -1620,7 +1622,7 @@ declare global {
   function GetLevelClassAbilityCount( classId: number ): number;
   function GetLevelClassAbilityProperty( classId: number, abilityIndex: number, propertyName: string ): string | number | null;
   function GetLevelClassCount(): number;
-  function GetLevelClassProperty( classId: number, propertyName: string ): string | number | null;
+  function GetLevelClassProperty( classId: number, propertyName: string ): string | number | boolean | null;
   function GetLevelProfessionCount(): number;
   function GetLevelProfessionProperty( professionId: number, propertyName: string ): string | number | boolean | null;
   function GetMapElevation( x: number, y: number, world: number ): number;

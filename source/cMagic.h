@@ -64,6 +64,7 @@ public:
 	void	SetSpellStatus( SI32 spellNumber, bool isEnabled );
 
 private:
+	bool CheckLevelSpellAccess( CSocket *socket, CChar *caster, SI32 spellNumber ) const;
 	UI08 GetFieldDir( CChar *s, SI16 x, SI16 y );
 	void LogSpell( std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo );
 	UI32 spellCount;

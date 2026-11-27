@@ -110,6 +110,8 @@ private:
 	std::string strToSay;	// string visualized with targ. system
 	bool		enabled;
 	UI08		circle;
+	UI08		castingSkill;	// Skill used for class access and casting success.
+	UI16		requiredLevel;	// Level-system unlock; zero keeps classic behavior.
 	UI16		flags;
 	CMagicMove	moveEffect;
 	UI16		effect;
@@ -124,7 +126,7 @@ private:
 	std::vector<SpellReagent> reagents;
 public:
 	CSpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
-	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), tithing( 0 ), jsScript( 0 ), baseDmg( 0 )
+	circle( 1 ), castingSkill( MAGERY ), requiredLevel( 0 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), tithing( 0 ), jsScript( 0 ), baseDmg( 0 )
 	{
 	}
 
@@ -225,6 +227,14 @@ public:
 	{
 		return circle;
 	}
+	UI08 CastingSkill( void ) const
+	{
+		return castingSkill;
+	}
+	UI16 RequiredLevel( void ) const
+	{
+		return requiredLevel;
+	}
 	bool Enabled( void ) const
 	{
 		return enabled;
@@ -304,6 +314,14 @@ public:
 	void Circle( UI08 newVal )
 	{
 		circle = newVal;
+	}
+	void CastingSkill( UI08 newVal )
+	{
+		castingSkill = ( newVal < ALLSKILLS ? newVal : MAGERY );
+	}
+	void RequiredLevel( UI16 newVal )
+	{
+		requiredLevel = newVal;
 	}
 	void Enabled( bool newVal )
 	{
