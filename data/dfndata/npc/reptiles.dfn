@@ -45,6 +45,7 @@ CARVE=1
 RACE=5
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 5
 }
 
 [giantserpent]
@@ -77,6 +78,7 @@ TOPEACE=610 5
 CARVE=17
 RACE=5
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 12
 }
 
 [icesnake]
@@ -108,6 +110,7 @@ CARVE=45
 RACE=5
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 4
 }
 
 [iceserpent]
@@ -145,6 +148,7 @@ RACE=5
 FLAG=NEUTRAL
 CONTROLSLOTS=1
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 12
 }
 
 [lavalizard]
@@ -184,6 +188,7 @@ FLAG=NEUTRAL
 CONTROLSLOTS=1
 ORIGIN=t2a
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 12
 }
 
 [lavasnake]
@@ -216,6 +221,7 @@ CARVE=45
 RACE=5
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 9
 }
 
 [lavaserpent]
@@ -252,6 +258,7 @@ RACE=5
 FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3503
+CUSTOMINTTAG=npcLevel 15
 }
 
 //Ophidians
@@ -291,6 +298,7 @@ TOPEACE=740 5
 RACE=25
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 16
 }
 
 [ophenforcer]
@@ -329,6 +337,7 @@ TOPEACE=736 5
 RACE=25
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 20
 }
 
 [ophknight]
@@ -369,6 +378,7 @@ RACE=25
 FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 22
 }
 
 [ophavenger]
@@ -411,6 +421,7 @@ RACE=25
 FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 26
 }
 
 [ophapprentice]
@@ -452,6 +463,7 @@ TOPEACE=805 5
 RACE=25
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 16
 }
 
 [ophshaman]
@@ -493,6 +505,7 @@ TOPEACE=807 5
 RACE=25
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 16
 }
 
 [ophmatriarch]
@@ -536,6 +549,7 @@ FLEEAT=-1
 RACE=25
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 30
 }
 
 [ophjusticar]
@@ -574,6 +588,7 @@ TOPEACE=815 5
 RACE=25
 FLAG=NEUTRAL
 ORIGIN=uor
+CUSTOMINTTAG=npcLevel 26
 }
 
 [ophzealot]
@@ -613,6 +628,7 @@ TOPEACE=818 5
 RACE=25
 FLAG=NEUTRAL
 ORIGIN=uor
+CUSTOMINTTAG=npcLevel 26
 }
 
 [silverserpent]
@@ -646,6 +662,7 @@ TOPEACE=801 5
 CARVE=45
 RACE=5
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 14
 }
 
 [snake]
@@ -683,6 +700,7 @@ CARVE=45
 RACE=5
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 3
 }
 
 // yamandon - Base NPC with shared DFN tags
@@ -702,4 +720,5 @@ GETLBR=yamandon_se
 GETAOS=yamandon_se
 GETSE=yamandon_se
 GETTOL=yamandon_se
+CUSTOMINTTAG=npcLevel 42
 }

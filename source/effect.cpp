@@ -650,6 +650,12 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		sock->SysMessage( 985 ); // You create the item and place it in your backpack.
 	}
 
+	if( !toMake->skillReqs.empty() )
+	{
+		const ResSkillReq_st &primarySkill = toMake->skillReqs[0];
+		src->AddProfessionCraftExperience( primarySkill.skillNumber, primarySkill.minSkill, primarySkill.maxSkill );
+	}
+
 	// Trigger onMakeItem() JS event for character who crafted the item
 	std::vector<UI16> scriptTriggers = src->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )

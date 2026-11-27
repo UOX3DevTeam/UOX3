@@ -745,6 +745,54 @@
       "returns": "number"
     },
     {
+      "name": "GetLevelClassCount",
+      "cppName": "SE_GetLevelClassCount",
+      "params": { "num": 0 },
+      "returns": "number"
+    },
+    {
+      "name": "GetLevelClassProperty",
+      "cppName": "SE_GetLevelClassProperty",
+      "params": { "num": 2, "list": [
+        { "name": "classId", "type": "number", "required": true },
+        { "name": "propertyName", "type": "string", "required": true }
+      ] },
+      "returns": "string | number | null"
+    },
+    {
+      "name": "GetLevelClassAbilityCount",
+      "cppName": "SE_GetLevelClassAbilityCount",
+      "params": { "num": 1, "list": [
+        { "name": "classId", "type": "number", "required": true }
+      ] },
+      "returns": "number"
+    },
+    {
+      "name": "GetLevelClassAbilityProperty",
+      "cppName": "SE_GetLevelClassAbilityProperty",
+      "params": { "num": 3, "list": [
+        { "name": "classId", "type": "number", "required": true },
+        { "name": "abilityIndex", "type": "number", "required": true },
+        { "name": "propertyName", "type": "string", "required": true }
+      ] },
+      "returns": "string | number | null"
+    },
+    {
+      "name": "GetLevelProfessionCount",
+      "cppName": "SE_GetLevelProfessionCount",
+      "params": { "num": 0, "list": [] },
+      "returns": "number"
+    },
+    {
+      "name": "GetLevelProfessionProperty",
+      "cppName": "SE_GetLevelProfessionProperty",
+      "params": { "num": 2, "list": [
+        { "name": "professionId", "type": "number", "required": true },
+        { "name": "propertyName", "type": "string", "required": true }
+      ] },
+      "returns": "string | number | boolean | null"
+    },
+    {
       "name": "WorldBrightLevel",
       "cppName": "SE_WorldBrightLevel",
       "params": {
@@ -3933,6 +3981,41 @@
           "type": "number"
         },
         {
+          "name": "level",
+          "cppName": "CCP_LEVEL",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "levelClass",
+          "cppName": "CCP_LEVELCLASS",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "experience",
+          "cppName": "CCP_EXPERIENCE",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "experienceToNextLevel",
+          "cppName": "CCP_EXPERIENCETONEXTLEVEL",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "unspentStatPoints",
+          "cppName": "CCP_UNSPENTSTATPOINTS",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
           "name": "poisonStrength",
           "cppName": "CCP_POISONSTRENGTH",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -4205,6 +4288,7 @@
       ],
       "methods": [
         { "name": "AddAggressorFlag",              "cppName": "CChar_AddAggressorFlag",              "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "AddExperience",                 "cppName": "CChar_AddExperience",                 "params": { "num":  1, "list": [ { "name": "amount", "type": "number", "required": true } ] }, "returns": "number" },
         { "name": "AddFollower",                   "cppName": "CChar_AddFollower",                   "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "AddFriend",                     "cppName": "CChar_AddFriend",                     "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "boolean" },
         { "name": "AddPermaGreyFlag",              "cppName": "CChar_AddPermaGreyFlag",              "params": { "num":  1, "list": [ { "name": "target", "type": "Character", "required": true } ] }, "returns": "void" },
@@ -4214,6 +4298,20 @@
           { "name": "triggerEvent", "type": "boolean", "required": true }
         ] }, "returns": "void" },
         { "name": "AddSpell",                      "cppName": "CChar_AddSpell",                      "params": { "num":  1, "list": [ { "name": "spellNum", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "ForgetProfession",              "cppName": "CChar_ForgetProfession",              "params": { "num":  1, "list": [ { "name": "professionId", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "CanUseProfessionSkill",         "cppName": "CChar_CanUseProfessionSkill",         "params": { "num":  1, "list": [ { "name": "skillId", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "GainProfessionExperience",      "cppName": "CChar_GainProfessionExperience",      "params": { "num":  3, "list": [ { "name": "skillId", "type": "number", "required": true }, { "name": "minimumSkill", "type": "number", "required": true }, { "name": "maximumSkill", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "GetProfessionCount",             "cppName": "CChar_GetProfessionCount",             "params": { "num":  0, "list": [] }, "returns": "number" },
+        { "name": "GetProfessionExperience",        "cppName": "CChar_GetProfessionExperience",        "params": { "num":  1, "list": [ { "name": "professionId", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "GetProfessionId",                "cppName": "CChar_GetProfessionId",                "params": { "num":  1, "list": [ { "name": "slot", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "GetProfessionProficiency",       "cppName": "CChar_GetProfessionProficiency",       "params": { "num":  1, "list": [ { "name": "professionId", "type": "number", "required": true } ] }, "returns": "number" },
+        { "name": "HasProfession",                  "cppName": "CChar_HasProfession",                  "params": { "num":  1, "list": [ { "name": "professionId", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "LearnProfession",                "cppName": "CChar_LearnProfession",                "params": { "num":  1, "max": 2, "list": [ { "name": "professionId", "type": "number", "required": true }, { "name": "forceLearn", "type": "boolean", "required": false } ] }, "returns": "boolean" },
+        { "name": "ResetLevelProgress",             "cppName": "CChar_ResetLevelProgress",             "params": { "num":  1, "list": [ { "name": "clearClass", "type": "boolean", "required": true } ] }, "returns": "void" },
+        { "name": "ResetProfessions",               "cppName": "CChar_ResetProfessions",               "params": { "num":  0, "list": [] }, "returns": "void" },
+        { "name": "SetLevelClass",                  "cppName": "CChar_SetLevelClass",                  "params": { "num":  1, "max": 2, "list": [ { "name": "classId", "type": "number", "required": true }, { "name": "forceChange", "type": "boolean", "required": false } ] }, "returns": "boolean" },
+        { "name": "SetLevelProgress",               "cppName": "CChar_SetLevelProgress",               "params": { "num":  1, "list": [ { "name": "level", "type": "number", "required": true } ] }, "returns": "boolean" },
+        { "name": "SetProfessionProgress",          "cppName": "CChar_SetProfessionProgress",          "params": { "num":  2, "max": 3, "list": [ { "name": "professionId", "type": "number", "required": true }, { "name": "proficiency", "type": "number", "required": true }, { "name": "forceLearn", "type": "boolean", "required": false } ] }, "returns": "boolean" },
         { "name": "BoltEffect",                    "cppName": "CChar_BoltEffect",                    "params": { "num":  0, "list": [] }, "returns": "void" },
         { "name": "BreakConcentration",            "cppName": "CChar_BreakConcentration",            "params": { "num":  0, "list": [] }, "returns": "void" },
         { "name": "BuyFrom",                       "cppName": "CMisc_BuyFrom",                       "params": { "num":  1, "list": [ { "name": "npc",    "type": "Character", "required": true } ] }, "returns": "void" },
@@ -4405,6 +4503,7 @@
           { "name": "target", "type": "Character", "required": true } 
         ] }, "returns": "void" },
         { "name": "SpellStaticEffect",             "cppName": "CChar_SpellStaticEffect",             "params": { "num":  1, "list": [ { "name": "spell", "type": "Spell", "required": true } ] }, "returns": "void" },
+        { "name": "SpendLevelStatPoint",           "cppName": "CChar_SpendLevelStatPoint",           "params": { "num":  1, "list": [ { "name": "statId", "type": "number", "required": true } ] }, "returns": "boolean" },
         { "name": "Teleport",            "cppName": "CBase_Teleport",             "params": { 
           "sets": [
             { "num": 0, "list": [] }

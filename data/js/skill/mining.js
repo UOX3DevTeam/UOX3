@@ -265,8 +265,18 @@ function CheckForMiningTool( socket, mChar )
 	return true;
 }
 
+function CheckMiningProfession( socket, mChar )
+{
+	if( mChar.CanUseProfessionSkill( 45 ))
+		return true;
+	socket.SysMessage( "You must learn the Mining profession before gathering with this skill." );
+	return false;
+}
+
 function Mining( socket, mChar, targX, targY )
 {
+	if( !CheckMiningProfession( socket, mChar ))
+		return;
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateOre( mResource, socket );
 	if( mResource.oreAmount <= 0 )
@@ -306,6 +316,8 @@ function Mining( socket, mChar, targX, targY )
 // Handle functionality of GraveDigging feature
 function GraveDigging( socket, mChar, targX, targY )
 {
+	if( !CheckMiningProfession( socket, mChar ))
+		return;
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateOre( mResource, socket );
 	if( mResource.oreAmount <= 0 )
@@ -369,6 +381,8 @@ function GraveDigging( socket, mChar, targX, targY )
 
 function SandMining( socket, mChar, targX, targY ) 
 {
+	if( !CheckMiningProfession( socket, mChar ))
+		return;
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateOre( mResource, socket );
 	if( mResource.oreAmount <= 0 )
@@ -490,7 +504,8 @@ function onTimer( mChar, timerID )
 						}
 
 						// Create ore in player's backpack
-						MakeOre( socket, mChar );
+						if( MakeOre( socket, mChar ))
+							mChar.GainProfessionExperience( 45, 0, mChar.skillCaps.mining );
 					}
 					else
 					{
@@ -533,7 +548,8 @@ function onTimer( mChar, timerID )
 						mResource.oreAmount = mResource.oreAmount - 1;
 
 						// Create sand in player's backpack
-						MakeSand( socket, mChar );
+						if( MakeSand( socket, mChar ))
+							mChar.GainProfessionExperience( 45, 0, mChar.skillCaps.mining );
 					}
 					else
 					{
@@ -603,6 +619,7 @@ function MakeOre( socket, mChar )
 
 	var sumChance = 0;
 	var oreFound = false;
+	var resourceGathered = false;
 	var orePref;
 	var oreData = 0;
 
@@ -654,6 +671,7 @@ function MakeOre( socket, mChar )
 				var oreItem = CreateBlankItem( socket, mChar, amtToMake, oreName, oreId, oreColor, "ITEM", true );
 				if( ValidateObject( oreItem ))
 				{
+					resourceGathered = true;
 					oreItem.name = oreName;
 					if( oreSizeName != "" )
 					{
@@ -690,6 +708,7 @@ function MakeOre( socket, mChar )
 			var randomGem = CreateDFNItem( socket, mChar, "digginggems", 1, "ITEM", true );
 			if( ValidateObject( randomGem ) && ValidateObject( randomGem.container ))
 			{
+				resourceGathered = true;
 				mChar.TextMessage( GetDictionaryEntry( 983, socket.language ), false, 0x3b2, 0, mChar.serial ); // You place a gem in your pack.
 			}
 		}
@@ -700,6 +719,7 @@ function MakeOre( socket, mChar )
 	}
 
 	HandleToolUse( socket, mChar );
+	return resourceGathered;
 }
 
 function MakeGranite( socket, mChar ) 
@@ -738,6 +758,7 @@ function MakeSand(socket, mChar)
 	}
 
 	HandleToolUse( socket, mChar );
+	return ValidateObject( iSpawned );
 }
 
 function HandleGraveDigOutcome( socket, mChar )

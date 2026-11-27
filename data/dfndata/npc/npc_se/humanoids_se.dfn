@@ -24,6 +24,7 @@ RESISTPOISON=35 50
 RESISTLIGHTNING=20 30
 TOPROV=636
 TOPEACE=636 5
+CUSTOMINTTAG=npcLevel 8
 }
 
 [yomotsuelder_se]
@@ -56,6 +57,7 @@ RESISTPOISON=35 55
 RESISTLIGHTNING=25 50
 TOPROV=1260
 TOPEACE=1260 5
+CUSTOMINTTAG=npcLevel 28
 }
 
 [yomotsupriest_se]
@@ -92,6 +94,7 @@ SPATTACK=8
 SPADELAY=5
 TOPROV=1174
 TOPEACE=1174 5
+CUSTOMINTTAG=npcLevel 26
 }
 
 [yomotsuwarrior_se]
@@ -124,6 +127,7 @@ RESISTLIGHTNING=30 50
 TOPROV=992
 TOPEACE=992 5
 SCRIPT=3300// magicitems.js
+CUSTOMINTTAG=npcLevel 24
 }
 
 [fandancer_se]
@@ -150,4 +154,5 @@ RESISTLIGHTNING=40 60
 TOPROV=973
 TOPEACE=973 5
 //special attacks Fan Dancer Fire. Reflect Physical Damage. Throws Tessen at ranged attackers.
+CUSTOMINTTAG=npcLevel 28
 }

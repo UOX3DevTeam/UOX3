@@ -4,12 +4,19 @@
 // Supported Events trigger for every character/item, use with care
 const questSystemEnabled = GetServerSetting( "QuestSystemEnabled" );
 const loginQuestEnabled = GetServerSetting( "LoginQuestEnabled" );
+const levelSystemEnabled = GetServerSetting( "LevelSystemEnabled" );
+const levelSystemScriptId = 2509;
 
 /** @type { ( sockPlayer: Socket, pPlayer: Character ) => boolean } */
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+	ConfigurePlayerLevelSystem( pChar );
+	if( levelSystemEnabled )
+	{
+		TriggerEvent( levelSystemScriptId, "ShowLevelSystemOnLogin", pChar );
+	}
 
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
@@ -127,6 +134,11 @@ function onCreatePlayer( pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
 	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+	ConfigurePlayerLevelSystem( pChar );
+	if( levelSystemEnabled )
+	{
+		TriggerEvent( levelSystemScriptId, "ShowLevelSystemOnLogin", pChar );
+	}
 
 	// If player character is created on a Young account, give them Young-specific items
 	if( youngPlayerSystem && pChar.account.isYoung )
@@ -144,6 +156,27 @@ function onCreatePlayer( pChar )
 	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
 	{
 		pChar.AddScriptTrigger( 7001 );
+	}
+}
+
+/** Attach or remove the level-system event script according to the server setting. */
+function ConfigurePlayerLevelSystem( pChar )
+{
+	if( levelSystemEnabled )
+	{
+		if( !pChar.HasScriptTrigger( levelSystemScriptId ))
+		{
+			pChar.AddScriptTrigger( levelSystemScriptId );
+		}
+		pChar.noSkillTitles = true;
+	}
+	else
+	{
+		if( pChar.HasScriptTrigger( levelSystemScriptId ))
+		{
+			pChar.RemoveScriptTrigger( levelSystemScriptId );
+		}
+		pChar.noSkillTitles = false;
 	}
 }
 

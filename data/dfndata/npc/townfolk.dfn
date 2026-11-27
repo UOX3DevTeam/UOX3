@@ -6,21 +6,25 @@
 [artist]
 {
 GET=m_artist f_artist
+CUSTOMINTTAG=npcLevel 0
 }
 
 [brigand]
 {
 GET=m_brigand f_brigand
+CUSTOMINTTAG=npcLevel 10
 }
 
 [beggar]
 {
 GET=m_beggar f_beggar
+CUSTOMINTTAG=npcLevel 0
 }
 
 [peasant]
 {
 GET=m_peasant f_peasant
+CUSTOMINTTAG=npcLevel 0
 }
 
 //[cashual]
@@ -31,26 +35,31 @@ GET=m_peasant f_peasant
 [chaosdragoon]
 {
 GET=m_chaosdragoon f_chaosdragoon
+CUSTOMINTTAG=npcLevel 22
 }
 
 [chaosdragoonelite]
 {
 GET=m_chaosdragoonelite f_chaosdragoonelite
+CUSTOMINTTAG=npcLevel 30
 }
 
 [executioner]
 {
 GET=m_executioner f_executioner
+CUSTOMINTTAG=npcLevel 22
 }
 
 [fighter]
 {
 GET=m_fighter f_fighter
+CUSTOMINTTAG=npcLevel 8
 }
 
 [gambler]
 {
 GET=m_gambler f_gambler
+CUSTOMINTTAG=npcLevel 0
 }
 
 //[glassblower]
@@ -61,26 +70,31 @@ GET=m_gambler f_gambler
 [golemcontroller]
 {
 GET=m_golemcontroller f_golemcontroller
+CUSTOMINTTAG=npcLevel 18
 }
 
 [guard]
 {
 GET=m_guard f_guard
+CUSTOMINTTAG=npcLevel 50
 }
 
 [gypsy]
 {
 GET=m_gypsy f_gypsy
+CUSTOMINTTAG=npcLevel 0
 }
 
 [jailer]
 {
 GET=m_jailer f_jailer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [judge]
 {
 GET=m_judge f_judge
+CUSTOMINTTAG=npcLevel 0
 }
 
 //[laborer]
@@ -91,6 +105,7 @@ GET=m_judge f_judge
 [mayor]
 {
 GET=m_mayor f_mayor
+CUSTOMINTTAG=npcLevel 0
 }
 
 //[miller]
@@ -106,26 +121,31 @@ GET=m_mayor f_mayor
 [monk]
 {
 GET=m_monk f_monk
+CUSTOMINTTAG=npcLevel 0
 }
 
 [murderer-archmage]
 {
 GET=m_murderer-archmage f_murderer-archmage
+CUSTOMINTTAG=npcLevel 18
 }
 
 [noble]
 {
 GET=m_noble f_noble
+CUSTOMINTTAG=npcLevel 0
 }
 
 [paladin]
 {
 GET=m_paladin f_paladin
+CUSTOMINTTAG=npcLevel 10
 }
 
 [pirate]
 {
 GET=m_pirate f_pirate
+CUSTOMINTTAG=npcLevel 8
 }
 
 //[priest]
@@ -136,16 +156,19 @@ GET=m_pirate f_pirate
 [ranger]
 {
 GET=m_ranger f_ranger
+CUSTOMINTTAG=npcLevel 8
 }
 
 [prisoner]
 {
 GET=m_prisoner f_prisoner
+CUSTOMINTTAG=npcLevel 0
 }
 
 [sailor]
 {
 GET=m_sailor f_sailor
+CUSTOMINTTAG=npcLevel 0
 }
 
 //[scholar]
@@ -156,6 +179,7 @@ GET=m_sailor f_sailor
 [sculptor]
 {
 GET=m_sculptor f_sculptor
+CUSTOMINTTAG=npcLevel 0
 }
 
 //[servant]
@@ -166,29 +190,35 @@ GET=m_sculptor f_sculptor
 [seeker]
 {
 GET=m_seeker f_seeker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [shepherd]
 {
 GET=m_shepherd f_shepherd
+CUSTOMINTTAG=npcLevel 0
 }
 
 [warrior]
 {
 GET=m_warrior f_warrior
+CUSTOMINTTAG=npcLevel 8
 }
 
 [thief]
 {
 GET=m_thief f_thief
+CUSTOMINTTAG=npcLevel 8
 }
 
 [townthief]
 {
 GET=m_townthief f_townthief
+CUSTOMINTTAG=npcLevel 0
 }
 
 [towncrier]
 {
 GET=m_towncrier f_towncrier
+CUSTOMINTTAG=npcLevel 0
 }

@@ -1,0 +1,149 @@
+// Crafting and gathering professions used when LEVELSYSTEMENABLED and LEVELSYSTEMCRAFTING are enabled.
+// Values use UOX3's tenths-based skill scale: 1000 is displayed as 100.0.
+// EXPERIENCEPERPOINT is the profession XP needed for one 0.1 proficiency increase.
+// PRIMARY=1 consumes a primary profession slot; PRIMARY=0 is a free secondary profession.
+
+[PROFESSION 1]
+{
+NAME=Blacksmithing
+DESCRIPTION=Forge weapons, armor, shields, and metal tools from ingots.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=BLACKSMITHING
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 2]
+{
+NAME=Tailoring
+DESCRIPTION=Create clothing and armor from cloth, hides, and leather.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=TAILORING
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 3]
+{
+NAME=Carpentry
+DESCRIPTION=Build furniture, containers, instruments, and wooden equipment.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=CARPENTRY
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 4]
+{
+NAME=Tinkering
+DESCRIPTION=Construct tools, mechanisms, traps, and finely worked objects.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=TINKERING
+STARTVALUE=100
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 5]
+{
+NAME=Bowcraft
+DESCRIPTION=Shape bows, crossbows, arrows, and bolts from wood and feathers.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=BOWCRAFT
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 6]
+{
+NAME=Alchemy
+DESCRIPTION=Mix reagents into potions and form glass with advanced knowledge.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=ALCHEMY
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 7]
+{
+NAME=Inscription
+DESCRIPTION=Scribe magical scrolls and other written arcana.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=INSCRIPTION
+STARTVALUE=100
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 8]
+{
+NAME=Cartography
+DESCRIPTION=Draw local, regional, and world maps with increasing accuracy.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=CARTOGRAPHY
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 9]
+{
+NAME=Cooking
+DESCRIPTION=Prepare meats, breads, baked goods, and complete meals.
+TYPE=CRAFTING
+PRIMARY=1
+SKILL=COOKING
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 10]
+{
+NAME=Mining
+DESCRIPTION=Extract ore, stone, sand, and gems from mountains and caves.
+TYPE=GATHERING
+PRIMARY=1
+SKILL=MINING
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 11]
+{
+NAME=Lumberjacking
+DESCRIPTION=Harvest logs from trees for carpentry and bowcraft.
+TYPE=GATHERING
+PRIMARY=1
+SKILL=LUMBERJACKING
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+
+[PROFESSION 12]
+{
+NAME=Fishing
+DESCRIPTION=Catch fish and recover uncommon treasures from deeper waters.
+TYPE=GATHERING
+PRIMARY=0
+SKILL=FISHING
+STARTVALUE=0
+MAXVALUE=1000
+EXPERIENCEPERPOINT=100
+}
+

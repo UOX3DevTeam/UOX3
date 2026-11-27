@@ -29,6 +29,7 @@ CONTROLSLOTS=4
 NPCAI=2
 SCRIPT=3300
 //special attack Dismount
+CUSTOMINTTAG=npcLevel 36
 }
 
 [lesser_hiryu_se]
@@ -62,6 +63,7 @@ CONTROLSLOTS=4
 NPCAI=2
 SCRIPT=3300
 //special attack Dismount
+CUSTOMINTTAG=npcLevel 28
 }
 
 [etherealhiryu]
@@ -71,4 +73,5 @@ NAME=5109//an ethereal hiryu
 SKIN=0x4001
 CONTROLSLOTS=1
 ORIGIN=sa
+CUSTOMINTTAG=npcLevel 36
 }

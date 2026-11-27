@@ -122,6 +122,12 @@ bool SE_EraStringToNum( JSContext *cx, unsigned argc, JS::Value *vp );
 bool SE_GetCommandLevelVal( JSContext *cx, unsigned argc, JS::Value *vp );
 
 bool SE_GetRaceCount( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetLevelClassCount( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetLevelClassProperty( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetLevelClassAbilityCount( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetLevelClassAbilityProperty( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetLevelProfessionCount( JSContext *cx, unsigned argc, JS::Value *vp );
+bool SE_GetLevelProfessionProperty( JSContext *cx, unsigned argc, JS::Value *vp );
 bool SE_AreaCharacterFunction( JSContext *cx, unsigned argc, JS::Value *vp );
 bool SE_AreaItemFunction( JSContext *cx, unsigned argc, JS::Value *vp );
 bool SE_Reload( JSContext *cx, unsigned argc, JS::Value *vp );

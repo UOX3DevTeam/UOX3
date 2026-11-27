@@ -1,214 +1,257 @@
 [alchemist]
 {
 GET=m_alchemist f_alchemist
+CUSTOMINTTAG=npcLevel 0
 }
 
 [animaltrainer]
 {
 GET=m_animaltrainer f_animaltrainer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [architect]
 {
 GET=m_architect f_architect
+CUSTOMINTTAG=npcLevel 0
 }
 
 [armourer]
 {
 GET=m_armourer f_armourer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [baker]
 {
 GET=m_baker f_baker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [banker]
 {
 GET=m_banker f_banker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [bard]
 {
 GET=m_bard f_bard
+CUSTOMINTTAG=npcLevel 0
 }
 
 [beekeeper]
 {
 GET=m_beekeeper f_beekeeper
+CUSTOMINTTAG=npcLevel 0
 }
 
 [blacksmith]
 {
 GET=m_blacksmith f_blacksmith
+CUSTOMINTTAG=npcLevel 0
 }
 
 [bowyer]
 {
 GET=m_bowyer f_bowyer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [butcher]
 {
 GET=m_butcher f_butcher
+CUSTOMINTTAG=npcLevel 0
 }
 
 [carpenter]
 {
 GET=m_carpenter f_carpenter
+CUSTOMINTTAG=npcLevel 0
 }
 
 [cobbler]
 {
 GET=m_cobbler f_cobbler
+CUSTOMINTTAG=npcLevel 0
 }
 
 [cook]
 {
 GET=m_cook f_cook
+CUSTOMINTTAG=npcLevel 0
 }
 
 [farmer]
 {
 GET=m_farmer f_farmer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [fisher]
 {
 GET=m_fisher f_fisher
+CUSTOMINTTAG=npcLevel 0
 }
 
 [furtrader]
 {
 GET=m_furtrader f_furtrader
+CUSTOMINTTAG=npcLevel 0
 }
 
 [gypsyanimaltrainer]
 {
 GET=m_gypsyanimaltrainer f_gypsyanimaltrainer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [gypsybanker]
 {
 GET=m_gypsybanker f_gypsybanker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [hairstylist]
 {
 GET=m_hairstylist f_hairstylist
+CUSTOMINTTAG=npcLevel 0
 }
 
 [healer]
 {
 GET=m_healer f_healer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [herbalist]
 {
 GET=m_herbalist f_herbalist
+CUSTOMINTTAG=npcLevel 0
 }
 
 [innkeeper]
 {
 GET=m_innkeeper f_innkeeper
+CUSTOMINTTAG=npcLevel 0
 }
 
 [ironworker]
 {
 GET=m_ironworker f_ironworker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [jeweler]
 {
 GET=m_jeweler f_jeweler
+CUSTOMINTTAG=npcLevel 0
 }
 
 [leatherworker]
 {
 GET=m_leatherworker f_leatherworker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [mage]
 {
 GET=m_mage f_mage
+CUSTOMINTTAG=npcLevel 0
 }
 
 [mapmaker]
 {
 GET=m_mapmaker f_mapmaker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [miner]
 {
 GET=m_miner f_miner
+CUSTOMINTTAG=npcLevel 0
 }
 
 [provisioner]
 {
 GET=m_provisioner f_provisioner
+CUSTOMINTTAG=npcLevel 0
 }
 
 [scribe]
 {
 GET=m_scribe f_scribe
+CUSTOMINTTAG=npcLevel 0
 }
 
 [shipwright]
 {
 GET=m_shipwright f_shipwright
+CUSTOMINTTAG=npcLevel 0
 }
 
 [spinner]
 {
 GET=m_spinner f_spinner
+CUSTOMINTTAG=npcLevel 0
 }
 
 [tailor]
 {
 GET=m_tailor f_tailor
+CUSTOMINTTAG=npcLevel 0
 }
 
 [tanner]
 {
 GET=m_tanner f_tanner
+CUSTOMINTTAG=npcLevel 0
 }
 
 [tavernkeeper]
 {
 GET=m_tavernkeeper f_tavernkeeper
+CUSTOMINTTAG=npcLevel 0
 }
 
 [tinker]
 {
 GET=m_tinker f_tinker
+CUSTOMINTTAG=npcLevel 0
 }
 
 [vagabond]
 {
 GET=m_vagabond f_vagabond
+CUSTOMINTTAG=npcLevel 0
 }
 
 [veterinarian]
 {
 GET=m_veterinarian f_veterinarian
+CUSTOMINTTAG=npcLevel 0
 }
 
 [waiter]
 {
 GET=m_waiter f_waitress
+CUSTOMINTTAG=npcLevel 0
 }
 
 [whealer]
 {
 GET=m_whealer f_whealer
+CUSTOMINTTAG=npcLevel 0
 }
 
 [weaponsmith]
 {
 GET=m_weaponsmith f_weaponsmith
+CUSTOMINTTAG=npcLevel 0
 }
 
 [weaver]
 {
 GET=m_weaver f_weaver
+CUSTOMINTTAG=npcLevel 0
 }

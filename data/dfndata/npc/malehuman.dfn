@@ -36,6 +36,7 @@ COLORLIST=11
 STR=50 75
 DEX=60 70
 INT=50 75
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_banker]
@@ -65,6 +66,7 @@ INT=50 75
 PRIV=4
 NPCAI=8
 SCRIPT=3201//banker.js
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_guard]
@@ -107,6 +109,7 @@ FY2=15
 NPCAI=4
 NOTRAIN
 RUNS
+CUSTOMINTTAG=npcLevel 50
 }
 
 [m_murderer-archmage]
@@ -153,6 +156,7 @@ FX2=5
 NPCAI=11
 FLAG=Evil
 NOTRAIN
+CUSTOMINTTAG=npcLevel 18
 }
 
 [m_whealer]
@@ -196,6 +200,7 @@ FX2=40
 FY2=40
 NPCAI=1
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_pirate]
@@ -239,6 +244,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 8
 }
 
 [m_fighter]
@@ -281,6 +287,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 8
 }
 
 [m_paladin]
@@ -324,6 +331,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 10
 }
 
 [m_warrior]
@@ -366,6 +374,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 8
 }
 
 [m_sailor]
@@ -405,6 +414,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_brigand]
@@ -453,6 +463,7 @@ NPCAI=2
 RUNS
 NOTRAIN
 FLAG=Evil
+CUSTOMINTTAG=npcLevel 10
 }
 
 [m_beggar]
@@ -490,6 +501,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_noble]
@@ -525,6 +537,7 @@ NPCWANDER=4
 FX2=10
 FY2=10
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_thief_guildmaster]
@@ -571,6 +584,7 @@ RUNS
 NOTRAIN
 NPCGUILD=3
 SCRIPT=3217
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_thief]
@@ -616,6 +630,7 @@ FY2=15
 NPCAI=2
 RUNS
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 8
 }
 
 [m_townthief]
@@ -655,6 +670,7 @@ NPCWANDER=4
 FX2=15
 FY2=15
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_peasant]
@@ -692,6 +708,7 @@ CONTROLSLOTS=2
 HIRELING
 NOTRAIN
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_gypsy]
@@ -731,6 +748,7 @@ NPCWANDER=4
 FX2=15
 FY2=15
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_seeker]
@@ -764,6 +782,7 @@ NPCWANDER=4
 FX2=15
 FY2=15
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_jailer]
@@ -793,6 +812,7 @@ SWORDSMANSHIP=450 680
 WRESTLING=600 830
 NPCWANDER=3
 FX2=10
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_towncrier]
@@ -832,6 +852,7 @@ WRESTLING=900 1000
 KARMA=1200
 FAME=400
 NPCWANDER=0
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_artist]
@@ -864,6 +885,7 @@ FAME=400
 DAMAGE=8 16
 NPCWANDER=3
 FX2=30
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_ranger]
@@ -911,6 +933,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 8
 }
 
 [m_gambler]
@@ -952,6 +975,7 @@ HIRELING
 NOTRAIN
 RUNS
 SCRIPT=3204
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_judge]
@@ -983,6 +1007,7 @@ NPCWANDER=4
 FX2=10
 FY2=10
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_mayor]
@@ -1015,6 +1040,7 @@ NPCWANDER=4
 FX2=10
 FY2=10
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_monk]
@@ -1045,6 +1071,7 @@ NPCWANDER=4
 FX2=10
 FY2=10
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_prisoner]
@@ -1067,6 +1094,7 @@ NPCWANDER=4
 FX2=15
 FY2=15
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_sculptor]
@@ -1094,6 +1122,7 @@ NPCWANDER=4
 FX2=10
 FY2=10
 RUNS
+CUSTOMINTTAG=npcLevel 0
 }
 
 [m_golemcontroller]
@@ -1137,6 +1166,7 @@ RUNS
 FLAG=EVIL
 NOTRAIN
 ORIGIN=td
+CUSTOMINTTAG=npcLevel 18
 }
 
 [m_executioner]
@@ -1182,6 +1212,7 @@ NPCAI=2
 RUNS
 FLAG=Evil
 NOTRAIN
+CUSTOMINTTAG=npcLevel 22
 }
 
 [m_chaosdragoon]
@@ -1225,6 +1256,7 @@ NOTRAIN
 SCRIPT=3218//chaos dragoon armor/loot
 SCRIPT=3511//colossal blow
 SCRIPT=3507//fire breath
+CUSTOMINTTAG=npcLevel 22
 }
 
 [m_chaosdragoonelite]
@@ -1271,6 +1303,7 @@ SCRIPT=3218//chaos dragoon armor/loot
 SCRIPT=3511//colossal blow
 SCRIPT=3507//fire breath
 SCRIPT=3300//Magic items loot
+CUSTOMINTTAG=npcLevel 30
 }
 
 [m_gypsybanker]
@@ -1300,6 +1333,7 @@ INT=50 75
 PRIV=4
 NPCAI=8
 SCRIPT=3201//banker.js
+CUSTOMINTTAG=npcLevel 0
 }
 
 [lordbritish]
@@ -1319,6 +1353,7 @@ TOTAME=2000
 FLAG=INNOCENT
 PRIV=4
 NPCAI=7
+CUSTOMINTTAG=npcLevel 50
 }
 
 [lordblackthorn]
@@ -1336,6 +1371,7 @@ TOTAME=2000
 FLAG=NEUTRAL
 PRIV=4
 NPCAI=7
+CUSTOMINTTAG=npcLevel 50
 }
 
 [dupre]
@@ -1354,6 +1390,7 @@ TOTAME=2000
 FLAG=INNOCENT
 PRIV=4
 NPCAI=7
+CUSTOMINTTAG=npcLevel 45
 }
 
 [garriot]
@@ -1373,4 +1410,5 @@ RACE=0
 TOTAME=2000
 FLAG=INNOCENT
 PRIV=4
+CUSTOMINTTAG=npcLevel 50
 }

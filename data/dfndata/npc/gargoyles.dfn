@@ -37,6 +37,7 @@ TOPROV=725
 TOPEACE=725 5
 RUNS
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 10
 }
 
 [stonegargoyle]
@@ -71,6 +72,7 @@ RACE=3
 RUNS
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 14
 }
 
 [enslavedgargoyle]
@@ -102,6 +104,7 @@ RUNS
 NPCAI=2
 FLAG=NEUTRAL
 ORIGIN=td
+CUSTOMINTTAG=npcLevel 18
 }
 
 [firegargoyle]
@@ -141,6 +144,7 @@ FLAG=NEUTRAL
 ORIGIN=uor
 SCRIPT=3300
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 18
 }
 
 [gargoyledestroyer]
@@ -181,6 +185,7 @@ RUNS
 FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 22
 }
 
 [gargoyleenforcer]
@@ -220,6 +225,7 @@ RUNS
 FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 16
 }
 
 // gargoyle names need to be included for shopkeepers.
@@ -254,6 +260,7 @@ TOPEACE=600 5
 RUNS
 FLAG=NEUTRAL
 ORIGIN=sa
+CUSTOMINTTAG=npcLevel 12
 }
 
 [gargoylemason]
@@ -286,4 +293,5 @@ TOPEACE=600 5
 RUNS
 FLAG=NEUTRAL
 ORIGIN=sa
+CUSTOMINTTAG=npcLevel 12
 }

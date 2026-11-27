@@ -28,6 +28,7 @@ PEACEMAKING=650 880
 PROVOCATION=650 830
 SWORDSMANSHIP=360 680
 SHOPLIST=BardShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_miner]
@@ -50,6 +51,7 @@ EQUIPITEM=listobject44
 COLORLIST=11
 MINING=650 880
 SHOPLIST=MinerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_weaponsmith]
@@ -80,6 +82,7 @@ SHOPLIST=WeaponsmithShopping
 SCRIPT=3214
 CUSTOMINTTAG=bodType 1
 CUSTOMINTTAG=bodSubtype 1
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_baker]
@@ -102,6 +105,7 @@ COLORLIST=11
 COOKING=750 980
 TASTEID=360 680
 SHOPLIST=BakerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_provisioner]
@@ -125,6 +129,7 @@ CAMPING=450 680
 PARRYING=450 680
 TACTICS=450 680
 SHOPLIST=ProvisionerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_cobbler]
@@ -146,6 +151,7 @@ EQUIPITEM=listobject44
 COLORLIST=11
 TAILORING=600 830
 SHOPLIST=CobblerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_innkeeper]
@@ -166,6 +172,7 @@ EQUIPITEM=listobject43
 EQUIPITEM=listobject45
 COLORLIST=11
 SHOPLIST=InnkeeperShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_herbalist]
@@ -189,6 +196,7 @@ ALCHEMY=350 580
 COOKING=350 580
 TASTEID=350 580
 SHOPLIST=HerbalistShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_butcher]
@@ -211,6 +219,7 @@ EQUIPITEM=listobject44
 COLORLIST=11
 ANATOMY=450 680
 SHOPLIST=ButcherShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_tailor]
@@ -235,6 +244,7 @@ SHOPLIST=TailorShopping
 SCRIPT=3214
 CUSTOMINTTAG=bodType 2
 CUSTOMINTTAG=bodSubtype 1
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_bowyer]
@@ -259,6 +269,7 @@ ARCHERY=600 830
 BOWCRAFT=900 1000
 TACTICS=450 680
 SHOPLIST=BowyerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_jeweler]
@@ -280,6 +291,7 @@ EQUIPITEM=listobject54
 COLORLIST=11
 ITEMID=640 1000
 SHOPLIST=JewlerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_leatherworker]
@@ -299,6 +311,7 @@ EQUIPITEM=0x13ce
 EQUIPITEM=0x13c7
 EQUIPITEM=listobject43
 SHOPLIST=LeatherShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_mage]
@@ -330,6 +343,7 @@ WRESTLING=360 680
 SPATTACK=8
 SPADELAY=10
 SHOPLIST=MageShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_shipwright]
@@ -353,6 +367,7 @@ COLORLIST=11
 CARPENTRY=600 830
 MACEFIGHTING=360 680
 SHOPLIST=ShipwrightShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_spinner]
@@ -374,6 +389,7 @@ EQUIPITEM=listobject54
 COLORLIST=11
 TAILORING=350 580
 SHOPLIST=SpinnerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_armourer]
@@ -400,6 +416,7 @@ SHOPLIST=ArmorShopping
 SCRIPT=3214
 CUSTOMINTTAG=bodType 1
 CUSTOMINTTAG=bodSubtype 2
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_blacksmith]
@@ -431,6 +448,7 @@ SHOPLIST=BlacksmithShopping
 SCRIPT=3214
 CUSTOMINTTAG=bodType 1
 CUSTOMINTTAG=bodSubtype 3
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_architect]
@@ -452,6 +470,7 @@ COLORLIST=11
 EQUIPITEM=listobject45
 COLORLIST=11
 SHOPLIST=ArchitectShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_carpenter]
@@ -474,6 +493,7 @@ COLORLIST=11
 CARPENTRY=850 1000
 LUMBERJACKING=600 830
 SHOPLIST=CarpenterShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_farmer]
@@ -500,6 +520,7 @@ COOKING=360 680
 LUMBERJACKING=360 680
 TASTEID=360 680
 SHOPLIST=FarmerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_cook]
@@ -522,6 +543,7 @@ COLORLIST=11
 COOKING=900 1000
 TASTEID=750 980
 SHOPLIST=CookShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_animaltrainer]
@@ -550,6 +572,7 @@ FAME=400
 SHOPLIST=TrainerShopping
 NPCAI=9
 SCRIPT=3105
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_fisher]
@@ -575,6 +598,7 @@ COLORLIST=11
 EQUIPITEM=0x0dbf
 FISHING=750 980
 SHOPLIST=FisherShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_alchemist]
@@ -597,6 +621,7 @@ COLORLIST=8
 ALCHEMY=850 1000
 TASTEID=650 880
 SHOPLIST=AlchemistShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_tinker]
@@ -625,6 +650,7 @@ LOCKPICKING=600 830
 REMOVETRAP=750 980
 TINKERING=640 1000
 SHOPLIST=TinkerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_beekeeper]
@@ -646,6 +672,7 @@ EQUIPITEM=listobject45
 COLORLIST=11
 ANIMALLORE=550 780
 SHOPLIST=BeekeeperShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_healer]
@@ -672,6 +699,7 @@ FORENSICS=650 880
 HEALING=640 1000
 SPIRITSPEAK=600 830
 SHOPLIST=HealerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_playervendor]
@@ -702,6 +730,7 @@ COLORLIST=4
 EQUIPITEM=0x1541
 COLORLIST=1
 NPCWANDER=0
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_tavernkeeper]
@@ -722,6 +751,7 @@ EQUIPITEM=listobject43
 EQUIPITEM=listobject45
 COLORLIST=11
 SHOPLIST=TavernKeepShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_scribe]
@@ -744,6 +774,7 @@ COLORLIST=2
 EVALUATINGINTEL=600 830
 INSCRIPTION=900 1000
 SHOPLIST=ScribeShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_weaver]
@@ -765,6 +796,7 @@ EQUIPITEM=listobject54
 COLORLIST=11
 TAILORING=650 880
 SHOPLIST=SpinnerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_mapmaker]
@@ -787,6 +819,7 @@ EQUIPITEM=listobject44
 COLORLIST=11
 CARTOGRAPHY=900 1000
 SHOPLIST=MapShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_furtrader]
@@ -812,6 +845,7 @@ COOKING=450 680
 TASTEID=850 1000
 TRACKING=360 680
 SHOPLIST=FurShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_tanner]
@@ -832,6 +866,7 @@ EQUIPITEM=0x13c7
 EQUIPITEM=listobject43
 TAILORING=360 680
 SHOPLIST=TannerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_waitress]
@@ -853,6 +888,7 @@ EQUIPITEM=listobject45
 COLORLIST=11
 ENTICEMENT=360 680
 SHOPLIST=TavernKeepShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_miller]
@@ -879,6 +915,7 @@ TINKERING=360 680
 TOPROV=234
 TOPEACE=234 5
 SHOPLIST=MillerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_rancher]
@@ -909,6 +946,7 @@ VETERINARY=600 830
 SHOPLIST=RancherShopping
 KARMA=1200
 FAME=400
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_hairstylist]
@@ -939,6 +977,7 @@ SHOPLIST=HairStylistShopping
 KARMA=1200
 FAME=400
 ORIGIN=td
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_gypsymaiden]
@@ -962,6 +1001,7 @@ CAMPING=450 680
 PARRYING=450 680
 TACTICS=450 680
 SHOPLIST=ProvisionerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_gypsyanimaltrainer]
@@ -990,6 +1030,7 @@ FAME=400
 SHOPLIST=TrainerShopping
 NPCAI=9
 SCRIPT=3105
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_gypsyfortuneteller]
@@ -1021,6 +1062,7 @@ WRESTLING=360 680
 SPATTACK=8
 SPADELAY=10
 SHOPLIST=MageShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_vagabond]
@@ -1049,6 +1091,7 @@ LOCKPICKING=600 830
 REMOVETRAP=750 980
 TINKERING=640 1000
 SHOPLIST=TinkerShopping
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_ironworker]
@@ -1080,6 +1123,7 @@ SHOPLIST=BlacksmithShopping
 SCRIPT=3214
 CUSTOMINTTAG=bodType 1
 CUSTOMINTTAG=bodSubtype 3
+CUSTOMINTTAG=npcLevel 0
 }
 
 [f_veterinarian]
@@ -1106,4 +1150,5 @@ HEALING=640 1000
 SPIRITSPEAK=600 830
 SHOPLIST=VetShopping
 SCRIPT=3109
+CUSTOMINTTAG=npcLevel 0
 }

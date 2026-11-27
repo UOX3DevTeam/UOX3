@@ -2,6 +2,113 @@
 #define __Races__
 #include <unordered_set>
 #include <array>
+
+class CLevelProfession
+{
+private:
+	UI08 professionId;
+	std::string professionName;
+	std::string description;
+	std::string professionType;
+	UI08 skillId;
+	SKILLVAL startValue;
+	SKILLVAL maxValue;
+	UI32 experiencePerPoint;
+	bool primaryProfession;
+
+public:
+	CLevelProfession();
+	bool Load( UI08 id );
+	UI08 Id() const;
+	const std::string &Name() const;
+	const std::string &Description() const;
+	const std::string &Type() const;
+	UI08 SkillId() const;
+	const std::string &SkillName() const;
+	bool IsPrimary() const;
+	SKILLVAL StartValue() const;
+	SKILLVAL MaxValue() const;
+	UI32 ExperiencePerPoint() const;
+	UI64 MaxExperience() const;
+	SKILLVAL ProficiencyFromExperience( UI64 experience ) const;
+	UI64 ExperienceForProficiency( SKILLVAL proficiency ) const;
+};
+
+class CLevelClassAbility
+{
+private:
+	UI16 abilityId;
+	std::string abilityName;
+	std::string description;
+	std::string action;
+	SI32 value;
+	UI16 requiredLevel;
+	UI16 manaCost;
+	UI16 staminaCost;
+	UI16 cooldownSeconds;
+	UI16 scriptId;
+	std::string functionName;
+
+public:
+	CLevelClassAbility();
+	bool Load( UI16 id );
+	UI16 Id() const;
+	const std::string &Name() const;
+	const std::string &Description() const;
+	const std::string &Action() const;
+	SI32 Value() const;
+	UI16 RequiredLevel() const;
+	UI16 ManaCost() const;
+	UI16 StaminaCost() const;
+	UI16 CooldownSeconds() const;
+	UI16 ScriptId() const;
+	const std::string &FunctionName() const;
+};
+
+class CLevelClass
+{
+private:
+	struct SkillTier_st
+	{
+		UI16 startValue;
+		UI16 capPercent;
+	};
+
+	UI08 classId;
+	std::string className;
+	std::string description;
+	std::array<UI08, ALLSKILLS> skillTiers;
+	std::array<SkillTier_st, 4> tierSettings;
+	UI16 healthPerLevel;
+	UI16 manaPerLevel;
+	UI16 staminaPerLevel;
+	std::unordered_set<UI16> allowedEquipment;
+	std::unordered_set<UI16> bannedEquipment;
+	std::vector<CLevelClassAbility> abilities;
+
+	void LoadSkillList( const std::string &data, UI08 tier );
+	void LoadEquipmentList( const std::string &sectionName, bool allowList );
+	void LoadAbility( const std::string &data );
+
+public:
+	CLevelClass();
+	void Load( UI08 id );
+	UI08 Id() const;
+	const std::string &Name() const;
+	const std::string &Description() const;
+	UI16 HealthPerLevel() const;
+	UI16 ManaPerLevel() const;
+	UI16 StaminaPerLevel() const;
+	UI08 SkillTier( UI08 skill ) const;
+	std::string SkillList( UI08 tier ) const;
+	UI16 TierStart( UI08 tier ) const;
+	UI16 TierCap( UI08 tier ) const;
+	SKILLVAL SkillValue( UI08 skill, UI16 level, UI16 levelCap, SKILLVAL skillCap ) const;
+	bool CanEquipItem( UI16 itemId ) const;
+	UI16 AbilityCount() const;
+	const CLevelClassAbility *Ability( UI16 abilityIndex ) const;
+};
+
 class CRace
 {
 private:
@@ -190,6 +297,9 @@ private:
 	// data
 	RACELIST		races;
 	MODIFIERLIST	combat;
+	std::vector<CLevelClass>	levelClasses;
+	std::vector<CLevelProfession>	levelProfessions;
+	std::array<UI08, ALLSKILLS>	professionBySkill;
 	RACEID			nextUniqueRaceID;
 
 	void			DefaultInitCombat( void );
@@ -218,6 +328,13 @@ public:
 	bool			SkinRestricted( RACEID x ) const;
 
 	CRace *			Race( RACEID x );
+	CLevelClass *	LevelClass( UI08 classId );
+	const CLevelClass * LevelClass( UI08 classId ) const;
+	UI08			LevelClassCount() const;
+	CLevelProfession * LevelProfession( UI08 professionId );
+	const CLevelProfession * LevelProfession( UI08 professionId ) const;
+	const CLevelProfession * ProfessionForSkill( UI08 skillId ) const;
+	UI08			LevelProfessionCount() const;
 
 	// Accessors
 	SECONDS			Secs( RACEID race, WeatherType element ) const;

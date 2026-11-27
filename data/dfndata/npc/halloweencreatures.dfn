@@ -30,6 +30,7 @@ RUNS
 RACE=10
 FLAG=EVIL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 18
 }
 
 [halloweenzombie]
@@ -37,6 +38,7 @@ ORIGIN=aos
 GET=zombie
 LOOT=HalloweenLoot
 FLAG=EVIL
+CUSTOMINTTAG=npcLevel 4
 }
 
 [halloweenwraith]
@@ -44,6 +46,7 @@ FLAG=EVIL
 GET=wraith
 LOOT=HalloweenLoot
 FLAG=EVIL
+CUSTOMINTTAG=npcLevel 9
 }
 
 [halloweenshade]
@@ -51,6 +54,7 @@ FLAG=EVIL
 GET=halloweenwraith
 ID=0x001a
 COLOR=0x6677
+CUSTOMINTTAG=npcLevel 9
 }
 
 [halloweenskeleton]
@@ -58,10 +62,12 @@ COLOR=0x6677
 GET=skeleton
 LOOT=HalloweenLoot
 FLAG=EVIL
+CUSTOMINTTAG=npcLevel 4
 }
 
 [halloweenboneaxeman]
 {
 get=halloweenskeleton
 NAME=5123//a bone axeman
+CUSTOMINTTAG=npcLevel 4
 }

@@ -53,6 +53,7 @@ RACE=10
 FLAG=NEUTRAL
 CONTROLSLOTS=4
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 36
 }
 
 [daemon]
@@ -94,6 +95,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 30
 }
 
 [armeddaemon]
@@ -101,6 +103,7 @@ SCRIPT=3300
 GET=daemon
 NAMELIST=5
 ID=0x000a
+CUSTOMINTTAG=npcLevel 40
 }
 
 [exodus]
@@ -109,6 +112,7 @@ GET=balron
 NAME=#//Exodus
 ID=0x0066
 SKIN=0x096c
+CUSTOMINTTAG=npcLevel 40
 }
 
 [icefiend]
@@ -146,6 +150,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 26
 }
 
 [imp]
@@ -188,6 +193,7 @@ RACE=10
 FLAG=NEUTRAL
 CONTROLSLOTS=2
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 8
 }
 
 [mongbat]
@@ -223,6 +229,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 2
 }
 
 [greatermongbat]
@@ -243,6 +250,7 @@ DEF=10
 TOPROV=313
 TOPEACE=313 5
 TOTAME=711
+CUSTOMINTTAG=npcLevel 4
 }
 
 //AoS Daemons
@@ -282,6 +290,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 26
 }
 
 [moloch]
@@ -314,6 +323,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 26
 }
 
 [chaosdaemon]
@@ -347,6 +357,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 8
 }
 
 [shadowfiend]
@@ -377,6 +388,7 @@ RACE=10
 FLAG=NEUTRAL
 ORIGIN=uor
 SCRIPT=3228//shadowfiend.js
+CUSTOMINTTAG=npcLevel 8
 }
 
 //oni - Base NPC with shared DFN tags
@@ -401,4 +413,5 @@ GETML=oni_se
 GETSA=oni_se
 GETHS=oni_se
 GETTOL=oni_se
+CUSTOMINTTAG=npcLevel 30
 }

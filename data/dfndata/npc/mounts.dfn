@@ -52,6 +52,7 @@ CARVE=26
 RACE=9
 FOOD=horse
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 2
 }
 
 [brownhorse]
@@ -59,6 +60,7 @@ CONTROLSLOTS=1
 GET=horse
 NAME=#//a horse
 ID=0x00C8
+CUSTOMINTTAG=npcLevel 3
 }
 
 [grayhorse]
@@ -66,6 +68,7 @@ ID=0x00C8
 GET=horse
 NAME=#//a horse
 ID=0x00E2
+CUSTOMINTTAG=npcLevel 3
 }
 
 [darkhorse]
@@ -73,6 +76,7 @@ ID=0x00E2
 GET=horse
 NAME=#//a horse
 ID=0x00CC
+CUSTOMINTTAG=npcLevel 3
 }
 
 [etherealhorse]
@@ -82,6 +86,7 @@ NAME=#//an ethereal horse
 ID=0x0073
 SKIN=0x4001
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 2
 }
 
 [llama]
@@ -106,6 +111,7 @@ TOPROV=170
 TOPEACE=170 5
 CARVE=30
 RACE=9
+CUSTOMINTTAG=npcLevel 2
 }
 
 [ethereallama]
@@ -115,6 +121,7 @@ NAME=#//an ethereal llama
 ID=0x00aa
 SKIN=0x4001
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 3
 }
 
 [frenziedostard]
@@ -146,6 +153,7 @@ CARVE=11
 RACE=9
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 6
 }
 
 [forestostard]
@@ -174,6 +182,7 @@ FOOD=horse
 CARVE=11
 RACE=9
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 6
 }
 
 [desertostard]
@@ -200,6 +209,7 @@ FOOD=horse
 CARVE=11
 RACE=9
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 6
 }
 
 [etherealostard]
@@ -209,6 +219,7 @@ NAME=#//an ethereal ostard
 ID=0x00AB
 SKIN=0x4001
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 6
 }
 
 [nightmare]
@@ -247,6 +258,7 @@ FLAG=NEUTRAL
 CONTROLSLOTS=2
 ORIGIN=t2a
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 30
 }
 
 [darknightmare]
@@ -254,6 +266,7 @@ SCRIPT=3507
 GET=nightmare
 NAME=#//a nightmare
 ID=0x00b1
+CUSTOMINTTAG=npcLevel 30
 }
 
 [manenightmare]
@@ -261,6 +274,7 @@ ID=0x00b1
 GET=nightmare
 NAME=#//a nightmare
 ID=0x00b2
+CUSTOMINTTAG=npcLevel 30
 }
 
 [purenightmare]
@@ -268,6 +282,7 @@ ID=0x00b2
 GET=nightmare
 NAME=#//a nightmare
 ID=0x00b3
+CUSTOMINTTAG=npcLevel 30
 }
 
 [unicorn]
@@ -306,6 +321,7 @@ NPCAI=5
 ORIGIN=td
 SCRIPT=3106
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 30
 }
 
 [etherealunicorn]
@@ -316,6 +332,7 @@ ID=0x00c0
 SKIN=0x4001
 CONTROLSLOTS=1
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 30
 }
 
 [kirin]
@@ -354,6 +371,7 @@ NPCAI=5
 ORIGIN=td
 SCRIPT=3106
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 30
 }
 
 [warhorse1]
@@ -377,24 +395,28 @@ TOPROV=657
 TOPEACE=657 5
 TOTAME=291
 ORIGIN=uor
+CUSTOMINTTAG=npcLevel 10
 }
 
 [warhorse2]
 { //Circle of Mages Warhorse
 GET=warhorse1
 ID=0x0077
+CUSTOMINTTAG=npcLevel 10
 }
 
 [warhorse3]
 { //Minax Warhorse
 GET=warhorse1
 ID=0x0078
+CUSTOMINTTAG=npcLevel 10
 }
 
 [warhorse4]
 { //Shadowlords Warhorse
 GET=warhorse1
 ID=0x0079
+CUSTOMINTTAG=npcLevel 10
 }
 
 [darksteed]
@@ -427,6 +449,7 @@ FLAG=NEUTRAL
 CONTROLSLOTS=2
 ORIGIN=t2a
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 32
 }
 
 [silversteed]
@@ -459,6 +482,7 @@ FLAG=NEUTRAL
 CONTROLSLOTS=2
 ORIGIN=t2a
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 32
 }
 
 [skeletalmount]
@@ -487,6 +511,7 @@ RACE=9
 FLAG=NEUTRAL
 CONTROLSLOTS=2
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 30
 }
 
 [giantbeetle]
@@ -512,6 +537,7 @@ NPCAI=2
 FLAG=NEUTRAL
 CONTROLSLOTS=3
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 20
 }
 
 [etherealgiantbeetle]
@@ -521,6 +547,7 @@ NAME=#//an ethereal giant beetle
 ID=0x00C3
 SKIN=0x4001
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 20
 }
 
 [firebeetle]
@@ -539,6 +566,7 @@ TOPROV=840
 TOPEACE=840 5
 TOTAME=939
 ORIGIN=se
+CUSTOMINTTAG=npcLevel 22
 }
 
 [firesteed]
@@ -567,6 +595,7 @@ TOTAME=1060
 CONTROLSLOTS=2
 ORIGIN=aos
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 34
 }
 
 [ridgeback]
@@ -591,6 +620,7 @@ TOTAME=831
 CARVE=40
 CONTROLSLOTS=1
 ORIGIN=td
+CUSTOMINTTAG=npcLevel 3
 }
 
 [savageridgeback]
@@ -599,6 +629,7 @@ GET=ridgeback
 NAME=#//a savage ridgeback
 ID=0x00BC
 CARVE=41
+CUSTOMINTTAG=npcLevel 3
 }
 
 [etherealridgeback]
@@ -608,6 +639,7 @@ NAME=#//an ethereal ridgeback
 ID=0x00C1
 SKIN=0x4001
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 3
 }
 
 [swampdragon]
@@ -635,6 +667,7 @@ CARVE=47
 FOOD=meat
 CONTROLSLOTS=1
 ORIGIN=lbr
+CUSTOMINTTAG=npcLevel 15
 }
 
 [armoredswampdragon]
@@ -643,6 +676,7 @@ GET=swampdragon
 NAME=#//an armoured swamp dragon
 ID=0x031f
 DEF=60
+CUSTOMINTTAG=npcLevel 15
 }
 
 [etherealswampdragon]
@@ -652,6 +686,7 @@ NAME=#//an ethereal swamp dragon
 ID=0x00C2
 SKIN=0x4001
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 15
 }
 
 [reptalon]
@@ -677,6 +712,7 @@ CONTROLSLOTS=4
 ORIGIN=ml
 SCRIPT=3300
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 42
 }
 
 [etherealreptalon]
@@ -686,6 +722,7 @@ NAME=5110//an ethereal reptalon
 ID=0x0114
 SKIN=0x4001
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 42
 }
 
 [cusidhe]
@@ -712,6 +749,7 @@ TOPEACE=1269 5
 TOTAME=1020
 ORIGIN=ml
 SCRIPT=3106
+CUSTOMINTTAG=npcLevel 44
 }
 
 [etherealcusidhe]
@@ -720,6 +758,7 @@ GET=cusidhe
 NAME=5111//an ethereal cu sidhe
 ID=0x0115
 SKIN=0x4001
+CUSTOMINTTAG=npcLevel 44
 }
 
 [chargerofthefallen]
@@ -742,6 +781,7 @@ TOPROV=1250
 TOPEACE=1250 5
 TOTAME=1199
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 44
 }
 
 [etherealkirin]
@@ -752,6 +792,7 @@ ID=0x00BF
 SKIN=0x4001
 CONTROLSLOTS=1
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 30
 }
 
 [etherealpolarbear]
@@ -761,6 +802,7 @@ NAME=an ethereal polar bear
 ID=0x00d5
 SKIN=0x4001
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 7
 }
 
 [etherealboura]
@@ -770,6 +812,7 @@ NAME=an ethereal boura
 ID=0x02cb
 SKIN=0x4001
 ORIGIN=hs
+CUSTOMINTTAG=npcLevel 3
 }
 
 [etherealchargerofthefallen]
@@ -779,6 +822,7 @@ NAME=an ethereal charger of the fallen
 ID=0x011c
 SKIN=0x4001
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 44
 }
 
 [etherealtiger]
@@ -788,6 +832,7 @@ NAME=an ethereal tiger
 ID=0x04e7
 SKIN=0x4001
 ORIGIN=hs
+CUSTOMINTTAG=npcLevel 3
 }
 
 //hiryu - Base NPC with shared DFN tags
@@ -812,6 +857,7 @@ GETML=hiryu_se
 GETSA=hiryu_se
 GETHS=hiryu_se
 GETTOL=hiryu_se
+CUSTOMINTTAG=npcLevel 36
 }
 
 [lesserhiryu]
@@ -827,4 +873,5 @@ GETML=lesser_hiryu_se
 GETSA=lesser_hiryu_se
 GETHS=lesser_hiryu_se
 GETTOL=lesser_hiryu_se
+CUSTOMINTTAG=npcLevel 28
 }

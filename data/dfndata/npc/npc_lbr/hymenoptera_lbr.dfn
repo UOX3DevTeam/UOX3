@@ -1,6 +1,7 @@
 [ambitious_black_solen_queen_lbr]
 {//Quest Npc
 GET=base_ambitious_black_solen_queen
+CUSTOMINTTAG=npcLevel 32
 }
 
 [black_infilrator_queen_lbr]
@@ -22,6 +23,7 @@ FAME=6500
 KARM=-6500
 TOPROV=497
 TOPEACE=497 5
+CUSTOMINTTAG=npcLevel 26
 }
 
 [black_solen_infilrator_warrior_lbr]
@@ -43,6 +45,7 @@ FAME=3000
 KARM=-3000
 TOPROV=415
 TOPEACE=415 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [black_queen_lbr]
@@ -65,6 +68,7 @@ FAME=4500
 KARM=-4500
 TOPROV=497
 TOPEACE=497 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [black_solen_warrior_lbr]
@@ -87,6 +91,7 @@ FAME=3000
 KARM=-3000
 TOPROV=345
 TOPEACE=345 5
+CUSTOMINTTAG=npcLevel 20
 }
 
 [black_solen_worker_lbr]
@@ -108,16 +113,19 @@ FAME=1500
 KARM=-1500
 TOPROV=345
 TOPEACE=345 5
+CUSTOMINTTAG=npcLevel 16
 }
 
 [black_solen_matriarch_lbr]
 {//Quest Npc
 GET=base_black_solen_matriarch
+CUSTOMINTTAG=npcLevel 32
 }
 
 [ambitious_red_solen_queen_lbr]
 {//Quest Npc
 GET=base_ambitious_red_solen_queen
+CUSTOMINTTAG=npcLevel 32
 }
 
 [red_infilrator_queen_lbr]
@@ -139,6 +147,7 @@ FAME=6500
 KARM=-6500
 TOPROV=497
 TOPEACE=497 5
+CUSTOMINTTAG=npcLevel 26
 }
 
 [red_solen_infilrator_warrior_lbr]
@@ -160,6 +169,7 @@ FAME=3000
 KARM=-3000
 TOPROV=415
 TOPEACE=415 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [red_queen_lbr]
@@ -182,6 +192,7 @@ FAME=4500
 KARM=-4500
 TOPROV=497
 TOPEACE=497 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [red_solen_warrior_lbr]
@@ -204,6 +215,7 @@ FAME=3000
 KARM=-3000
 TOPROV=345
 TOPEACE=345 5
+CUSTOMINTTAG=npcLevel 20
 }
 
 [red_solen_worker_lbr]
@@ -225,9 +237,11 @@ FAME=1500
 KARM=-1500
 TOPROV=345
 TOPEACE=345 5
+CUSTOMINTTAG=npcLevel 16
 }
 
 [red_solen_matriarch_lbr]
 {//Quest Npc
 GET=base_red_solen_matriarch
+CUSTOMINTTAG=npcLevel 32
 }

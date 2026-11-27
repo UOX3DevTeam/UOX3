@@ -28,6 +28,7 @@ TOPEACE=706 5
 RUNS
 RACE=6
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 10
 }
 
 [dreadspider]
@@ -61,6 +62,7 @@ TOPEACE=880 5
 RUNS
 RACE=6
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 20
 }
 
 [frostspider]
@@ -98,6 +100,7 @@ RACE=6
 FLAG=NEUTRAL
 CONTROLSLOTS=1
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 7
 }
 
 [giantspider]
@@ -135,6 +138,7 @@ RUNS
 RACE=6
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 5
 }
 
 //Terathans
@@ -169,6 +173,7 @@ TOPEACE=369 5
 RACE=26
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 8
 }
 
 [terawarrior]
@@ -204,6 +209,7 @@ RACE=26
 FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3300//Magic Items
+CUSTOMINTTAG=npcLevel 18
 }
 
 [teraavenger]
@@ -245,6 +251,7 @@ RACE=26
 FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3300//Magic Items
+CUSTOMINTTAG=npcLevel 38
 }
 
 [teramatriarch]
@@ -287,4 +294,5 @@ RACE=26
 FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3300//Magic Items
+CUSTOMINTTAG=npcLevel 30
 }

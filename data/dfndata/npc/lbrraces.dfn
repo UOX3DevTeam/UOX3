@@ -31,6 +31,7 @@ TOPEACE=726 5
 RACE=21
 FLAG=EVIL
 ORIGIN=lbr
+CUSTOMINTTAG=npcLevel 24
 }
 
 [jukalord]
@@ -69,6 +70,7 @@ FOOD=carnivore
 RACE=21
 FLAG=EVIL
 ORIGIN=lbr
+CUSTOMINTTAG=npcLevel 36
 }
 
 [jukamage]
@@ -108,6 +110,7 @@ FOOD=carnivore
 RACE=21
 FLAG=EVIL
 ORIGIN=lbr
+CUSTOMINTTAG=npcLevel 36
 }
 
 // Meer
@@ -148,6 +151,7 @@ RACE=20
 FLAG=NEUTRAL
 ORIGIN=lbr
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 38
 }
 
 [meerwarrior]
@@ -177,6 +181,7 @@ FOOD=carnivore
 RACE=20
 FLAG=GOOD
 ORIGIN=lbr
+CUSTOMINTTAG=npcLevel 15
 }
 
 [meercaptain]
@@ -208,6 +213,7 @@ FOOD=carnivore
 RACE=20
 FLAG=GOOD
 ORIGIN=lbr
+CUSTOMINTTAG=npcLevel 15
 }
 
 [meermage]
@@ -246,6 +252,7 @@ RACE=20
 FLAG=NEUTRAL
 ORIGIN=lbr
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 28
 }
 
 [blackthornjuggernaut]
@@ -281,6 +288,7 @@ NPCAI=2
 FLAG=EVIL
 ORIGIN=lbr
 SCRIPT=3511// Colossal Blow
+CUSTOMINTTAG=npcLevel 34
 }
 
 [betrayer]
@@ -320,5 +328,6 @@ ORIGIN=lbr
 SCRIPT=3503// Damage Aura
 SCRIPT=3511// Colossal Blow
 SCRIPT=3300// Random Magic Items
+CUSTOMINTTAG=npcLevel 36
 }
 

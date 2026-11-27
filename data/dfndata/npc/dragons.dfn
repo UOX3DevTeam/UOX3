@@ -41,6 +41,7 @@ CONTROLSLOTS=3
 RUNS
 SCRIPT=3300
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 38
 }
 
 [reddragon]
@@ -48,11 +49,13 @@ SCRIPT=3507
 GET=graydragon
 NAME=#//a dragon
 ID=0x003b
+CUSTOMINTTAG=npcLevel 38
 }
 
 [dragon]
 {
 GET=graydragon reddragon
+CUSTOMINTTAG=npcLevel 38
 }
 
 [graydrake]
@@ -93,6 +96,7 @@ FLAG=NEUTRAL
 CONTROLSLOTS=2
 RUNS
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 22
 }
 
 [reddrake]
@@ -100,11 +104,13 @@ SCRIPT=3300
 GET=graydrake
 NAME=#//a drake
 ID=0x003d
+CUSTOMINTTAG=npcLevel 22
 }
 
 [drake]
 {
 GET=graydrake reddrake
+CUSTOMINTTAG=npcLevel 22
 }
 
 [shadowwyrm]
@@ -148,6 +154,7 @@ CONTROLSLOTS=5
 ORIGIN=uor
 SCRIPT=3300
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 44
 }
 
 [whitewyrm]
@@ -188,6 +195,7 @@ RACE=12
 FLAG=NEUTRAL
 CONTROLSLOTS=3
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 42
 }
 
 [ancientwyrm]
@@ -227,6 +235,7 @@ RACE=12
 FLAG=EVIL
 SCRIPT=3300
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 46
 }
 
 [wyvern]
@@ -262,6 +271,7 @@ CARVE=96
 RACE=12
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 20
 }
 
 [serpentinedragon]
@@ -302,6 +312,7 @@ FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3300
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 36
 }
 
 [skeletaldragon]
@@ -342,5 +353,6 @@ CONTROLSLOTS=3
 ORIGIN=td
 SCRIPT=3300
 SCRIPT=3507
+CUSTOMINTTAG=npcLevel 44
 }
 

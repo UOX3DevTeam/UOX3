@@ -38,6 +38,7 @@ RUNS
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 4
 }
 
 [blackbear]
@@ -52,6 +53,7 @@ DEF=8
 TOPROV=310
 TOPEACE=310 5
 TOTAME=351
+CUSTOMINTTAG=npcLevel 4
 }
 
 [boar]
@@ -81,6 +83,7 @@ FOOD=boar
 CARVE=4
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 2
 }
 
 [bull]
@@ -111,6 +114,7 @@ FOOD=hay
 CARVE=5
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 4
 }
 
 [bullfrog]
@@ -142,6 +146,7 @@ CARVE=6
 RACE=9
 CONTROLSLOTS=1
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 2
 }
 
 [cat]
@@ -174,6 +179,7 @@ CARVE=7
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 1
 }
 
 [cougar]
@@ -206,6 +212,7 @@ CARVE=9
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 5
 }
 
 [cow]
@@ -236,6 +243,7 @@ CARVE=10
 RACE=9
 SCRIPT=3200
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 1
 }
 
 [dog]
@@ -268,6 +276,7 @@ CARVE=13
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 2
 }
 
 [goat]
@@ -297,6 +306,7 @@ FOOD=goat
 CARVE=20
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 1
 }
 
 [gorilla]
@@ -327,6 +337,7 @@ CARVE=21
 RUNS
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 5
 }
 
 [greywolf]
@@ -361,11 +372,13 @@ CARVE=23
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 4
 }
 
 [graywolf]
 {
 get=greywolf
+CUSTOMINTTAG=npcLevel 4
 }
 
 [grizbear]
@@ -397,6 +410,7 @@ RUNS
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 6
 }
 
 [hart]
@@ -427,6 +441,7 @@ RUNS
 CARVE=22
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 2
 }
 
 [hind]
@@ -459,6 +474,7 @@ CARVE=25
 RACE=9
 NPCAI=12
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 1
 }
 
 [jackrabbit]
@@ -474,6 +490,7 @@ DAMAGE=1 2
 DEF=2
 TOPROV=59
 TOPEACE=59 5
+CUSTOMINTTAG=npcLevel 1
 }
 
 [mountaingoat]
@@ -494,6 +511,7 @@ TACTICS=290 440
 WRESTLING=290 440
 TOPROV=260
 TOPEACE=260 5
+CUSTOMINTTAG=npcLevel 2
 }
 
 [packhorse]
@@ -524,6 +542,7 @@ RUNS
 CARVE=32
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 2
 }
 
 [packllama]
@@ -554,6 +573,7 @@ RUNS
 CARVE=33
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 2
 }
 
 [panther]
@@ -586,6 +606,7 @@ CARVE=34
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 4
 }
 
 [pig]
@@ -615,6 +636,7 @@ FOOD=boar
 CARVE=35
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 1
 }
 
 [polarbear]
@@ -646,6 +668,7 @@ RUNS
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 7
 }
 
 [rabbit]
@@ -679,6 +702,7 @@ CARVE=37
 RACE=9
 CONTROLSLOTS=1
 NPCAI=12
+CUSTOMINTTAG=npcLevel 1
 }
 
 [rat]
@@ -709,6 +733,7 @@ FOOD=rat
 CARVE=44
 RACE=23
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 1
 }
 
 [sheep]
@@ -739,6 +764,7 @@ CARVE=42
 RUNS
 RACE=9
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 1
 }
 
 [snowleopard]
@@ -772,6 +798,7 @@ CARVE=46
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 4
 }
 
 [timberwolf]
@@ -804,6 +831,7 @@ CARVE=23
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 4
 }
 
 [whitewolf]
@@ -837,6 +865,7 @@ CARVE=50
 RACE=8
 NPCAI=6
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 4
 }
 
 [silverwolf]
@@ -870,6 +899,7 @@ CARVE=12
 RACE=8
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+CUSTOMINTTAG=npcLevel 7
 }
 
 [squirrel]
@@ -898,6 +928,7 @@ RACE=9
 CONTROLSLOTS=1
 NPCAI=12
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 1
 }
 
 [ferret]
@@ -927,6 +958,7 @@ RACE=9
 CONTROLSLOTS=1
 NPCAI=12
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 2
 }
 
 //crane - Base NPC with shared DFN tags
@@ -951,6 +983,7 @@ GETML=crane_se
 GETSA=crane_se
 GETHS=crane_se
 GETTOL=crane_se
+CUSTOMINTTAG=npcLevel 3
 }
 
 //gaman - Base NPC with shared DFN tags
@@ -975,4 +1008,5 @@ GETML=gaman_se
 GETSA=gaman_se
 GETHS=gaman_se
 GETTOL=gaman_se
+CUSTOMINTTAG=npcLevel 6
 }

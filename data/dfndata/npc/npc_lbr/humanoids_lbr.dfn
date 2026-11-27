@@ -25,6 +25,7 @@ DAMAGE=3 9
 DEF=14
 TOPROV=241
 TOPEACE=241 5
+CUSTOMINTTAG=npcLevel 6
 }
 
 // Orc Captain - LBR stats (default)
@@ -46,6 +47,7 @@ DAMAGE=2 18
 DEF=17
 TOPROV=332
 TOPEACE=332 5
+CUSTOMINTTAG=npcLevel 7
 }
 
 // Orc Mage - LBR stats (default)
@@ -75,6 +77,7 @@ SPATTACK=6
 SPADELAY=10
 TOPROV=451
 TOPEACE=451 5
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Orc Lord - LBR stats (default)
@@ -99,6 +102,7 @@ DEF=15
 TOPROV=299
 TOPEACE=299 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 10
 }
 
 // Orc Bomber - LBR stats (default)
@@ -121,6 +125,7 @@ DAMAGE=1 8
 DEF=15
 TOPROV=2000
 TOPEACE=278 5
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Orc Scout - LBR stats (default)
@@ -143,6 +148,7 @@ DAMAGE=3 9
 DEF=14
 TOPROV=219
 TOPEACE=219 5
+CUSTOMINTTAG=npcLevel 7
 }
 
 // Orc Brute - LBR stats (default)
@@ -168,6 +174,7 @@ DEF=25
 TOPROV=618
 TOPEACE=618 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 16
 }
 
 // Orc Chopper - LBR stats (default)
@@ -194,6 +201,7 @@ DEF=15
 TOPROV=301
 TOPEACE=301 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Lizardman - LBR stats (default)
@@ -214,6 +222,7 @@ DAMAGE=3 9
 DEF=14
 TOPROV=301
 TOPEACE=301 5
+CUSTOMINTTAG=npcLevel 6
 }
 
 // Ratman - LBR stats (default)
@@ -234,6 +243,7 @@ DAMAGE=3 6
 DEF=14
 TOPROV=109
 TOPEACE=109 5
+CUSTOMINTTAG=npcLevel 6
 }
 
 // Ratman Mage - LBR stats (default)
@@ -257,6 +267,7 @@ DEF=22
 TOPROV=492
 TOPEACE=492 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Ratman Archer - LBR stats (default)
@@ -280,4 +291,5 @@ DEF=28
 TOPROV=360
 TOPEACE=360 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 7
 }

@@ -434,6 +434,14 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"LOGINTHROTTLEMAXDELAY", 421},
 	{"LOGINTHROTTLEENTRYTTL", 422},
 	{"PASSWORDHASHINGENABLED", 423},
+	{"LEVELSYSTEMENABLED", 424},
+	{"LEVELCAP", 425},
+	{"LEVELBASEEXPERIENCE", 426},
+	{"LEVELSTATPOINTSPERLEVEL", 427},
+	{"LEVELSYSTEMCRAFTING", 428},
+	{"MAXPRIMARYPROFESSIONS", 429},
+	{"ALLOWALLPROFESSIONS", 430},
+	{"PROFESSIONGAINRATE", 431},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -727,6 +735,14 @@ auto CServerData::ResetDefaults() -> void
 	ServerSkillTotalCap( 7000 );
 	ServerSkillCap( 1000 );
 	ServerStatCap( 225 );
+	LevelSystemEnabled( false );
+	LevelCap( 50 );
+	LevelBaseExperience( 1000 );
+	LevelStatPointsPerLevel( 3 );
+	LevelSystemCrafting( true );
+	MaxPrimaryProfessions( 2 );
+	AllowAllProfessions( false );
+	ProfessionGainRate( 1.0f );
 	StatsAffectSkillChecks( false );
 	PlayerCorpseLootDecay( true );
 	NpcCorpseLootDecay( true );
@@ -5847,6 +5863,14 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SKILLCAPSINGLE=" << ServerSkillCapStatus() << '\n';
 		ofsOutput << "SKILLDELAY=" << static_cast<UI16>( ServerSkillDelayStatus() ) << '\n';
 		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
+		ofsOutput << "LEVELSYSTEMENABLED=" << ( LevelSystemEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "LEVELCAP=" << LevelCap() << '\n';
+		ofsOutput << "LEVELBASEEXPERIENCE=" << LevelBaseExperience() << '\n';
+		ofsOutput << "LEVELSTATPOINTSPERLEVEL=" << LevelStatPointsPerLevel() << '\n';
+		ofsOutput << "LEVELSYSTEMCRAFTING=" << ( LevelSystemCrafting() ? 1 : 0 ) << '\n';
+		ofsOutput << "MAXPRIMARYPROFESSIONS=" << static_cast<UI16>( MaxPrimaryProfessions() ) << '\n';
+		ofsOutput << "ALLOWALLPROFESSIONS=" << ( AllowAllProfessions() ? 1 : 0 ) << '\n';
+		ofsOutput << "PROFESSIONGAINRATE=" << ProfessionGainRate() << '\n';
 		ofsOutput << "STATSAFFECTSKILLCHECKS=" << ( StatsAffectSkillChecks() ? 1 : 0 ) << '\n';
 		ofsOutput << "EXTENDEDSTARTINGSTATS=" << ( ExtendedStartingStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "EXTENDEDSTARTINGSKILLS=" << ( ExtendedStartingSkills() ? 1 : 0 ) << '\n';
@@ -7803,6 +7827,30 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 423: // PASSWORDHASHINGENABLED
 			PasswordHashingEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 424: // LEVELSYSTEMENABLED
+			LevelSystemEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 425: // LEVELCAP
+			LevelCap( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 426: // LEVELBASEEXPERIENCE
+			LevelBaseExperience( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 427: // LEVELSTATPOINTSPERLEVEL
+			LevelStatPointsPerLevel( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 428: // LEVELSYSTEMCRAFTING
+			LevelSystemCrafting( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 429: // MAXPRIMARYPROFESSIONS
+			MaxPrimaryProfessions( static_cast<UI08>( std::min<UI32>( std::stoul( value, nullptr, 0 ), std::numeric_limits<UI08>::max() )));
+			break;
+		case 430: // ALLOWALLPROFESSIONS
+			AllowAllProfessions( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 431: // PROFESSIONGAINRATE
+			ProfessionGainRate( static_cast<R32>( std::stod( value )));
 			break;
 		default:
 			rValue = false;

@@ -57,7 +57,9 @@
 #include "combat.h"
 #include "StringUtility.hpp"
 #include "cEffects.h"
+#include "PartySystem.h"
 #include <algorithm>
+#include <cmath>
 
 void RestockNPC( CChar &i, bool stockAll );
 
@@ -154,13 +156,18 @@ const UI16			DEFPLAYER_CONTROLSLOTSUSED	= 0;
 const TIMERVAL		DEFPLAYER_CREATEDON			= 0;
 const UI32			DEFPLAYER_NPCGUILDJOINED	= 0;
 const UI32			DEFPLAYER_PLAYTIME			= 0;
+const UI16			DEFPLAYER_LEVEL				= 1;
+const UI08			DEFPLAYER_LEVELCLASS			= CC_NONE;
+const UI64			DEFPLAYER_EXPERIENCE			= 0;
+const UI16			DEFPLAYER_UNSPENTSTATPOINTS	= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( nullptr ), speechMode( DEFPLAYER_SPEECHMODE ), speechId( DEFPLAYER_SPEECHID ),
 speechCallback( nullptr ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origId( DEFPLAYER_ORIGID ),
 fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townVote( DEFPLAYER_TOWNVOTE ), townPriv( DEFPLAYER_TOWNPRIV ), controlSlotsUsed( DEFPLAYER_CONTROLSLOTSUSED ),
-createdOn( DEFPLAYER_CREATEDON ), npcGuildJoined( DEFPLAYER_NPCGUILDJOINED ), playTime( DEFPLAYER_PLAYTIME )
+createdOn( DEFPLAYER_CREATEDON ), npcGuildJoined( DEFPLAYER_NPCGUILDJOINED ), playTime( DEFPLAYER_PLAYTIME ), level( DEFPLAYER_LEVEL ), levelClass( DEFPLAYER_LEVELCLASS ),
+experience( DEFPLAYER_EXPERIENCE ), unspentStatPoints( DEFPLAYER_UNSPENTSTATPOINTS )
 {
 	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot
@@ -2182,7 +2189,14 @@ SKILLVAL CChar::GetBaseSkill( UI08 skillToGet ) const
 	SKILLVAL rVal = 0;
 	if( skillToGet < ALLSKILLS )
 	{
-		rVal = baseskill[skillToGet];
+		if( IsValidPlayer() && cwmWorldState->ServerData()->LevelSystemEnabled() )
+		{
+			rVal = GetLevelSkillValue( skillToGet );
+		}
+		else
+		{
+			rVal = baseskill[skillToGet];
+		}
 	}
 	return rVal;
 }
@@ -2229,11 +2243,12 @@ SKILLVAL CChar::GetSkill( UI08 skillToGet ) const
 	SKILLVAL rVal = 0;
 	if( skillToGet <= INTELLECT )
 	{
-		rVal			= skill[skillToGet];
+		rVal			= ( IsValidPlayer() && skillToGet < ALLSKILLS && cwmWorldState->ServerData()->LevelSystemEnabled() ) ?
+			GetLevelSkillValue( skillToGet ) : skill[skillToGet];
 		SI32 modifier	= Races->DamageFromSkill( skillToGet, race );
 		if( modifier != 0 )
 		{
-			SKILLVAL toAdd	= static_cast<SKILLVAL>( static_cast<R32>( skill[skillToGet] ) * ( static_cast<R32>( modifier ) / 1000 ));		// percentage to add
+			SKILLVAL toAdd	= static_cast<SKILLVAL>( static_cast<R32>( rVal ) * ( static_cast<R32>( modifier ) / 1000 ));		// percentage to add
 			rVal			+= toAdd; // return the bonus
 		}
 	}
@@ -2657,6 +2672,12 @@ void CChar::CopyData( CChar *target )
 	target->SetLastOn( GetLastOn() );
 	target->SetLastOnSecs( GetLastOnSecs() );
 	target->SetPlayTime( GetPlayTime() );
+	target->SetLevel( GetLevel() );
+	target->SetLevelClass( GetLevelClass(), true );
+	target->SetExperience( GetExperience() );
+	target->SetUnspentStatPoints( GetUnspentStatPoints() );
+	if( IsValidPlayer() && target->IsValidPlayer() )
+		target->mPlayer->professions = mPlayer->professions;
 	target->SetGuildTitle( guildTitle );
 	target->SetGuildFealty( guildFealty );
 	target->SetGuildNumber( guildNumber );
@@ -3500,7 +3521,8 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	outStream << "BaseSkills=";
 	for( UI08 bsc = 0; bsc < ALLSKILLS; ++bsc )
 	{
-		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "," + std::to_string( skillCap[bsc] ) + "]-";
+		// Persist the legacy value, not the virtual proficiency supplied by level mode.
+		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( baseskill[bsc] ) + "," + std::to_string( skillCap[bsc] ) + "]-";
 	}
 	outStream << "[END]" << newLine;
 
@@ -3629,6 +3651,12 @@ void CChar::PlayerValues_st::DumpBody( std::ostream& outStream )
 	outStream << "LastOnSecs=" + std::to_string( lastOnSecs ) + newLine;
 	outStream << "CreatedOn=" + std::to_string( createdOn ) + newLine;
 	outStream << "PlayTime=" + std::to_string( playTime ) + newLine;
+	outStream << "Level=" + std::to_string( level ) + newLine;
+	outStream << "LevelClass=" + std::to_string( levelClass ) + newLine;
+	outStream << "Experience=" + std::to_string( experience ) + newLine;
+	outStream << "UnspentStatPoints=" + std::to_string( unspentStatPoints ) + newLine;
+	for( const auto &profession : professions )
+		outStream << "Profession=" + std::to_string( profession.professionId ) + "," + std::to_string( profession.experience ) + newLine;
 	outStream << "OrgName=" + origName + newLine;
 	outStream << "CommandLevel=" + std::to_string( commandLevel ) + newLine;	// command level
 	outStream << "Squelched=" + std::to_string( squelched ) + newLine;
@@ -4169,7 +4197,8 @@ UI16 CChar::GetMaxHP( void )
 		oldRace			= GetRace();
 
 	}
-	return maxHP + GetHealthBonus();
+	const SI32 totalMaxHP = static_cast<SI32>( maxHP ) + GetHealthBonus() + GetLevelHealthBonus();
+	return static_cast<UI16>( std::clamp<SI32>( totalMaxHP, 0, std::numeric_limits<UI16>::max() ));
 }
 void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 {
@@ -4229,7 +4258,8 @@ SI16 CChar::GetMaxMana( void )
 		oldRace			= GetRace();
 
 	}
-	return maxMana + GetManaBonus();
+	const SI32 totalMaxMana = static_cast<SI32>( maxMana ) + GetManaBonus() + GetLevelManaBonus();
+	return static_cast<SI16>( std::clamp<SI32>( totalMaxMana, 0, std::numeric_limits<SI16>::max() ));
 }
 void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 {
@@ -4289,7 +4319,8 @@ SI16 CChar::GetMaxStam( void )
 		oldRace			= GetRace();
 
 	}
-	return maxStam + GetStaminaBonus();
+	const SI32 totalMaxStamina = static_cast<SI32>( maxStam ) + GetStaminaBonus() + GetLevelStaminaBonus();
+	return static_cast<SI16>( std::clamp<SI32>( totalMaxStamina, 0, std::numeric_limits<SI16>::max() ));
 }
 void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 {
@@ -4770,7 +4801,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'E':
-				if( UTag == "EMOTION" )
+				if( UTag == "EXPERIENCE" )
+				{
+					SetExperience( static_cast<UI64>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "EMOTION" )
 				{
 					SetEmoteColour( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
@@ -4913,7 +4949,17 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'L':
-				if( UTag == "LASTON" )
+				if( UTag == "LEVELCLASS" )
+				{
+					SetLevelClass( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )), true );
+					rValue = true;
+				}
+				else if( UTag == "LEVEL" )
+				{
+					SetLevel( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "LASTON" )
 				{
 					SetLastOn( data );
 					rValue = true;
@@ -5032,7 +5078,15 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'P':
-				if( UTag == "PRIVILEGES" )
+				if( UTag == "PROFESSION" && csecs.size() >= 2 )
+				{
+					const UI32 professionId = std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 );
+					const UI64 professionExperience = std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 );
+					if( professionId > 0 && professionId <= std::numeric_limits<UI08>::max() )
+						SetProfessionExperience( static_cast<UI08>( professionId ), professionExperience, true );
+					rValue = true;
+				}
+				else if( UTag == "PRIVILEGES" )
 				{
 					SetPriv( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
@@ -5290,6 +5344,13 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "THIRST" )
 				{
 					SetThirst( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				break;
+			case 'U':
+				if( UTag == "UNSPENTSTATPOINTS" )
+				{
+					SetUnspentStatPoints( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -6491,6 +6552,460 @@ auto CChar::SetPlayTime( UI32 newValue ) -> void
 		mPlayer->playTime = newValue;
 		UpdateRegion();
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar level-system accessors and progression helpers
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Stores persistent level progress and derives virtual skill proficiency
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetLevel() const -> UI16
+{
+	if( IsValidPlayer() )
+		return mPlayer->level;
+
+	// NPC levels exist only while level mode is active. An explicit npcLevel tag
+	// takes precedence; zero hides the level for that NPC. Otherwise fame acts as
+	// the existing shard data's combat-difficulty signal, at 300 fame per level.
+	if( IsNpc() && cwmWorldState->ServerData()->LevelSystemEnabled() )
+	{
+		const auto tagMap = GetTagMap();
+		const auto npcLevelTag = tagMap.find( "npcLevel" );
+		if( npcLevelTag != tagMap.end() && npcLevelTag->second.m_ObjectType == TAGMAP_TYPE_INT )
+		{
+			if( npcLevelTag->second.m_IntValue <= 0 )
+				return 0;
+			return static_cast<UI16>( std::min<SI32>( npcLevelTag->second.m_IntValue, std::numeric_limits<UI16>::max() ));
+		}
+
+		const UI32 positiveFame = static_cast<UI32>( std::max<SI32>( 0, GetFame() ));
+		const UI32 derivedLevel = std::max<UI32>( 1, ( positiveFame + 299 ) / 300 );
+		return static_cast<UI16>( std::min<UI32>( derivedLevel, cwmWorldState->ServerData()->LevelCap() ));
+	}
+
+	return 0;
+}
+
+auto CChar::SetLevel( UI16 newValue ) -> void
+{
+	if( IsValidPlayer() )
+	{
+		// Do not clamp persisted progress to the current shard cap. This keeps the
+		// level data reversible when level mode is disabled or its cap is lowered.
+		mPlayer->level = std::max<UI16>( newValue, 1 );
+		UpdateRegion();
+	}
+}
+
+auto CChar::GetLevelClass() const -> UI08
+{
+	return IsValidPlayer() ? mPlayer->levelClass : CC_NONE;
+}
+
+auto CChar::SetLevelClass( UI08 newValue, bool forceChange ) -> bool
+{
+	if( !IsValidPlayer() || ( newValue != CC_NONE && Races->LevelClass( newValue ) == nullptr ))
+		return false;
+
+	// Players make one permanent selection. Trusted administration scripts can
+	// explicitly force a respec or clear the selection for migration/testing.
+	if( !forceChange && ( newValue == CC_NONE || mPlayer->levelClass != CC_NONE ))
+		return false;
+
+	mPlayer->levelClass = newValue;
+	UpdateRegion();
+	return true;
+}
+
+auto CChar::GetExperience() const -> UI64
+{
+	return IsValidPlayer() ? mPlayer->experience : 0;
+}
+
+auto CChar::SetExperience( UI64 newValue ) -> void
+{
+	if( IsValidPlayer() )
+	{
+		mPlayer->experience = newValue;
+		UpdateRegion();
+	}
+}
+
+auto CChar::GetExperienceRequiredForLevel( UI16 targetLevel ) const -> UI64
+{
+	if( targetLevel <= 1 )
+		return 0;
+
+	const UI64 completedLevels = static_cast<UI64>( targetLevel - 1 );
+	return static_cast<UI64>( cwmWorldState->ServerData()->LevelBaseExperience() ) * completedLevels * ( completedLevels + 1 ) / 2;
+}
+
+auto CChar::GetExperienceToNextLevel() const -> UI64
+{
+	if( !IsValidPlayer() || GetLevel() >= cwmWorldState->ServerData()->LevelCap() )
+		return 0;
+
+	const UI64 nextLevelExperience = GetExperienceRequiredForLevel( GetLevel() + 1 );
+	return ( GetExperience() >= nextLevelExperience ? 0 : nextLevelExperience - GetExperience() );
+}
+
+auto CChar::GetUnspentStatPoints() const -> UI16
+{
+	return IsValidPlayer() ? mPlayer->unspentStatPoints : 0;
+}
+
+auto CChar::SetUnspentStatPoints( UI16 newValue ) -> void
+{
+	if( IsValidPlayer() )
+	{
+		mPlayer->unspentStatPoints = newValue;
+		UpdateRegion();
+	}
+}
+
+auto CChar::AddExperience( UI64 amount ) -> UI16
+{
+	if( !IsValidPlayer() || !cwmWorldState->ServerData()->LevelSystemEnabled() || GetLevelClass() == CC_NONE || amount == 0 )
+		return 0;
+
+	const UI16 levelCap = cwmWorldState->ServerData()->LevelCap();
+	if( GetLevel() >= levelCap )
+		return 0;
+	const UI16 startingLevel = GetLevel();
+
+	if( std::numeric_limits<UI64>::max() - mPlayer->experience < amount )
+		mPlayer->experience = std::numeric_limits<UI64>::max();
+	else
+		mPlayer->experience += amount;
+
+	UI16 levelsGained = 0;
+	while( mPlayer->level < levelCap && mPlayer->experience >= GetExperienceRequiredForLevel( mPlayer->level + 1 ))
+	{
+		++mPlayer->level;
+		++levelsGained;
+		const UI32 newPoints = static_cast<UI32>( mPlayer->unspentStatPoints ) + cwmWorldState->ServerData()->LevelStatPointsPerLevel();
+		mPlayer->unspentStatPoints = static_cast<UI16>( std::min<UI32>( newPoints, std::numeric_limits<UI16>::max() ));
+	}
+
+	if( mPlayer->level >= levelCap )
+		mPlayer->experience = GetExperienceRequiredForLevel( levelCap );
+
+	if( mPlayer->socket != nullptr )
+	{
+		mPlayer->socket->SysMessage( "You gain " + std::to_string( amount ) + " experience." );
+		if( levelsGained > 0 )
+		{
+			mPlayer->socket->SysMessage( "You have reached level " + std::to_string( mPlayer->level ) + "." );
+			const CLevelClass *levelClass = Races->LevelClass( GetLevelClass() );
+			if( levelClass != nullptr )
+			{
+				for( UI16 abilityIndex = 0; abilityIndex < levelClass->AbilityCount(); ++abilityIndex )
+				{
+					const CLevelClassAbility *ability = levelClass->Ability( abilityIndex );
+					if( ability != nullptr && ability->RequiredLevel() > startingLevel && ability->RequiredLevel() <= mPlayer->level )
+						mPlayer->socket->SysMessage( "New class ability unlocked: " + ability->Name() + "." );
+				}
+			}
+		}
+	}
+
+	UpdateRegion();
+	return levelsGained;
+}
+
+auto CChar::SpendLevelStatPoint( UI08 statId ) -> bool
+{
+	if( !IsValidPlayer() || !cwmWorldState->ServerData()->LevelSystemEnabled() || mPlayer->unspentStatPoints == 0 )
+		return false;
+
+	const SI32 totalStats = GetStrength() + GetDexterity() + GetIntelligence();
+	if( totalStats >= cwmWorldState->ServerData()->ServerStatCapStatus() )
+		return false;
+
+	switch( statId )
+	{
+		case 0: SetStrength( GetStrength() + 1 ); break;
+		case 1: SetDexterity( GetDexterity() + 1 ); break;
+		case 2: SetIntelligence( GetIntelligence() + 1 ); break;
+		default: return false;
+	}
+
+	--mPlayer->unspentStatPoints;
+	UpdateRegion();
+	return true;
+}
+
+auto CChar::SetLevelProgress( UI16 newLevel ) -> bool
+{
+	if( !IsValidPlayer() )
+		return false;
+
+	const UI16 oldLevel = GetLevel();
+	const UI16 targetLevel = std::clamp<UI16>( newLevel, 1, cwmWorldState->ServerData()->LevelCap() );
+	mPlayer->level = targetLevel;
+	mPlayer->experience = GetExperienceRequiredForLevel( targetLevel );
+	if( targetLevel > oldLevel )
+	{
+		const UI32 earnedPoints = static_cast<UI32>( targetLevel - oldLevel ) * cwmWorldState->ServerData()->LevelStatPointsPerLevel();
+		const UI32 newPoints = static_cast<UI32>( mPlayer->unspentStatPoints ) + earnedPoints;
+		mPlayer->unspentStatPoints = static_cast<UI16>( std::min<UI32>( newPoints, std::numeric_limits<UI16>::max() ));
+	}
+	UpdateRegion();
+	return true;
+}
+
+auto CChar::ResetLevelProgress( bool clearClass ) -> void
+{
+	if( !IsValidPlayer() )
+		return;
+
+	mPlayer->level = 1;
+	mPlayer->experience = 0;
+	mPlayer->unspentStatPoints = 0;
+	if( clearClass )
+		mPlayer->levelClass = CC_NONE;
+	UpdateRegion();
+}
+
+namespace
+{
+	auto ScaledLevelBonus( UI16 level, UI16 multiplier ) -> UI16
+	{
+		const UI32 bonus = static_cast<UI32>( level > 0 ? level - 1 : 0 ) * multiplier;
+		return static_cast<UI16>( std::min<UI32>( bonus, std::numeric_limits<UI16>::max() ));
+	}
+}
+
+auto CChar::GetLevelSkillValue( UI08 skillToGet ) const -> SKILLVAL
+{
+	if( !IsValidPlayer() || skillToGet >= ALLSKILLS )
+		return 0;
+
+	if( cwmWorldState->ServerData()->LevelSystemCrafting() && Races->ProfessionForSkill( skillToGet ) != nullptr )
+		return GetProfessionSkillValue( skillToGet );
+
+	if( GetLevelClass() == CC_NONE )
+		return 0;
+
+	const CLevelClass *levelClass = Races->LevelClass( GetLevelClass() );
+	return ( levelClass == nullptr ? 0 : levelClass->SkillValue( skillToGet, GetLevel(), cwmWorldState->ServerData()->LevelCap(), cwmWorldState->ServerData()->ServerSkillCapStatus() ));
+}
+
+auto CChar::GetProfessionCount() const -> UI08
+{
+	return ( IsValidPlayer() ? static_cast<UI08>( std::min<size_t>( mPlayer->professions.size(), std::numeric_limits<UI08>::max() )) : 0 );
+}
+
+auto CChar::GetPrimaryProfessionCount() const -> UI08
+{
+	if( !IsValidPlayer() )
+		return 0;
+	const size_t count = std::count_if( mPlayer->professions.begin(), mPlayer->professions.end(), []( const PlayerValues_st::ProfessionProgress_st &entry )
+	{
+		const CLevelProfession *definition = Races->LevelProfession( entry.professionId );
+		return definition != nullptr && definition->IsPrimary();
+	} );
+	return static_cast<UI08>( std::min<size_t>( count, std::numeric_limits<UI08>::max() ));
+}
+
+auto CChar::GetProfessionId( UI08 slot ) const -> UI08
+{
+	return ( IsValidPlayer() && slot < mPlayer->professions.size() ? mPlayer->professions[slot].professionId : 0 );
+}
+
+auto CChar::HasProfession( UI08 professionId ) const -> bool
+{
+	if( !IsValidPlayer() || professionId == 0 )
+		return false;
+	return std::any_of( mPlayer->professions.begin(), mPlayer->professions.end(), [professionId]( const PlayerValues_st::ProfessionProgress_st &profession )
+	{
+		return profession.professionId == professionId;
+	} );
+}
+
+auto CChar::CanUseProfessionSkill( UI08 skillId ) const -> bool
+{
+	if( IsNpc() || !cwmWorldState->ServerData()->LevelSystemEnabled() || !cwmWorldState->ServerData()->LevelSystemCrafting() )
+		return true;
+	const CLevelProfession *definition = Races->ProfessionForSkill( skillId );
+	return definition == nullptr || HasProfession( definition->Id() );
+}
+
+auto CChar::LearnProfession( UI08 professionId, bool forceLearn ) -> bool
+{
+	const CLevelProfession *definition = Races->LevelProfession( professionId );
+	if( !IsValidPlayer() || definition == nullptr )
+		return false;
+	if( HasProfession( professionId ))
+		return true;
+
+	if( !forceLearn )
+	{
+		if( !cwmWorldState->ServerData()->LevelSystemEnabled() || !cwmWorldState->ServerData()->LevelSystemCrafting() || GetLevelClass() == CC_NONE )
+			return false;
+		if( definition->IsPrimary() && !cwmWorldState->ServerData()->AllowAllProfessions() &&
+			GetPrimaryProfessionCount() >= cwmWorldState->ServerData()->MaxPrimaryProfessions() )
+			return false;
+	}
+
+	mPlayer->professions.push_back({ professionId, 0 });
+	UpdateRegion();
+	return true;
+}
+
+auto CChar::ForgetProfession( UI08 professionId ) -> bool
+{
+	if( !IsValidPlayer() )
+		return false;
+	const auto profession = std::find_if( mPlayer->professions.begin(), mPlayer->professions.end(), [professionId]( const PlayerValues_st::ProfessionProgress_st &entry )
+	{
+		return entry.professionId == professionId;
+	} );
+	if( profession == mPlayer->professions.end() )
+		return false;
+	mPlayer->professions.erase( profession );
+	UpdateRegion();
+	return true;
+}
+
+auto CChar::ResetProfessions() -> void
+{
+	if( IsValidPlayer() )
+	{
+		mPlayer->professions.clear();
+		UpdateRegion();
+	}
+}
+
+auto CChar::GetProfessionExperience( UI08 professionId ) const -> UI64
+{
+	if( !IsValidPlayer() )
+		return 0;
+	const auto profession = std::find_if( mPlayer->professions.begin(), mPlayer->professions.end(), [professionId]( const PlayerValues_st::ProfessionProgress_st &entry )
+	{
+		return entry.professionId == professionId;
+	} );
+	return ( profession == mPlayer->professions.end() ? 0 : profession->experience );
+}
+
+auto CChar::SetProfessionExperience( UI08 professionId, UI64 experience, bool forceLearn ) -> bool
+{
+	if( !IsValidPlayer() )
+		return false;
+	const CLevelProfession *definition = Races->LevelProfession( professionId );
+	if( definition == nullptr )
+		return false;
+	if( !HasProfession( professionId ) && !LearnProfession( professionId, forceLearn ))
+		return false;
+
+	for( auto &profession : mPlayer->professions )
+	{
+		if( profession.professionId == professionId )
+		{
+			profession.experience = std::min<UI64>( experience, definition->MaxExperience() );
+			UpdateRegion();
+			return true;
+		}
+	}
+	return false;
+}
+
+auto CChar::GetProfessionProficiency( UI08 professionId ) const -> SKILLVAL
+{
+	const CLevelProfession *definition = Races->LevelProfession( professionId );
+	return ( definition != nullptr && HasProfession( professionId ) ? definition->ProficiencyFromExperience( GetProfessionExperience( professionId )) : 0 );
+}
+
+auto CChar::SetProfessionProficiency( UI08 professionId, SKILLVAL proficiency, bool forceLearn ) -> bool
+{
+	const CLevelProfession *definition = Races->LevelProfession( professionId );
+	return ( definition != nullptr ? SetProfessionExperience( professionId, definition->ExperienceForProficiency( proficiency ), forceLearn ) : false );
+}
+
+auto CChar::GetProfessionSkillValue( UI08 skillToGet ) const -> SKILLVAL
+{
+	const CLevelProfession *definition = Races->ProfessionForSkill( skillToGet );
+	return ( definition == nullptr ? 0 : GetProfessionProficiency( definition->Id() ));
+}
+
+auto CChar::AddProfessionExperience( UI08 skillId, UI16 minSkill, UI16 maxSkill ) -> UI64
+{
+	if( !IsValidPlayer() || !cwmWorldState->ServerData()->LevelSystemEnabled() || !cwmWorldState->ServerData()->LevelSystemCrafting() )
+		return 0;
+
+	const CLevelProfession *definition = Races->ProfessionForSkill( skillId );
+	if( definition == nullptr || !HasProfession( definition->Id() ))
+		return 0;
+
+	const SKILLVAL currentValue = GetProfessionProficiency( definition->Id() );
+	const SKILLVAL difficultyMinimum = std::min<SKILLVAL>( minSkill, definition->MaxValue() );
+	const SKILLVAL difficultyMaximum = std::min<SKILLVAL>( std::max<UI16>( maxSkill, minSkill + 1 ), definition->MaxValue() );
+	if( currentValue < difficultyMinimum || currentValue >= difficultyMaximum || currentValue >= definition->MaxValue() )
+		return 0;
+
+	const UI32 difficultyRange = std::max<UI32>( 1, difficultyMaximum - difficultyMinimum );
+	const UI32 progressInRange = currentValue - difficultyMinimum;
+	UI64 baseExperience = 100; // Green recipe: 0.1 proficiency at the default data rate.
+	if( progressInRange * 3 < difficultyRange )
+		baseExperience = 300; // Orange recipe.
+	else if( progressInRange * 3 < difficultyRange * 2 )
+		baseExperience = 200; // Yellow recipe.
+
+	const R64 scaledExperience = static_cast<R64>( baseExperience ) * cwmWorldState->ServerData()->ProfessionGainRate();
+	if( scaledExperience <= 0.0 )
+		return 0;
+	const UI64 experienceAward = static_cast<UI64>( std::llround( scaledExperience ));
+	if( experienceAward == 0 )
+		return 0;
+
+	const UI64 oldExperience = GetProfessionExperience( definition->Id() );
+	const UI64 newExperience = std::min<UI64>( definition->MaxExperience(), oldExperience + experienceAward );
+	const UI64 actualAward = newExperience - oldExperience;
+	if( actualAward == 0 || !SetProfessionExperience( definition->Id(), newExperience ))
+		return 0;
+
+	const SKILLVAL newValue = GetProfessionProficiency( definition->Id() );
+	if( mPlayer->socket != nullptr && newValue > currentValue )
+	{
+		const std::string displayedValue = oldstrutil::format( "%.1f", static_cast<R64>( newValue ) / 10.0 );
+		if( newValue >= definition->MaxValue() )
+			mPlayer->socket->SysMessage( "You have mastered " + definition->Name() + " at " + displayedValue + "." );
+		else
+			mPlayer->socket->SysMessage( "Your " + definition->Name() + " proficiency increases to " + displayedValue + "." );
+	}
+	return actualAward;
+}
+
+auto CChar::AddProfessionCraftExperience( UI08 skillId, UI16 minSkill, UI16 maxSkill ) -> UI64
+{
+	return AddProfessionExperience( skillId, minSkill, maxSkill );
+}
+
+auto CChar::GetLevelHealthBonus() const -> UI16
+{
+	if( !IsValidPlayer() || !cwmWorldState->ServerData()->LevelSystemEnabled() )
+		return 0;
+
+	const CLevelClass *levelClass = Races->LevelClass( GetLevelClass() );
+	return ( levelClass == nullptr ? 0 : ScaledLevelBonus( GetLevel(), levelClass->HealthPerLevel() ));
+}
+
+auto CChar::GetLevelManaBonus() const -> UI16
+{
+	if( !IsValidPlayer() || !cwmWorldState->ServerData()->LevelSystemEnabled() )
+		return 0;
+
+	const CLevelClass *levelClass = Races->LevelClass( GetLevelClass() );
+	return ( levelClass == nullptr ? 0 : ScaledLevelBonus( GetLevel(), levelClass->ManaPerLevel() ));
+}
+
+auto CChar::GetLevelStaminaBonus() const -> UI16
+{
+	if( !IsValidPlayer() || !cwmWorldState->ServerData()->LevelSystemEnabled() )
+		return 0;
+
+	const CLevelClass *levelClass = Races->LevelClass( GetLevelClass() );
+	return ( levelClass == nullptr ? 0 : ScaledLevelBonus( GetLevel(), levelClass->StaminaPerLevel() ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9701,6 +10216,64 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 				// OnKill: attacker side notification that a kill is happening.
 				// Death is guaranteed at this point; return value is ignored.
 				toExecute->OnKill( attacker, this );
+			}
+		}
+
+		// Level-system experience is awarded for unowned NPC kills. Pet and summon
+		// damage is credited to the owning player; PvP and owned NPC kills do not pay XP.
+		if( cwmWorldState->ServerData()->LevelSystemEnabled() && IsNpc() && !IsTamed() && !ValidateObject( GetOwnerObj() ))
+		{
+			CChar *experienceRecipient = attacker;
+			if( attacker->IsNpc() && ValidateObject( attacker->GetOwnerObj() ) && !attacker->GetOwnerObj()->IsNpc() )
+				experienceRecipient = attacker->GetOwnerObj();
+
+			if( ValidateObject( experienceRecipient ) && !experienceRecipient->IsNpc() && experienceRecipient != this )
+			{
+				UI64 experienceReward = static_cast<UI64>( std::max<SI32>( 1, std::max<SI32>( 0, GetFame() ) / 10 ));
+				const auto tagMap = GetTagMap();
+				const auto levelExperienceTag = tagMap.find( "levelXP" );
+				if( levelExperienceTag != tagMap.end() && levelExperienceTag->second.m_ObjectType == TAGMAP_TYPE_INT )
+					experienceReward = static_cast<UI64>( std::max<SI32>( 0, levelExperienceTag->second.m_IntValue ));
+
+				if( experienceReward > 0 )
+				{
+					std::vector<CChar *> eligiblePlayers;
+					Party *recipientParty = PartyFactory::GetSingleton().Get( experienceRecipient );
+					if( recipientParty != nullptr )
+					{
+						for( CPartyEntry *entry : *recipientParty->MemberList() )
+						{
+							CChar *partyMember = ( entry != nullptr ? entry->Member() : nullptr );
+							if( ValidateObject( partyMember ) && !partyMember->IsNpc() && partyMember->GetSocket() != nullptr &&
+								partyMember->WorldNumber() == WorldNumber() && partyMember->GetInstanceId() == GetInstanceId() &&
+								ObjInRange( partyMember, this, DIST_SAMESCREEN ))
+							{
+								eligiblePlayers.push_back( partyMember );
+							}
+						}
+					}
+
+					if( std::find( eligiblePlayers.begin(), eligiblePlayers.end(), experienceRecipient ) == eligiblePlayers.end() )
+						eligiblePlayers.push_back( experienceRecipient );
+
+					// Each additional nearby party member adds 10% group XP, capped at 50%,
+					// before the reward is divided evenly. Any remainder goes to the killer.
+					const UI64 groupBonusPercent = 100 + std::min<size_t>( eligiblePlayers.size() > 0 ? eligiblePlayers.size() - 1 : 0, 5 ) * 10;
+					const UI64 groupExperience = experienceReward * groupBonusPercent / 100;
+					const UI64 sharedExperience = groupExperience / eligiblePlayers.size();
+					UI64 remainder = groupExperience % eligiblePlayers.size();
+					for( CChar *player : eligiblePlayers )
+					{
+						UI64 playerExperience = sharedExperience;
+						if( player == experienceRecipient )
+						{
+							playerExperience += remainder;
+							remainder = 0;
+						}
+						if( playerExperience > 0 )
+							player->AddExperience( playerExperience );
+					}
+				}
 			}
 		}
 

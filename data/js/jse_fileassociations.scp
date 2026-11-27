@@ -123,6 +123,7 @@
 2506=server/data/material_types.js
 2507=server/misc/facetRuleset.js
 2508=server/misc/facetChange.js
+2509=server/level_system.js
 
 // Server Teleporters [2750-2999]
 2750=server/teleporter/teleporter_wind_city_entrance.js
@@ -512,6 +513,7 @@
 1069=commands/em.js
 1070=commands/champion_spawn_cmd.js
 1071=commands/testjsbindings.js
+1072=commands/level_system_commands.js
 }
 
 //-------------------------------------------

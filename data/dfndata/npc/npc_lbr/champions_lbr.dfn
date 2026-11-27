@@ -30,6 +30,7 @@ DAMAGE=14 46
 DEF=35 35
 TOPROV=1600
 TOPEACE=1600 5
+CUSTOMINTTAG=npcLevel 50
 }
 
 // lord oaks - lbr stats
@@ -61,6 +62,7 @@ DAMAGE=9 45
 DEF=50 50
 TOPROV=1600
 TOPEACE=1600 5
+CUSTOMINTTAG=npcLevel 50
 }
 
 // rikktor - lbr stats
@@ -90,6 +92,7 @@ DAMAGE=13 70
 DEF=65 65
 TOPROV=1600
 TOPEACE=1600 5
+CUSTOMINTTAG=npcLevel 50
 }
 
 // semidar - lbr stats
@@ -119,6 +122,7 @@ DAMAGE=11 53
 DEF=35 35
 TOPROV=1600
 TOPEACE=1600 5
+CUSTOMINTTAG=npcLevel 50
 }
 
 // silvani - lbr stats
@@ -148,6 +152,7 @@ DAMAGE=10 55
 DEF=25 25
 TOPROV=1042
 TOPEACE=990 5
+CUSTOMINTTAG=npcLevel 50
 }
 
 // dragon turtle - lbr stats
@@ -177,4 +182,5 @@ DAMAGE=15 35
 DEF=75 85
 TOPROV=1600
 TOPEACE=1600 5
+CUSTOMINTTAG=npcLevel 50
 }

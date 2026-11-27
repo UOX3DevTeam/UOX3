@@ -525,6 +525,11 @@ DECL_GET_SET( CCharacter, willhunger )
 DECL_GET_SET( CCharacter, willthirst )
 DECL_GET_SET( CCharacter, worldnumber )
 DECL_GET( CCharacter, attack )
+DECL_GET( CCharacter, level )
+DECL_GET( CCharacter, levelClass )
+DECL_GET( CCharacter, experience )
+DECL_GET( CCharacter, experienceToNextLevel )
+DECL_GET( CCharacter, unspentStatPoints )
 DECL_GET( CCharacter, flag )
 DECL_GET( CCharacter, followerCount )
 DECL_GET( CCharacter, hungerRate )
@@ -1312,6 +1317,11 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, account,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, createdOn,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, playTime,              JSPROP_ENUMANDPERM ),
+  UX_PSG( CCharacter, level,                  JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, levelClass,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, experience,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, experienceToNextLevel,  JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, unspentStatPoints,      JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, housesOwned,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, housesCoOwned,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tithing,               JSPROP_ENUMANDPERM ),

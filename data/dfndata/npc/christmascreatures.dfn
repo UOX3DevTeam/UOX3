@@ -3,6 +3,7 @@
 GET=reaper
 NAME=a winter reaper
 SKIN=2498
+CUSTOMINTTAG=npcLevel 14
 }
 
 [krampus]
@@ -51,6 +52,7 @@ FOOD=meat
 CARVE=57
 FLAG=EVIL
 RUNS
+CUSTOMINTTAG=npcLevel 50
 }
 
 [krampus_minion]
@@ -89,4 +91,5 @@ FOOD=meat
 CARVE=57
 FLAG=EVIL
 RUNS
+CUSTOMINTTAG=npcLevel 26
 }

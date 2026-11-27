@@ -79,6 +79,22 @@ bool CChar_DirectionTo( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CChar_TurnToward( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CChar_CheckSkill( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_AddExperience( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_SpendLevelStatPoint( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_SetLevelClass( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_SetLevelProgress( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_ResetLevelProgress( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_GetProfessionCount( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_GetProfessionId( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_HasProfession( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_CanUseProfessionSkill( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_LearnProfession( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_ForgetProfession( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_ResetProfessions( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_GetProfessionExperience( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_GetProfessionProficiency( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_SetProfessionProgress( JSContext *cx, unsigned argc, JS::Value *vp );
+bool CChar_GainProfessionExperience( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CChar_FindItemLayer( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CChar_SpeechInput( JSContext *cx, unsigned argc, JS::Value *vp );
 bool CChar_CastSpell( JSContext *cx, unsigned argc, JS::Value *vp );
@@ -392,6 +408,22 @@ inline JSFunctionSpec CBaseObject_Methods[] =
 inline JSFunctionSpec CChar_Methods[] =
 {
 	JS_FN( "AddSkill",			CChar_AddSkill,			3, 0 ),
+	JS_FN( "AddExperience",		CChar_AddExperience,		1, 0 ),
+	JS_FN( "SpendLevelStatPoint",	CChar_SpendLevelStatPoint,	1, 0 ),
+	JS_FN( "SetLevelClass",		CChar_SetLevelClass,		1, 0 ),
+	JS_FN( "SetLevelProgress",	CChar_SetLevelProgress,	1, 0 ),
+	JS_FN( "ResetLevelProgress",	CChar_ResetLevelProgress,	1, 0 ),
+	JS_FN( "GetProfessionCount",	CChar_GetProfessionCount,	0, 0 ),
+	JS_FN( "GetProfessionId",	CChar_GetProfessionId,	1, 0 ),
+	JS_FN( "HasProfession",		CChar_HasProfession,		1, 0 ),
+	JS_FN( "CanUseProfessionSkill", CChar_CanUseProfessionSkill, 1, 0 ),
+	JS_FN( "LearnProfession",	CChar_LearnProfession,	1, 0 ),
+	JS_FN( "ForgetProfession",	CChar_ForgetProfession,	1, 0 ),
+	JS_FN( "ResetProfessions",	CChar_ResetProfessions,	0, 0 ),
+	JS_FN( "GetProfessionExperience", CChar_GetProfessionExperience, 1, 0 ),
+	JS_FN( "GetProfessionProficiency", CChar_GetProfessionProficiency, 1, 0 ),
+	JS_FN( "SetProfessionProgress", CChar_SetProfessionProgress, 2, 0 ),
+	JS_FN( "GainProfessionExperience", CChar_GainProfessionExperience, 3, 0 ),
 	JS_FN( "SpeechInput",		CChar_SpeechInput,		1, 0 ),
 	JS_FN( "KillTimers",			CBase_KillTimers,		1, 0 ),
 	JS_FN( "GetJSTimer",			CBase_GetJSTimer,		2, 0 ),

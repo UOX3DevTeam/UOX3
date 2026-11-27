@@ -61,6 +61,7 @@ SPATTACK=8
 SPADELAY=5
 DEF=20
 DAMAGE=3 15
+CUSTOMINTTAG=npcLevel 24
 }
 
 [grimmoch_drummel]
@@ -102,6 +103,7 @@ TOPEACE=750 5
 TOPROV=750
 DEF=20
 DAMAGE=7 22
+CUSTOMINTTAG=npcLevel 24
 }
 
 [morg_bergen]
@@ -142,6 +144,7 @@ TOPEACE=730 5
 TOPROV=730
 DEF=20
 DAMAGE=4 22
+CUSTOMINTTAG=npcLevel 24
 }
 
 [tavara_sewel]
@@ -185,6 +188,7 @@ TOPEACE=751 5
 TOPROV=751
 DEF=14
 DAMAGE=7 22
+CUSTOMINTTAG=npcLevel 24
 }
 
 [cursed_male]
@@ -222,6 +226,7 @@ TOPEACE=720 5
 TOPROV=720
 DEF=20
 DAMAGE=3 15
+CUSTOMINTTAG=npcLevel 10
 }
 
 [cursed_female]
@@ -259,9 +264,11 @@ TOPEACE=720 5
 TOPROV=720
 DEF=20
 DAMAGE=3 15
+CUSTOMINTTAG=npcLevel 10
 }
 
 [cursed]
 {
 GET=cursed_male cursed_female
+CUSTOMINTTAG=npcLevel 10
 }
