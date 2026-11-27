@@ -46,6 +46,7 @@ TOPEACE=342 5
 FLEEAT=-1
 RACE=11
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 4
 }
 
 //liches
@@ -96,6 +97,7 @@ RACE=11
 FLAG=EVIL
 SCRIPT=3300
 SCRIPT=3226//ancient_lich.js
+CUSTOMINTTAG=npcLevel 46
 }
 
 [lichlord]
@@ -142,6 +144,7 @@ FLEEAT=-1
 RACE=11
 FLAG=NEUTRAL
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 38
 }
 
 [lich]
@@ -186,6 +189,7 @@ FLEEAT=-1
 RACE=11
 FLAG=NEUTRAL
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 28
 }
 
 //ghosts
@@ -226,6 +230,7 @@ TOPEACE=678 5
 RACE=11
 FLAG=NEUTRAL
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 10
 }
 
 [wraith]
@@ -259,6 +264,7 @@ TOPEACE=682 5
 RACE=11
 FLAG=NEUTRAL
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 10
 }
 
 [shade]
@@ -267,6 +273,7 @@ GET=spectre
 NAME=5122//a shade
 ID=0x001a
 COLOR=0x6677
+CUSTOMINTTAG=npcLevel 10
 }
 
 //skeletons
@@ -301,6 +308,7 @@ TOPEACE=389 5
 FLEEAT=-1
 RACE=11
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 3
 }
 
 [boneaxeman]
@@ -309,6 +317,7 @@ get=skeleton
 NAME=5123//a bone axeman
 ID=0x0038
 PACKITEM=0x0f43
+CUSTOMINTTAG=npcLevel 3
 }
 
 [boneknight]
@@ -346,6 +355,7 @@ TOPEACE=691 5
 FLEEAT=-1
 RACE=11
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 15
 }
 
 [skeletalknight]
@@ -358,6 +368,7 @@ TACTICS=850 1000
 WRESTLING=850 950
 DAMAGE=6 20
 DEF=20
+CUSTOMINTTAG=npcLevel 15
 }
 
 [bonemage]
@@ -398,6 +409,7 @@ FLEEAT=-1
 RACE=11
 FLAG=NEUTRAL
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 12
 }
 
 [skeletalmage]
@@ -412,6 +424,7 @@ TACTICS=450 600
 WRESTLING=450 550
 DAMAGE=2 8
 DEF=19
+CUSTOMINTTAG=npcLevel 12
 }
 
 [mummy]
@@ -449,6 +462,7 @@ FLEEAT=-1
 RACE=11
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 12
 }
 
 [rottingcorpse]
@@ -489,6 +503,7 @@ RACE=11
 FLAG=NEUTRAL
 ORIGIN=t2a
 SCRIPT=3300
+CUSTOMINTTAG=npcLevel 24
 }
 
 [ghoul]
@@ -497,6 +512,7 @@ get=wraith
 NAME=#//a ghoul
 ID=0x0099
 SKIN=0x0
+CUSTOMINTTAG=npcLevel 10
 }
 
 [spectralarmor]
@@ -530,6 +546,7 @@ TOPROV=1359
 TOPEACE=1359 5
 FLAG=EVIL
 FLEEAT=-1
+CUSTOMINTTAG=npcLevel 18
 }
 
 //lady of the snow - Base NPC with shared DFN tags
@@ -554,6 +571,7 @@ GETML=ladyofthesnow_se
 GETSA=ladyofthesnow_se
 GETHS=ladyofthesnow_se
 GETTOL=ladyofthesnow_se
+CUSTOMINTTAG=npcLevel 34
 }
 
 //revenant lion - Base NPC with shared DFN tags
@@ -578,4 +596,5 @@ GETML=revenant_lion_se
 GETSA=revenant_lion_se
 GETHS=revenant_lion_se
 GETTOL=revenant_lion_se
+CUSTOMINTTAG=npcLevel 29
 }

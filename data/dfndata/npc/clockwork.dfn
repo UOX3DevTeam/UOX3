@@ -25,6 +25,7 @@ FLAG=NEUTRAL
 CUSTOMINTTAG=repairResource 0x1f1c
 ORIGIN=td
 SCRIPT=3511// Colossal Blow
+CUSTOMINTTAG=npcLevel 15
 }
 
 [golem]
@@ -38,6 +39,7 @@ LOOT=golemLoot
 NPCWANDER=4
 FX2=30
 NPCAI=2
+CUSTOMINTTAG=npcLevel 15
 }
 
 [exodusoverseer]
@@ -69,6 +71,7 @@ RACE=27
 FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3211//exodus clockwork AI
+CUSTOMINTTAG=npcLevel 30
 }
 
 [exodusminionlord]
@@ -100,6 +103,7 @@ RACE=27
 FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3211//exodus clockwork AI
+CUSTOMINTTAG=npcLevel 40
 }
 
 [exodusminion]
@@ -131,4 +135,5 @@ RACE=27
 FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3211//exodus clockwork AI
+CUSTOMINTTAG=npcLevel 38
 }

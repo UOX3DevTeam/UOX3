@@ -25,6 +25,7 @@ DAMAGE=3 9
 DEF=14
 TOPROV=241
 TOPEACE=241 5
+CUSTOMINTTAG=npcLevel 6
 }
 
 // Orc Captain - T2A stats (default)
@@ -46,6 +47,7 @@ DAMAGE=2 18
 DEF=17
 TOPROV=332
 TOPEACE=332 5
+CUSTOMINTTAG=npcLevel 7
 }
 
 // Orc Mage - T2A stats (default)
@@ -76,6 +78,7 @@ SPATTACK=6
 SPADELAY=10
 TOPROV=451
 TOPEACE=451 5
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Orc Lord - T2A stats (default)
@@ -100,6 +103,7 @@ DEF=15
 TOPROV=299
 TOPEACE=299 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 10
 }
 
 // Orc Bomber - T2A stats (default)
@@ -122,6 +126,7 @@ DAMAGE=1 8
 DEF=15
 TOPROV=2000
 TOPEACE=275 5
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Orc Scout - T2A stats (default)
@@ -145,6 +150,7 @@ DAMAGE=3 9
 DEF=14
 TOPROV=215
 TOPEACE=215 5
+CUSTOMINTTAG=npcLevel 7
 }
 
 // Orc Brute - T2A stats (default)
@@ -170,6 +176,7 @@ DEF=25
 TOPROV=2000
 TOPEACE=610 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 16
 }
 
 // Orc Chopper - T2A stats (default)
@@ -197,6 +204,7 @@ DEF=15
 TOPROV=250
 TOPEACE=250 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Lizardman - T2A stats (default)
@@ -219,6 +227,7 @@ DAMAGE=3 9
 DEF=14
 TOPROV=301
 TOPEACE=301 5
+CUSTOMINTTAG=npcLevel 6
 }
 
 // Ratman - T2A stats (default)
@@ -239,6 +248,7 @@ DAMAGE=3 6
 DEF=14
 TOPROV=109
 TOPEACE=109 5
+CUSTOMINTTAG=npcLevel 6
 }
 
 // Ratman Mage - T2A stats (default)
@@ -264,6 +274,7 @@ TOPEACE=485 5
 SPATTACK=6
 SPADELAY=8
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 8
 }
 
 // Ratman Archer - T2A stats (default)
@@ -286,4 +297,5 @@ DEF=14
 TOPROV=360
 TOPEACE=360 5
 SCRIPT=3300//magic items
+CUSTOMINTTAG=npcLevel 7
 }

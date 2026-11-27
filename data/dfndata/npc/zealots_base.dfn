@@ -54,6 +54,7 @@ TOPROV=2000
 DEF=20
 DAMAGE=6 34
 SCRIPT=3227//Transform into Bone Knight on death
+CUSTOMINTTAG=npcLevel 24
 }
 
 [zealot_knight_female]
@@ -95,11 +96,13 @@ TOPROV=2000
 DEF=20
 DAMAGE=6 34
 SCRIPT=3227//Transform into Bone Knight on death
+CUSTOMINTTAG=npcLevel 24
 }
 
 [zealot_knight]
 {
 GET=zealot_knight_male zealot_knight_female
+CUSTOMINTTAG=npcLevel 24
 }
 
 [zealot_summoner_male]
@@ -138,6 +141,7 @@ TOPROV=720
 DEF=20
 DAMAGE=3 15
 SCRIPT=3227//Transform into Bone Magi on death
+CUSTOMINTTAG=npcLevel 28
 }
 
 [zealot_summoner_female]
@@ -176,9 +180,11 @@ TOPROV=720
 DEF=20
 DAMAGE=3 15
 SCRIPT=3227//Transform into Bone Magi on death
+CUSTOMINTTAG=npcLevel 28
 }
 
 [zealot_summoner]
 {
 GET=zealot_summoner_male zealot_summoner_female
+CUSTOMINTTAG=npcLevel 28
 }

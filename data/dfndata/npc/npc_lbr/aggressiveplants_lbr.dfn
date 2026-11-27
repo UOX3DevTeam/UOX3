@@ -18,6 +18,7 @@ DAMAGE=3 30
 DEF=9
 TOPROV=378
 TOPEACE=378 5
+CUSTOMINTTAG=npcLevel 10
 }
 
 [reaper_lbr]
@@ -45,6 +46,7 @@ DAMAGE=5 15
 DEF=20
 TOPROV=741
 TOPEACE=741 5
+CUSTOMINTTAG=npcLevel 12
 }
 
 [swamptentacle_lbr]
@@ -66,6 +68,7 @@ DAMAGE=3 15
 DEF=15
 TOPROV=480
 TOPEACE=480 5
+CUSTOMINTTAG=npcLevel 22
 }
 
 [whippingvine_lbr]
@@ -88,6 +91,7 @@ DAMAGE=4 31
 DEF=40
 TOPROV=766
 TOPEACE=766 5
+CUSTOMINTTAG=npcLevel 20
 }
 
 [quagmire_lbr]
@@ -108,6 +112,7 @@ DEF=27
 POISONSTRENGTH=3
 TOPROV=710
 TOPEACE=710 5
+CUSTOMINTTAG=npcLevel 22
 }
 
 [bogthing_lbr]
@@ -130,6 +135,7 @@ DAMAGE=5 30
 DEF=14
 TOPROV=861
 TOPEACE=861 5
+CUSTOMINTTAG=npcLevel 22
 }
 
 [bogling_lbr]
@@ -150,6 +156,7 @@ DAMAGE=3 9
 DEF=10
 TOPROV=615
 TOPEACE=615 5
+CUSTOMINTTAG=npcLevel 8
 }
 
 //Unique Creatures Extinct
@@ -177,6 +184,7 @@ DAMAGE=10 20
 DEF=25
 TOPROV=991
 TOPEACE=991 5
+CUSTOMINTTAG=npcLevel 42
 }
 
 [deathwillow_lbr]
@@ -203,4 +211,5 @@ DAMAGE=6 14
 DEF=18
 TOPROV=561
 TOPEACE=561 5
+CUSTOMINTTAG=npcLevel 42
 }

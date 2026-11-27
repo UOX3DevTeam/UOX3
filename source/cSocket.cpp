@@ -2320,12 +2320,36 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 		GuildSys->DisplayTitle( this, i );
 	}
 
+	COLOUR charNameColour = GetFlagColour( mChar, i );
+	if( cwmWorldState->ServerData()->LevelSystemEnabled() && i->IsNpc() && !i->IsTamed() &&
+		!ValidateObject( i->GetOwnerObj() ) && !i->IsInvulnerable() && i->GetNpcAiType() != AI_PLAYERVENDOR &&
+		i->GetNpcAiType() != AI_GUARD && i->GetNpcAiType() != AI_DUMMY )
+	{
+		const UI16 npcLevel = i->GetLevel();
+		const UI16 playerLevel = mChar->GetLevel();
+		if( npcLevel > 0 && playerLevel > 0 )
+		{
+			charName = oldstrutil::format( "[Level %u] %s", npcLevel, charName.c_str() );
+			const SI32 levelDifference = static_cast<SI32>( npcLevel ) - static_cast<SI32>( playerLevel );
+			if( levelDifference <= -5 )
+				charNameColour = 0x03B2; // Gray: trivial.
+			else if( levelDifference <= -2 )
+				charNameColour = 0x003F; // Green: easier.
+			else if( levelDifference <= 2 )
+				charNameColour = 0x0035; // Yellow: near the player's level.
+			else if( levelDifference <= 4 )
+				charNameColour = 0x0090; // Orange: difficult.
+			else
+				charNameColour = 0x0022; // Red: much higher level.
+		}
+	}
+
 	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
 		CPUnicodeMessage unicodeMessage;
 		unicodeMessage.Message( charName );
 		unicodeMessage.Font( FNT_NORMAL );
-		unicodeMessage.Colour( GetFlagColour( mChar, i ));
+		unicodeMessage.Colour( charNameColour );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
 		unicodeMessage.Name( "System" );
@@ -2340,7 +2364,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 		toAdd.Font( FNT_NORMAL );
 		toAdd.Speaker( i->GetSerial() );
 		toAdd.SpokenTo( mChar->GetSerial() );
-		toAdd.Colour( GetFlagColour( mChar, i ));
+		toAdd.Colour( charNameColour );
 		toAdd.Type( SYSTEM );
 		toAdd.At( cwmWorldState->GetUICurrentTime() );
 		toAdd.TargType( SPTRG_ONLYRECEIVER );
@@ -2702,6 +2726,9 @@ void CSocket::StatWindow( CBaseObject *targObj, bool updateParty )
 //o------------------------------------------------------------------------------------------------o
 void CSocket::UpdateSkill( UI08 skillnum )
 {
+	if( cwmWorldState->ServerData()->LevelSystemEnabled() )
+		return;
+
 	CChar *mChar = CurrcharObj();
 	CPUpdIndSkill toSend(( *mChar ), static_cast<UI08>( skillnum ));
 	Send( &toSend );

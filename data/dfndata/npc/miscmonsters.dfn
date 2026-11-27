@@ -43,6 +43,7 @@ NPCAI=2
 ORIGIN=td
 SCRIPT=3300// Random Magic Items
 SCRIPT=3508// Life Drain Aura
+CUSTOMINTTAG=npcLevel 42
 }
 
 [pixie]
@@ -80,6 +81,7 @@ RACE=19
 FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3509// Pixie onDeath Spells
+CUSTOMINTTAG=npcLevel 20
 }
 
 [centaur]
@@ -112,6 +114,7 @@ RACE=19
 FLAG=NEUTRAL
 ORIGIN=td
 SCRIPT=3300// Magic Items
+CUSTOMINTTAG=npcLevel 18
 }
 
 [ethwarrior]
@@ -150,6 +153,7 @@ FLAG=INNOCENT
 ORIGIN=td
 SCRIPT=3205// ethereal warrior AI
 SCRIPT=3300// Magic Items
+CUSTOMINTTAG=npcLevel 20
 }
 
 [efreet]
@@ -189,6 +193,7 @@ FLAG=NEUTRAL
 WALKINGSPEED=0.4
 ORIGIN=t2a
 SCRIPT=3300// Magic Items
+CUSTOMINTTAG=npcLevel 28
 }
 
 [hellcat]
@@ -216,6 +221,7 @@ NPCAI=2
 TOPROV=502
 TOPEACE=502 5
 TOTAME=711
+TAMELEVEL=5
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -225,6 +231,7 @@ FLAG=NEUTRAL
 CONTROLSLOTS=1
 ORIGIN=t2a
 SCRIPT=3507// Fire Breath
+CUSTOMINTTAG=npcLevel 5
 }
 
 [largehellcat]
@@ -252,6 +259,7 @@ NPCAI=2
 TOPROV=712
 TOPEACE=712 5
 TOTAME=891
+TAMELEVEL=8
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -261,6 +269,7 @@ FLAG=NEUTRAL
 CONTROLSLOTS=1
 ORIGIN=t2a
 SCRIPT=3507// Fire Breath
+CUSTOMINTTAG=npcLevel 8
 }
 
 [hellhound]
@@ -289,6 +298,7 @@ FLEEAT=-1
 TOPROV=628
 TOPEACE=628 5
 TOTAME=855
+TAMELEVEL=10
 TAMEDHUNGER=600 30
 FOOD=meat
 RUNS
@@ -300,6 +310,7 @@ CONTROLSLOTS=1
 ORIGIN=t2a
 SCRIPT=3206// Pack AI
 SCRIPT=3507// Fire Breath
+CUSTOMINTTAG=npcLevel 10
 }
 
 [stoneharpy]
@@ -331,6 +342,7 @@ CARVE=91
 RACE=18
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 15
 }
 
 [gazer]
@@ -368,6 +380,7 @@ CARVE=61
 RACE=18
 FLAG=NEUTRAL
 SCRIPT=3300// Magic Items
+CUSTOMINTTAG=npcLevel 12
 }
 
 [gazerlarva]
@@ -396,6 +409,7 @@ FX2=20
 NPCAI=2
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 5
 }
 
 [eldergazer]
@@ -429,6 +443,7 @@ TOPEACE=902 5
 RACE=18
 FLAG=NEUTRAL
 SCRIPT=3300// Magic Items
+CUSTOMINTTAG=npcLevel 28
 }
 
 [harpy]
@@ -457,6 +472,7 @@ TOPEACE=564 5
 CARVE=63
 RACE=18
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 8
 }
 
 [headless]
@@ -486,6 +502,7 @@ CARVE=64
 RACE=18
 FLEEAT=-1
 FLAG=NEUTRAL
+CUSTOMINTTAG=npcLevel 3
 }
 
 [slime]
@@ -518,6 +535,7 @@ NPCAI=2
 TOPROV=325
 TOPEACE=325 5
 TOTAME=231
+TAMELEVEL=2
 TAMEDHUNGER=600 30
 FOOD=fish
 RACE=24
@@ -525,12 +543,14 @@ FLAG=NEUTRAL
 CONTROLSLOTS=1
 SCRIPT=3203// Splitting NPCs
 SCRIPT=3506// Corrosive Damage
+CUSTOMINTTAG=npcLevel 2
 }
 
 [jwilson]
 {
 GET=slime
 NAME=5108//a jwilson
+CUSTOMINTTAG=npcLevel 4
 }
 
 [frostooze]
@@ -560,6 +580,7 @@ TOPEACE=145 5
 RACE=18
 FLAG=NEUTRAL
 ORIGIN=t2a
+CUSTOMINTTAG=npcLevel 3
 }
 
 [wisp]
@@ -590,6 +611,7 @@ TOPEACE=820 5
 RACE=19
 FLAG=NEUTRAL
 SCRIPT=3001//monster speech
+CUSTOMINTTAG=npcLevel 18
 }
 
 [shadowwisp]
@@ -621,6 +643,7 @@ RACE=19
 FLAG=NEUTRAL
 ORIGIN=lbr
 SCRIPT=3001//monster speech
+CUSTOMINTTAG=npcLevel 4
 }
 
 [darkwisp]
@@ -653,6 +676,7 @@ RACE=19
 FLAG=EVIL
 ORIGIN=td
 SCRIPT=3001//monster speech
+CUSTOMINTTAG=npcLevel 10
 }
 
 [evilmage]
@@ -685,6 +709,7 @@ NPCAI=11
 TOPROV=722
 TOPEACE=722 5
 FLAG=EVIL
+CUSTOMINTTAG=npcLevel 10
 }
 
 [evilmagelord]
@@ -718,6 +743,7 @@ NPCAI=11
 TOPROV=796
 TOPEACE=796 5
 FLAG=EVIL
+CUSTOMINTTAG=npcLevel 28
 }
 
 [tentacles_of_the_harrower]
@@ -752,6 +778,7 @@ TOPEACE=1500 5
 FLAG=EVIL
 SCRIPT=3300// Random Magic Items
 SCRIPT=3508// Life Drain
+CUSTOMINTTAG=npcLevel 44
 }
 
 [base_plaguebeast]
@@ -779,4 +806,5 @@ GETML=plaguebeast_aos
 GETSA=plaguebeast_aos
 GETHS=plaguebeast_aos
 GETTOL=plaguebeast_aos
+CUSTOMINTTAG=npcLevel 24
 }

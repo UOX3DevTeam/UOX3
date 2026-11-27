@@ -2589,6 +2589,191 @@ bool SE_GetRaceCount( JSContext *cx, unsigned int argc, JS::Value *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	SE_GetLevelClassCount()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the number of contiguous CLASS sections loaded from classes.dfn
+//o------------------------------------------------------------------------------------------------o
+bool SE_GetLevelClassCount( JSContext *cx, unsigned int argc, JS::Value *vp )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "GetLevelClassCount: Invalid number of arguments (takes 0)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setInt32( Races->LevelClassCount() );
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	SE_GetLevelClassProperty()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns a named property from a data-defined level class
+//o------------------------------------------------------------------------------------------------o
+bool SE_GetLevelClassProperty( JSContext *cx, unsigned int argc, JS::Value *vp )
+{
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNull();
+	if( argc != 2 || !args.get( 0 ).isInt32() || !args.get( 1 ).isString() )
+	{
+		ScriptError( cx, "GetLevelClassProperty: expected class id and property name" );
+		return false;
+	}
+
+	const SI32 classId = args.get( 0 ).toInt32();
+	if( classId <= 0 || classId > std::numeric_limits<UI08>::max() )
+		return true;
+	const CLevelClass *levelClass = Races->LevelClass( static_cast<UI08>( classId ));
+	if( levelClass == nullptr )
+		return true;
+
+	const std::string propertyName = oldstrutil::upper( JS_GetStringBytes( cx, args.get( 1 )));
+	std::string stringValue;
+	if( propertyName == "NAME" ) stringValue = levelClass->Name();
+	else if( propertyName == "DESCRIPTION" ) stringValue = levelClass->Description();
+	else if( propertyName == "PRIMARYSKILLS" ) stringValue = levelClass->SkillList( 3 );
+	else if( propertyName == "CORESKILLS" ) stringValue = levelClass->SkillList( 2 );
+	else if( propertyName == "SUPPORTSKILLS" ) stringValue = levelClass->SkillList( 1 );
+	else if( propertyName == "HEALTHPERLEVEL" ) { args.rval().setInt32( levelClass->HealthPerLevel() ); return true; }
+	else if( propertyName == "MANAPERLEVEL" ) { args.rval().setInt32( levelClass->ManaPerLevel() ); return true; }
+	else if( propertyName == "STAMINAPERLEVEL" ) { args.rval().setInt32( levelClass->StaminaPerLevel() ); return true; }
+	else if( propertyName == "CANTAME" ) { args.rval().setBoolean( levelClass->CanTame() ); return true; }
+	else if( propertyName == "PRIMARYCAP" ) { args.rval().setInt32( levelClass->TierCap( 3 )); return true; }
+	else if( propertyName == "CORECAP" ) { args.rval().setInt32( levelClass->TierCap( 2 )); return true; }
+	else if( propertyName == "SUPPORTCAP" ) { args.rval().setInt32( levelClass->TierCap( 1 )); return true; }
+	else if( propertyName == "OTHERCAP" ) { args.rval().setInt32( levelClass->TierCap( 0 )); return true; }
+	else return true;
+
+	args.rval().setString( JS_NewStringCopyZ( cx, stringValue.c_str() ));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	SE_GetLevelClassAbilityCount()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the number of abilities referenced by a data-defined class
+//o------------------------------------------------------------------------------------------------o
+bool SE_GetLevelClassAbilityCount( JSContext *cx, unsigned int argc, JS::Value *vp )
+{
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setInt32( 0 );
+	if( argc != 1 || !args.get( 0 ).isInt32() )
+	{
+		ScriptError( cx, "GetLevelClassAbilityCount: expected a class id" );
+		return false;
+	}
+
+	const SI32 classId = args.get( 0 ).toInt32();
+	if( classId <= 0 || classId > std::numeric_limits<UI08>::max() )
+		return true;
+	const CLevelClass *levelClass = Races->LevelClass( static_cast<UI08>( classId ));
+	if( levelClass != nullptr )
+		args.rval().setInt32( levelClass->AbilityCount() );
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	SE_GetLevelClassAbilityProperty()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns a named property for one class ability by zero-based class-list index
+//o------------------------------------------------------------------------------------------------o
+bool SE_GetLevelClassAbilityProperty( JSContext *cx, unsigned int argc, JS::Value *vp )
+{
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNull();
+	if( argc != 3 || !args.get( 0 ).isInt32() || !args.get( 1 ).isInt32() || !args.get( 2 ).isString() )
+	{
+		ScriptError( cx, "GetLevelClassAbilityProperty: expected class id, ability index and property name" );
+		return false;
+	}
+
+	const SI32 classId = args.get( 0 ).toInt32();
+	const SI32 abilityIndex = args.get( 1 ).toInt32();
+	if( classId <= 0 || classId > std::numeric_limits<UI08>::max() || abilityIndex < 0 || abilityIndex > std::numeric_limits<UI16>::max() )
+		return true;
+	const CLevelClass *levelClass = Races->LevelClass( static_cast<UI08>( classId ));
+	const CLevelClassAbility *ability = ( levelClass == nullptr ? nullptr : levelClass->Ability( static_cast<UI16>( abilityIndex )));
+	if( ability == nullptr )
+		return true;
+
+	const std::string propertyName = oldstrutil::upper( JS_GetStringBytes( cx, args.get( 2 )));
+	std::string stringValue;
+	if( propertyName == "NAME" ) stringValue = ability->Name();
+	else if( propertyName == "DESCRIPTION" ) stringValue = ability->Description();
+	else if( propertyName == "ACTION" ) stringValue = ability->Action();
+	else if( propertyName == "FUNCTION" ) stringValue = ability->FunctionName();
+	else if( propertyName == "ID" ) { args.rval().setInt32( ability->Id() ); return true; }
+	else if( propertyName == "VALUE" ) { args.rval().setInt32( ability->Value() ); return true; }
+	else if( propertyName == "LEVEL" ) { args.rval().setInt32( ability->RequiredLevel() ); return true; }
+	else if( propertyName == "MANACOST" ) { args.rval().setInt32( ability->ManaCost() ); return true; }
+	else if( propertyName == "STAMINACOST" ) { args.rval().setInt32( ability->StaminaCost() ); return true; }
+	else if( propertyName == "COOLDOWN" ) { args.rval().setInt32( ability->CooldownSeconds() ); return true; }
+	else if( propertyName == "SCRIPT" ) { args.rval().setInt32( ability->ScriptId() ); return true; }
+	else return true;
+
+	args.rval().setString( JS_NewStringCopyZ( cx, stringValue.c_str() ));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	SE_GetLevelProfessionCount()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the number of contiguous PROFESSION sections loaded from professions.dfn
+//o------------------------------------------------------------------------------------------------o
+bool SE_GetLevelProfessionCount( JSContext *cx, unsigned int argc, JS::Value *vp )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "GetLevelProfessionCount: Invalid number of arguments (takes 0)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setInt32( Races->LevelProfessionCount() );
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	SE_GetLevelProfessionProperty()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns a named property from a data-defined profession
+//o------------------------------------------------------------------------------------------------o
+bool SE_GetLevelProfessionProperty( JSContext *cx, unsigned int argc, JS::Value *vp )
+{
+	auto args = JS::CallArgsFromVp( argc, vp );
+	args.rval().setNull();
+	if( argc != 2 || !args.get( 0 ).isInt32() || !args.get( 1 ).isString() )
+	{
+		ScriptError( cx, "GetLevelProfessionProperty: expected profession id and property name" );
+		return false;
+	}
+
+	const SI32 professionId = args.get( 0 ).toInt32();
+	if( professionId <= 0 || professionId > std::numeric_limits<UI08>::max() )
+		return true;
+	const CLevelProfession *profession = Races->LevelProfession( static_cast<UI08>( professionId ));
+	if( profession == nullptr )
+		return true;
+
+	const std::string propertyName = oldstrutil::upper( JS_GetStringBytes( cx, args.get( 1 )));
+	std::string stringValue;
+	if( propertyName == "NAME" ) stringValue = profession->Name();
+	else if( propertyName == "DESCRIPTION" ) stringValue = profession->Description();
+	else if( propertyName == "TYPE" || propertyName == "CATEGORY" ) stringValue = profession->Type();
+	else if( propertyName == "SKILL" ) stringValue = profession->SkillName();
+	else if( propertyName == "ID" ) { args.rval().setInt32( profession->Id() ); return true; }
+	else if( propertyName == "SKILLID" ) { args.rval().setInt32( profession->SkillId() ); return true; }
+	else if( propertyName == "PRIMARY" || propertyName == "COUNTSTOWARDLIMIT" ) { args.rval().setBoolean( profession->IsPrimary() ); return true; }
+	else if( propertyName == "STARTVALUE" ) { args.rval().setInt32( profession->StartValue() ); return true; }
+	else if( propertyName == "MAXVALUE" ) { args.rval().setInt32( profession->MaxValue() ); return true; }
+	else if( propertyName == "EXPERIENCEPERPOINT" ) { args.rval().setNumber( profession->ExperiencePerPoint() ); return true; }
+	else if( propertyName == "MAXEXPERIENCE" ) { args.rval().setNumber( profession->MaxExperience() ); return true; }
+	else return true;
+
+	args.rval().setString( JS_NewStringCopyZ( cx, stringValue.c_str() ));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_AreaCharacterFunction()
 //|	Date		-	January 27, 2003
 //o------------------------------------------------------------------------------------------------o
@@ -5781,6 +5966,30 @@ bool SE_GetServerSetting( JSContext *cx, unsigned int argc, JS::Value *vp )
 				break;
 			case 423:	// PASSWORDHASHINGENABLED
 				args.rval().setBoolean( cwmWorldState->ServerData()->PasswordHashingEnabled() );
+				break;
+			case 424:	// LEVELSYSTEMENABLED
+				args.rval().setBoolean( cwmWorldState->ServerData()->LevelSystemEnabled() );
+				break;
+			case 425:	// LEVELCAP
+				args.rval().setInt32( cwmWorldState->ServerData()->LevelCap() );
+				break;
+			case 426:	// LEVELBASEEXPERIENCE
+				args.rval().setNumber( cwmWorldState->ServerData()->LevelBaseExperience() );
+				break;
+			case 427:	// LEVELSTATPOINTSPERLEVEL
+				args.rval().setInt32( cwmWorldState->ServerData()->LevelStatPointsPerLevel() );
+				break;
+			case 428:	// LEVELSYSTEMCRAFTING
+				args.rval().setBoolean( cwmWorldState->ServerData()->LevelSystemCrafting() );
+				break;
+			case 429:	// MAXPRIMARYPROFESSIONS
+				args.rval().setInt32( cwmWorldState->ServerData()->MaxPrimaryProfessions() );
+				break;
+			case 430:	// ALLOWALLPROFESSIONS
+				args.rval().setBoolean( cwmWorldState->ServerData()->AllowAllProfessions() );
+				break;
+			case 431:	// PROFESSIONGAINRATE
+				args.rval().setNumber( cwmWorldState->ServerData()->ProfessionGainRate() );
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

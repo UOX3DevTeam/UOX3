@@ -24,6 +24,7 @@ RESISTLIGHTNING=70 85
 TOPROV=1114
 TOPEACE=1114 5
 //special attacks Throws snowballs, Icy wind attack
+CUSTOMINTTAG=npcLevel 34
 }
 
 [revenant_lion_se]
@@ -56,4 +57,5 @@ TOPROV=940
 TOPEACE=940 5
 SCRIPT=3507//magic items
 //Special Abilities:	Bleed Attack
+CUSTOMINTTAG=npcLevel 29
 }

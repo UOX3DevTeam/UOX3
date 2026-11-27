@@ -1,0 +1,193 @@
+//=============================================================================
+// UOX3 level-system class definitions
+//
+// Class ids must start at 1 and remain contiguous. Characters persist this id.
+// Skill names must match NAME entries in dfndata/skills/skills.dfn.
+// Skill values use UOX3 tenths (300 = 30.0). Cap values are percentages of the
+// shard's SKILLCAPSINGLE setting.
+//
+// Optional equipment restrictions use ALLOWEQUIPLIST or BANEQUIPLIST and a
+// [CLASS EQUIPLIST #] section containing comma-separated item graphic ids.
+// If an allow list is present, every unlisted item is rejected for that class.
+//
+// ABILITY references a [CLASS ABILITY #] section. Supported built-in ACTIONs
+// are RESTOREHEALTH, RESTOREMANA, RESTORESTAMINA, SPELL and PASSIVE. SCRIPT
+// dispatches to SCRIPT/FUNCTION and passes the character, ability id and VALUE.
+// CANTAME grants access to level-gated animal taming while level mode is active.
+//=============================================================================
+
+[CLASS 1]
+{
+NAME=Warrior
+DESCRIPTION=Durable melee fighter with strong weapons, tactics and parrying.
+HEALTHPERLEVEL=2
+MANAPERLEVEL=0
+STAMINAPERLEVEL=1
+PRIMARYSKILLS=SWORDSMANSHIP,MACEFIGHTING,FENCING,TACTICS,PARRYING
+CORESKILLS=ANATOMY,HEALING,MAGICRESISTANCE,CHIVALRY,BUSHIDO,WRESTLING
+SUPPORTSKILLS=ARMSLORE,FOCUS
+PRIMARYSTART=300
+PRIMARYCAP=100
+CORESTART=200
+CORECAP=85
+SUPPORTSTART=100
+SUPPORTCAP=60
+OTHERSTART=0
+OTHERCAP=25
+ABILITY=1001
+ABILITY=1002
+}
+
+[CLASS 2]
+{
+NAME=Mage
+DESCRIPTION=Spellcaster built around magery, evaluation and meditation.
+HEALTHPERLEVEL=0
+MANAPERLEVEL=2
+STAMINAPERLEVEL=0
+PRIMARYSKILLS=MAGERY,EVALUATINGINTEL,MEDITATION
+CORESKILLS=MAGICRESISTANCE,WRESTLING,SPIRITSPEAK,NECROMANCY,SPELLWEAVING,MYSTICISM,FOCUS
+SUPPORTSKILLS=POISONING,ITEMID,TASTEID
+PRIMARYSTART=300
+PRIMARYCAP=100
+CORESTART=200
+CORECAP=85
+SUPPORTSTART=100
+SUPPORTCAP=60
+OTHERSTART=0
+OTHERCAP=25
+ABILITY=2001
+ABILITY=2002
+}
+
+[CLASS 3]
+{
+NAME=Rogue
+DESCRIPTION=Fast infiltrator using fencing, stealth and poison.
+HEALTHPERLEVEL=1
+MANAPERLEVEL=0
+STAMINAPERLEVEL=2
+PRIMARYSKILLS=FENCING,TACTICS,HIDING,STEALTH,POISONING
+CORESKILLS=ANATOMY,HEALING,LOCKPICKING,SNOOPING,STEALING,DETECTINGHIDDEN,REMOVETRAP,NINJITSU
+SUPPORTSKILLS=ARCHERY,WRESTLING,TRACKING,CAMPING,ARMSLORE
+PRIMARYSTART=300
+PRIMARYCAP=100
+CORESTART=200
+CORECAP=85
+SUPPORTSTART=100
+SUPPORTCAP=60
+OTHERSTART=0
+OTHERCAP=25
+ABILITY=3001
+ABILITY=3002
+}
+
+[CLASS 4]
+{
+NAME=Ranger
+DESCRIPTION=Ranged hunter and dedicated animal tamer with strong tracking and survival.
+CANTAME=1
+HEALTHPERLEVEL=1
+MANAPERLEVEL=1
+STAMINAPERLEVEL=1
+PRIMARYSKILLS=ARCHERY,TACTICS,TRACKING,TAMING,ANIMALLORE
+CORESKILLS=ANATOMY,HEALING,VETERINARY,CAMPING,HIDING,FENCING,SWORDSMANSHIP
+SUPPORTSKILLS=STEALTH,MAGICRESISTANCE,FOCUS
+PRIMARYSTART=300
+PRIMARYCAP=100
+CORESTART=200
+CORECAP=85
+SUPPORTSTART=100
+SUPPORTCAP=60
+OTHERSTART=0
+OTHERCAP=25
+ABILITY=4001
+ABILITY=4002
+}
+
+//=============================================================================
+// Default class abilities
+//=============================================================================
+
+[CLASS ABILITY 1001]
+{
+NAME=Second Wind
+DESCRIPTION=Recover 25 health by drawing on your remaining stamina.
+LEVEL=1
+ACTION=RESTOREHEALTH
+VALUE=25
+STAMINACOST=10
+COOLDOWN=45
+}
+
+[CLASS ABILITY 1002]
+{
+NAME=Rally
+DESCRIPTION=Recover 40 stamina and return to the fight.
+LEVEL=10
+ACTION=RESTORESTAMINA
+VALUE=40
+COOLDOWN=60
+}
+
+[CLASS ABILITY 2001]
+{
+NAME=Arcane Recovery
+DESCRIPTION=Focus inward to recover 30 mana.
+LEVEL=1
+ACTION=RESTOREMANA
+VALUE=30
+COOLDOWN=45
+}
+
+[CLASS ABILITY 2002]
+{
+NAME=Fireball
+DESCRIPTION=Cast the standard Fireball spell through the normal magic system.
+LEVEL=10
+ACTION=SPELL
+VALUE=18
+COOLDOWN=3
+}
+
+[CLASS ABILITY 3001]
+{
+NAME=Adrenaline Rush
+DESCRIPTION=Recover 35 stamina for another burst of action.
+LEVEL=1
+ACTION=RESTORESTAMINA
+VALUE=35
+COOLDOWN=45
+}
+
+[CLASS ABILITY 3002]
+{
+NAME=Shadow Mend
+DESCRIPTION=Sacrifice 15 stamina to recover 20 health.
+LEVEL=10
+ACTION=RESTOREHEALTH
+VALUE=20
+STAMINACOST=15
+COOLDOWN=60
+}
+
+[CLASS ABILITY 4001]
+{
+NAME=Field Dressing
+DESCRIPTION=Spend 10 mana to quickly recover 20 health.
+LEVEL=1
+ACTION=RESTOREHEALTH
+VALUE=20
+MANACOST=10
+COOLDOWN=30
+}
+
+[CLASS ABILITY 4002]
+{
+NAME=Hunter's Focus
+DESCRIPTION=Recover 25 mana while preparing for the next hunt.
+LEVEL=10
+ACTION=RESTOREMANA
+VALUE=25
+COOLDOWN=45
+}

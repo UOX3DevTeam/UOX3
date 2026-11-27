@@ -34,6 +34,7 @@ GETML=direwolf_aos
 GETSA=direwolf_aos
 GETHS=direwolf_aos
 GETTOL=direwolf_aos
+CUSTOMINTTAG=npcLevel 7
 }
 
 [base_giantrat]
@@ -61,6 +62,7 @@ GETML=giantrat_aos
 GETSA=giantrat_aos
 GETHS=giantrat_aos
 GETTOL=giantrat_aos
+CUSTOMINTTAG=npcLevel 3
 }
 
 [base_gianttoad]
@@ -89,6 +91,7 @@ GETML=gianttoad_aos
 GETSA=gianttoad_aos
 GETHS=gianttoad_aos
 GETTOL=gianttoad_aos
+CUSTOMINTTAG=npcLevel 6
 }
 
 [base_scorpion]
@@ -117,6 +120,7 @@ GETML=scorpion_aos
 GETSA=scorpion_aos
 GETHS=scorpion_aos
 GETTOL=scorpion_aos
+CUSTOMINTTAG=npcLevel 7
 }
 
 [base_sewerrat]
@@ -145,6 +149,7 @@ GETML=sewerrat_aos
 GETSA=sewerrat_aos
 GETHS=sewerrat_aos
 GETTOL=sewerrat_aos
+CUSTOMINTTAG=npcLevel 2
 }
 
 [base_phoenix]
@@ -175,6 +180,7 @@ GETML=phoenix_aos
 GETSA=phoenix_aos
 GETHS=phoenix_aos
 GETTOL=phoenix_aos
+CUSTOMINTTAG=npcLevel 40
 }
 
 //bake kitsune - Base NPC with shared DFN tags
@@ -204,4 +210,5 @@ GETML=bakekitsune_se
 GETSA=bakekitsune_se
 GETHS=bakekitsune_se
 GETTOL=bakekitsune_se
+CUSTOMINTTAG=npcLevel 28
 }

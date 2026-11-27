@@ -132,6 +132,7 @@ DECL_SET( main, attr )
 DECL_GET( CSpell, action )
 DECL_GET( CSpell, aggressiveSpell )
 DECL_GET( CSpell, baseDmg )
+DECL_GET( CSpell, castingSkill )
 DECL_GET( CSpell, circle )
 DECL_GET( CSpell, damageDelay )
 DECL_GET( CSpell, delay )
@@ -147,6 +148,7 @@ DECL_GET( CSpell, name )
 DECL_GET( CSpell, reagents )
 DECL_GET( CSpell, recoveryDelay )
 DECL_GET( CSpell, reflectable )
+DECL_GET( CSpell, requiredLevel )
 DECL_GET( CSpell, requireChar )
 DECL_GET( CSpell, requireItem )
 DECL_GET( CSpell, requireLocation )
@@ -525,6 +527,11 @@ DECL_GET_SET( CCharacter, willhunger )
 DECL_GET_SET( CCharacter, willthirst )
 DECL_GET_SET( CCharacter, worldnumber )
 DECL_GET( CCharacter, attack )
+DECL_GET( CCharacter, level )
+DECL_GET( CCharacter, levelClass )
+DECL_GET( CCharacter, experience )
+DECL_GET( CCharacter, experienceToNextLevel )
+DECL_GET( CCharacter, unspentStatPoints )
 DECL_GET( CCharacter, flag )
 DECL_GET( CCharacter, followerCount )
 DECL_GET( CCharacter, hungerRate )
@@ -893,6 +900,8 @@ inline JSPropertySpec CSpellProperties[] =
   UX_PSG( CSpell, scrollLow,       JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, scrollHigh,      JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, circle,          JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, castingSkill,    JSPROP_ENUMANDPERM ),
+  UX_PSG( CSpell, requiredLevel,   JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, lowSkill,        JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, highSkill,       JSPROP_ENUMANDPERM ),
   UX_PSG( CSpell, requireTarget,   JSPROP_ENUMANDPERM ),
@@ -1312,6 +1321,11 @@ inline JSPropertySpec CCharacterProps[] =
   UX_PSGS( CCharacter, account,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, createdOn,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, playTime,              JSPROP_ENUMANDPERM ),
+  UX_PSG( CCharacter, level,                  JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, levelClass,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, experience,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, experienceToNextLevel,  JSPROP_ENUMPERMRO ),
+  UX_PSG( CCharacter, unspentStatPoints,      JSPROP_ENUMPERMRO ),
   UX_PSGS( CCharacter, housesOwned,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, housesCoOwned,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tithing,               JSPROP_ENUMANDPERM ),

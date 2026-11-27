@@ -277,6 +277,14 @@ private:
 	UI16		skillTotalCap;					//	A cap on the total of all a PC's skills
 	UI16		skillCap;						//	A cap on each individual PC skill
 	UI16		statCap;						//	A cap on the total of a PC's stats
+	bool		levelSystemEnabled;			//	Use level/experience progression instead of player skill advancement
+	UI16		levelCap;						//	Maximum player level when the level system is enabled
+	UI32		levelBaseExperience;			//	Base experience used by the level curve
+	UI16		levelStatPointsPerLevel;		//	Unspent stat points awarded for each level gained
+	bool		levelSystemCrafting;			//	Use profession progression for crafting while level mode is enabled
+	UI08		maxPrimaryProfessions;		//	Maximum professions a player may learn
+	bool		allowAllProfessions;			//	Ignore the profession slot limit
+	R32		professionGainRate;			//	Multiplier applied to profession experience awards
 	SI16		maxStealthMovement;				//	Max number of steps allowed with stealth skill at 100.0
 	SI16		maxStaminaMovement;				//	Max number of steps allowed while running before stamina is reduced
 	UI08		healthRegenMode;				//	Hp regen mode - see HpRegenMode enum for details
@@ -601,6 +609,22 @@ public:
 	UI08		ServerSkillDelayStatus() const;
 	auto		ServerStatCap( UI16 cap ) -> void;
 	auto		ServerStatCapStatus() const -> UI16;
+	auto		LevelSystemEnabled( bool value ) -> void { levelSystemEnabled = value; }
+	auto		LevelSystemEnabled() const -> bool { return levelSystemEnabled; }
+	auto		LevelCap( UI16 value ) -> void { levelCap = ( value == 0 ? 1 : value ); }
+	auto		LevelCap() const -> UI16 { return levelCap; }
+	auto		LevelBaseExperience( UI32 value ) -> void { levelBaseExperience = ( value == 0 ? 1 : value ); }
+	auto		LevelBaseExperience() const -> UI32 { return levelBaseExperience; }
+	auto		LevelStatPointsPerLevel( UI16 value ) -> void { levelStatPointsPerLevel = value; }
+	auto		LevelStatPointsPerLevel() const -> UI16 { return levelStatPointsPerLevel; }
+	auto		LevelSystemCrafting( bool value ) -> void { levelSystemCrafting = value; }
+	auto		LevelSystemCrafting() const -> bool { return levelSystemCrafting; }
+	auto		MaxPrimaryProfessions( UI08 value ) -> void { maxPrimaryProfessions = value; }
+	auto		MaxPrimaryProfessions() const -> UI08 { return maxPrimaryProfessions; }
+	auto		AllowAllProfessions( bool value ) -> void { allowAllProfessions = value; }
+	auto		AllowAllProfessions() const -> bool { return allowAllProfessions; }
+	auto		ProfessionGainRate( R32 value ) -> void { professionGainRate = std::max<R32>( 0.0f, value ); }
+	auto		ProfessionGainRate() const -> R32 { return professionGainRate; }
 	auto		MaxStealthMovement( SI16 value ) -> void;
 	SI16		MaxStealthMovement() const;
 	auto		MaxStaminaMovement( SI16 value ) -> void;

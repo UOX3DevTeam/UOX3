@@ -1189,19 +1189,19 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 	for( i = 0; i < ALLSKILLS; ++i )
 	{
 		mChar->SetBaseSkill( 0, i );
-		if( i == firstSkill )
+		if( !cwmWorldState->ServerData()->LevelSystemEnabled() && i == firstSkill )
 		{
 			mChar->SetBaseSkill( static_cast<UI16>( skillValue[0] * 10 ), i );
 		}
-		else if( i == secondSkill )
+		else if( !cwmWorldState->ServerData()->LevelSystemEnabled() && i == secondSkill )
 		{
 			mChar->SetBaseSkill( static_cast<UI16>( skillValue[1] * 10 ), i );
 		}
-		else if( i == thirdSkill )
+		else if( !cwmWorldState->ServerData()->LevelSystemEnabled() && i == thirdSkill )
 		{
 			mChar->SetBaseSkill( static_cast<UI16>( skillValue[2] * 10 ), i );
 		}
-		else if( i == fourthSkill )
+		else if( !cwmWorldState->ServerData()->LevelSystemEnabled() && i == fourthSkill )
 		{
 			if( cwmWorldState->ServerData()->ExtendedStartingSkills() )
 			{
@@ -1460,6 +1460,22 @@ void StartChar( CSocket *mSock, bool onCreate )
 				{
 					onCreateScp->OnCreate( mChar, false, true );
 				}
+			}
+
+			// The skill-gump override only checks scripts attached to the character.
+			// Enforce the level-system trigger here even when another login script
+			// prevents the global onLogin handler from running.
+			constexpr UI16 levelSystemScriptId = 2509;
+			if( cwmWorldState->ServerData()->LevelSystemEnabled() )
+			{
+				if( !mChar->HasScriptTrigger( levelSystemScriptId ))
+					mChar->AddScriptTrigger( levelSystemScriptId );
+				mChar->SetSkillTitles( true );
+			}
+			else if( mChar->HasScriptTrigger( levelSystemScriptId ))
+			{
+				mChar->RemoveScriptTrigger( levelSystemScriptId );
+				mChar->SetSkillTitles( false );
 			}
 
 			bool loginEventHandled = false;

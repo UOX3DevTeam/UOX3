@@ -1936,6 +1936,16 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_TACTICS:			skillToSet = TACTICS;					break;
 			case DFNTAG_TAILORING:			skillToSet = TAILORING;					break;
 			case DFNTAG_TAMING:				skillToSet = TAMING;					break;
+			case DFNTAG_TAMELEVEL:
+			{
+				TAGMAPOBJECT tameLevelTag;
+				tameLevelTag.m_Destroy = false;
+				tameLevelTag.m_IntValue = std::max<SI32>( 1, ndata );
+				tameLevelTag.m_ObjectType = TAGMAP_TYPE_INT;
+				tameLevelTag.m_StringValue = "";
+				applyTo->SetTag( "tameLevel", tameLevelTag );
+				break;
+			}
 			case DFNTAG_TASTEID:			skillToSet = TASTEID;					break;
 			case DFNTAG_TINKERING:			skillToSet = TINKERING;					break;
 			case DFNTAG_TRACKING:			skillToSet = TRACKING;					break;

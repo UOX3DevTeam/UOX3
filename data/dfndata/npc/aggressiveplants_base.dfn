@@ -40,6 +40,7 @@ GETML=corpser_aos
 GETSA=corpser_aos
 GETHS=corpser_aos
 GETTOL=corpser_aos
+CUSTOMINTTAG=npcLevel 10
 }
 
 [base_reaper]
@@ -65,6 +66,7 @@ GETML=reaper_aos
 GETSA=reaper_aos
 GETHS=reaper_aos
 GETTOL=reaper_aos
+CUSTOMINTTAG=npcLevel 12
 }
 
 [base_swamptentacle]
@@ -89,6 +91,7 @@ GETML=swamptentacle_aos
 GETSA=swamptentacle_aos
 GETHS=swamptentacle_aos
 GETTOL=swamptentacle_aos
+CUSTOMINTTAG=npcLevel 22
 }
 
 [base_whippingvine]
@@ -114,6 +117,7 @@ GETML=whippingvine_aos
 GETSA=whippingvine_aos
 GETHS=whippingvine_aos
 GETTOL=whippingvine_aos
+CUSTOMINTTAG=npcLevel 20
 }
 
 [base_quagmire]
@@ -138,6 +142,7 @@ GETML=quagmire_aos
 GETSA=quagmire_aos
 GETHS=quagmire_aos
 GETTOL=quagmire_aos
+CUSTOMINTTAG=npcLevel 22
 }
 
 [base_bogthing]
@@ -162,6 +167,7 @@ GETML=bogthing_aos
 GETSA=bogthing_aos
 GETHS=bogthing_aos
 GETTOL=bogthing_aos
+CUSTOMINTTAG=npcLevel 22
 }
 
 [base_bogling]
@@ -187,6 +193,7 @@ GETML=bogling_aos
 GETSA=bogling_aos
 GETHS=bogling_aos
 GETTOL=bogling_aos
+CUSTOMINTTAG=npcLevel 8
 }
 
 //Unique Creatures Extinct
@@ -215,6 +222,7 @@ GETML=doomtree_lbr
 GETSA=doomtree_lbr
 GETHS=doomtree_lbr
 GETTOL=doomtree_lbr
+CUSTOMINTTAG=npcLevel 42
 }
 
 [base_deathwillow]
@@ -242,4 +250,5 @@ GETML=deathwillow_lbr
 GETSA=deathwillow_lbr
 GETHS=deathwillow_lbr
 GETTOL=deathwillow_lbr
+CUSTOMINTTAG=npcLevel 42
 }

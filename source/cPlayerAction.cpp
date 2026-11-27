@@ -677,6 +677,45 @@ bool CPIEquipItem::Handle( void )
 	if( !ValidateObject( k ))
 		return true;
 
+	if( cwmWorldState->ServerData()->LevelSystemEnabled() && !k->IsNpc() && !k->IsGM() )
+	{
+		const CLevelClass *classProfile = Races->LevelClass( k->GetLevelClass() );
+		if( classProfile != nullptr && !classProfile->CanEquipItem( i->GetId() ))
+		{
+			tSock->SysMessage( "Your class cannot equip that item." );
+			Bounce( tSock, i );
+			return true;
+		}
+
+		const TAGMAPOBJECT levelRequiredTag = i->GetTag( "levelRequired" );
+		if( levelRequiredTag.m_ObjectType == TAGMAP_TYPE_INT && levelRequiredTag.m_IntValue > static_cast<SI32>( k->GetLevel() ))
+		{
+			tSock->SysMessage( "You must be level " + std::to_string( levelRequiredTag.m_IntValue ) + " to equip that item." );
+			Bounce( tSock, i );
+			return true;
+		}
+
+		const TAGMAPOBJECT classRequiredTag = i->GetTag( "classRequired" );
+		if( classRequiredTag.m_ObjectType == TAGMAP_TYPE_INT && classRequiredTag.m_IntValue > 0 &&
+			classRequiredTag.m_IntValue != static_cast<SI32>( k->GetLevelClass() ))
+		{
+			tSock->SysMessage( "Your class cannot equip that item." );
+			Bounce( tSock, i );
+			return true;
+		}
+
+		const TAGMAPOBJECT classMaskTag = i->GetTag( "levelClassMask" );
+		const UI08 levelClass = k->GetLevelClass();
+		if( classMaskTag.m_ObjectType == TAGMAP_TYPE_INT && classMaskTag.m_IntValue > 0 &&
+			( levelClass == CC_NONE || levelClass > 31 ||
+			( static_cast<UI32>( classMaskTag.m_IntValue ) & ( 1u << ( levelClass - 1 ))) == 0 ))
+		{
+			tSock->SysMessage( "Your class cannot equip that item." );
+			Bounce( tSock, i );
+			return true;
+		}
+	}
+
 	RACEID raceId = k->GetRace();
 	CRace *race = Races->Race( raceId );
 	if( !race->CanEquipItem( i->GetId() ))
@@ -1071,36 +1110,46 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		}
 		else if( i->GetId() == 0x0EED ) // They gave the NPC gold
 		{
-			targNPC->TextMessage( mSock, 1198, TALK, false ); // I thank thee for thy payment. That should give thee a good start on thy way. Farewell!
-			UI08 trainedIn = targNPC->GetTrainingPlayerIn();
-			UI16 oldskill = mChar->GetBaseSkill( trainedIn );
-			mChar->SetBaseSkill( static_cast<UI16>( mChar->GetBaseSkill( trainedIn ) + i->GetAmount() ), trainedIn );
-			if( mChar->GetBaseSkill( trainedIn ) > 250 )
+			if( cwmWorldState->ServerData()->LevelSystemEnabled() )
 			{
-				mChar->SetBaseSkill( 250, trainedIn );
-			}
-
-			Skills->UpdateSkillLevel( mChar, trainedIn );
-			mSock->UpdateSkill( trainedIn );
-			UI16 getAmount = i->GetAmount();
-			if( i->GetAmount() > 250 ) // Paid too much
-			{
-				i->IncAmount( - ( 250 - oldskill ));
+				targNPC->TextMessage( mSock, 1197, TALK, false ); // Skill training is disabled in level mode.
+				mSock->TempObj( nullptr );
+				targNPC->SetTrainingPlayerIn( 0xFF );
 				dropResult = 1;
 			}
-			else  // Gave exact change
+			else
 			{
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				targNPC->TextMessage( mSock, 1198, TALK, false ); // I thank thee for thy payment. That should give thee a good start on thy way. Farewell!
+				UI08 trainedIn = targNPC->GetTrainingPlayerIn();
+				UI16 oldskill = mChar->GetBaseSkill( trainedIn );
+				mChar->SetBaseSkill( static_cast<UI16>( mChar->GetBaseSkill( trainedIn ) + i->GetAmount() ), trainedIn );
+				if( mChar->GetBaseSkill( trainedIn ) > 250 )
 				{
-					Weight->SubtractItemWeight( mChar, i );
+					mChar->SetBaseSkill( 250, trainedIn );
 				}
-				i->Delete();
-				stackDeleted = true;
-			}
 
-			mSock->TempObj( nullptr );
-			targNPC->SetTrainingPlayerIn( 0xFF );
-			Effects->GoldSound( mSock, getAmount, false );
+				Skills->UpdateSkillLevel( mChar, trainedIn );
+				mSock->UpdateSkill( trainedIn );
+				UI16 getAmount = i->GetAmount();
+				if( i->GetAmount() > 250 ) // Paid too much
+				{
+					i->IncAmount( - ( 250 - oldskill ));
+					dropResult = 1;
+				}
+				else  // Gave exact change
+				{
+					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					{
+						Weight->SubtractItemWeight( mChar, i );
+					}
+					i->Delete();
+					stackDeleted = true;
+				}
+
+				mSock->TempObj( nullptr );
+				targNPC->SetTrainingPlayerIn( 0xFF );
+				Effects->GoldSound( mSock, getAmount, false );
+			}
 		}
 		else // Did not give gold
 		{

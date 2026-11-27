@@ -51,6 +51,7 @@ DEF=5
 TOPEACE=889 5
 TOPROV=889 5
 SCRIPT=3213//savage_shaman.js
+CUSTOMINTTAG=npcLevel 14
 }
 
 [m_savagewarrior]
@@ -87,6 +88,7 @@ DEF=1
 TOPEACE=743 5
 TOPROV=743 5
 script=3513//bola_ability.js
+CUSTOMINTTAG=npcLevel 12
 }
 
 [f_savagewarrior]
@@ -122,11 +124,13 @@ DAMAGE=1 1
 DEF=1
 TOPEACE=743 5
 TOPROV=743 5
+CUSTOMINTTAG=npcLevel 12
 }
 
 [savagewarrior]
 {
 get=f_savagewarrior m_savagewarrior
+CUSTOMINTTAG=npcLevel 12
 }
 
 [savagerider]
@@ -158,4 +162,5 @@ DAMAGE=1 1
 DEF=1
 TOPEACE=743 5
 TOPROV=743 5
+CUSTOMINTTAG=npcLevel 16
 }

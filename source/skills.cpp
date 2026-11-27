@@ -525,6 +525,14 @@ UI16 CSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
 //o------------------------------------------------------------------------------------------------o
 bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill, SI08 forceResult )
 {
+	if( !ValidateObject( s ))
+		return false;
+	if( !s->IsNpc() && cwmWorldState->ServerData()->LevelSystemEnabled() && cwmWorldState->ServerData()->LevelSystemCrafting() )
+	{
+		if( !s->CanUseProfessionSkill( sk ))
+			return false;
+	}
+
 	bool skillCheck		= false;
 	bool exists			= false;
 	std::vector<UI16> scriptTriggers = s->GetScriptTriggers();
@@ -1789,6 +1797,11 @@ auto CSkills::LoadCreateMenus() -> void
 //o------------------------------------------------------------------------------------------------o
 bool CSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed, SKILLVAL skAmt, bool triggerEvent )
 {
+	// Player progression is level-based in this mode. Skill checks still use the
+	// virtual level proficiency, but neither skills nor stats advance through use.
+	if( ValidateObject( s ) && !s->IsNpc() && cwmWorldState->ServerData()->LevelSystemEnabled() )
+		return false;
+
 	bool advSkill = false;
 	SI16 skillGain = 0;
 
@@ -2303,6 +2316,16 @@ void CSkills::MakeItem( CreateEntry_st &toMake, CChar *player, CSocket *sock, UI
 
 	if( !ValidateObject( player ))
 		return;
+	if( !toMake.skillReqs.empty() && !player->IsNpc() && cwmWorldState->ServerData()->LevelSystemEnabled() &&
+		cwmWorldState->ServerData()->LevelSystemCrafting() )
+	{
+		const CLevelProfession *profession = Races->ProfessionForSkill( toMake.skillReqs[0].skillNumber );
+		if( profession != nullptr && !player->HasProfession( profession->Id() ))
+		{
+			sock->SysMessage( "You must learn the " + profession->Name() + " profession before crafting this item." );
+			return;
+		}
+	}
 
 	// Get potential tag with ID of a targeted sub-resource
 	UI16 targetedSubResourceId = 0;

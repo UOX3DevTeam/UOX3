@@ -64,6 +64,11 @@ struct DamageTrackEntry_st
 
 bool DTEgreater( DamageTrackEntry_st &elem1, DamageTrackEntry_st &elem2 );
 
+enum CharacterClass : UI08
+{
+	CC_NONE = 0
+};
+
 class CChar : public CBaseObject
 {
 private:
@@ -139,6 +144,12 @@ private:
 
 	struct PlayerValues_st
 	{
+		struct ProfessionProgress_st
+		{
+			UI08 professionId;
+			UI64 experience;
+		};
+
 		PlayerValues_st();
 		void		DumpBody( std::ostream& outStream );
 
@@ -177,6 +188,11 @@ private:
 		TIMERVAL	createdOn;	// Timestamp for when player character was created
 		TIMERVAL	npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
 		UI32		playTime;	// Character's full playtime
+		UI16		level;		// Character level used by the optional level system
+		UI08		levelClass;	// CharacterClass selected for level-system progression
+		UI64		experience;	// Total accumulated experience
+		UI16		unspentStatPoints;	// Level-up points available for STR/DEX/INT
+		std::vector<ProfessionProgress_st> professions;	// Level-system crafting profession progress
 
 		UI08		atrophy[INTELLECT+1];
 		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
@@ -884,6 +900,39 @@ public:
 
 	auto		GetPlayTime() const -> UI32;
 	auto		SetPlayTime( UI32 newValue ) -> void;
+	auto		GetLevel() const -> UI16;
+	auto		SetLevel( UI16 newValue ) -> void;
+	auto		GetLevelClass() const -> UI08;
+	auto		SetLevelClass( UI08 newValue, bool forceChange = false ) -> bool;
+	auto		GetExperience() const -> UI64;
+	auto		SetExperience( UI64 newValue ) -> void;
+	auto		GetExperienceRequiredForLevel( UI16 targetLevel ) const -> UI64;
+	auto		GetExperienceToNextLevel() const -> UI64;
+	auto		GetUnspentStatPoints() const -> UI16;
+	auto		SetUnspentStatPoints( UI16 newValue ) -> void;
+	auto		AddExperience( UI64 amount ) -> UI16;
+	auto		SpendLevelStatPoint( UI08 statId ) -> bool;
+	auto		SetLevelProgress( UI16 newLevel ) -> bool;
+	auto		ResetLevelProgress( bool clearClass ) -> void;
+	auto		GetLevelSkillValue( UI08 skillToGet ) const -> SKILLVAL;
+	auto		GetProfessionCount() const -> UI08;
+	auto		GetPrimaryProfessionCount() const -> UI08;
+	auto		GetProfessionId( UI08 slot ) const -> UI08;
+	auto		HasProfession( UI08 professionId ) const -> bool;
+	auto		CanUseProfessionSkill( UI08 skillId ) const -> bool;
+	auto		LearnProfession( UI08 professionId, bool forceLearn = false ) -> bool;
+	auto		ForgetProfession( UI08 professionId ) -> bool;
+	auto		ResetProfessions() -> void;
+	auto		GetProfessionExperience( UI08 professionId ) const -> UI64;
+	auto		SetProfessionExperience( UI08 professionId, UI64 experience, bool forceLearn = false ) -> bool;
+	auto		GetProfessionProficiency( UI08 professionId ) const -> SKILLVAL;
+	auto		SetProfessionProficiency( UI08 professionId, SKILLVAL proficiency, bool forceLearn = false ) -> bool;
+	auto		GetProfessionSkillValue( UI08 skillToGet ) const -> SKILLVAL;
+	auto		AddProfessionExperience( UI08 skillId, UI16 minSkill, UI16 maxSkill ) -> UI64;
+	auto		AddProfessionCraftExperience( UI08 skillId, UI16 minSkill, UI16 maxSkill ) -> UI64;
+	auto		GetLevelHealthBonus() const -> UI16;
+	auto		GetLevelManaBonus() const -> UI16;
+	auto		GetLevelStaminaBonus() const -> UI16;
 
 	void		SetCreatedOn( TIMERVAL newValue );
 	TIMERVAL	GetCreatedOn( void ) const;

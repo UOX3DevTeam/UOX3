@@ -24,6 +24,7 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802//questconversation.js
 CUSTOMINTTAG=QuestID 1//More ore Please
+CUSTOMINTTAG=npcLevel 0
 }
 
 [clairesse]
@@ -45,6 +46,7 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 2//Stitch In Time
+CUSTOMINTTAG=npcLevel 0
 }
 
 [asandos]
@@ -69,6 +71,7 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 3//Bakers Dozen
+CUSTOMINTTAG=npcLevel 0
 }
 
 [hargrove]
@@ -95,6 +98,7 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 4//Chop Chop On The Double
+CUSTOMINTTAG=npcLevel 0
 }
 
 [gervis]
@@ -121,6 +125,7 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 5//Battered Bucklers
+CUSTOMINTTAG=npcLevel 0
 }
 
 [nibbet]
@@ -148,6 +153,7 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 6//A clockwork puzzle
+CUSTOMINTTAG=npcLevel 0
 }
 
 [jacob]
@@ -182,6 +188,7 @@ MINING=650 880
 TINKERING=640 1000
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 7//The Delucian’s Lost Mine
+CUSTOMINTTAG=npcLevel 0
 }
 
 [sarsmea]
@@ -212,4 +219,5 @@ SWORDSMANSHIP=1200 1200
 FOCUS=1200 1200
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 8//The Inner Warrior
+CUSTOMINTTAG=npcLevel 0
 }

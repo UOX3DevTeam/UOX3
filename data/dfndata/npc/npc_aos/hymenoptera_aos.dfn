@@ -1,6 +1,7 @@
 [ambitious_black_solen_queen_aos]
 {//Quest Npc
 GET=base_ambitious_black_solen_queen
+CUSTOMINTTAG=npcLevel 32
 }
 
 [black_infilrator_queen_aos]
@@ -27,6 +28,7 @@ RESISTPOISON=35 40
 RESISTLIGHTNING=25 30
 TOPROV=826
 TOPEACE=826 5
+CUSTOMINTTAG=npcLevel 26
 }
 
 [black_solen_infilrator_warrior_aos]
@@ -54,6 +56,7 @@ RESISTPOISON=20 35
 RESISTLIGHTNING=18 25
 TOPROV=742
 TOPEACE=742 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [black_queen_aos]
@@ -82,6 +85,7 @@ RESISTPOISON=35 40
 RESISTLIGHTNING=25 30
 TOPROV=796
 TOPEACE=796 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [black_solen_warrior_aos]
@@ -110,6 +114,7 @@ RESISTPOISON=20 35
 RESISTLIGHTNING=10 25
 TOPROV=729
 TOPEACE=729 5
+CUSTOMINTTAG=npcLevel 20
 }
 
 [black_solen_worker_aos]
@@ -137,16 +142,19 @@ RESISTPOISON=10 20
 RESISTLIGHTNING=20 30
 TOPROV=583
 TOPEACE=583 5
+CUSTOMINTTAG=npcLevel 16
 }
 
 [black_solen_matriarch_aos]
 {//Quest Npc
 GET=base_black_solen_matriarch
+CUSTOMINTTAG=npcLevel 32
 }
 
 [ambitious_red_solen_queen_aos]
 {//Quest Npc
 GET=base_ambitious_red_solen_queen
+CUSTOMINTTAG=npcLevel 32
 }
 
 [red_infilrator_queen_aos]
@@ -173,6 +181,7 @@ RESISTPOISON=35 40
 RESISTLIGHTNING=25 30
 TOPROV=826
 TOPEACE=826 5
+CUSTOMINTTAG=npcLevel 26
 }
 
 [red_solen_infilrator_warrior_aos]
@@ -200,6 +209,7 @@ RESISTPOISON=20 35
 RESISTLIGHTNING=18 25
 TOPROV=742
 TOPEACE=742 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [red_queen_aos]
@@ -228,6 +238,7 @@ RESISTPOISON=35 40
 RESISTLIGHTNING=25 30
 TOPROV=796
 TOPEACE=796 5
+CUSTOMINTTAG=npcLevel 24
 }
 
 [red_solen_warrior_aos]
@@ -256,6 +267,7 @@ RESISTPOISON=20 35
 RESISTLIGHTNING=10 25
 TOPROV=729
 TOPEACE=729 5
+CUSTOMINTTAG=npcLevel 20
 }
 
 [red_solen_worker_aos]
@@ -283,9 +295,11 @@ RESISTPOISON=10 20
 RESISTLIGHTNING=20 30
 TOPROV=583
 TOPEACE=583 5
+CUSTOMINTTAG=npcLevel 16
 }
 
 [red_solen_matriarch_aos]
 {//Quest Npc
 GET=base_red_solen_matriarch
+CUSTOMINTTAG=npcLevel 32
 }

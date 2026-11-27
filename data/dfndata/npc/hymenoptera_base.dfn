@@ -34,6 +34,7 @@ GETML=ambitious_black_solen_queen_aos
 GETSA=ambitious_black_solen_queen_aos
 GETHS=ambitious_black_solen_queen_aos
 GETTOL=ambitious_black_solen_queen_aos
+CUSTOMINTTAG=npcLevel 32
 }
 
 // black infilrator queen - Base NPC with shared DFN tags
@@ -60,6 +61,7 @@ GETML=black_infilrator_queen_aos
 GETSA=black_infilrator_queen_aos
 GETHS=black_infilrator_queen_aos
 GETTOL=black_infilrator_queen_aos
+CUSTOMINTTAG=npcLevel 26
 }
 
 // black solen infilrator warrior - Base NPC with shared DFN tags
@@ -86,6 +88,7 @@ GETML=black_solen_infilrator_warrior_aos
 GETSA=black_solen_infilrator_warrior_aos
 GETHS=black_solen_infilrator_warrior_aos
 GETTOL=black_solen_infilrator_warrior_aos
+CUSTOMINTTAG=npcLevel 24
 }
 
 // black queen - Base NPC with shared DFN tags
@@ -112,6 +115,7 @@ GETML=black_queen_aos
 GETSA=black_queen_aos
 GETHS=black_queen_aos
 GETTOL=black_queen_aos
+CUSTOMINTTAG=npcLevel 24
 }
 
 // black solen warrior - Base NPC with shared DFN tags
@@ -138,6 +142,7 @@ GETML=black_solen_warrior_aos
 GETSA=black_solen_warrior_aos
 GETHS=black_solen_warrior_aos
 GETTOL=black_solen_warrior_aos
+CUSTOMINTTAG=npcLevel 20
 }
 
 // black solen worker - Base NPC with shared DFN tags
@@ -164,6 +169,7 @@ GETML=black_solen_worker_aos
 GETSA=black_solen_worker_aos
 GETHS=black_solen_worker_aos
 GETTOL=black_solen_worker_aos
+CUSTOMINTTAG=npcLevel 16
 }
 
 // black solen matriarch - Base NPC with shared DFN tags
@@ -192,6 +198,7 @@ GETML=black_solen_matriarch_aos
 GETSA=black_solen_matriarch_aos
 GETHS=black_solen_matriarch_aos
 GETTOL=black_solen_matriarch_aos
+CUSTOMINTTAG=npcLevel 32
 }
 
 // ambitious red solen queen - Base NPC with shared DFN tags
@@ -218,6 +225,7 @@ GETML=ambitious_red_solen_queen_aos
 GETSA=ambitious_red_solen_queen_aos
 GETHS=ambitious_red_solen_queen_aos
 GETTOL=ambitious_red_solen_queen_aos
+CUSTOMINTTAG=npcLevel 32
 }
 
 // red infilrator queen - Base NPC with shared DFN tags
@@ -243,6 +251,7 @@ GETML=red_infilrator_queen_aos
 GETSA=red_infilrator_queen_aos
 GETHS=red_infilrator_queen_aos
 GETTOL=red_infilrator_queen_aos
+CUSTOMINTTAG=npcLevel 26
 }
 
 // red solen infilrator warrior - Base NPC with shared DFN tags
@@ -268,6 +277,7 @@ GETML=red_solen_infilrator_warrior_aos
 GETSA=red_solen_infilrator_warrior_aos
 GETHS=red_solen_infilrator_warrior_aos
 GETTOL=red_solen_infilrator_warrior_aos
+CUSTOMINTTAG=npcLevel 24
 }
 
 // red queen - Base NPC with shared DFN tags
@@ -293,6 +303,7 @@ GETML=red_queen_aos
 GETSA=red_queen_aos
 GETHS=red_queen_aos
 GETTOL=red_queen_aos
+CUSTOMINTTAG=npcLevel 24
 }
 
 // red solen warrior - Base NPC with shared DFN tags
@@ -318,6 +329,7 @@ GETML=red_solen_warrior_aos
 GETSA=red_solen_warrior_aos
 GETHS=red_solen_warrior_aos
 GETTOL=red_solen_warrior_aos
+CUSTOMINTTAG=npcLevel 20
 }
 
 // red solen worker - Base NPC with shared DFN tags
@@ -343,6 +355,7 @@ GETML=red_solen_worker_aos
 GETSA=red_solen_worker_aos
 GETHS=red_solen_worker_aos
 GETTOL=red_solen_worker_aos
+CUSTOMINTTAG=npcLevel 16
 }
 
 // red solen matriarch - Base NPC with shared DFN tags
@@ -370,4 +383,5 @@ GETML=red_solen_matriarch_aos
 GETSA=red_solen_matriarch_aos
 GETHS=red_solen_matriarch_aos
 GETTOL=red_solen_matriarch_aos
+CUSTOMINTTAG=npcLevel 32
 }

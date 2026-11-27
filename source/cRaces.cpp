@@ -22,6 +22,309 @@ const UI32 BIT_NOBEARD		= 1;
 const UI32 BIT_PLAYERRACE	= 2;
 const UI32 BIT_NOHAIR		= 3;
 
+CLevelProfession::CLevelProfession() : professionId( 0 ), professionName( "Unnamed Profession" ),
+	description( "A profession." ), professionType( "CRAFTING" ), skillId( ALLSKILLS ), startValue( 0 ), maxValue( 1000 ),
+	experiencePerPoint( 100 ), primaryProfession( true )
+{
+}
+
+bool CLevelProfession::Load( UI08 id )
+{
+	professionId = id;
+	const std::string sectionName = "PROFESSION " + std::to_string( id );
+	CScriptSection *professionSection = FileLookup->FindEntry( sectionName, race_def );
+	if( professionSection == nullptr )
+		return false;
+
+	for( std::string tag = professionSection->First(); !professionSection->AtEnd(); tag = professionSection->Next() )
+	{
+		const std::string upperTag = oldstrutil::upper( tag );
+		const std::string data = oldstrutil::trim( oldstrutil::removeTrailing( professionSection->GrabData(), "//" ));
+		if( upperTag == "NAME" )
+		{
+			professionName = data;
+		}
+		else if( upperTag == "DESCRIPTION" )
+		{
+			description = data;
+		}
+		else if( upperTag == "TYPE" || upperTag == "CATEGORY" )
+		{
+			professionType = oldstrutil::upper( data );
+		}
+		else if( upperTag == "SKILL" )
+		{
+			const std::string skillName = oldstrutil::upper( data );
+			for( UI08 skill = 0; skill < ALLSKILLS; ++skill )
+			{
+				if( oldstrutil::upper( cwmWorldState->skill[skill].name ) == skillName )
+				{
+					skillId = skill;
+					break;
+				}
+			}
+			if( skillId == ALLSKILLS )
+				Console.Warning( oldstrutil::format( "Unknown skill '%s' in PROFESSION %u", skillName.c_str(), professionId ));
+		}
+		else if( upperTag == "STARTVALUE" )
+		{
+			startValue = static_cast<SKILLVAL>( std::min<UI32>( std::stoul( data, nullptr, 0 ), std::numeric_limits<SKILLVAL>::max() ));
+		}
+		else if( upperTag == "MAXVALUE" )
+		{
+			maxValue = static_cast<SKILLVAL>( std::min<UI32>( std::stoul( data, nullptr, 0 ), std::numeric_limits<SKILLVAL>::max() ));
+		}
+		else if( upperTag == "EXPERIENCEPERPOINT" )
+		{
+			experiencePerPoint = std::max<UI32>( 1, std::stoul( data, nullptr, 0 ));
+		}
+		else if( upperTag == "PRIMARY" || upperTag == "COUNTSTOWARDLIMIT" )
+		{
+			primaryProfession = ( std::stoul( data, nullptr, 0 ) != 0 );
+		}
+	}
+
+	maxValue = std::max<SKILLVAL>( maxValue, startValue );
+	return skillId < ALLSKILLS;
+}
+
+UI08 CLevelProfession::Id() const { return professionId; }
+const std::string &CLevelProfession::Name() const { return professionName; }
+const std::string &CLevelProfession::Description() const { return description; }
+const std::string &CLevelProfession::Type() const { return professionType; }
+UI08 CLevelProfession::SkillId() const { return skillId; }
+const std::string &CLevelProfession::SkillName() const
+{
+	static const std::string invalidSkill = "Unknown";
+	return ( skillId < ALLSKILLS ? cwmWorldState->skill[skillId].name : invalidSkill );
+}
+bool CLevelProfession::IsPrimary() const { return primaryProfession; }
+SKILLVAL CLevelProfession::StartValue() const { return startValue; }
+SKILLVAL CLevelProfession::MaxValue() const { return maxValue; }
+UI32 CLevelProfession::ExperiencePerPoint() const { return experiencePerPoint; }
+
+UI64 CLevelProfession::MaxExperience() const
+{
+	return static_cast<UI64>( maxValue - startValue ) * experiencePerPoint;
+}
+
+SKILLVAL CLevelProfession::ProficiencyFromExperience( UI64 experience ) const
+{
+	const UI64 earnedPoints = experience / experiencePerPoint;
+	return static_cast<SKILLVAL>( std::min<UI64>( static_cast<UI64>( startValue ) + earnedPoints, maxValue ));
+}
+
+UI64 CLevelProfession::ExperienceForProficiency( SKILLVAL proficiency ) const
+{
+	const SKILLVAL clampedValue = std::clamp<SKILLVAL>( proficiency, startValue, maxValue );
+	return static_cast<UI64>( clampedValue - startValue ) * experiencePerPoint;
+}
+
+CLevelClassAbility::CLevelClassAbility() : abilityId( 0 ), abilityName( "Unnamed Ability" ), action( "PASSIVE" ), value( 0 ),
+	requiredLevel( 1 ), manaCost( 0 ), staminaCost( 0 ), cooldownSeconds( 0 ), scriptId( 0 ), functionName( "UseClassAbility" )
+{
+}
+
+bool CLevelClassAbility::Load( UI16 id )
+{
+	abilityId = id;
+	const std::string sectionName = "CLASS ABILITY " + std::to_string( id );
+	CScriptSection *abilitySection = FileLookup->FindEntry( sectionName, race_def );
+	if( abilitySection == nullptr )
+		return false;
+
+	for( std::string tag = abilitySection->First(); !abilitySection->AtEnd(); tag = abilitySection->Next() )
+	{
+		const std::string upperTag = oldstrutil::upper( tag );
+		const std::string data = oldstrutil::trim( oldstrutil::removeTrailing( abilitySection->GrabData(), "//" ));
+		if( upperTag == "NAME" ) abilityName = data;
+		else if( upperTag == "DESCRIPTION" ) description = data;
+		else if( upperTag == "ACTION" ) action = oldstrutil::upper( data );
+		else if( upperTag == "VALUE" ) value = static_cast<SI32>( std::stol( data, nullptr, 0 ));
+		else if( upperTag == "LEVEL" ) requiredLevel = static_cast<UI16>( std::max<UI32>( 1, std::stoul( data, nullptr, 0 )));
+		else if( upperTag == "MANACOST" ) manaCost = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "STAMINACOST" ) staminaCost = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "COOLDOWN" ) cooldownSeconds = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "SCRIPT" ) scriptId = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "FUNCTION" ) functionName = data;
+	}
+	return true;
+}
+
+UI16 CLevelClassAbility::Id() const { return abilityId; }
+const std::string &CLevelClassAbility::Name() const { return abilityName; }
+const std::string &CLevelClassAbility::Description() const { return description; }
+const std::string &CLevelClassAbility::Action() const { return action; }
+SI32 CLevelClassAbility::Value() const { return value; }
+UI16 CLevelClassAbility::RequiredLevel() const { return requiredLevel; }
+UI16 CLevelClassAbility::ManaCost() const { return manaCost; }
+UI16 CLevelClassAbility::StaminaCost() const { return staminaCost; }
+UI16 CLevelClassAbility::CooldownSeconds() const { return cooldownSeconds; }
+UI16 CLevelClassAbility::ScriptId() const { return scriptId; }
+const std::string &CLevelClassAbility::FunctionName() const { return functionName; }
+
+CLevelClass::CLevelClass() : classId( 0 ), className( "Unselected" ), description( "Choose a class to begin progression." ),
+	healthPerLevel( 0 ), manaPerLevel( 0 ), staminaPerLevel( 0 ), canTame( false )
+{
+	skillTiers.fill( 0 );
+	tierSettings[0] = { 0, 25 };
+	tierSettings[1] = { 100, 60 };
+	tierSettings[2] = { 200, 85 };
+	tierSettings[3] = { 300, 100 };
+}
+
+void CLevelClass::LoadSkillList( const std::string &data, UI08 tier )
+{
+	for( const auto &entry : oldstrutil::sections( data, "," ))
+	{
+		const std::string skillName = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( entry, "//" )));
+		if( skillName.empty() )
+			continue;
+
+		bool foundSkill = false;
+		for( UI08 skill = 0; skill < ALLSKILLS; ++skill )
+		{
+			if( oldstrutil::upper( cwmWorldState->skill[skill].name ) == skillName )
+			{
+				skillTiers[skill] = tier;
+				foundSkill = true;
+				break;
+			}
+		}
+		if( !foundSkill )
+			Console.Warning( oldstrutil::format( "Unknown skill '%s' in CLASS %u", skillName.c_str(), classId ));
+	}
+}
+
+void CLevelClass::LoadEquipmentList( const std::string &sectionName, bool allowList )
+{
+	CScriptSection *equipmentSection = FileLookup->FindEntry( sectionName, race_def );
+	if( equipmentSection == nullptr )
+		return;
+
+	for( std::string tag = equipmentSection->First(); !equipmentSection->AtEnd(); tag = equipmentSection->Next() )
+	{
+		if( oldstrutil::upper( tag ) != "ITEMS" )
+			continue;
+		for( const auto &entry : oldstrutil::sections( equipmentSection->GrabData(), "," ))
+		{
+			const std::string itemId = oldstrutil::trim( oldstrutil::removeTrailing( entry, "//" ));
+			if( itemId.empty() )
+				continue;
+			if( allowList )
+				allowedEquipment.insert( static_cast<UI16>( std::stoul( itemId, nullptr, 0 )));
+			else
+				bannedEquipment.insert( static_cast<UI16>( std::stoul( itemId, nullptr, 0 )));
+		}
+	}
+}
+
+void CLevelClass::LoadAbility( const std::string &data )
+{
+	const UI32 parsedId = std::stoul( data, nullptr, 0 );
+	if( parsedId == 0 || parsedId > std::numeric_limits<UI16>::max() )
+		return;
+
+	CLevelClassAbility ability;
+	if( ability.Load( static_cast<UI16>( parsedId )))
+		abilities.push_back( ability );
+	else
+		Console.Warning( oldstrutil::format( "Missing CLASS ABILITY %u referenced by CLASS %u", parsedId, classId ));
+}
+
+void CLevelClass::Load( UI08 id )
+{
+	classId = id;
+	const std::string sectionName = "CLASS " + std::to_string( id );
+	CScriptSection *classSection = FileLookup->FindEntry( sectionName, race_def );
+	if( classSection == nullptr )
+		return;
+
+	for( std::string tag = classSection->First(); !classSection->AtEnd(); tag = classSection->Next() )
+	{
+		const std::string upperTag = oldstrutil::upper( tag );
+		const std::string data = oldstrutil::trim( oldstrutil::removeTrailing( classSection->GrabData(), "//" ));
+		if( upperTag == "NAME" ) className = data;
+		else if( upperTag == "DESCRIPTION" ) description = data;
+		else if( upperTag == "HEALTHPERLEVEL" ) healthPerLevel = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "MANAPERLEVEL" ) manaPerLevel = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "STAMINAPERLEVEL" ) staminaPerLevel = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "CANTAME" ) canTame = ( std::stoul( data, nullptr, 0 ) != 0 );
+		else if( upperTag == "PRIMARYSKILLS" ) LoadSkillList( data, 3 );
+		else if( upperTag == "CORESKILLS" ) LoadSkillList( data, 2 );
+		else if( upperTag == "SUPPORTSKILLS" ) LoadSkillList( data, 1 );
+		else if( upperTag == "OTHERSTART" ) tierSettings[0].startValue = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "OTHERCAP" ) tierSettings[0].capPercent = static_cast<UI16>( std::min<UI32>( std::stoul( data, nullptr, 0 ), 100 ));
+		else if( upperTag == "SUPPORTSTART" ) tierSettings[1].startValue = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "SUPPORTCAP" ) tierSettings[1].capPercent = static_cast<UI16>( std::min<UI32>( std::stoul( data, nullptr, 0 ), 100 ));
+		else if( upperTag == "CORESTART" ) tierSettings[2].startValue = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "CORECAP" ) tierSettings[2].capPercent = static_cast<UI16>( std::min<UI32>( std::stoul( data, nullptr, 0 ), 100 ));
+		else if( upperTag == "PRIMARYSTART" ) tierSettings[3].startValue = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+		else if( upperTag == "PRIMARYCAP" ) tierSettings[3].capPercent = static_cast<UI16>( std::min<UI32>( std::stoul( data, nullptr, 0 ), 100 ));
+		else if( upperTag == "ALLOWEQUIPLIST" ) LoadEquipmentList( "CLASS EQUIPLIST " + data, true );
+		else if( upperTag == "BANEQUIPLIST" ) LoadEquipmentList( "CLASS EQUIPLIST " + data, false );
+		else if( upperTag == "ABILITY" ) LoadAbility( data );
+	}
+}
+
+UI08 CLevelClass::Id() const { return classId; }
+const std::string &CLevelClass::Name() const { return className; }
+const std::string &CLevelClass::Description() const { return description; }
+UI16 CLevelClass::HealthPerLevel() const { return healthPerLevel; }
+UI16 CLevelClass::ManaPerLevel() const { return manaPerLevel; }
+UI16 CLevelClass::StaminaPerLevel() const { return staminaPerLevel; }
+bool CLevelClass::CanTame() const { return canTame; }
+UI08 CLevelClass::SkillTier( UI08 skill ) const { return ( skill < ALLSKILLS ? skillTiers[skill] : 0 ); }
+UI16 CLevelClass::TierStart( UI08 tier ) const { return ( tier < tierSettings.size() ? tierSettings[tier].startValue : 0 ); }
+UI16 CLevelClass::TierCap( UI08 tier ) const { return ( tier < tierSettings.size() ? tierSettings[tier].capPercent : 0 ); }
+
+std::string CLevelClass::SkillList( UI08 tier ) const
+{
+	std::string result;
+	for( UI08 skill = 0; skill < ALLSKILLS; ++skill )
+	{
+		if( skillTiers[skill] != tier )
+			continue;
+		if( !result.empty() )
+			result += ", ";
+		result += cwmWorldState->skill[skill].name;
+	}
+	return result;
+}
+
+SKILLVAL CLevelClass::SkillValue( UI08 skill, UI16 level, UI16 levelCap, SKILLVAL skillCap ) const
+{
+	if( skill >= ALLSKILLS )
+		return 0;
+	const SkillTier_st &tier = tierSettings[skillTiers[skill]];
+	const SKILLVAL targetValue = static_cast<SKILLVAL>( static_cast<UI32>( skillCap ) * tier.capPercent / 100 );
+	const SKILLVAL startingValue = std::min<SKILLVAL>( tier.startValue, targetValue );
+	if( levelCap <= 1 || targetValue <= startingValue )
+		return targetValue;
+	const UI16 currentLevel = std::clamp<UI16>( level, 1, levelCap );
+	const UI32 gainedValue = static_cast<UI32>( currentLevel - 1 ) * ( targetValue - startingValue ) / ( levelCap - 1 );
+	return static_cast<SKILLVAL>( startingValue + gainedValue );
+}
+
+bool CLevelClass::CanEquipItem( UI16 itemId ) const
+{
+	if( !allowedEquipment.empty() )
+		return allowedEquipment.find( itemId ) != allowedEquipment.end();
+	if( !bannedEquipment.empty() )
+		return bannedEquipment.find( itemId ) == bannedEquipment.end();
+	return true;
+}
+
+UI16 CLevelClass::AbilityCount() const
+{
+	return static_cast<UI16>( std::min<size_t>( abilities.size(), std::numeric_limits<UI16>::max() ));
+}
+
+const CLevelClassAbility *CLevelClass::Ability( UI16 abilityIndex ) const
+{
+	return ( abilityIndex < abilities.size() ? &abilities[abilityIndex] : nullptr );
+}
+
 bool cRaces::InvalidRace( RACEID x ) const
 {
 	return ( x >= races.size() );
@@ -40,6 +343,41 @@ CRace * cRaces::Race( RACEID x )
 		return nullptr;
 
 	return races[x];
+}
+
+CLevelClass *cRaces::LevelClass( UI08 classId )
+{
+	return ( classId > 0 && classId < levelClasses.size() ? &levelClasses[classId] : nullptr );
+}
+
+const CLevelClass *cRaces::LevelClass( UI08 classId ) const
+{
+	return ( classId > 0 && classId < levelClasses.size() ? &levelClasses[classId] : nullptr );
+}
+
+UI08 cRaces::LevelClassCount() const
+{
+	return static_cast<UI08>( levelClasses.size() > 0 ? levelClasses.size() - 1 : 0 );
+}
+
+CLevelProfession *cRaces::LevelProfession( UI08 professionId )
+{
+	return ( professionId > 0 && professionId < levelProfessions.size() ? &levelProfessions[professionId] : nullptr );
+}
+
+const CLevelProfession *cRaces::LevelProfession( UI08 professionId ) const
+{
+	return ( professionId > 0 && professionId < levelProfessions.size() ? &levelProfessions[professionId] : nullptr );
+}
+
+const CLevelProfession *cRaces::ProfessionForSkill( UI08 skillId ) const
+{
+	return ( skillId < ALLSKILLS ? LevelProfession( professionBySkill[skillId] ) : nullptr );
+}
+
+UI08 cRaces::LevelProfessionCount() const
+{
+	return static_cast<UI08>( levelProfessions.size() > 0 ? levelProfessions.size() - 1 : 0 );
 }
 
 cRaces::cRaces():initialized( false ), nextUniqueRaceID( 0 )
@@ -80,6 +418,40 @@ void cRaces::DefaultInitCombat( void )
 void cRaces::Load()
 {
 	initialized = true;
+	levelProfessions.clear();
+	professionBySkill.fill( 0 );
+	levelProfessions.emplace_back(); // Profession id 0 is the unlearned state.
+	for( UI16 professionId = 1; professionId < std::numeric_limits<UI08>::max(); ++professionId )
+	{
+		const std::string professionSection = "PROFESSION " + std::to_string( professionId );
+		if( FileLookup->FindEntry( professionSection, race_def ) == nullptr )
+			break;
+
+		levelProfessions.emplace_back();
+		if( levelProfessions.back().Load( static_cast<UI08>( professionId )))
+		{
+			const UI08 skillId = levelProfessions.back().SkillId();
+			if( professionBySkill[skillId] == 0 )
+				professionBySkill[skillId] = static_cast<UI08>( professionId );
+			else
+				Console.Warning( oldstrutil::format( "PROFESSION %u duplicates skill %s; PROFESSION %u retains ownership", professionId,
+					levelProfessions.back().SkillName().c_str(), professionBySkill[skillId] ));
+		}
+	}
+	Console.Print( oldstrutil::format( "Loaded %u level professions", LevelProfessionCount() ));
+
+	levelClasses.clear();
+	levelClasses.emplace_back(); // Class id 0 is the unselected state.
+	for( UI16 classId = 1; classId < std::numeric_limits<UI08>::max(); ++classId )
+	{
+		const std::string classSection = "CLASS " + std::to_string( classId );
+		if( FileLookup->FindEntry( classSection, race_def ) == nullptr )
+			break;
+		levelClasses.emplace_back();
+		levelClasses.back().Load( static_cast<UI08>( classId ));
+	}
+	Console.Print( oldstrutil::format( "Loaded %u level classes", LevelClassCount() ));
+
 	UI32 i = 0;
 	UI32 raceCount = 0;
 	bool done = false;

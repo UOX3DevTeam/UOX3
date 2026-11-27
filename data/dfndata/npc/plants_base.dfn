@@ -29,4 +29,5 @@ GETML=treefellow_aos
 GETSA=treefellow_aos
 GETHS=treefellow_aos
 GETTOL=treefellow_aos
+CUSTOMINTTAG=npcLevel 14
 }

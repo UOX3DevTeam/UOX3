@@ -49,6 +49,7 @@ GETML=barracoon_aos
 GETSA=barracoon_aos
 GETHS=barracoon_aos
 GETTOL=barracoon_aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 //lord oaks - Base NPC with shared DFN tags
@@ -78,6 +79,7 @@ GETML=lordoaks_aos
 GETSA=lordoaks_aos
 GETHS=lordoaks_aos
 GETTOL=lordoaks_aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 //rikktor - Base NPC with shared DFN tags
@@ -107,6 +109,7 @@ GETML=rikktor_aos
 GETSA=rikktor_aos
 GETHS=rikktor_aos
 GETTOL=rikktor_aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 //semidar - Base NPC with shared DFN tags
@@ -139,6 +142,7 @@ GETML=semidar_aos
 GETSA=semidar_aos
 GETHS=semidar_aos
 GETTOL=semidar_aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 //silvani - Base NPC with shared DFN tags
@@ -170,6 +174,7 @@ GETML=silvani_aos
 GETSA=silvani_aos
 GETHS=silvani_aos
 GETTOL=silvani_aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [paroxysmus]
@@ -201,6 +206,7 @@ POISONSTRENGTH=4
 RACE=18
 FLAG=NEUTRAL
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 50
 }
 
 [abyssmalhorror]
@@ -233,6 +239,7 @@ POISONSTRENGTH=4
 RACE=18
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [bonedaemon]
@@ -265,6 +272,7 @@ RACE=18
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [darkfather]
@@ -298,6 +306,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [darknightcreeper]
@@ -332,6 +341,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [dreadhorn]
@@ -357,6 +367,7 @@ NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 50
 }
 
 [fleshrenderer]
@@ -383,6 +394,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [impaler]
@@ -413,6 +425,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [ladymelisande]
@@ -438,6 +451,7 @@ NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 50
 }
 
 [mephitis]
@@ -465,6 +479,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=td
+CUSTOMINTTAG=npcLevel 50
 }
 
 [interredgrizzle]
@@ -494,6 +509,7 @@ NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 50
 }
 
 [neira]
@@ -532,6 +548,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [serado]
@@ -559,6 +576,7 @@ NPCWANDER=4
 FX2=10
 FLAG=NEUTRAL
 ORIGIN=se
+CUSTOMINTTAG=npcLevel 50
 }
 
 [shadowknight]
@@ -592,6 +610,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [shimmeringeffusion]
@@ -623,6 +642,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=ml
+CUSTOMINTTAG=npcLevel 50
 }
 
 [theharrower]
@@ -653,6 +673,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [trueharrower]
@@ -684,6 +705,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
+CUSTOMINTTAG=npcLevel 50
 }
 
 [travesty]
@@ -715,6 +737,7 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGI=ml
+CUSTOMINTTAG=npcLevel 45
 }
 
 //dragon turtle - Base NPC with shared DFN tags
@@ -742,4 +765,5 @@ GETML=dragonturtle_aos
 GETSA=dragonturtle_aos
 GETHS=dragonturtle_aos
 GETTOL=dragonturtle_aos
+CUSTOMINTTAG=npcLevel 50
 }

@@ -5282,6 +5282,409 @@ bool CChar_AddSkill( JSContext *cx, unsigned argc, JS::Value* vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_AddExperience()
+//|	Prototype	-	int AddExperience( amount )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds level-system experience and returns the number of levels gained
+//o------------------------------------------------------------------------------------------------o
+bool CChar_AddExperience( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "AddExperience: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
+	CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( myChar ) )
+	{
+		ScriptError( cx, "Invalid Object assigned (AddExperience)" );
+		return false;
+	}
+
+	double amount = 0;
+	if( !JS::ToNumber( cx, args.get( 0 ), &amount ) || amount <= 0 || amount > 9007199254740991.0 )
+	{
+		ScriptError( cx, "AddExperience: amount must be a positive safe integer" );
+		return false;
+	}
+
+	const UI64 experienceAmount = static_cast<UI64>( amount );
+	if( static_cast<double>( experienceAmount ) != amount )
+	{
+		ScriptError( cx, "AddExperience: amount must be a positive safe integer" );
+		return false;
+	}
+
+	args.rval().setInt32( myChar->AddExperience( experienceAmount ));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_SpendLevelStatPoint()
+//|	Prototype	-	bool SpendLevelStatPoint( statId )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Spends one earned level point on strength, dexterity or intelligence
+//o------------------------------------------------------------------------------------------------o
+bool CChar_SpendLevelStatPoint( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "SpendLevelStatPoint: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
+	CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( myChar ) || !args.get( 0 ).isInt32() )
+	{
+		ScriptError( cx, "SpendLevelStatPoint: invalid character or stat id" );
+		return false;
+	}
+
+	args.rval().setBoolean( myChar->SpendLevelStatPoint( static_cast<UI08>( args.get( 0 ).toInt32() )));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_SetLevelClass()
+//|	Prototype	-	bool SetLevelClass( classId[, forceChange] )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Selects a level class; trusted scripts may force a class migration
+//o------------------------------------------------------------------------------------------------o
+bool CChar_SetLevelClass( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc < 1 || argc > 2 )
+	{
+		ScriptError( cx, "SetLevelClass: Invalid number of arguments (takes 1 or 2)" );
+		return false;
+	}
+
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
+	CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( myChar ) || !args.get( 0 ).isInt32() || ( argc == 2 && !args.get( 1 ).isBoolean() ))
+	{
+		ScriptError( cx, "SetLevelClass: invalid character, class id or force flag" );
+		return false;
+	}
+
+	const SI32 classId = args.get( 0 ).toInt32();
+	if( classId < CC_NONE || classId > std::numeric_limits<UI08>::max() ||
+		( classId != CC_NONE && Races->LevelClass( static_cast<UI08>( classId )) == nullptr ))
+	{
+		ScriptError( cx, "SetLevelClass: class id does not exist in classes.dfn" );
+		return false;
+	}
+
+	const bool forceChange = ( argc == 2 ? args.get( 1 ).toBoolean() : false );
+	args.rval().setBoolean( myChar->SetLevelClass( static_cast<UI08>( classId ), forceChange ));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_SetLevelProgress()
+//|	Prototype	-	bool SetLevelProgress( level )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Moves a character to a level and synchronizes total experience
+//o------------------------------------------------------------------------------------------------o
+bool CChar_SetLevelProgress( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "SetLevelProgress: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
+	CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( myChar ) || !args.get( 0 ).isInt32() )
+	{
+		ScriptError( cx, "SetLevelProgress: invalid character or level" );
+		return false;
+	}
+
+	const SI32 level = args.get( 0 ).toInt32();
+	if( level < 1 || level > std::numeric_limits<UI16>::max() )
+	{
+		ScriptError( cx, "SetLevelProgress: level must be a positive integer" );
+		return false;
+	}
+
+	args.rval().setBoolean( myChar->SetLevelProgress( static_cast<UI16>( level )));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_ResetLevelProgress()
+//|	Prototype	-	void ResetLevelProgress( clearClass )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resets level, experience and unspent points, optionally clearing class
+//o------------------------------------------------------------------------------------------------o
+bool CChar_ResetLevelProgress( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "ResetLevelProgress: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+
+	auto args = JS::CallArgsFromVp( argc, vp );
+	auto obj = getThis( cx, args );
+	CChar *myChar = GetWrappedObject<CChar>( obj, &UOXChar_class );
+	if( !ValidateObject( myChar ) || !args.get( 0 ).isBoolean() )
+	{
+		ScriptError( cx, "ResetLevelProgress: invalid character or clearClass flag" );
+		return false;
+	}
+
+	myChar->ResetLevelProgress( args.get( 0 ).toBoolean() );
+	args.rval().setUndefined();
+	return true;
+}
+
+namespace
+{
+	bool GetProfessionMethodCharacter( JSContext *cx, JS::CallArgs &args, CChar *&character, const char *methodName )
+	{
+		auto obj = getThis( cx, args );
+		character = GetWrappedObject<CChar>( obj, &UOXChar_class );
+		if( !ValidateObject( character ) || character->IsNpc() )
+		{
+			const std::string errorMessage = oldstrutil::format( "%s: invalid player character", methodName );
+			ScriptError( cx, errorMessage.c_str() );
+			return false;
+		}
+		return true;
+	}
+
+	bool GetProfessionMethodId( JSContext *cx, const JS::Value &value, UI08 &professionId, const char *methodName )
+	{
+		if( !value.isInt32() )
+		{
+			const std::string errorMessage = oldstrutil::format( "%s: profession id must be an integer", methodName );
+			ScriptError( cx, errorMessage.c_str() );
+			return false;
+		}
+		const SI32 requestedId = value.toInt32();
+		if( requestedId <= 0 || requestedId > std::numeric_limits<UI08>::max() ||
+			Races->LevelProfession( static_cast<UI08>( requestedId )) == nullptr )
+		{
+			const std::string errorMessage = oldstrutil::format( "%s: profession id does not exist in professions.dfn", methodName );
+			ScriptError( cx, errorMessage.c_str() );
+			return false;
+		}
+		professionId = static_cast<UI08>( requestedId );
+		return true;
+	}
+}
+
+bool CChar_GetProfessionCount( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "GetProfessionCount: Invalid number of arguments (takes 0)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	if( !GetProfessionMethodCharacter( cx, args, character, "GetProfessionCount" ))
+		return false;
+	args.rval().setInt32( character->GetProfessionCount() );
+	return true;
+}
+
+bool CChar_GetProfessionId( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetProfessionId: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	if( !GetProfessionMethodCharacter( cx, args, character, "GetProfessionId" ) || !args.get( 0 ).isInt32() || args.get( 0 ).toInt32() < 0 )
+	{
+		ScriptError( cx, "GetProfessionId: slot must be a non-negative integer" );
+		return false;
+	}
+	const SI32 slot = args.get( 0 ).toInt32();
+	args.rval().setInt32( slot <= std::numeric_limits<UI08>::max() ? character->GetProfessionId( static_cast<UI08>( slot )) : 0 );
+	return true;
+}
+
+bool CChar_HasProfession( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "HasProfession: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	UI08 professionId = 0;
+	if( !GetProfessionMethodCharacter( cx, args, character, "HasProfession" ) || !GetProfessionMethodId( cx, args.get( 0 ), professionId, "HasProfession" ))
+		return false;
+	args.rval().setBoolean( character->HasProfession( professionId ));
+	return true;
+}
+
+bool CChar_CanUseProfessionSkill( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "CanUseProfessionSkill: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	if( !GetProfessionMethodCharacter( cx, args, character, "CanUseProfessionSkill" ) || !args.get( 0 ).isInt32() ||
+		args.get( 0 ).toInt32() < 0 || args.get( 0 ).toInt32() >= ALLSKILLS )
+	{
+		ScriptError( cx, "CanUseProfessionSkill: skill id must identify a valid skill" );
+		return false;
+	}
+	args.rval().setBoolean( character->CanUseProfessionSkill( static_cast<UI08>( args.get( 0 ).toInt32() )));
+	return true;
+}
+
+bool CChar_LearnProfession( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc < 1 || argc > 2 )
+	{
+		ScriptError( cx, "LearnProfession: Invalid number of arguments (takes 1 or 2)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	UI08 professionId = 0;
+	if( !GetProfessionMethodCharacter( cx, args, character, "LearnProfession" ) ||
+		!GetProfessionMethodId( cx, args.get( 0 ), professionId, "LearnProfession" ) || ( argc == 2 && !args.get( 1 ).isBoolean() ))
+	{
+		return false;
+	}
+	args.rval().setBoolean( character->LearnProfession( professionId, argc == 2 && args.get( 1 ).toBoolean() ));
+	return true;
+}
+
+bool CChar_ForgetProfession( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "ForgetProfession: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	UI08 professionId = 0;
+	if( !GetProfessionMethodCharacter( cx, args, character, "ForgetProfession" ) || !GetProfessionMethodId( cx, args.get( 0 ), professionId, "ForgetProfession" ))
+		return false;
+	args.rval().setBoolean( character->ForgetProfession( professionId ));
+	return true;
+}
+
+bool CChar_ResetProfessions( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "ResetProfessions: Invalid number of arguments (takes 0)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	if( !GetProfessionMethodCharacter( cx, args, character, "ResetProfessions" ))
+		return false;
+	character->ResetProfessions();
+	args.rval().setUndefined();
+	return true;
+}
+
+bool CChar_GetProfessionExperience( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetProfessionExperience: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	UI08 professionId = 0;
+	if( !GetProfessionMethodCharacter( cx, args, character, "GetProfessionExperience" ) ||
+		!GetProfessionMethodId( cx, args.get( 0 ), professionId, "GetProfessionExperience" ))
+		return false;
+	args.rval().setNumber( character->GetProfessionExperience( professionId ));
+	return true;
+}
+
+bool CChar_GetProfessionProficiency( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetProfessionProficiency: Invalid number of arguments (takes 1)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	UI08 professionId = 0;
+	if( !GetProfessionMethodCharacter( cx, args, character, "GetProfessionProficiency" ) ||
+		!GetProfessionMethodId( cx, args.get( 0 ), professionId, "GetProfessionProficiency" ))
+		return false;
+	args.rval().setInt32( character->GetProfessionProficiency( professionId ));
+	return true;
+}
+
+bool CChar_SetProfessionProgress( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc < 2 || argc > 3 )
+	{
+		ScriptError( cx, "SetProfessionProgress: Invalid number of arguments (takes 2 or 3)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	UI08 professionId = 0;
+	if( !GetProfessionMethodCharacter( cx, args, character, "SetProfessionProgress" ) ||
+		!GetProfessionMethodId( cx, args.get( 0 ), professionId, "SetProfessionProgress" ) ||
+		!args.get( 1 ).isInt32() || args.get( 1 ).toInt32() < 0 || args.get( 1 ).toInt32() > std::numeric_limits<SKILLVAL>::max() ||
+		( argc == 3 && !args.get( 2 ).isBoolean() ))
+	{
+		ScriptError( cx, "SetProfessionProgress: proficiency must be a non-negative tenths-based integer" );
+		return false;
+	}
+	const bool forceLearn = ( argc == 3 ? args.get( 2 ).toBoolean() : false );
+	args.rval().setBoolean( character->SetProfessionProficiency( professionId, static_cast<SKILLVAL>( args.get( 1 ).toInt32() ), forceLearn ));
+	return true;
+}
+
+bool CChar_GainProfessionExperience( JSContext *cx, unsigned argc, JS::Value* vp )
+{
+	if( argc != 3 )
+	{
+		ScriptError( cx, "GainProfessionExperience: Invalid number of arguments (takes 3)" );
+		return false;
+	}
+	auto args = JS::CallArgsFromVp( argc, vp );
+	CChar *character = nullptr;
+	if( !GetProfessionMethodCharacter( cx, args, character, "GainProfessionExperience" ) ||
+		!args.get( 0 ).isInt32() || args.get( 0 ).toInt32() < 0 || args.get( 0 ).toInt32() >= ALLSKILLS ||
+		!args.get( 1 ).isInt32() || args.get( 1 ).toInt32() < 0 || args.get( 1 ).toInt32() > std::numeric_limits<UI16>::max() ||
+		!args.get( 2 ).isInt32() || args.get( 2 ).toInt32() < 0 || args.get( 2 ).toInt32() > std::numeric_limits<UI16>::max() )
+	{
+		ScriptError( cx, "GainProfessionExperience: expected skill id, minimum skill and maximum skill integers" );
+		return false;
+	}
+	args.rval().setNumber( character->AddProfessionExperience(
+		static_cast<UI08>( args.get( 0 ).toInt32() ),
+		static_cast<UI16>( args.get( 1 ).toInt32() ),
+		static_cast<UI16>( args.get( 2 ).toInt32() )));
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_FindItemLayer()
 //|	Prototype	-	Item FindItemLayer( layer )
 //o------------------------------------------------------------------------------------------------o

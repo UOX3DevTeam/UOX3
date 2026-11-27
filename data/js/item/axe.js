@@ -264,6 +264,11 @@ function BowCraft( socket, mChar, ourObj, tileID )
 
 function ChopTree( socket, mChar )
 {
+	if( !mChar.CanUseProfessionSkill( 44 ))
+	{
+		socket.SysMessage( "You must learn the Lumberjacking profession before harvesting wood." );
+		return;
+	}
 	if( mChar.skillsused.lumberjacking )
 	{
 		var curTime = GetCurrentClock();
@@ -349,8 +354,12 @@ function onTimer( mChar, timerID )
 					if( mChar.CheckSkill( 44, 0, mChar.skillCaps.lumberjacking ))
 					{
 						mResource.logAmount = mResource.logAmount-1;
-						CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
-						socket.SysMessage( GetDictionaryEntry( 1435, socket.language )); // You place some logs in your pack.
+						var gatheredLogs = CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
+						if( ValidateObject( gatheredLogs ))
+						{
+							mChar.GainProfessionExperience( 44, 0, mChar.skillCaps.lumberjacking );
+							socket.SysMessage( GetDictionaryEntry( 1435, socket.language )); // You place some logs in your pack.
+						}
 					}
 					else
 					{
